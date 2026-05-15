@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XynaFaith</title>
+  <link rel="stylesheet" href="/faith/styles.css">
+
+  <style>
+    /* Active link styling for top nav */
+    .nav-links a.nav-active {
+      font-weight: bold;
+      color: #2563eb;
+      border-bottom: 2px solid #2563eb;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img src="/faith/assets/xynafaith.png" class="logo" alt="XynaFaith Logo">
+      <div class="brand">
+        <div class="brand-title">XynaFaith</div>
+        <div class="brand-sub">
+          <a href="https://xynasoft.com" target="_blank" class="brand-link">
+            Powered by Xynasoft
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="nav-links" id="navLinks"></nav>
+  </header>
+
+  <!-- =========================
+       SPA CONTENT
+  ========================== -->
+  <main id="app"></main>
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+  <footer class="footer">
+    <p>© 2026 XynaFaith. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/faith/app.js"></script>
+
+  <!-- =========================
+       NAVBAR + ACTIVE LINK LOGIC
+  ========================== -->
+  <script>
+    async function hydrateUser() {
+      const token = localStorage.getItem("access_token");
+      const role = localStorage.getItem("userRole");
+
+      if (!token) {
+        window.currentUser = null;
+        return null;
+      }
+
+      try {
+        const res = await fetch("/auth/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error();
+
+        const user = await res.json();
+
+        // ✅ FORCE ROLE CONSISTENCY
+        user.role = user.role || role;
+        window.currentUser = user;
+
+        // ✅ Persist role again
+        localStorage.setItem("userRole", user.role);
+
+        return user;
+      } catch {
+        window.currentUser = { role: role };
+        return window.currentUser;
+      }
+    }
+
+function renderNavbar() {
+  const nav = document.getElementById("navLinks");
+  if (!nav) return;
+
+  const token = localStorage.getItem("access_token");
+  const role = window.currentUser?.role || localStorage.getItem("userRole");
+  const currentPage = window.currentPage || "";
+
+  // Home always included
+  let links = [
+    { page: "home", label: "Home" }
+  ];
+
+  if (!token) {
+    links.push(
+      { page: "login", label: "Login" },
+      { page: "register", label: "Register" }
+    );
+  } else if (role === "member") {
+    links.push(
+      { page: "member-dashboard", label: "My Feed" },
+      { page: "network", label: "Network" }
+    );
+  } else if (role === "pastor") {
+    links.push(
+      { page: "dashboard", label: "Dashboard" },
+      { page: "sermon", label: "Sermon Studio" },
+      { page: "network", label: "Network" },
+      { page: "mysermons", label: "My Sermons" }
+    );
+  }
+
+  // Render nav links with active highlight
+  nav.innerHTML = links.map(link => {
+    const activeClass = link.page === currentPage ? "nav-active" : "";
+    return `<a onclick="navigate('${link.page}')" class="${activeClass}">${link.label}</a>`;
+  }).join("") + (token ? `<a onclick="logout()" style="color:#ef4444;">Logout</a>` : "");
+}
+
+    // Wrap navigate to update currentPage for highlighting
+    const originalNavigate = window.navigate;
+    window.navigate = async function(page) {
+      window.currentPage = page; // Track active page
+      if (typeof originalNavigate === "function") {
+        await originalNavigate(page);
+      }
+      renderNavbar(); // Refresh navbar highlight
+    };
+
+    async function logout() {
+      try {
+        await fetch("/auth/logout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: localStorage.getItem("refresh_token") })
+        });
+      } catch (err) {
+        console.error("Logout error:", err);
+      }
+
+      if (window.dashboardInterval) clearInterval(window.dashboardInterval);
+
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("user");
+
+      window.currentUser = null;
+
+      renderNavbar();
+      navigate("home");
+
+      if (typeof showToast === "function") {
+        showToast("Logged out successfully", "success");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = await hydrateUser();
+      renderNavbar();
+
+      if (user?.role === "member") navigate("member-dashboard");
+      else if (user?.role === "pastor") navigate("dashboard");
+      else navigate("home");
+    });
+  </script>
+
+</body>
+</html>

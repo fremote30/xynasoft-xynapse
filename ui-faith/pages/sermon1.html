@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sermon Studio — XynaFaith</title>
+
+  <link rel="stylesheet" href="/faith/styles.css">
+
+<style>
+  .sermon-workspace {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    height: 100vh;
+    background: #F5F7FA;
+    color: #111827;
+  }
+
+  .left-panel {
+    padding: 25px;
+    border-right: 1px solid #E5E7EB;
+    overflow-y: auto;
+    background: #FFFFFF;
+  }
+
+  .right-panel {
+    padding: 30px;
+    overflow-y: auto;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  label {
+    font-size: 13px;
+    color: #6B7280;
+    margin-bottom: 5px;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+    background: #FFFFFF;
+    color: #111827;
+    outline: none;
+    margin-bottom: 12px;
+  }
+
+  textarea { min-height: 80px; }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: #2563EB;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .btn-secondary {
+    padding: 10px;
+    border-radius: 10px;
+    background: #E5E7EB;
+    color: #111827;
+    border: none;
+    cursor: pointer;
+  }
+
+  .sermon-output {
+    background: #FFFFFF;
+    padding: 25px;
+    border-radius: 16px;
+    min-height: 300px;
+    border: 1px solid #E5E7EB;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: #6B7280;
+  }
+
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .action-bar button {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-save { background: #10b981; color: white; }
+  .btn-share { background: #3b82f6; color: white; }
+  .btn-pdf { background: #ef4444; color: white; }
+  .btn-preach { background: #8b5cf6; color: white; }
+  .btn-pastor { background: #f59e0b; color: white; }
+
+  .comments-section { margin-top: 30px; }
+
+  .upload-box {
+    border: 2px dashed #2563eb;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 15px;
+    background: #F9FAFB;
+  }
+
+  .advanced-toggle {
+    margin-top: 10px;
+    cursor: pointer;
+    color: #2563EB;
+    font-size: 13px;
+  }
+
+  .advanced-section {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    background: #FAFAFA;
+  }
+
+  .hint-box {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #EFF6FF;
+    font-size: 13px;
+  }
+
+  .ai-disclaimer {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #6B7280;
+  }
+
+  .draft-notice {
+    background: #E0F2FE;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  /* 🔥 NEW: MULTIVERSE TABS */
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .tab {
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #E5E7EB;
+    cursor: pointer;
+  }
+
+  .tab.active {
+    background: #2563EB;
+    color: white;
+  }
+
+  /* 🔥 NEW: REFINE BAR */
+  .refine-bar {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .refine-bar button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #1f2937;
+    color: white;
+    cursor: pointer;
+  }
+
+  @media (max-width: 900px) {
+    .sermon-workspace {
+      grid-template-columns: 1fr;
+    }
+
+    .left-panel {
+      border-right: none;
+      border-bottom: 1px solid #E5E7EB;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="sermon-workspace">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+
+    <div class="section-title">✍️ Create Sermon</div>
+
+    <div id="draftNotice" class="draft-notice" style="display:none;">
+      📝 Draft restored
+    </div>
+
+    <label>Mode</label>
+    <select id="mode">
+      <option value="default">Expand My Message</option>
+      <option value="scripture">Deepen Scripture</option>
+      <option value="topic">Build from Theme</option>
+      <option value="rewrite">Refine Sermon</option>
+      <option value="multiverse">🔥 Multiverse</option>
+    </select>
+
+    <div class="upload-box">
+      <label>📂 Upload Sermon</label>
+      <input type="file" id="sermonFile">
+      <button onclick="uploadSermon()" class="btn-secondary">Upload & Load</button>
+    </div>
+
+    <label>Your Message</label>
+    <textarea id="userInput"></textarea>
+
+    <label>Scripture</label>
+    <input id="bibleInput">
+
+    <label>Theme</label>
+    <input id="themeInput">
+
+    <div class="advanced-toggle" onclick="toggleAdvanced()">
+  ⚙️ Advanced Options <span id="advArrow">▸</span>
+</div>
+
+<div id="advancedPanel" class="advanced-panel">
+
+  <div class="form-row">
+    <div>
+      <label>Denomination</label>
+      <select id="denomination">
+        <option value="general">General</option>
+        <option value="baptist">Baptist</option>
+        <option value="pentecostal">Pentecostal</option>
+        <option value="catholic">Catholic</option>
+        <option value="reformed">Reformed</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Audience</label>
+      <input id="audience" placeholder="Youth, Church, Conference...">
+    </div>
+  </div>
+
+  <label>Local Context</label>
+  <input id="context" placeholder="Community challenges, events...">
+
+  <div class="form-row">
+    <div>
+      <label>Service</label>
+      <select id="serviceType">
+        <option value="regular">Regular</option>
+        <option value="revival">Revival</option>
+        <option value="funeral">Funeral</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Tone</label>
+      <select id="tone">
+        <option value="balanced">Balanced</option>
+        <option value="passionate">Passionate</option>
+        <option value="teaching">Teaching</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Duration</label>
+      <select id="duration">
+  <option value="10">10 min</option>
+  <option value="15">15 min</option>
+  <option value="20">20 min</option>
+  <option value="30" selected>30 min</option>
+  <option value="45">45 min</option>
+  <option value="60">60 min</option>
+</select>
+    </div>
+  </div>
+
+</div>
+
+    <button class="btn-primary" onclick="generateSermon()">
+      ✨ Generate Sermon
+    </button>
+    <button onclick="scrollToOutput()">📖 View Sermon</button>
+    <div class="hint-box">
+      💡 Start → Expand → Refine → Preach  
+      🔥 Use Multiverse for deeper sermons
+    </div>
+
+    <div class="ai-disclaimer">
+      ⚠️ AI-assisted tool. Does not replace Spirit-led preaching.
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="section-title">📖 Sermon Output</div>
+
+    <!-- 🔥 NEW: MULTIVERSE TABS -->
+    <div id="tabs" class="tabs"></div>
+
+    <div id="sermonOutput" class="sermon-output" contenteditable="true">
+      <div class="empty-state">
+        <h2>Your sermon will appear here...Respect denominational tone and doctrine.</h2>
+      </div>
+    </div>
+
+    <!-- 🔥 NEW: REFINE BUTTONS -->
+    <div class="refine-bar">
+      <button onclick="refine('deepen')">✨ Make Deeper</button>
+      <button onclick="refine('illustration')">🔥 Add Illustration</button>
+      <button onclick="refine('simplify')">🧒 Simplify</button>
+      <button onclick="refine('scripture')">📖 Add Scripture</button>
+    </div>
+
+    <div class="action-bar">
+      <button onclick="clearSermon()" class="btn-danger">🗑 Clear</button>
+      <button class="btn-save" onclick="saveCurrentSermon()">💾 Save</button>
+      <button class="btn-pdf" onclick="exportPDF()">🧾 Export</button>
+      <button class="btn-preach" onclick="openPreachMode()">🎤 Preach</button>
+      <button onclick="shareWhatsApp()" class="btn-share">📲 WhatsApp</button>
+      <button onclick="shareWithPastor()" class="btn-share-alt">🤝 Share with Pastor</button>
+    </div>
+
+    <div class="comments-section">
+      <div class="section-title">💬 Comments</div>
+
+      <div id="commentsList"></div>
+
+      <textarea id="commentInput" placeholder="Write a comment..."></textarea>
+
+      <button onclick="addComment()" class="btn-secondary">
+        Add Comment
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function toggleAdvanced() {
+  const section = document.getElementById("advancedSection");
+  section.style.display = section.style.display === "block" ? "none" : "block";
+}
+</script>
+
+<script src="/faith/app.js"></script>
+
+</body>
+</html>

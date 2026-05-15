@@ -1,0 +1,128 @@
+<!-- =========================
+     DASHBOARD HERO
+========================= -->
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1 class="hero-title">Welcome back, User!</h1>
+    <p class="hero-sub">Manage your sermons and lead your congregation.</p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="navigate('sermon')">Go to Sermon Studio</button>
+      <button class="btn-secondary" onclick="navigate('network')">Explore Network</button>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+     SIDEBAR & MAIN CONTENT
+========================= -->
+<div class="dashboard-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-nav">
+      <a onclick="navigate('dashboard')" class="active">
+        🏠 Dashboard
+      </a>
+      <a onclick="navigate('sermon')">
+        ✍️ Sermon Studio
+      </a>
+      <a onclick="navigate('mysermons')">
+        📝 My Sermons
+      </a>
+      <a onclick="navigate('network')">
+        🌍 Network
+      </a>
+      <a style="cursor:pointer;" onclick="logout()">🚪 Logout</a>
+    </div>
+    <div class="sidebar-stats">
+      <h3>Total Sermons</h3>
+      <p>0</p> <!-- Dynamically update this with actual data -->
+      <h3>Total Members</h3>
+      <p>0</p> <!-- Dynamically update this with actual data -->
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- DASHBOARD MODULES -->
+    <section class="features">
+      <div class="features-header">
+        <h2>Your Dashboard</h2>
+        <p>Quick access to your sermons, network, and more!</p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon">📖</div>
+          <h3>Recent Sermons</h3>
+          <p>View your latest sermon stats.</p>
+          <span class="badge live">Live</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">📊</div>
+          <h3>Insights</h3>
+          <p>Analyze your sermon performance.</p>
+          <span class="badge live">Live</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">📝</div>
+          <h3>Write New Sermon</h3>
+          <p>Create a powerful new message.</p>
+          <span class="badge live" onclick="navigate('sermon')">Start Now</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUICK ACTIONS -->
+    <section class="quick-actions">
+      <h3>Quick Actions</h3>
+      <div class="action-grid">
+        <div class="action-card">
+          <h4>Top Sermons</h4>
+          <button>Loading...</button> <!-- Dynamic button or data -->
+        </div>
+
+        <div class="action-card">
+          <h4>AI Insights</h4>
+          <button>Analyzing...</button> <!-- Dynamic button or data -->
+        </div>
+
+        <div class="action-card">
+          <h4>Explore Network</h4>
+          <button onclick="navigate('network')">Explore</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE DATA -->
+    <section class="live-data">
+      <h3>Live Data</h3>
+      <div class="live-card">
+        <h4>Sermon Performance</h4>
+        <button>Loading performance...</button>
+      </div>
+
+      <div class="live-card">
+        <h4>Sermon Trends</h4>
+        <button>Loading trends...</button>
+      </div>
+
+      <div class="live-card">
+        <h4>Prayer Requests</h4>
+        <button>Coming soon...</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ADDITIONAL MODULES & FOOTER -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Example: Navigate to sermon studio
+    document.querySelector(".btn-primary").addEventListener("click", () => {
+      navigate("sermon");
+    });
+  });
+</script>

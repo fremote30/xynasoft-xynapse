@@ -1,0 +1,75 @@
+<main class="auth-page">
+
+  <!-- BACKGROUND -->
+  <div class="auth-hero">
+    <div class="auth-overlay"></div>
+  </div>
+
+  <!-- CENTER CONTENT -->
+  <div class="auth-wrapper">
+    
+    <div class="auth-card">
+
+      <h2>Create Account</h2>
+      <p class="auth-sub">Join XynaFaith and grow your faith journey</p>
+
+      <form id="registerForm">
+
+        <div class="form-group">
+          <input type="text" id="name" placeholder="Full name" required>
+        </div>
+
+        <div class="form-group">
+          <input type="email" id="email" placeholder="Email address" required>
+        </div>
+
+        <!-- 🔥 ROLE REMOVED -->
+        <!-- Users are created as MEMBER by default -->
+
+        <!-- 🔥 USER GUIDANCE -->
+        <div style="
+          background:#f3f4f6;
+          padding:10px;
+          border-radius:6px;
+          font-size:13px;
+          color:#555;
+          margin-bottom:12px;
+        ">
+          You will join as a <strong>Member</strong>.  
+          You can upgrade to a Pastor later from your dashboard.
+        </div>
+
+        <div class="form-group">
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Password" required>
+            <span class="toggle">👁</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="password-wrapper">
+            <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+            <span class="toggle">👁</span>
+          </div>
+        </div>
+
+        <!-- ERROR MESSAGE -->
+        <p id="registerError" style="color:red; display:none;"></p>
+
+        <button type="submit" class="btn-primary full">
+          Create Account
+        </button>
+
+      </form>
+
+      <!-- SPA LINK -->
+      <div class="auth-footer">
+        Already have an account? 
+        <a href="#" onclick="navigate('login')">Log in</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>

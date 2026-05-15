@@ -1,0 +1,198 @@
+<div class="app clean-app">
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+  <div class="clean-main">
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <section class="simple-hero">
+
+      <div class="hero-content">
+
+        <h1 class="hero-title">
+          Explore the <span class="highlight">XynaFaith Network</span>
+        </h1>
+
+        <p class="hero-sub">
+          Discover pastors, trending sermons, growing ministries, and faith communities around the world.
+        </p>
+
+        <div class="hero-buttons">
+
+          <button
+            class="btn-primary"
+            onclick="navigate('sermon')"
+          >
+            Go to Sermon Studio
+          </button>
+
+          <button
+            class="btn-secondary"
+            onclick="navigate('dashboard')"
+          >
+            Back to Dashboard
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         TRENDING SERMONS
+    ========================== -->
+    <section class="features">
+
+      <div class="features-header">
+        <h2>🔥 Trending Sermons</h2>
+        <p>Discover the most engaging sermons across the platform</p>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="icon">🔥</div>
+
+          <h3>Most Shared</h3>
+
+          <div id="topSermons">
+            <p>Loading sermons...</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">💡</div>
+
+          <h3>AI Trending Insights</h3>
+
+          <div id="aiInsights">
+            <p>Analyzing trends...</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">🌎</div>
+
+          <h3>Global Reach</h3>
+
+          <p>
+            Explore sermons and ministries impacting believers worldwide.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         DISCOVER PASTORS
+    ========================== -->
+    <section class="features">
+
+      <div class="features-header">
+        <h2>🌐 Discover Pastors</h2>
+        <p>Connect with pastors and ministries across the XynaFaith ecosystem</p>
+      </div>
+
+      <div
+        id="pastorGrid"
+        class="feature-grid"
+      >
+
+        <!-- DYNAMICALLY LOADED -->
+
+        <div class="feature-card">
+          <div class="icon">⛪</div>
+
+          <h3>Loading pastors...</h3>
+
+          <p>Please wait...</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         TRENDING CATEGORIES
+    ========================== -->
+    <section class="features">
+
+      <div class="features-header">
+        <h2>📚 Explore Categories</h2>
+        <p>Find sermons and ministries by topic</p>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="icon">🙏</div>
+          <h3>Prayer</h3>
+          <p>Messages focused on prayer and spiritual growth.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">❤️</div>
+          <h3>Marriage & Family</h3>
+          <p>Teaching for relationships, parenting, and family life.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">🛡</div>
+          <h3>Spiritual Warfare</h3>
+          <p>Faith-based teachings on overcoming spiritual battles.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">🌱</div>
+          <h3>Growth & Leadership</h3>
+          <p>Leadership, purpose, and personal development teachings.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         LIVE COMMUNITY
+    ========================== -->
+    <section class="features">
+
+      <div class="features-header">
+        <h2>💬 Community Activity</h2>
+        <p>See what believers are engaging with across the platform</p>
+      </div>
+
+      <div class="feature-grid stats-grid">
+
+        <div class="feature-card">
+          <h3>Platform Sermons</h3>
+          <p id="sermonCount">0</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Connected Members</h3>
+          <p id="memberCount">0</p>
+        </div>
+
+        <div class="feature-card prayer-wall-card">
+
+          <h3>🙏 Live Prayer Wall</h3>
+
+          <div id="prayerWall">
+            <p>Loading prayer activity...</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>

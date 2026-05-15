@@ -1,0 +1,80 @@
+<div class="dashboard-page">
+
+  <!-- BACKGROUND (MATCH LOGIN) -->
+  <div class="dashboard-hero">
+    <div class="dashboard-overlay"></div>
+  </div>
+
+  <!-- ORIGINAL APP -->
+  <div class="app dashboard-app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+      <!-- BRAND -->
+      <div class="sidebar-top">
+        <div class="brand-block">
+          <img src="/faith/assets/xynafaith.png" class="sidebar-logo">
+          <div>
+            <h2>XynaFaith</h2>
+            <span class="brand-sub">by Xynasoft</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NAV -->
+      <nav class="sidebar-nav">
+        <a onclick="navigate('dashboard')" class="active">🏠 Dashboard</a>
+        <a onclick="navigate('sermon')">✍️ Sermon Studio</a>
+        <a onclick="navigate('mysermons')">📝 My Sermons</a>
+        <a onclick="navigate('network')">🌍 Network</a>
+      </nav>
+
+      <!-- FOOTER -->
+      <div class="sidebar-bottom">
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+
+        <!-- MOBILE MENU -->
+        <div class="mobile-menu" onclick="toggleSidebar()">☰</div>
+
+        <!-- TITLE -->
+        <div>
+          <h1 id="welcomeTitle">Dashboard</h1>
+          <p id="welcomeSub">Preparing your workspace...</p>
+        </div>
+
+        <!-- USER -->
+        <div class="topbar-right">
+
+          <span id="userRole" class="badge"></span>
+
+          <div class="profile">
+            <div class="avatar" id="dashboardAvatar">U</div>
+            <span id="dashboardUserName">User</span>
+          </div>
+
+        </div>
+
+      </header>
+
+
+      <!-- CONTENT (UNCHANGED — JS CONTROLS IT) -->
+      <section id="dashboardContent" class="dashboard-grid">
+        <!-- JS renders here -->
+      </section>
+
+    </main>
+
+  </div>
+
+</div>

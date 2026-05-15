@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sermon Studio — XynaFaith</title>
+
+  <link rel="stylesheet" href="/faith/styles.css">
+
+<style>
+body{
+  margin:0;
+  background:#F5F7FB;
+  font-family:Inter,sans-serif;
+  color:#111827;
+}
+
+/* LAYOUT */
+.studio-layout{
+  display:grid;
+  grid-template-columns:320px 1fr 280px;
+  min-height:100vh;
+  gap:24px;
+  padding:24px;
+}
+
+/* SIDEBARS */
+.studio-sidebar,
+.action-sidebar{
+  background:#FFFFFF;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.04);
+  height:fit-content;
+}
+
+.sidebar-header h2{
+  margin:0 0 20px;
+}
+
+/* TABS */
+.studio-tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+}
+
+.tab-btn{
+  border:none;
+  background:#EEF2FF;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.tab-btn.active{
+  background:linear-gradient(
+    135deg,
+    #2563EB,
+    #4F46E5
+  );
+  color:white;
+}
+
+/* INPUTS */
+.sidebar-card{
+  margin-bottom:24px;
+}
+
+.sidebar-card h3{
+  margin-bottom:18px;
+}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  font-size:14px;
+  color:#6B7280;
+}
+
+textarea,
+input,
+select{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #E5E7EB;
+  background:white;
+  margin-bottom:18px;
+  font-size:14px;
+  box-sizing:border-box;
+}
+
+textarea{
+  min-height:140px;
+  resize:none;
+}
+
+/* UPLOAD */
+.upload-card{
+  margin-top:20px;
+}
+
+.upload-drop{
+  border:2px dashed #CBD5E1;
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+  background:#F8FAFC;
+}
+
+.upload-drop span{
+  display:block;
+  margin-bottom:16px;
+  color:#64748B;
+  font-size:13px;
+}
+
+/* BUTTONS */
+.generate-btn{
+  width:100%;
+  border:none;
+  padding:16px;
+  border-radius:16px;
+  background:linear-gradient(
+    135deg,
+    #2563EB,
+    #4F46E5
+  );
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.view-btn,
+.btn-secondary{
+  width:100%;
+  margin-top:14px;
+  border:none;
+  padding:14px;
+  border-radius:14px;
+  background:#EEF2FF;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* ADVANCED */
+.advanced-wrapper{
+  margin-bottom:20px;
+}
+
+.advanced-toggle{
+  cursor:pointer;
+  padding:14px;
+  border-radius:14px;
+  background:#F8FAFC;
+  font-weight:600;
+}
+
+.advanced-panel{
+  margin-top:14px;
+}
+
+/* MAIN */
+.studio-main{
+  background:#FFFFFF;
+  border-radius:24px;
+  padding:32px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.04);
+}
+
+.main-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:24px;
+}
+
+.main-header h1{
+  margin:0;
+}
+
+.main-header p{
+  color:#6B7280;
+  margin-top:6px;
+}
+
+.focus-btn{
+  border:none;
+  background:#F3F4F6;
+  padding:12px 16px;
+  border-radius:14px;
+  cursor:pointer;
+}
+
+/* SERMON CANVAS */
+.sermon-canvas{
+  min-height:700px;
+  border:1px solid #E5E7EB;
+  border-radius:24px;
+  padding:60px;
+  background:#FFFFFF;
+}
+
+.empty-state{
+  text-align:center;
+  margin-top:140px;
+}
+
+.empty-state h2{
+  font-size:32px;
+  margin-bottom:14px;
+}
+
+.empty-state p{
+  color:#6B7280;
+  font-size:18px;
+}
+
+/* RIGHT ACTIONS */
+.action-card{
+  margin-bottom:24px;
+}
+
+.action-card h3{
+  margin-bottom:16px;
+}
+
+.action-card button{
+  width:100%;
+  border:none;
+  background:#F8FAFC;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
+  cursor:pointer;
+  text-align:left;
+  font-weight:600;
+}
+
+/* TIP */
+.studio-tip{
+  margin-top:24px;
+  padding:16px;
+  background:#EFF6FF;
+  border-radius:16px;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* MOBILE */
+@media(max-width:1200px){
+
+  .studio-layout{
+    grid-template-columns:1fr;
+  }
+
+  .action-sidebar{
+    order:3;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="studio-layout">
+
+  <!-- ===================================== -->
+  <!-- LEFT SIDEBAR -->
+  <!-- ===================================== -->
+  <aside class="studio-sidebar">
+
+    <div class="sidebar-header">
+      <h2>✍️ Create Sermon</h2>
+    </div>
+
+    <!-- TABS -->
+    <div class="studio-tabs">
+      <button class="tab-btn active">Create</button>
+      <button class="tab-btn">Rewrite</button>
+      <button class="tab-btn">Multiverse</button>
+      <button class="tab-btn">Cross-Ref</button>
+    </div>
+
+    <!-- CORE INPUTS -->
+    <div class="sidebar-card">
+
+      <h3>📝 Core Inputs</h3>
+
+      <label>Your Message / Sermon Prompt</label>
+      <textarea
+        id="userInput"
+        placeholder="What is your sermon about?"
+      ></textarea>
+
+      <label>Scripture / Passage</label>
+      <input
+        id="bibleInput"
+        placeholder="e.g. John 3:16-17"
+      >
+
+      <!-- UPLOAD -->
+      <div class="upload-card">
+
+        <h4>📂 Upload Sermon</h4>
+
+        <div class="upload-drop">
+          <p>Drag & drop your file here</p>
+          <span>PDF, DOCX, or TXT</span>
+
+          <input type="file" id="sermonFile">
+
+          <button
+            class="btn-secondary"
+            onclick="uploadSermon()"
+          >
+            Browse File
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ADVANCED -->
+    <div class="advanced-wrapper">
+
+      <div class="advanced-toggle">
+        ⚙ Advanced Options
+      </div>
+
+      <div class="advanced-panel">
+
+        <label>Denomination</label>
+        <select id="denomination">
+          <option value="general">General</option>
+          <option value="baptist">Baptist</option>
+          <option value="pentecostal">Pentecostal</option>
+          <option value="catholic">Catholic</option>
+        </select>
+
+        <label>Audience</label>
+        <input
+          id="audience"
+          placeholder="Youth, Church, Conference..."
+        >
+
+        <label>Local Context</label>
+        <input
+          id="context"
+          placeholder="Community challenges..."
+        >
+
+        <label>Tone</label>
+        <select id="tone">
+          <option value="balanced">Balanced</option>
+          <option value="teaching">Teaching</option>
+          <option value="passionate">Passionate</option>
+        </select>
+
+        <label>Duration</label>
+        <select id="duration">
+          <option value="15">15 min</option>
+          <option value="30">30 min</option>
+          <option value="45">45 min</option>
+        </select>
+
+      </div>
+
+    </div>
+
+    <!-- GENERATE -->
+    <button
+      class="generate-btn"
+      onclick="generateSermon()"
+    >
+      ✨ Generate Sermon
+    </button>
+
+    <button
+      class="view-btn"
+      onclick="scrollToOutput()"
+    >
+      📖 View Last Sermon
+    </button>
+
+    <!-- HINT -->
+    <div class="studio-tip">
+      💡 Start → Expand → Refine → Preach
+      🔥 Use Multiverse for deeper sermons
+    </div>
+
+  </aside>
+
+  <!-- ===================================== -->
+  <!-- MAIN SERMON CANVAS -->
+  <!-- ===================================== -->
+  <main class="studio-main">
+
+    <div class="main-header">
+
+      <div>
+        <h1>📖 Sermon Output</h1>
+        <p>
+          Generated with ✨ purpose and powered by AI.
+        </p>
+      </div>
+
+      <div class="main-actions">
+        <button class="focus-btn">
+          🖥 Focus Mode
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SERMON OUTPUT -->
+    <div
+      id="sermonOutput"
+      class="sermon-canvas"
+      contenteditable="true"
+    >
+
+      <div class="empty-state">
+
+        <h2>
+          ✨ Ready to help craft your next message.
+        </h2>
+
+        <p>
+          Generate sermons, refine ideas, and prepare
+          powerful teachings.
+        </p>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ===================================== -->
+  <!-- RIGHT ACTION PANEL -->
+  <!-- ===================================== -->
+  <aside class="action-sidebar">
+
+    <!-- REFINE -->
+    <div class="action-card">
+
+      <h3>✨ Refine</h3>
+
+      <button onclick="refine('deepen')">
+        ✨ Make Deeper
+      </button>
+
+      <button onclick="refine('illustration')">
+        🔥 Add Illustration
+      </button>
+
+      <button onclick="refine('simplify')">
+        🧒 Simplify
+      </button>
+
+      <button onclick="refine('scripture')">
+        📖 Add Scripture
+      </button>
+
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="action-card">
+
+      <h3>⚡ Actions</h3>
+
+      <button onclick="saveCurrentSermon()">
+        💾 Save Sermon
+      </button>
+
+      <button onclick="exportPDF()">
+        🧾 Export
+      </button>
+
+      <button onclick="openPreachMode()">
+        🎤 Preach Mode
+      </button>
+
+      <button onclick="shareWhatsApp()">
+        📲 WhatsApp
+      </button>
+
+      <button onclick="shareWithPastor()">
+        🤝 Share with Pastor
+      </button>
+
+    </div>
+
+    <!-- COLLAB -->
+    <div class="action-card">
+
+      <h3>💬 Collaboration</h3>
+
+      <button>
+        💬 Comments
+      </button>
+
+      <button>
+        📜 Activity Log
+      </button>
+
+    </div>
+
+  </aside>
+
+</div>
+
+<script src="/faith/app.js"></script>
+
+</body>
+</html>

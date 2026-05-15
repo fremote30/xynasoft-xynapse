@@ -1,0 +1,48 @@
+services:
+
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: xynapse-db
+    restart: always
+
+    environment:
+      POSTGRES_DB: xynapse
+      POSTGRES_USER: xynapse
+      POSTGRES_PASSWORD: xynapse_fremote
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xynapse -d xynapse"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+
+  api:
+    build: .
+    container_name: xynapse-api
+    restart: always
+
+    depends_on:
+      db:
+        condition: service_healthy   # 🔥 THIS IS THE FIX
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      DATABASE_URL: postgresql+psycopg2://xynapse:xynapse_password@db:5432/xynapse
+      SECRET_KEY: 0646d3b5a2142b11a15e36e7133652c58456b1899e5a4c2523c0a1e9e727bd9f
+    working_dir: /workspaces/xynasoft-xynapse
+
+    command: >
+      python -m uvicorn main:app --host 0.0.0.0 --port 8000
+
+
+volumes:
+  pgdata:

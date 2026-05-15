@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xynasoft Faith — Pastor</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="manifest" href="/faith/manifest.webmanifest" />
+  <meta name="theme-color" content="#2563eb" />
+
+  <link rel="stylesheet" href="/faith/styles.css?v=500" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/faith/" class="brand-link">
+        <img
+          src="/faith/assets/xynasoft-logo.png"
+          class="brand-logo"
+          alt="Xynasoft Logo"
+          height="42"
+        />
+        <div>
+          <div class="title">Xynasoft Faith</div>
+          <div class="subtitle">Pastor Preparation Suite</div>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="/faith/">Home</a>
+        <a href="/faith/dashboard.html">Dashboard</a>
+        <a href="/faith/member.html">Member Access</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Sermon Workspace
+          </div>
+
+          <h1>Prepare Scripture with Depth and Clarity.</h1>
+          <p class="hero-copy">
+            AI-assisted sermon preparation designed for faithful leadership,
+            theological integrity, and contextual relevance.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn secondary" href="/faith/dashboard.html">Back to Dashboard</a>
+            <button class="btn primary" type="button" id="heroGenerateBtn">Generate Sermon</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-2">
+      <div class="stack">
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Sermon Preparation</div>
+              <p class="muted">Build an outline, refine your framing, and generate a manuscript.</p>
+            </div>
+          </div>
+
+          <label class="label" for="apiKey">API Key (optional)</label>
+          <input id="apiKey" class="input" placeholder="x-api-key (if required)" />
+
+          <div class="row">
+            <div class="col">
+              <label class="label" for="passage_reference">Bible Passage</label>
+              <input
+                id="passage_reference"
+                class="input"
+                placeholder="e.g., Ephesians 6:10–18; Psalm 23"
+              />
+              <div class="hint" style="margin-top:6px">
+                Separate multiple passages with commas or semicolons.
+              </div>
+            </div>
+
+            <div class="col">
+              <label class="label" for="theme">Theme</label>
+              <input id="theme" class="input" placeholder="e.g., Spiritual Strength" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label class="label" for="denomination">Denomination Guardrails</label>
+              <select id="denomination" class="input">
+                <option value="broad_evangelical">Broad Evangelical (recommended)</option>
+                <option value="pentecostal_charismatic">Pentecostal / Charismatic</option>
+                <option value="reformed">Reformed</option>
+                <option value="baptist">Baptist</option>
+                <option value="methodist_wesleyan">Methodist / Wesleyan</option>
+                <option value="catholic">Catholic</option>
+                <option value="anglican">Anglican</option>
+                <option value="seventh_day_adventist">Seventh-day Adventist</option>
+                <option value="non_denom">Non-denominational</option>
+              </select>
+              <div class="hint" style="margin-top:6px">
+                This controls guardrails for tone, phrasing, and sensitive doctrine areas.
+              </div>
+            </div>
+
+            <div class="col">
+              <label class="label" for="audience_type">Audience</label>
+              <select id="audience_type" class="input">
+                <option>General</option>
+                <option>Youth</option>
+                <option>Leaders</option>
+                <option>Couples</option>
+                <option>Evangelistic</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label class="label" for="local_context">Local Context</label>
+              <select id="local_context" class="input">
+                <option>Other</option>
+                <option>Urban</option>
+                <option>Rural</option>
+                <option>Accra</option>
+                <option>Kumasi</option>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="label" for="service_type">Service Type</label>
+              <select id="service_type" class="input">
+                <option>Sunday</option>
+                <option>Midweek</option>
+                <option>Conference</option>
+                <option>Funeral</option>
+                <option>Wedding</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label class="label" for="tone">Tone</label>
+              <select id="tone" class="input">
+                <option>Teaching</option>
+                <option>Encouraging</option>
+                <option>Corrective</option>
+                <option>Evangelistic</option>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="label" for="duration_minutes">Duration (minutes)</label>
+              <input
+                id="duration_minutes"
+                class="input"
+                type="number"
+                min="5"
+                max="120"
+                value="30"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col mini-note">
+              <div class="hint">
+                Low-data mode: generate once online, then reopen this page offline to read saved outline and manuscript.
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="btnGenerate" class="btn primary" type="button">Generate Sermon Outline</button>
+            <button id="clearBtn" class="btn secondary" type="button">Clear</button>
+            <button id="preachModeBtn" class="btn secondary" type="button">Preaching Mode</button>
+          </div>
+
+          <div id="toast" class="status"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Generated Outline</div>
+              <p class="muted">Your structured sermon outline will appear here.</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="copyBtn" class="btn secondary" disabled type="button">Copy Outline (JSON)</button>
+            <button id="saveBtn" class="btn secondary" disabled type="button">Save</button>
+            <button id="loadBtn" class="btn secondary" type="button">Load Last Saved</button>
+            <button id="manuscriptBtn" class="btn primary" disabled type="button">Generate Manuscript</button>
+          </div>
+
+          <div id="output" class="output">
+            <div class="muted">Your structured sermon outline will appear here.</div>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card" id="manuscriptCard">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Full Manuscript</div>
+              <p class="muted">Generate a manuscript after you create the outline.</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="copyManuscriptBtn" class="btn secondary" disabled type="button">Copy Manuscript</button>
+            <button id="downloadManuscriptBtn" class="btn secondary" disabled type="button">Download .txt</button>
+            <button id="exportPdfBtn" class="btn secondary" disabled type="button">Export to PDF</button>
+            <button id="loadManuscriptBtn" class="btn secondary" type="button">Load Last Manuscript</button>
+          </div>
+
+          <div class="actions" style="margin-top:10px">
+            <button id="publishBtn" class="btn primary" disabled type="button">Publish (Create Share Link)</button>
+            <button id="copyShareBtn" class="btn secondary" disabled type="button">Copy Share Link</button>
+            <button id="whatsAppShareBtn" class="btn secondary" disabled type="button">Share via WhatsApp</button>
+          </div>
+
+          <div id="shareBox" class="status" style="margin-top:8px"></div>
+
+          <div id="manuscriptOutput" class="output">
+            <div class="muted">Generate a manuscript after you generate an outline.</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-title">Quick Guidance</div>
+              <p class="muted">A lightweight workflow for preparing and sharing sermons.</p>
+            </div>
+          </div>
+
+          <div class="list">
+            <div class="list-item">
+              <div class="list-item-title">1. Start with the passage</div>
+              <div class="list-item-sub">Enter the main Bible passage and sermon theme.</div>
+            </div>
+
+            <div class="list-item">
+              <div class="list-item-title">2. Generate the outline</div>
+              <div class="list-item-sub">Review the structure before expanding to a manuscript.</div>
+            </div>
+
+            <div class="list-item">
+              <div class="list-item-title">3. Create the manuscript</div>
+              <div class="list-item-sub">Use the manuscript for preaching, editing, or export.</div>
+            </div>
+
+            <div class="list-item">
+              <div class="list-item-title">4. Publish and share</div>
+              <div class="list-item-sub">Create a share link and send it through WhatsApp.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>
+        Faith API: <code>/api/v1/faith</code> • Xynasoft Faith v0.1 (Ghana Beta)
+      </div>
+    </footer>
+  </main>
+
+  <section id="preachOverlay" class="preach-overlay hidden" aria-hidden="true">
+    <div class="preach-top">
+      <div class="preach-title" id="preachTitle">Preaching Mode</div>
+      <div class="preach-actions">
+        <button id="preachSmallerBtn" class="btn secondary" type="button">A−</button>
+        <button id="preachBiggerBtn" class="btn secondary" type="button">A+</button>
+        <button id="preachExitBtn" class="btn primary" type="button">Exit</button>
+      </div>
+    </div>
+
+    <div class="preach-body" id="preachBody">
+      <div class="muted">Load or generate a manuscript first.</div>
+    </div>
+  </section>
+
+  <script>
+    const heroGenerateBtn = document.getElementById("heroGenerateBtn");
+    const btnGenerate = document.getElementById("btnGenerate");
+
+    if (heroGenerateBtn && btnGenerate) {
+      heroGenerateBtn.addEventListener("click", () => btnGenerate.click());
+    }
+  </script>
+
+  <script src="/faith/app.js?v=402"></script>
+</body>
+</html>

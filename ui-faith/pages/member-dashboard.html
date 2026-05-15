@@ -1,0 +1,124 @@
+<div class="app clean-app">
+
+  <div class="clean-main">
+
+    <!-- HERO -->
+    <section class="simple-hero">
+      <div class="hero-content">
+
+        <div class="hero-top-row">
+
+          <div>
+            <h1 class="hero-title">
+              Welcome back, <span class="highlight" id="userName">User</span>
+            </h1>
+
+            <p class="hero-sub">
+              Stay connected with your pastors and grow in faith.
+            </p>
+          </div>
+
+          <!-- PASTOR UPGRADE -->
+          <div id="pastorUpgradeContainer">
+            <button
+              class="btn-primary pastor-upgrade-btn"
+              id="upgradePastorBtn"
+            >
+              ✨ Become a Pastor
+            </button>
+          </div>
+
+        </div>
+
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="navigate('network')">
+            Explore Sermons
+          </button>
+
+          <button class="btn-secondary" onclick="navigate('member-dashboard')">
+            My Feed
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MEMBER FEED -->
+    <section class="features">
+      <div class="features-header">
+        <h2>Your Feed</h2>
+        <p>Latest sermons from pastors you follow</p>
+      </div>
+
+      <div id="memberFeed" class="feed-grid">
+        <p>Loading feed...</p>
+      </div>
+    
+      <div class="features-header">
+        <h2>Discover</h2>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="icon">🔥</div>
+          <h3>Trending Sermons</h3>
+          <div id="topSermons">
+            <p>Loading...</p>
+          </div>
+        </div>
+   
+        <div class="feature-card">
+          <div class="icon">💡</div>
+          <h3>Faith Insights</h3>
+          <div id="aiInsights">
+            <p>Analyzing...</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3>🌐 Find Pastors</h3>
+          <p>Discover and follow pastors</p>
+        </div>
+
+      </div>
+    
+      <div class="features-header">
+        <h2>Your Activity</h2>
+      </div>
+
+      <div class="stats-grid">
+
+        <div class="feature-card">
+          <h3>Sermons Viewed</h3>
+          <p id="sermonCount">0</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Pastors Following</h3>
+          <p id="memberCount">0</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>Engagement</h3>
+
+          <div class="engagement-bar">
+            <span id="engagementRate">0%</span>
+            <div id="engagementFill" class="fill"></div>
+          </div>
+        </div>
+
+        <div class="feature-card prayer-wall-card">
+          <h3>🙏 Prayer Wall</h3>
+
+          <div id="prayerWall">
+            <p>Loading prayers...</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+</div>

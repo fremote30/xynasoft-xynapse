@@ -1,0 +1,157 @@
+<div class="app">
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+  <main class="main">
+
+    <!-- =========================
+         TOPBAR (REPLACES NAVBAR)
+    ========================== -->
+    <header class="topbar">
+
+      <div>
+        <h1>Dashboard</h1>
+        <p>Welcome back — manage your ministry</p>
+      </div>
+
+      <div class="topbar-right">
+        <div class="profile">
+          <div class="avatar">U</div>
+          <span>User</span>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- =========================
+         HERO (NOW INSIDE MAIN)
+    ========================== -->
+    <section class="simple-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          Welcome back, <span class="highlight">User</span>
+        </h1>
+
+        <p class="hero-sub">
+          Manage your sermons and lead your congregation.
+        </p>
+
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="navigate('sermon')">
+            Go to Sermon Studio
+          </button>
+
+          <button class="btn-secondary" onclick="navigate('network')">
+            Explore Network
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         DASHBOARD MODULES
+    ========================== -->
+    <section class="features">
+
+      <div class="features-header">
+        <h2>Your Dashboard</h2>
+        <p>Quick access to your sermons, network, and insights</p>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="icon">📖</div>
+          <h3>Recent Sermons</h3>
+          <p>View your latest sermon stats.</p>
+          <span class="badge live">Live</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">📊</div>
+          <h3>Insights</h3>
+          <p>Analyze your sermon performance.</p>
+          <span class="badge live">Live</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">📝</div>
+          <h3>Write New Sermon</h3>
+          <p>Create a powerful message.</p>
+          <span class="badge live">Start Now</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         QUICK ACTIONS
+    ========================== -->
+    <section class="features">
+
+      <div class="features-header">
+        <h2>Quick Actions</h2>
+        <p>Take action instantly</p>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="icon">🔥</div>
+          <h3>Top Sermons</h3>
+          <p>See top performing sermons</p>
+          <span class="badge live">Loading...</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">💡</div>
+          <h3>AI Insights</h3>
+          <p>Smart sermon analysis</p>
+          <span class="badge live">Analyzing...</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">🌐</div>
+          <h3>Explore Network</h3>
+          <p>Connect with pastors worldwide</p>
+          <button class="btn-primary" onclick="navigate('network')">
+            Explore
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         STATS (NOW CLEAN)
+    ========================== -->
+    <section class="features">
+
+      <div class="features-header">
+        <h2>Dashboard Stats</h2>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="icon">📚</div>
+          <h3>Total Sermons</h3>
+          <p id="sermonCount">0</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon">👥</div>
+          <h3>Total Members</h3>
+          <p id="memberCount">0</p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

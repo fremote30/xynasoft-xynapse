@@ -1,0 +1,79 @@
+<main class="auth-page">
+
+  <!-- ✅ HERO BACKGROUND (MATCHES LOGIN) -->
+  <div class="auth-hero">
+    <div class="auth-overlay"></div>
+  </div>
+
+  <!-- CENTER CONTENT -->
+  <div class="auth-wrapper">
+    
+    <div class="auth-card">
+
+      <!-- TITLE -->
+      <h2>Create Account</h2>
+      <p class="auth-sub">Join XynaFaith and grow your ministry</p>
+
+      <!-- FORM -->
+      <form id="registerForm">
+
+        <!-- FULL NAME -->
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="name" placeholder="Enter your full name" required>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+
+        <!-- ROLE -->
+        <div class="form-group">
+          <label>Role</label>
+          <select id="role">
+            <option value="pastor">Pastor</option>
+            <option value="member">Member</option>
+          </select>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Enter password" required>
+            <span class="toggle">👁</span>
+          </div>
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+            <span class="toggle">👁</span>
+          </div>
+        </div>
+
+        <!-- BUTTON -->
+        <button type="submit" class="btn-primary full">
+          Create Account
+        </button>
+
+      </form>
+
+      <!-- DIVIDER -->
+      <div class="divider"></div>
+
+      <!-- FOOTER -->
+      <div class="auth-footer">
+        Already have an account? 
+        <a href="/faith/login.html">Log in</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>

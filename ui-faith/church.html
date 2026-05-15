@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xynasoft Faith — Shared Sermon</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="manifest" href="/faith/manifest.webmanifest" />
+  <meta name="theme-color" content="#2563eb" />
+
+  <link rel="stylesheet" href="/faith/styles.css?v=502" />
+
+  <style>
+    .shared-shell{
+      display:grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap:24px;
+      align-items:start;
+      margin-top:20px;
+    }
+
+    .shared-sermon-card,
+    .shared-side-card{
+      margin:0;
+      border-radius:22px;
+      padding:26px 22px;
+    }
+
+    .shared-sermon-head{
+      margin-bottom:16px;
+    }
+
+    .shared-title{
+      margin:0 0 8px;
+      font-family:"Playfair Display", serif;
+      font-size:38px;
+      line-height:1.12;
+      color:var(--text);
+    }
+
+    .shared-meta{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .shared-output{
+      background:linear-gradient(180deg,#fbfdff,#f8fbff);
+      border:1px dashed rgba(37,99,235,.22);
+      border-radius:18px;
+      padding:18px;
+      min-height:180px;
+      color:var(--text);
+      line-height:1.75;
+      font-size:15px;
+    }
+
+    .shared-output .section{
+      padding:14px 0;
+      border-bottom:1px solid var(--border-light);
+    }
+
+    .shared-output .section:last-child{
+      border-bottom:none;
+    }
+
+    .shared-output h3{
+      margin:0 0 8px;
+      font-family:"Playfair Display", serif;
+      font-size:20px;
+      color:var(--text);
+    }
+
+    .question-hero{
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.12), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(37,99,235,.08), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow-md);
+      padding:28px 24px;
+    }
+
+    .question-hero::after{
+      content:"";
+      position:absolute;
+      right:-20px;
+      bottom:-20px;
+      width:160px;
+      height:160px;
+      background:url("/faith/assets/xynasoft-logo.png") no-repeat center;
+      background-size:contain;
+      opacity:.05;
+      pointer-events:none;
+    }
+
+    .question-eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--muted);
+      border-radius:999px;
+      padding:8px 14px;
+      font-size:12px;
+      margin-bottom:14px;
+      box-shadow:var(--shadow-sm);
+    }
+
+    .question-dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:var(--primary);
+    }
+
+    .side-title{
+      margin:0 0 8px;
+      font-family:"Playfair Display", serif;
+      font-size:30px;
+      line-height:1.15;
+      color:var(--text);
+      position:relative;
+      z-index:1;
+    }
+
+    .side-copy{
+      margin:0;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:14px;
+      position:relative;
+      z-index:1;
+    }
+
+    .ask-card{
+      margin:0;
+      border-radius:22px;
+      padding:24px 20px;
+    }
+
+    .ask-card h2{
+      margin:0 0 8px;
+      font-family:"Playfair Display", serif;
+      font-size:28px;
+      color:var(--text);
+    }
+
+    .ask-copy{
+      margin:0 0 16px;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:14px;
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    .field label{
+      display:block;
+      font-size:13px;
+      margin-bottom:6px;
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .field input,
+    .field textarea{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      font-size:14px;
+      outline:none;
+      background:#fff;
+      color:var(--text);
+      transition:border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .field input:focus,
+    .field textarea:focus{
+      border-color:rgba(37,99,235,.75);
+      box-shadow:0 0 0 4px rgba(37,99,235,.14);
+    }
+
+    .field textarea{
+      min-height:110px;
+      resize:vertical;
+    }
+
+    .ask-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
+
+    .status{
+      margin-top:12px;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    .info-card{
+      margin:0;
+      border-radius:22px;
+      padding:24px 20px;
+    }
+
+    .info-card h2{
+      margin:0 0 8px;
+      font-family:"Playfair Display", serif;
+      font-size:26px;
+      color:var(--text);
+    }
+
+    .info-list{
+      display:grid;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .info-item{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      background:#fff;
+    }
+
+    .info-item h3{
+      margin:0 0 6px;
+      font-family:"Playfair Display", serif;
+      font-size:18px;
+      color:var(--text);
+    }
+
+    .info-item p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:14px;
+    }
+
+    @media (max-width: 980px){
+      .shared-shell{
+        grid-template-columns:1fr;
+      }
+
+      .shared-title{
+        font-size:30px;
+      }
+    }
+
+    @media (max-width: 640px){
+      .shared-title{
+        font-size:26px;
+      }
+
+      .ask-actions{
+        flex-direction:column;
+      }
+
+      .ask-actions .btn{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand-link" href="/faith/" aria-label="Back to Xynasoft Faith home">
+        <img class="brand-logo" src="/faith/assets/xynasoft-logo.png" alt="Xynasoft" />
+        <div>
+          <div class="title">Xynasoft Faith</div>
+          <div class="subtitle">Shared Sermon</div>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="/faith/">Home</a>
+        <a href="/faith/member.html">Member Portal</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="memberView" class="shared-shell">
+      <section class="card shared-sermon-card">
+        <div class="shared-sermon-head">
+          <div id="mvTitle" class="shared-title">Loading sermon...</div>
+          <div id="mvMeta" class="shared-meta"></div>
+        </div>
+
+        <div id="mvBody" class="shared-output">
+          <div class="muted">Please wait while the sermon loads.</div>
+        </div>
+      </section>
+
+      <div class="stack">
+        <section class="question-hero">
+          <div class="question-eyebrow">
+            <span class="question-dot"></span>
+            Member engagement
+          </div>
+
+          <h1 class="side-title">Ask a Question</h1>
+          <p class="side-copy">
+            After reading the sermon, you can send a follow-up question directly
+            to the pastor for personal response and pastoral engagement.
+          </p>
+        </section>
+
+        <section class="card ask-card">
+          <h2>Submit Your Question</h2>
+          <p class="ask-copy">
+            Your name is optional. Your question will be sent to the pastor connected to this sermon.
+          </p>
+
+          <div class="field">
+            <label for="mvName">Your Name (optional)</label>
+            <input id="mvName" placeholder="Your name" />
+          </div>
+
+          <div class="field">
+            <label for="mvQuestion">Your Question</label>
+            <textarea id="mvQuestion" placeholder="Type your question for the pastor"></textarea>
+          </div>
+
+          <div class="ask-actions">
+            <button id="mvSubmit" class="btn primary" type="button">Submit Question</button>
+            <a class="btn secondary" href="/faith/member.html">Open Another Sermon</a>
+          </div>
+
+          <div id="mvStatus" class="status"></div>
+        </section>
+
+        <section class="card info-card">
+          <h2>What You Can Do</h2>
+
+          <div class="info-list">
+            <div class="info-item">
+              <h3>Read</h3>
+              <p>Review the outline, manuscript, and sermon flow that your pastor shared.</p>
+            </div>
+
+            <div class="info-item">
+              <h3>Ask</h3>
+              <p>Send a question that the pastor can later review and answer from the dashboard.</p>
+            </div>
+
+            <div class="info-item">
+              <h3>Low-Data Friendly</h3>
+              <p>Designed to stay readable and lightweight even on weaker connections and mobile devices.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <footer class="footer">
+      Xynasoft Faith • Sermon Share
+    </footer>
+  </main>
+
+  <script src="/faith/app.js?v=502"></script>
+</body>
+</html>

@@ -1,0 +1,1313 @@
+/* =========================
+   GLOBAL RESET
+========================= */
+* {
+  box-sizing: border-box;
+}
+/* =========================
+   GLOBAL BACKGROUND IMAGE
+========================= */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #111;
+
+  background: 
+    linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.95)),
+    url('/faith/assets/hero.webp');
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  height: 100%;
+}
+
+.simple-hero {
+  padding: 100px 20px 60px;
+  text-align: center;
+}
+
+.simple-hero .hero-content {
+  max-width: 700px;
+  margin: auto;
+}
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border-bottom: 1px solid #e0e0e0;  /* Subtle border */
+  background: #f4f8ff; /* Soft light blue background */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* Light shadow for depth */
+  border-radius: 10px; /* Rounded edges */
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 35px;
+}
+
+.brand-title {
+  font-weight: bold;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: #666;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: #333;  /* Dark text for links */
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: #2563eb;  /* Highlight color */
+}
+
+.nav-links a:active {
+  color: #10b981;  /* Active color */
+}
+
+/* 🔥 NEW: NAV USER */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* 🔥 NEW: LOGOUT BUTTON */
+.btn-nav {
+  background: #ef4444;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #10b981;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary.full {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* =========================
+   HERO (GLASS UPGRADE)
+========================= */
+.hero {
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+
+  padding: 120px 20px 80px;
+}
+
+.hero-bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+
+  /* 🔥 KEY FIXES */
+  object-fit: contain;          /* show full logo */
+  object-position: center 35%; /* push cross into view */
+  /* 🔥 Reduce blur so cross is visible */
+  filter: blur(2px) brightness(1.05);
+
+  /* 🔥 Reduce zoom */
+  transform: scale(1.02);
+
+  opacity: 0.35; /* lighter so text pops */
+}
+
+.hero-glass {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.05),
+    rgba(255,255,255,0.6)
+  );
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 750px;
+  margin: auto;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.hero-sub {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.highlight {
+  color: #2563eb;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+/* =========================
+   AUTH PAGES (CLEAN VERSION)
+========================= */
+.auth-page {
+  height: 100vh;                 /* ⬅️ force full viewport */
+  overflow: hidden;              /* ⬅️ remove scroll */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background:
+    linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.95)),
+    url('/faith/assets/hero.webp');
+
+  background-size: cover;
+  background-position: center;
+}
+
+/* REMOVE OLD LAYERS (SAFE NO-OP IF HTML STILL HAS THEM) */
+.auth-hero,
+.auth-overlay {
+  display: none;
+}
+
+/* =========================
+   WRAPPER
+========================= */
+.auth-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* =========================
+   CARD
+========================= */
+.auth-card {
+  background: rgba(255,255,255,0.96);
+
+  /* 🔥 KEY: wider + more spacious */
+  width: 500px;
+  max-width: 92%;
+
+  padding: 45px 40px;
+
+  border-radius: 18px;
+
+  /* 🔥 softer premium shadow */
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+
+  /* subtle glass feel */
+  backdrop-filter: blur(6px);
+}
+
+.auth-card h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+/* SUBTEXT */
+.auth-sub {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   FORM (RESTORED — PREMIUM)
+========================= */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* 🔥 IMPORTANT: SCOPED INPUTS (NO GLOBAL OVERRIDE) */
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 14px;
+
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  outline: none;
+
+  font-size: 14px;
+}
+
+/* FOCUS STATE (RESTORED) */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* =========================
+   PASSWORD
+========================= */
+.password-wrapper {
+  position: relative;
+}
+
+.toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.full {
+  width: 100%;
+}
+
+/* =========================
+   ERROR
+========================= */
+#loginError,
+#registerError {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+/* =========================
+   LINKS
+========================= */
+.auth-footer {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.auth-links {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+/* =========================
+   FEATURES
+========================= */
+.features {
+  padding: 60px 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.features-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.feature-card {
+  border: 1px solid #eee;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+}
+
+
+.feature-card .icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.badge.live {
+  background: #10b981;
+  color: white;
+}
+
+.badge.soon {
+  background: #ccc;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.footer {
+  text-align: center;
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* =========================
+   TOAST (GLOBAL)
+========================= */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #111;
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.success { background: #10b981; }
+.toast.error { background: #ef4444; }
+.toast.info { background: #2563eb; }
+
+/* =========================
+   DASHBOARD (ISOLATED FIX)
+========================= */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#app {
+  flex: 1;
+}
+/* TEXT */
+.brand-block h2 {
+  font-size: 18px;
+  margin: 0;
+  text-align: center;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+textarea, input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+/* MAIN CONTENT */
+.main {
+  margin-left: 250px;
+  padding: 30px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 400px;
+  opacity: 1;
+}
+
+/* HERO */
+
+.hero {
+  padding: 100px 20px 60px;
+  text-align: center;
+  background: transparent; /* IMPORTANT */
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 750px;
+}
+
+.hero-title {
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.hero-sub {
+  color: #555;
+  margin: 10px 0 20px;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-secondary {
+  background: #10b981;
+  color: white;
+}
+
+/* FEATURE GRID */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+
+/* FEATURE CARDS */
+.feature-card {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card .icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+/* QUICK ACTIONS */
+.quick-actions {
+  margin-top: 40px;
+}
+
+.quick-actions .feature-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.quick-actions .feature-card .icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+/* STATS SECTION */
+.stats {
+  margin-top: 40px;
+}
+
+.stats .stats-header h2 {
+  margin-bottom: 25px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #f1f1f1;
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   CLEAN DASHBOARD MODE
+========================= */
+
+.clean-app {
+  flex-direction: column;
+}
+
+/* REMOVE SIDEBAR SPACE */
+.clean-main {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: 1100px;
+  margin: auto;
+}
+
+/* TOPBAR */
+.clean-topbar {
+  max-width: 1100px;
+  margin: 20px auto;
+}
+
+/* BRAND INLINE */
+.brand-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-logo {
+  width: 35px;
+}
+
+/* NAV BUTTONS */
+.nav-link {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+/* HERO SPACING */
+.simple-hero {
+  margin-top: 10px;
+}
+
+/* CARD CLICKABLE */
+.feature-card {
+  cursor: pointer;
+}
+
+/* =========================
+   🔥 DASHBOARD FINAL FIX
+========================= */
+
+/* REMOVE BODY IMAGE IMPACT ON DASHBOARD */
+.clean-app body {
+  background: #f7f8fa !important;
+}
+
+/* MAIN LAYOUT FIX */
+.clean-main {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: 1100px;
+  margin: 0 auto !important;
+  padding: 20px !important;
+}
+
+/* HERO FIX */
+.clean-main .simple-hero {
+  background: white;
+  border-radius: 16px;
+  padding: 50px 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+/* GRID FIX (OVERRIDES ALL DUPLICATES) */
+.clean-main .feature-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  gap: 24px !important;
+  max-width: 100% !important;
+}
+
+/* CARD FIX (CONSISTENT SIZE) */
+.clean-main .feature-card {
+  width: 100%;
+  padding: 25px;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+}
+
+/* REMOVE SMALL CARD LOOK */
+.clean-main .feature-card h3 {
+  margin-bottom: 8px;
+}
+
+.clean-main .feature-card p {
+  font-size: 14px;
+  color: #666;
+}
+
+/* HOVER */
+.clean-main .feature-card:hover {
+  transform: translateY(-4px);
+}
+
+/* SECTION SPACING */
+.clean-main .features {
+  margin-bottom: 10px;
+}
+
+/* FIX HEADER CENTERING */
+.clean-main .features-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* TOPBAR FIX */
+.clean-topbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+  max-width: 1100px;
+  margin: 20px auto;
+}
+
+/* NAV BUTTON CLEAN */
+.nav-link {
+  background: none;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.insight-item {
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Grid layout fix */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Make chart span full width */
+.chart-card {
+  grid-column: span 2;
+  height: 300px;
+  padding: 20px;
+}
+
+/* Control chart size */
+.chart-card canvas {
+  width: 100% !important;
+  height: 220px !important;
+}
+
+/* =========================
+   DASHBOARD GRID FIXES
+========================= */
+
+/* Stats grid including chart */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Chart card spans full width */
+.chart-card {
+  grid-column: 1 / -1;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  background: white;
+}
+
+/* Chart canvas fixed height */
+#sermonChart {
+  width: 100% !important;
+  height: 300px;
+}
+
+/* =========================
+   QUICK ACTIONS FIX
+========================= */
+
+.prayer-wall-card {
+  max-height: 250px;
+  overflow-y: auto;
+  text-align: left;
+  padding: 15px;
+}
+
+.prayer-item {
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #f3f4f6;
+  font-size: 14px;
+}
+
+.prayer-wall-card #prayerWall {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.scroll-card {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.prayer-wall-card {
+  max-height: 260px;
+}
+
+.prayer-item {
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+
+.highlighted {
+  background: #f0f9ff;
+  border-left: 4px solid #2563eb;
+  padding-left: 8px;
+}
+
+.engagement-bar {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+
+#engagementProgress {
+  height: 6px;
+  background: #2563eb;
+  width: 0%;
+  border-radius: 4px;
+}
+
+/* Quick Actions scrollable */
+.feature-card.scrollable {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+/* Uniform card heights */
+.feature-card {
+  min-height: 150px;
+}
+
+/* Reduce spacing between sections */
+.features-header {
+  margin-bottom: 8px;
+}
+.feature-grid {
+  gap: 12px;
+}
+.stats-grid {
+  gap: 12px;
+}
+
+/* Engagement progress bar */
+.progress-bar {
+  background: #eee;
+  height: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  width: 0;
+  text-align: center;
+  line-height: 16px;
+  color: white;
+  font-size: 12px;
+  transition: width 0.4s ease;
+}
+
+/* Highlight most recent items */
+.highlight-item {
+  border-left: 4px solid #3b82f6;
+  padding-left: 6px;
+  background-color: #f0f9ff;
+}
+
+/* Prayer wall timestamp */
+.prayer-time {
+  color: #666;
+  font-size: 12px;
+  margin-left: 2px;
+}
+.engagement-bar {
+  background: #e5e7eb; /* light gray track */
+  border-radius: 4px;
+  height: 18px;
+  position: relative;
+}
+
+.engagement-bar span {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: #111827; /* darker gray/black for visibility */
+  line-height: 18px;
+}
+.prayer-wall-card {
+  grid-column: span 2; /* spans 2 columns in grid */
+  min-width: 300px;
+  max-width: 600px;
+}
+
+/* Scrollable cards */
+.scroll-card {
+  min-width: 240px;
+  max-width: 260px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+/* Prayer wall wider */
+.prayer-wall-card {
+  min-width: 300px;
+  max-width: 380px;
+  max-height: 260px;
+}
+
+/* Feed */
+.feed-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* Engagement bar */
+.engagement-bar {
+  position: relative;
+  background: #e5e7eb;
+  height: 20px;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+
+.engagement-bar span {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: #111827;
+  line-height: 20px;
+}
+
+/* Scrollbar styling */
+.scroll-card::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-card::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 3px;
+}
+
+/* =========================
+   MEMBER DASHBOARD FIX
+========================= */
+
+/* Main section spacing */
+.features {
+  margin-top: 40px;
+}
+
+/* Section headers */
+.features-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.features-header h2 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+/* =========================
+   FEED
+========================= */
+
+.feed-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  max-width: 1000px;
+  margin: 0 auto;
+
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+/* =========================
+   QUICK GRID
+========================= */
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* =========================
+   STATS GRID
+========================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.feature-card {
+  background: rgba(255,255,255,0.92);
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  min-height: 180px;
+
+  box-shadow:
+    0 4px 18px rgba(0,0,0,0.06);
+
+  backdrop-filter: blur(8px);
+
+  transition: 0.25s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+}
+
+/* =========================
+   SCROLL CARDS
+========================= */
+
+.scroll-card {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* =========================
+   PRAYER WALL
+========================= */
+
+.prayer-wall-card {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.prayer-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* =========================
+   ENGAGEMENT BAR
+========================= */
+
+.engagement-bar {
+  position: relative;
+
+  width: 100%;
+  height: 22px;
+
+  background: #e5e7eb;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  margin-top: 12px;
+}
+
+.engagement-bar .fill {
+  height: 100%;
+  width: 0%;
+
+  background: linear-gradient(
+    90deg,
+    #2563eb,
+    #3b82f6
+  );
+
+  transition: width 0.4s ease;
+}
+
+.engagement-bar span {
+  position: absolute;
+  width: 100%;
+
+  text-align: center;
+
+  line-height: 22px;
+
+  font-weight: 700;
+
+  color: #111827;
+
+  z-index: 2;
+}
+
+/* =========================
+   HERO TOP ROW
+========================= */
+
+.hero-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+  flex-wrap: wrap;
+}
+
+/* =========================
+   PASTOR BUTTON
+========================= */
+
+.pastor-upgrade-btn {
+  white-space: nowrap;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+  .hero-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .quick-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* =========================
+   FORCE QUICK GRID FIX
+========================= */
+
+.quick-grid {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(280px, 1fr)) !important;
+
+  gap: 20px !important;
+
+  align-items: stretch !important;
+
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Uniform discover cards */
+.quick-grid .feature-card {
+  width: 100% !important;
+
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Prevent giant pastor card */
+.quick-grid .feature-card:last-child {
+  max-width: unset !important;
+}
+
+/* Better spacing */
+.features {
+  padding: 10px 0 30px;
+}
+.feature-card > #topSermons,
+.feature-card > #aiInsights {
+  max-height: 200px; /* adjust as needed */
+  overflow-y: auto;
+  text-align: left;
+  padding-right: 5px; /* space for scrollbar */
+}
+.features .feature-grid .feature-card {
+  padding: 20px;
+}
+
+.nav-links a.nav-active {
+  font-weight: bold;
+  border-bottom: 2px solid #2563eb; /* Blue underline */
+  color: #2563eb;
+}
+/* =========================
+   DASHBOARD STATS ADJUSTMENT
+========================= */
+
+/* Decrease height of Total Sermons & Total Members cards */
+.stats-grid > .feature-card:nth-child(1),
+.stats-grid > .feature-card:nth-child(2) {
+  min-height: 120px; /* reduce from ~180px */
+  padding: 16px;
+}
+
+/* Increase width of Prayer Wall to span 2 columns */
+.stats-grid > .prayer-wall-card {
+  grid-column: span 2; /* spans 2 feature cards */
+  min-width: 500px; /* optional: adjust based on container */
+  max-width: 1000px;
+  min-height: 250px; /* keep reasonable height */
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.stats-grid > .prayer-wall-card {
+  grid-column: span 2;
+}

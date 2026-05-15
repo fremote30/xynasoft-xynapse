@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xynasoft Faith — Pastor Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="manifest" href="/faith/manifest.webmanifest" />
+  <meta name="theme-color" content="#2563eb" />
+
+  <link rel="stylesheet" href="/faith/styles.css?v=505" />
+
+  <style>
+    .dashboard-hero-actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:22px;
+      justify-content:center;
+    }
+
+    .dashboard-stats{
+      display:grid;
+      grid-template-columns:repeat(3, minmax(0, 1fr));
+      gap:16px;
+      margin-top:26px;
+    }
+
+    .dashboard-stat{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:var(--shadow-sm);
+      text-align:center;
+    }
+
+    .dashboard-stat-label{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:8px;
+      font-weight:600;
+    }
+
+    .dashboard-stat-value{
+      font-family:"Playfair Display", serif;
+      font-size:30px;
+      line-height:1;
+      color:var(--text);
+    }
+
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+      margin-top:8px;
+    }
+
+    .quick-tile{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:var(--shadow-sm);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .quick-tile-top{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+    }
+
+    .quick-icon{
+      width:44px;
+      height:44px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-hover));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+      box-shadow:0 6px 14px rgba(37,99,235,.18);
+    }
+
+    .quick-icon svg{
+      width:22px;
+      height:22px;
+      stroke:#fff;
+      stroke-width:2;
+      fill:none;
+    }
+
+    .quick-title{
+      margin:0;
+      font-family:"Playfair Display", serif;
+      font-size:20px;
+      color:var(--text);
+    }
+
+    .quick-copy{
+      margin:0;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:14px;
+    }
+
+    .profile-snapshot-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:14px;
+      margin-top:8px;
+    }
+
+    .profile-item{
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:#fff;
+      padding:16px;
+      box-shadow:var(--shadow-sm);
+    }
+
+    .profile-item-label{
+      font-size:12px;
+      font-weight:700;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      margin-bottom:8px;
+    }
+
+    .profile-item-value{
+      color:var(--text);
+      line-height:1.6;
+      font-size:15px;
+      word-break:break-word;
+    }
+
+    .recent-sermon-row,
+    .question-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:#fff;
+      padding:16px;
+      box-shadow:var(--shadow-sm);
+    }
+
+    .recent-sermon-meta,
+    .question-meta{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:4px;
+      line-height:1.5;
+    }
+
+    .section-stack{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .session-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:rgba(37,99,235,.08);
+      border:1px solid rgba(37,99,235,.14);
+      color:var(--primary);
+      font-size:12px;
+      font-weight:700;
+      margin-top:14px;
+    }
+
+    .topbar-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .dashboard-empty-state{
+      text-align:center;
+      padding:18px 0 8px;
+    }
+
+    .dashboard-empty-state .btn{
+      margin-top:12px;
+    }
+
+    @media (max-width: 980px){
+      .dashboard-stats{
+        grid-template-columns:1fr;
+      }
+
+      .quick-grid,
+      .profile-snapshot-grid{
+        grid-template-columns:1fr;
+      }
+
+      .recent-sermon-row,
+      .question-row{
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/faith/" class="brand-link">
+        <img src="/faith/assets/xynasoft-logo.png" class="brand-logo" alt="Xynasoft Logo" />
+        <div>
+          <div class="brand-title">Xynasoft Faith</div>
+          <div class="brand-subtitle">Pastor Dashboard</div>
+        </div>
+      </a>
+
+      <div class="topbar-actions">
+        <nav class="nav">
+          <a href="/faith/">Home</a>
+          <a href="/faith/pastor.html">Sermon Workspace</a>
+          <a href="/faith/member.html">Member Access</a>
+        </nav>
+        <button class="btn secondary" type="button" id="logoutBtn">Log Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-inner">
+        <div style="width:100%; text-align:center;">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            Pastor Workspace
+          </div>
+
+          <h1 id="pastorName">Pastor Dashboard</h1>
+          <div class="hero-meta" id="pastorMeta">Open this page with your saved session or login link.</div>
+
+          <p class="hero-copy">
+            Manage your ministry profile, create sermons, review member engagement,
+            and keep your public presence organized in one place.
+          </p>
+
+          <div id="sessionChip" class="session-chip" style="display:none;">Saved session active</div>
+
+          <div class="dashboard-hero-actions">
+            <a class="btn primary" href="/faith/pastor.html">Create Sermon</a>
+            <a class="btn secondary" id="publicProfileBtn" href="#">Open Public Profile</a>
+            <a class="btn secondary" id="editProfileBtn" href="#">Edit Profile</a>
+          </div>
+
+          <div class="dashboard-stats">
+            <div class="dashboard-stat">
+              <div class="dashboard-stat-label">Profile Status</div>
+              <div class="dashboard-stat-value" id="profileStatus">Live</div>
+            </div>
+
+            <div class="dashboard-stat">
+              <div class="dashboard-stat-label">Recent Sermons</div>
+              <div class="dashboard-stat-value" id="sermonCount">0</div>
+            </div>
+
+            <div class="dashboard-stat">
+              <div class="dashboard-stat-label">Member Questions</div>
+              <div class="dashboard-stat-value" id="questionCount">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid dashboard-grid">
+      <div class="stack">
+        <div class="card">
+          <div class="card-head">
+            <h2>Quick Actions</h2>
+          </div>
+
+          <div class="quick-grid">
+            <div class="quick-tile">
+              <div class="quick-tile-top">
+                <div class="quick-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M4 5h12v14H4z"></path>
+                    <path d="M16 7l4 2v10H8"></path>
+                    <path d="M7 9h6M7 12h6M7 15h4"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="quick-title">Generate New Sermon</h3>
+                  <p class="quick-copy">Create a structured sermon outline and expand it into a full manuscript.</p>
+                </div>
+              </div>
+              <div>
+                <a class="btn primary" href="/faith/pastor.html">Open Sermon Tools</a>
+              </div>
+            </div>
+
+            <div class="quick-tile">
+              <div class="quick-tile-top">
+                <div class="quick-icon">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"></circle>
+                    <path d="M4 20c1.5-4 6-6 8-6s6.5 2 8 6"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="quick-title">Review Public Profile</h3>
+                  <p class="quick-copy">Open your public pastor page the way church members and visitors will see it.</p>
+                </div>
+              </div>
+              <div>
+                <a class="btn secondary" id="profilePreviewBtn" href="#">Preview Profile</a>
+              </div>
+            </div>
+
+            <div class="quick-tile">
+              <div class="quick-tile-top">
+                <div class="quick-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3h7v7"></path>
+                    <path d="M5 19l14-14"></path>
+                    <path d="M5 5h5"></path>
+                    <path d="M5 9h3"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="quick-title">Update Ministry Details</h3>
+                  <p class="quick-copy">Edit your church, city, biography, WhatsApp, and other public profile details.</p>
+                </div>
+              </div>
+              <div>
+                <a class="btn secondary" id="profileEditBtn2" href="#">Edit Profile</a>
+              </div>
+            </div>
+
+            <div class="quick-tile">
+              <div class="quick-tile-top">
+                <div class="quick-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+                    <path d="M7 9h10M7 13h7"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="quick-title">Member Engagement</h3>
+                  <p class="quick-copy">Review sermon questions and follow up with your congregation from one place.</p>
+                </div>
+              </div>
+              <div>
+                <a class="btn secondary" href="#questionsCard">View Questions</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Recent Sermons</h2>
+          </div>
+
+          <div id="recentSermons" class="section-stack">
+            <div class="empty">
+              No linked sermons yet. Publish a sermon from the Pastor Suite to see it here.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="card-head">
+            <h2>Profile Snapshot</h2>
+          </div>
+
+          <div class="profile-snapshot-grid">
+            <div class="profile-item">
+              <div class="profile-item-label">Handle</div>
+              <div class="profile-item-value" id="handleValue">—</div>
+            </div>
+
+            <div class="profile-item">
+              <div class="profile-item-label">Church</div>
+              <div class="profile-item-value" id="churchValue">—</div>
+            </div>
+
+            <div class="profile-item">
+              <div class="profile-item-label">Location</div>
+              <div class="profile-item-value" id="locationValue">—</div>
+            </div>
+
+            <div class="profile-item">
+              <div class="profile-item-label">Bio</div>
+              <div class="profile-item-value" id="bioValue">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="questionsCard">
+          <div class="card-head">
+            <h2>Member Questions</h2>
+          </div>
+
+          <div id="questionsList" class="section-stack">
+            <div class="empty">
+              No questions yet.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Xynasoft Faith
+    </footer>
+  </main>
+
+  <script>
+    const SESSION_KEYS = {
+      handle: "faith_session_handle",
+      token: "faith_session_token"
+    };
+
+    function saveSession(handle, token) {
+      if (handle) localStorage.setItem(SESSION_KEYS.handle, handle);
+      if (token) localStorage.setItem(SESSION_KEYS.token, token);
+    }
+
+    function clearSession() {
+      localStorage.removeItem(SESSION_KEYS.handle);
+      localStorage.removeItem(SESSION_KEYS.token);
+    }
+
+    function getSession() {
+      return {
+        handle: localStorage.getItem(SESSION_KEYS.handle) || "",
+        token: localStorage.getItem(SESSION_KEYS.token) || ""
+      };
+    }
+
+    function getParams() {
+      const url = new URL(window.location.href);
+
+      const handleFromUrl = (url.searchParams.get("handle") || "").trim();
+      const tokenFromUrl = (url.searchParams.get("token") || "").trim();
+
+      const handleFromStore = localStorage.getItem(SESSION_KEYS.handle) || "";
+      const tokenFromStore = localStorage.getItem(SESSION_KEYS.token) || "";
+
+      const handle = handleFromUrl || handleFromStore;
+      const token = tokenFromUrl || tokenFromStore;
+
+      if (handle && token) {
+        saveSession(handle, token);
+      }
+
+      return { handle, token };
+    }
+
+    function escapeHtml(s) {
+      return (s ?? "")
+        .toString()
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function prettyDate(iso) {
+      try {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return iso || "";
+        return d.toLocaleDateString();
+      } catch {
+        return iso || "";
+      }
+    }
+
+    function showLoggedOutState() {
+      document.getElementById("pastorName").textContent = "Pastor Dashboard";
+      document.getElementById("pastorMeta").textContent = "No active pastor session found.";
+      document.getElementById("sessionChip").style.display = "none";
+
+      document.getElementById("recentSermons").innerHTML = `
+        <div class="dashboard-empty-state">
+          <div class="empty">Please log in to load your dashboard.</div>
+          <a class="btn primary" href="/faith/login.html" style="margin-top:12px;">Go to Login</a>
+        </div>
+      `;
+
+      document.getElementById("questionsList").innerHTML = `
+        <div class="dashboard-empty-state">
+          <div class="empty">Questions will appear after you log in.</div>
+        </div>
+      `;
+
+      document.getElementById("publicProfileBtn").href = "/faith/login.html";
+      document.getElementById("profilePreviewBtn").href = "/faith/login.html";
+      document.getElementById("editProfileBtn").href = "/faith/login.html";
+      document.getElementById("profileEditBtn2").href = "/faith/login.html";
+    }
+
+    async function loadRecentSermons(handle) {
+      const host = document.getElementById("recentSermons");
+      if (!host) return;
+
+      try {
+        const res = await fetch(`/api/v1/faith/pastors/${encodeURIComponent(handle)}/sermons`);
+        if (!res.ok) {
+          host.innerHTML = `<div class="empty">No linked sermons yet.</div>`;
+          document.getElementById("sermonCount").textContent = "0";
+          return;
+        }
+
+        const sermons = await res.json();
+        document.getElementById("sermonCount").textContent = Array.isArray(sermons) ? String(sermons.length) : "0";
+
+        if (!Array.isArray(sermons) || sermons.length === 0) {
+          host.innerHTML = `<div class="empty">No linked sermons yet. Publish a sermon from the Pastor Suite to see it here.</div>`;
+          return;
+        }
+
+        host.innerHTML = sermons.map(s => `
+          <div class="recent-sermon-row">
+            <div>
+              <div class="list-item-title">${escapeHtml(s.title || "Shared Sermon")}</div>
+              <div class="recent-sermon-meta">Shared ${prettyDate(s.created_at)}</div>
+            </div>
+            <div>
+              <a class="btn secondary" href="${s.url}">Open Sermon</a>
+            </div>
+          </div>
+        `).join("");
+      } catch {
+        host.innerHTML = `<div class="empty">No linked sermons yet.</div>`;
+        document.getElementById("sermonCount").textContent = "0";
+      }
+    }
+
+    async function saveReply(questionId, token) {
+      const box = document.getElementById(`reply-${questionId}`);
+      const msg = document.getElementById(`reply-msg-${questionId}`);
+      const text = (box?.value || "").trim();
+
+      if (!text) {
+        if (msg) msg.textContent = "Enter a reply first.";
+        return;
+      }
+
+      if (msg) msg.textContent = "Saving reply...";
+
+      try {
+        const res = await fetch(`/api/v1/faith/questions/${questionId}/reply?token=${encodeURIComponent(token)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reply_text: text })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data?.detail || "Failed to save reply");
+
+        if (msg) msg.textContent = "Reply saved.";
+      } catch (e) {
+        if (msg) msg.textContent = `Error: ${e.message || e}`;
+      }
+    }
+
+    async function loadQuestions(handle, token) {
+      const host = document.getElementById("questionsList");
+      if (!host) return;
+
+      try {
+        const res = await fetch(`/api/v1/faith/pastors/${encodeURIComponent(handle)}/questions`);
+        if (!res.ok) {
+          host.innerHTML = `<div class="empty">No questions yet.</div>`;
+          document.getElementById("questionCount").textContent = "0";
+          return;
+        }
+
+        const data = await res.json();
+        document.getElementById("questionCount").textContent = Array.isArray(data) ? String(data.length) : "0";
+
+        if (!Array.isArray(data) || data.length === 0) {
+          host.innerHTML = `<div class="empty">No questions yet.</div>`;
+          return;
+        }
+
+        host.innerHTML = data.map(q => `
+          <div class="card" style="margin:0; padding:18px;">
+            <div class="list-item-title">${escapeHtml(q.name || "Anonymous")}</div>
+            <div class="list-item-sub" style="margin-top:6px;">${escapeHtml(q.question || "")}</div>
+            <div class="question-meta">
+              From sermon: ${escapeHtml(q.sermon_title || "Shared Sermon")} • ${prettyDate(q.created_at)}
+            </div>
+
+            <div style="margin-top:12px;">
+              <textarea
+                id="reply-${q.id}"
+                class="reply-box"
+                placeholder="Write a pastoral reply..."
+              >${escapeHtml(q.reply_text || "")}</textarea>
+            </div>
+
+            <div class="reply-actions">
+              <button class="btn secondary" type="button" onclick="saveReply(${q.id}, '${String(token).replaceAll("'", "\\'")}')">Save Reply</button>
+              <div id="reply-msg-${q.id}" class="list-item-meta">
+                ${q.replied_at ? `Saved ${prettyDate(q.replied_at)}` : ""}
+              </div>
+            </div>
+          </div>
+        `).join("");
+      } catch {
+        host.innerHTML = `<div class="empty">No questions yet.</div>`;
+        document.getElementById("questionCount").textContent = "0";
+      }
+    }
+
+    async function loadDashboard() {
+      const { handle, token } = getParams();
+
+      if (!handle || !token) {
+        showLoggedOutState();
+        return;
+      }
+
+      document.getElementById("sessionChip").style.display = "inline-flex";
+
+      try {
+        const res = await fetch(`/api/v1/faith/pastors/${encodeURIComponent(handle)}`);
+        if (!res.ok) throw new Error("Pastor not found");
+
+        const p = await res.json();
+
+        saveSession(p.handle || handle, token);
+
+        document.title = `${p.name || "Pastor"} — Pastor Dashboard`;
+        document.getElementById("pastorName").textContent = p.name || "Pastor Dashboard";
+
+        const heroMeta = [p.church, p.city, p.country].filter(Boolean).join(" • ");
+        document.getElementById("pastorMeta").textContent = heroMeta || "Pastor ministry workspace";
+
+        document.getElementById("handleValue").textContent = p.handle || handle;
+        document.getElementById("churchValue").textContent = p.church || "Not added yet";
+        document.getElementById("locationValue").textContent = [p.city, p.country].filter(Boolean).join(", ") || "Not added yet";
+        document.getElementById("bioValue").textContent = p.bio || "No biography has been added yet.";
+
+        const publicProfile = `/faith/p/${encodeURIComponent(p.handle || handle)}`;
+        const editProfile = `/faith/p/${encodeURIComponent(p.handle || handle)}/edit?token=${encodeURIComponent(token)}`;
+
+        document.getElementById("publicProfileBtn").href = publicProfile;
+        document.getElementById("profilePreviewBtn").href = publicProfile;
+        document.getElementById("editProfileBtn").href = editProfile;
+        document.getElementById("profileEditBtn2").href = editProfile;
+
+        await loadRecentSermons(p.handle || handle);
+        await loadQuestions(p.handle || handle, token);
+      } catch (e) {
+        clearSession();
+        document.getElementById("sessionChip").style.display = "none";
+        document.getElementById("pastorName").textContent = "Pastor not found";
+        document.getElementById("pastorMeta").textContent = "The requested pastor profile could not be loaded.";
+        document.getElementById("recentSermons").innerHTML = `<div class="empty">Could not load sermons.</div>`;
+        document.getElementById("questionsList").innerHTML = `<div class="empty">Could not load questions.</div>`;
+      }
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      clearSession();
+      window.location.href = "/faith/login.html";
+    });
+
+    window.saveReply = saveReply;
+    loadDashboard();
+  </script>
+</body>
+</html>
