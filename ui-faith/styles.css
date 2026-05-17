@@ -1311,3 +1311,415 @@ textarea, input {
 .stats-grid > .prayer-wall-card {
   grid-column: span 2;
 }
+/* =========================================
+   FINAL GLOBAL MOBILE SYSTEM
+   SAFE OVERLAY (NON-DESTRUCTIVE)
+========================================= */
+
+/* Prevent horizontal scrolling */
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Images responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better tap targets */
+button,
+a,
+input,
+textarea,
+select {
+  touch-action: manipulation;
+}
+
+/* =========================================
+   LARGE TABLETS
+========================================= */
+@media (max-width: 1200px) {
+
+  .clean-main,
+  .features,
+  .quick-grid,
+  .stats-grid {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .feature-grid,
+  .quick-grid,
+  .stats-grid {
+    grid-template-columns:
+      repeat(auto-fit, minmax(260px, 1fr)) !important;
+  }
+
+}
+
+/* =========================================
+   TABLET
+========================================= */
+@media (max-width: 992px) {
+
+  /* NAVBAR */
+  .navbar {
+    padding: 14px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  /* HERO */
+  .hero-title,
+  .simple-hero .hero-title {
+    font-size: 42px;
+    line-height: 1.2;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+  }
+
+  /* BUTTONS */
+  .hero-buttons {
+    flex-wrap: wrap;
+  }
+
+  /* FEATURE GRIDS */
+  .feature-grid,
+  .quick-grid,
+  .stats-grid {
+    grid-template-columns:
+      repeat(auto-fit, minmax(240px, 1fr)) !important;
+  }
+
+  /* PRAYER WALL */
+  .stats-grid > .prayer-wall-card {
+    grid-column: span 1 !important;
+    min-width: unset !important;
+    max-width: 100% !important;
+  }
+
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+@media (max-width: 768px) {
+
+  /* BODY */
+  body {
+    background-attachment: scroll;
+  }
+
+  /* NAVBAR */
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border-radius: 0;
+  }
+
+  .nav-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .nav-links a {
+    font-size: 15px;
+  }
+
+  /* HERO */
+  .simple-hero,
+  .hero {
+    padding: 70px 18px 50px;
+  }
+
+  .hero-content {
+    width: 100%;
+  }
+
+  .hero-title,
+  .simple-hero .hero-title {
+    font-size: 34px;
+    line-height: 1.2;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HERO BUTTONS */
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .hero-buttons button,
+  .hero-buttons .btn-primary,
+  .hero-buttons .btn-secondary {
+    width: 100%;
+  }
+
+  /* FEATURES */
+  .features {
+    padding: 30px 16px;
+  }
+
+  .features-header h2 {
+    font-size: 34px;
+    line-height: 1.2;
+  }
+
+  /* GRIDS */
+  .feature-grid,
+  .quick-grid,
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  /* CARDS */
+  .feature-card,
+  .card,
+  .stat-card {
+    min-height: unset !important;
+    padding: 22px;
+    border-radius: 18px;
+  }
+
+  /* PRAYER WALL */
+  .prayer-wall-card {
+    grid-column: span 1 !important;
+    min-width: unset !important;
+    max-width: 100% !important;
+  }
+
+  /* AUTH */
+  .auth-card {
+    padding: 30px 22px;
+    width: 100%;
+  }
+
+  /* INPUTS */
+  textarea,
+  input,
+  select {
+    font-size: 16px;
+  }
+
+  /* FOOTER */
+  .footer {
+    padding: 30px 16px;
+    text-align: center;
+  }
+
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+@media (max-width: 480px) {
+
+  .hero-title,
+  .simple-hero .hero-title {
+    font-size: 28px;
+  }
+
+  .features-header h2 {
+    font-size: 28px;
+  }
+
+  .feature-card h3 {
+    font-size: 22px;
+  }
+
+  .navbar {
+    padding: 12px;
+  }
+
+  .nav-links {
+    gap: 10px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 14px 18px;
+  }
+
+}
+/* =====================================
+   TABLET
+===================================== */
+@media(max-width:1200px){
+
+  .studio-layout{
+    grid-template-columns:1fr;
+    padding:18px;
+  }
+
+  .studio-sidebar,
+  .studio-main,
+  .action-sidebar{
+    width:100%;
+  }
+
+  .action-sidebar{
+    order:3;
+  }
+
+}
+
+/* =====================================
+   MOBILE
+===================================== */
+@media(max-width:768px){
+
+  body{
+    overflow-x:hidden;
+  }
+
+  .studio-layout{
+    padding:12px;
+    gap:16px;
+  }
+
+  /* CARDS */
+  .studio-sidebar,
+  .studio-main,
+  .action-sidebar{
+    border-radius:20px;
+    padding:18px;
+  }
+
+  /* HEADER */
+  .main-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:16px;
+  }
+
+  .main-header h1{
+    font-size:32px;
+  }
+
+  /* TABS */
+  .studio-tabs{
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    padding-bottom:6px;
+  }
+
+  .tab-btn{
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  /* TEXTAREA */
+  textarea{
+    min-height:120px;
+  }
+
+  /* SERMON */
+  .sermon-canvas{
+    padding:28px 20px;
+    min-height:400px;
+    border-radius:20px;
+  }
+
+  .sermon-canvas p{
+    font-size:17px;
+    line-height:1.8;
+  }
+
+  /* EMPTY STATE */
+  .empty-state{
+    margin-top:70px;
+  }
+
+  .empty-state h2{
+    font-size:26px;
+    line-height:1.3;
+  }
+
+  .empty-state p{
+    font-size:16px;
+  }
+
+  .empty-icon{
+    width:70px;
+    height:70px;
+    font-size:32px;
+  }
+
+  /* ACTIONS */
+  .action-card button{
+    padding:16px;
+    font-size:15px;
+  }
+
+  /* BUTTONS */
+  .generate-btn,
+  .view-btn{
+    padding:16px;
+    font-size:16px;
+  }
+
+  /* UPLOAD */
+  .upload-drop{
+    padding:18px;
+  }
+
+  /* TIP */
+  .studio-tip{
+    font-size:13px;
+  }
+
+}
+
+/* =====================================
+   SMALL MOBILE
+===================================== */
+@media(max-width:480px){
+
+  .main-header h1{
+    font-size:28px;
+  }
+
+  .sidebar-header h2{
+    font-size:30px;
+  }
+
+  .sermon-canvas{
+    padding:22px 18px;
+  }
+
+  .sermon-canvas p{
+    font-size:16px;
+  }
+
+  .action-card h3{
+    font-size:20px;
+  }
+
+}
