@@ -276,122 +276,148 @@ textarea{
   <aside class="studio-sidebar">
 
     <div class="sidebar-header">
+
       <h2>✍️ Create Sermon</h2>
-    </div>
 
-    <!-- TABS -->
-    <div class="studio-tabs">
-      <button class="tab-btn active">Create</button>
-      <button class="tab-btn">Rewrite</button>
-      <button class="tab-btn">Multiverse</button>
-      <button class="tab-btn">Cross-Ref</button>
-    </div>
-
-    <!-- CORE INPUTS -->
-    <div class="sidebar-card">
-
-      <h3>📝 Core Inputs</h3>
-
-      <label>Your Message / Sermon Prompt</label>
-      <textarea
-        id="userInput"
-        placeholder="What is your sermon about?"
-      ></textarea>
-
-      <label>Scripture / Passage</label>
-      <input
-        id="bibleInput"
-        placeholder="e.g. John 3:16-17"
+      <!-- MOBILE SETTINGS BUTTON -->
+      <button
+        class="mobile-settings-toggle"
+        onclick="toggleMobileSidebar()"
       >
+        ☰ Sermon Settings
+      </button>
 
-      <!-- UPLOAD -->
-      <div class="upload-card">
+    </div>
 
-        <h4>📂 Upload Sermon</h4>
+    <!-- COLLAPSIBLE CONTENT -->
+    <div class="sidebar-scroll">
 
-        <div class="upload-drop">
-          <p>Drag & drop your file here</p>
-          <span>PDF, DOCX, or TXT</span>
+      <!-- TABS -->
+      <div class="studio-tabs">
+        <button class="tab-btn active">Create</button>
+        <button class="tab-btn">Rewrite</button>
+        <button class="tab-btn">Multiverse</button>
+        <button class="tab-btn">Cross-Ref</button>
+      </div>
 
-          <input type="file" id="sermonFile">
+      <!-- CORE INPUTS -->
+      <div class="sidebar-card">
 
-          <button
-            class="btn-secondary"
-            onclick="uploadSermon()"
-          >
-            Browse File
-          </button>
+        <h3>📝 Core Inputs</h3>
+
+        <label>Your Message / Sermon Prompt</label>
+
+        <textarea
+          id="userInput"
+          placeholder="What is your sermon about?"
+        ></textarea>
+
+        <label>Scripture / Passage</label>
+
+        <input
+          id="bibleInput"
+          placeholder="e.g. John 3:16-17"
+        >
+
+        <!-- UPLOAD -->
+        <div class="upload-card">
+
+          <h4>📂 Upload Sermon</h4>
+
+          <div class="upload-drop">
+
+            <p>Drag & drop your file here</p>
+
+            <span>PDF, DOCX, or TXT</span>
+
+            <input type="file" id="sermonFile">
+
+            <button
+              class="btn-secondary"
+              onclick="uploadSermon()"
+            >
+              Browse File
+            </button>
+
+          </div>
+
         </div>
-      </div>
-
-    </div>
-
-    <!-- ADVANCED -->
-    <div class="advanced-wrapper">
-
-      <div class="advanced-toggle">
-        ⚙ Advanced Options
-      </div>
-
-      <div class="advanced-panel">
-
-        <label>Denomination</label>
-        <select id="denomination">
-          <option value="general">General</option>
-          <option value="baptist">Baptist</option>
-          <option value="pentecostal">Pentecostal</option>
-          <option value="catholic">Catholic</option>
-        </select>
-
-        <label>Audience</label>
-        <input
-          id="audience"
-          placeholder="Youth, Church, Conference..."
-        >
-
-        <label>Local Context</label>
-        <input
-          id="context"
-          placeholder="Community challenges..."
-        >
-
-        <label>Tone</label>
-        <select id="tone">
-          <option value="balanced">Balanced</option>
-          <option value="teaching">Teaching</option>
-          <option value="passionate">Passionate</option>
-        </select>
-
-        <label>Duration</label>
-        <select id="duration">
-          <option value="15">15 min</option>
-          <option value="30">30 min</option>
-          <option value="45">45 min</option>
-        </select>
 
       </div>
 
-    </div>
+      <!-- ADVANCED -->
+      <div class="advanced-wrapper">
 
-    <!-- GENERATE -->
-    <button
-      class="generate-btn"
-      onclick="generateSermon()"
-    >
-      ✨ Generate Sermon
-    </button>
+        <div class="advanced-toggle">
+          ⚙ Advanced Options
+        </div>
 
-    <button
-      class="view-btn"
-      onclick="scrollToOutput()"
-    >
-      📖 View Last Sermon
-    </button>
+        <div class="advanced-panel">
 
-    <!-- HINT -->
-    <div class="studio-tip">
-      💡 Start → Expand → Refine → Preach
-      🔥 Use Multiverse for deeper sermons
+          <label>Denomination</label>
+
+          <select id="denomination">
+            <option value="general">General</option>
+            <option value="baptist">Baptist</option>
+            <option value="pentecostal">Pentecostal</option>
+            <option value="catholic">Catholic</option>
+          </select>
+
+          <label>Audience</label>
+
+          <input
+            id="audience"
+            placeholder="Youth, Church, Conference..."
+          >
+
+          <label>Local Context</label>
+
+          <input
+            id="context"
+            placeholder="Community challenges..."
+          >
+
+          <label>Tone</label>
+
+          <select id="tone">
+            <option value="balanced">Balanced</option>
+            <option value="teaching">Teaching</option>
+            <option value="passionate">Passionate</option>
+          </select>
+
+          <label>Duration</label>
+
+          <select id="duration">
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+          </select>
+
+        </div>
+
+      </div>
+
+      <!-- GENERATE -->
+      <button
+        class="generate-btn"
+        onclick="generateSermon()"
+      >
+        ✨ Generate Sermon
+      </button>
+
+      <button
+        class="view-btn"
+        onclick="scrollToOutput()"
+      >
+        📖 View Last Sermon
+      </button>
+
+      <!-- HINT -->
+      <div class="studio-tip">
+        💡 Start → Expand → Refine → Preach
+        🔥 Use Multiverse for deeper sermons
+      </div>
+
     </div>
 
   </aside>
@@ -404,16 +430,21 @@ textarea{
     <div class="main-header">
 
       <div>
+
         <h1>📖 Sermon Output</h1>
+
         <p>
           Generated with ✨ purpose and powered by AI.
         </p>
+
       </div>
 
       <div class="main-actions">
+
         <button class="focus-btn">
           🖥 Focus Mode
         </button>
+
       </div>
 
     </div>
@@ -427,13 +458,18 @@ textarea{
 
       <div class="empty-state">
 
+        <div class="empty-icon">
+          ✨
+        </div>
+
         <h2>
-          ✨ Ready to help craft your next message.
+          Ready to help craft your next message
         </h2>
 
         <p>
-          Generate sermons, refine ideas, and prepare
-          powerful teachings.
+          Generate sermons, refine ideas,
+          build illustrations, and prepare
+          impactful teachings powered by AI.
         </p>
 
       </div>
@@ -515,6 +551,68 @@ textarea{
   </aside>
 
 </div>
+
+<!-- ===================================== -->
+<!-- MOBILE ACTION BAR -->
+<!-- ===================================== -->
+<div class="mobile-action-bar">
+
+  <button onclick="saveCurrentSermon()">
+    💾
+    <span>Save</span>
+  </button>
+
+  <button onclick="exportPDF()">
+    🧾
+    <span>Export</span>
+  </button>
+
+  <button onclick="openPreachMode()">
+    🎤
+    <span>Preach</span>
+  </button>
+
+  <button onclick="shareWhatsApp()">
+    📲
+    <span>Share</span>
+  </button>
+
+</div>
+
+<script>
+
+function toggleMobileSidebar(){
+
+  const sidebar =
+    document.querySelector(".studio-sidebar");
+
+  sidebar.classList.toggle("open");
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const toggle =
+    document.querySelector(".advanced-toggle");
+
+  const panel =
+    document.querySelector(".advanced-panel");
+
+  panel.style.display = "none";
+
+  toggle.addEventListener("click", () => {
+
+    if(panel.style.display === "none"){
+      panel.style.display = "block";
+    } else {
+      panel.style.display = "none";
+    }
+
+  });
+
+});
+
+</script>
 
 <script src="/faith/app.js"></script>
 
