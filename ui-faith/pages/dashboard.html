@@ -1,117 +1,220 @@
 <div class="app clean-app">
 
-  <!-- =========================
-       MAIN CONTENT
-  ========================== -->
   <div class="clean-main">
 
-    <!-- HERO -->
-    <section class="simple-hero">
-      <div class="hero-content">
-        <h1 class="hero-title">
-          Welcome back, <span class="highlight" id="userName">User</span>
-        </h1>
-        <p class="hero-sub">
-          Manage your sermons and lead your congregation.
-        </p>
+<!-- HERO -->
+<section class="simple-hero">
 
-        <div class="hero-buttons">
-          <button class="btn-primary" onclick="navigate('sermon')">
-            Go to Sermon Studio
-          </button>
-          <button class="btn-secondary" onclick="navigate('network')">
-            Explore Network
-          </button>
-          <button class="btn-secondary" onclick="navigate('edit-profile')">
-            Edit Profile
-          </button>
-        </div>
+  <div class="hero-content">
+
+    <h1 class="hero-title">
+      Welcome back,
+      <span class="highlight" id="userName">User</span>
+    </h1>
+
+    <p class="hero-sub">
+      Manage your sermons and lead your congregation.
+    </p>
+
+    <div class="hero-buttons">
+
+      <button
+        class="btn-primary"
+        onclick="navigate('sermon')"
+      >
+        Go to Sermon Studio
+      </button>
+
+      <button
+        class="btn-secondary"
+        onclick="navigate('network')"
+      >
+        Explore Network
+      </button>
+
+      <button
+        class="btn-secondary"
+        onclick="navigate('edit-profile')"
+      >
+        Edit Profile
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- DASHBOARD -->
+<section class="features">
+
+  <div class="features-header">
+    <h2>Your Dashboard</h2>
+    <p>
+      Quick access to your sermons, network, and insights
+    </p>
+  </div>
+
+  <div class="feature-grid">
+
+    <div class="feature-card">
+      <div class="icon">📖</div>
+      <h3>Recent Sermons</h3>
+      <p>View your latest sermon stats.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon">📊</div>
+      <h3>Insights</h3>
+      <p>Analyze your sermon performance.</p>
+    </div>
+
+    <div
+      class="feature-card"
+      onclick="navigate('sermon')"
+    >
+      <div class="icon">📝</div>
+      <h3>Write New Sermon</h3>
+      <p>Create a powerful message.</p>
+    </div>
+
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="features-header">
+    <h2>Quick Actions</h2>
+  </div>
+
+  <div class="feature-grid">
+
+    <div class="feature-card">
+
+      <div class="icon">🔥</div>
+
+      <h3>Top Sermons</h3>
+
+      <div id="topSermons">
+        <p>Loading...</p>
       </div>
-    </section>
 
-    <!-- DASHBOARD -->
-    <section class="features">
-      <div class="features-header">
-        <h2>Your Dashboard</h2>
-        <p>Quick access to your sermons, network, and insights</p>
+    </div>
+
+    <div class="feature-card">
+
+      <div class="icon">💡</div>
+
+      <h3>AI Insights</h3>
+
+      <div id="aiInsights">
+        <p>Analyzing...</p>
       </div>
 
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="icon">📖</div>
-          <h3>Recent Sermons</h3>
-          <p>View your latest sermon stats.</p>
-        </div>
+    </div>
 
-        <div class="feature-card">
-          <div class="icon">📊</div>
-          <h3>Insights</h3>
-          <p>Analyze your sermon performance.</p>
-        </div>
+    <div
+      class="feature-card"
+      onclick="navigate('network')"
+    >
+      <div class="icon">🌐</div>
+      <h3>Explore Network</h3>
+      <p>Connect with pastors worldwide</p>
+    </div>
 
-        <div class="feature-card" onclick="navigate('sermon')">
-          <div class="icon">📝</div>
-          <h3>Write New Sermon</h3>
-          <p>Create a powerful message.</p>
-        </div>
+    <!-- ADMIN ONLY -->
+    <div
+      class="feature-card"
+      id="adminApplicationsCard"
+      style="display:none;"
+    >
+
+      <div class="icon">🛡️</div>
+
+      <h3>Pastor Approvals</h3>
+
+      <p>
+        Review pastor applications and manage access.
+      </p>
+
+      <button
+        class="btn-primary"
+        onclick="navigate('admin-approvals')"
+      >
+        Open Admin Dashboard
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- MY STATS -->
+  <div class="features-header">
+    <h2>My Stats</h2>
+  </div>
+
+  <div class="feature-grid stats-grid">
+
+    <div class="feature-card">
+      <h3>Total Sermons</h3>
+      <p id="sermonCount">0</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Total Members</h3>
+      <p id="memberCount">0</p>
+    </div>
+
+  </div>
+
+  <!-- ADMIN STATS -->
+  <div
+    id="adminStatsSection"
+    class="feature-grid"
+    style="display:none;"
+  >
+
+    <div class="feature-card">
+      <h3>👥 Members</h3>
+      <p id="adminMemberCount">0</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>⛪ Pastors</h3>
+      <p id="adminPastorCount">0</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>🛡️ Pending Applications</h3>
+      <p id="pendingApprovalCount">0</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>📖 Total Sermons</h3>
+      <p id="adminSermonCount">0</p>
+    </div>
+
+  </div>
+
+  <!-- PRAYER WALL -->
+  <div class="features-header">
+    <h2>Prayer Wall</h2>
+  </div>
+
+  <div class="feature-grid">
+
+    <div class="feature-card prayer-wall-card">
+
+      <h3>🙏 Prayer Wall</h3>
+
+      <div id="prayerWall">
+        <p>Loading prayers...</p>
       </div>
-    
-      <div class="features-header">
-        <h2>Quick Actions</h2>
-      </div>
 
-      <div class="feature-grid">
+    </div>
 
-        <div class="feature-card">
-          <div class="icon">🔥</div>
-          <h3>Top Sermons</h3>
-          <div id="topSermons">
-            <p>Loading...</p>
-          </div>
-        </div>
+  </div>
 
-        <div class="feature-card">
-          <div class="icon">💡</div>
-          <h3>AI Insights</h3>
-          <div id="aiInsights">
-            <p>Analyzing...</p>
-          </div>
-        </div>
+</section>
 
-        <div class="feature-card" onclick="navigate('network')">
-          <div class="icon">🌐</div>
-          <h3>Explore Network</h3>
-          <p>Connect with pastors worldwide</p>
-        </div>
-
-      </div>
-    
-      <div class="features-header">
-        <h2>Dashboard Stats</h2>
-      </div>
-
-      <div class="feature-grid stats-grid">
-
-        <div class="feature-card">
-          <h3>Total Sermons</h3>
-          <p id="sermonCount">0</p>
-        </div>
-
-        <div class="feature-card">
-          <h3>Total Members</h3>
-          <p id="memberCount">0</p>
-        </div>
-
-        <!-- 🔥 PRAYER WALL -->
-        <div class="feature-card prayer-wall-card">
-          <h3>Prayer Wall</h3>
-          <div id="prayerWall">
-            <p>Loading recent prayers...</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
   </div>
 
 </div>

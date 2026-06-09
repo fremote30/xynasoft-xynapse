@@ -5,6 +5,23 @@ from sqlalchemy import create_engine, pool
 from alembic import context
 from dotenv import load_dotenv
 
+
+from api.db.database import Base
+
+from api.models.user import User
+from api.models.sermon import Sermon
+from api.models.prayer import Prayer
+from api.models.shared_sermon import SharedSermon
+from api.models.sermon_comment import SermonComment
+from api.models.follow import PastorFollower
+from api.models.pastor import Pastor
+from api.models.pastor_profile import PastorProfile
+from api.models.pastor_member import PastorMember
+from api.models.sermon_collaborator import SermonCollaborator
+from api.models.refresh_token import RefreshToken
+from api.models.church import Church
+
+target_metadata = Base.metadata
 # -------------------------------------------------
 # Load environment variables
 # -------------------------------------------------
@@ -35,7 +52,6 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # No ORM metadata yet (DDL-only migrations)
-target_metadata = None
 
 
 # -------------------------------------------------

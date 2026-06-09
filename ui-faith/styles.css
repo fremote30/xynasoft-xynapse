@@ -1996,3 +1996,1150 @@ select {
   }
 
 }
+
+/* =========================================
+   SERMON RENDERING ENGINE
+========================================= */
+
+.sermon-rendered{
+  width:100%;
+}
+
+.sermon-header{
+  margin-bottom:40px;
+}
+
+.sermon-title{
+  font-size:42px;
+  line-height:1.2;
+  margin-bottom:24px;
+  color:#111827;
+}
+
+.scripture-block{
+
+  background:
+    linear-gradient(
+      135deg,
+      #EEF2FF,
+      #F5F3FF
+    );
+
+  border-left:5px solid #4F46E5;
+
+  padding:22px;
+
+  border-radius:18px;
+
+  font-size:18px;
+  line-height:1.8;
+
+  color:#312E81;
+
+  margin-bottom:40px;
+}
+
+.sermon-section{
+  margin-bottom:46px;
+}
+
+.sermon-section h2{
+
+  font-size:30px;
+
+  margin-bottom:18px;
+
+  color:#111827;
+}
+
+.sermon-section p{
+
+  font-size:19px;
+
+  line-height:2;
+
+  color:#374151;
+}
+
+.application-section{
+
+  background:
+    linear-gradient(
+      135deg,
+      #ECFDF5,
+      #F0FDF4
+    );
+
+  padding:30px;
+
+  border-radius:24px;
+}
+
+.conclusion-section{
+
+  background:
+    linear-gradient(
+      135deg,
+      #EFF6FF,
+      #F8FAFC
+    );
+
+  padding:30px;
+
+  border-radius:24px;
+}
+
+/* =========================================
+   LOADING STATE
+========================================= */
+
+.loading-state{
+  text-align:center;
+  padding:100px 20px;
+}
+
+.loading-spinner{
+
+  width:70px;
+  height:70px;
+
+  border-radius:50%;
+
+  border:6px solid #E5E7EB;
+  border-top:6px solid #4F46E5;
+
+  margin:0 auto 24px;
+
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.loading-state h2{
+  margin-bottom:12px;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:768px){
+
+  .sermon-title{
+    font-size:34px;
+  }
+
+  .sermon-section h2{
+    font-size:26px;
+  }
+
+  .sermon-section p{
+    font-size:17px;
+    line-height:1.9;
+  }
+
+  .scripture-block{
+    font-size:16px;
+  }
+
+}
+
+/* =========================================
+   FORCE FIX UPLOAD BUTTONS
+========================================= */
+
+.upload-section button,
+.upload-section input[type="file"]::file-selector-button,
+.upload-box button,
+.upload-box .btn-primary,
+.upload-box .btn-secondary {
+
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #2563eb
+  ) !important;
+
+  color: #ffffff !important;
+
+  border: none !important;
+
+  opacity: 1 !important;
+
+  visibility: visible !important;
+
+  display: inline-flex !important;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 100%;
+
+  padding: 14px 18px;
+
+  border-radius: 14px;
+
+  font-weight: 700 !important;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+/* FORCE TEXT COLOR */
+.upload-section button *,
+.upload-box button *,
+.upload-box .btn-primary *,
+.upload-box .btn-secondary * {
+
+  color: white !important;
+
+  opacity: 1 !important;
+}
+
+/* HOVER */
+.upload-section button:hover,
+.upload-box button:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 24px rgba(
+      37,
+      99,
+      235,
+      0.25
+    );
+}
+
+/* FILE NAME */
+.upload-box p,
+.upload-box span,
+.upload-section p {
+
+  color: #334155 !important;
+
+  opacity: 1 !important;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-link {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.nav-active {
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
+  font-weight: 700;
+}
+
+.btn-secondary {
+  min-width: 110px;
+}
+
+/* =====================================
+   NAVIGATION CONTAINER
+===================================== */
+
+.nav-links {
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* =====================================
+   NAVIGATION BUTTONS
+===================================== */
+
+.nav-link {
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  border: none;
+
+  padding: 10px 18px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  transition: all .25s ease;
+
+  box-shadow:
+    0 2px 6px rgba(
+      37,
+      99,
+      235,
+      0.25
+    );
+}
+
+.nav-link:hover {
+
+  background: #1d4ed8;
+
+  transform:
+    translateY(-1px);
+}
+
+/* =====================================
+   ACTIVE PAGE
+===================================== */
+
+.nav-active {
+
+  background: #dc2626 !important;
+
+  color: #ffffff !important;
+
+  font-weight: 700;
+
+  border: none !important;
+
+  box-shadow:
+    0 4px 10px rgba(
+      220,
+      38,
+      38,
+      0.35
+    );
+}
+
+/* =====================================
+   LOGIN / LOGOUT BUTTONS
+===================================== */
+
+.btn-secondary {
+
+  background: #10b981 !important;
+
+  color: #ffffff !important;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 10px 22px;
+
+  font-weight: 600;
+}
+
+.btn-secondary:hover {
+
+  background: #059669 !important;
+}
+
+/* =====================================
+   REGISTER BUTTON
+===================================== */
+
+.btn-primary {
+
+  background: #2563eb !important;
+
+  color: #ffffff !important;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 10px 22px;
+
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+
+  background: #1d4ed8 !important;
+}
+
+/* =====================================
+   FIX FOR ACTIVE BUTTON
+===================================== */
+.nav-active,
+.nav-active:visited,
+.nav-active:hover,
+.nav-active:focus {
+
+  background: #dc2626 !important;
+
+  color: #ffffff !important;
+
+  font-weight: 700 !important;
+
+  border: none !important;
+
+  text-decoration: none !important;
+
+  box-shadow:
+    0 4px 10px rgba(
+      220,
+      38,
+      38,
+      0.35
+    );
+}
+
+/* Force all text inside active button to white */
+
+.nav-active * {
+
+  color: #ffffff !important;
+}
+
+/* =====================================================
+   STEP 1Y
+   XYNAFAITH MOBILE HARDENING PACK
+   Paste at VERY BOTTOM of styles.css
+===================================================== */
+
+@media (max-width: 768px) {
+
+  /* =====================================================
+     GLOBAL
+  ===================================================== */
+
+  html,
+  body {
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  * {
+
+    box-sizing: border-box;
+  }
+
+  .app,
+  .dashboard-page,
+  .dashboard-app,
+  .container,
+  .page-container {
+
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: hidden;
+  }
+
+  /* =====================================================
+     NAVBAR
+  ===================================================== */
+
+  .navbar {
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    padding: 12px;
+  }
+
+  .nav-left {
+
+    width: 100%;
+
+    justify-content: center;
+  }
+
+  .nav-links {
+
+    width: 100%;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 8px;
+  }
+
+  .nav-link,
+  .btn-primary,
+  .btn-secondary {
+
+    min-height: 48px;
+
+    padding: 10px 14px;
+
+    font-size: 14px;
+  }
+
+  /* =====================================================
+     HERO
+  ===================================================== */
+
+  .hero,
+  .simple-hero {
+
+    padding: 60px 20px;
+  }
+
+  .hero-content {
+
+    text-align: center;
+  }
+
+  .hero-title {
+
+    font-size: 2rem !important;
+
+    line-height: 1.2;
+  }
+
+  .hero-sub {
+
+    font-size: 1rem !important;
+
+    line-height: 1.6;
+  }
+
+  .hero-buttons {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: 100%;
+  }
+
+  .hero-buttons button {
+
+    width: 100%;
+  }
+
+  /* =====================================================
+     FEATURES
+  ===================================================== */
+
+  .feature-grid {
+
+    grid-template-columns: 1fr !important;
+  }
+
+  .feature-card {
+
+    width: 100%;
+  }
+
+  /* =====================================================
+     DASHBOARD
+  ===================================================== */
+
+  .dashboard-grid,
+  .metrics-grid,
+  .analytics-grid,
+  .cards-grid {
+
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-card,
+  .metric-card,
+  .analytics-card {
+
+    width: 100%;
+  }
+
+  .welcome-hero {
+
+    padding: 20px;
+  }
+
+  .welcome-hero h1 {
+
+    font-size: 1.8rem;
+  }
+
+  /* =====================================================
+     CHARTS
+  ===================================================== */
+
+  canvas {
+
+    max-width: 100% !important;
+  }
+
+  /* =====================================================
+     SERMON STUDIO
+  ===================================================== */
+
+  .sermon-layout,
+  .studio-layout,
+  .editor-layout {
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    gap: 16px;
+  }
+
+  .sermon-sidebar,
+  .sermon-main,
+  .sermon-actions {
+
+    width: 100% !important;
+  }
+
+  textarea,
+  input,
+  select {
+
+    width: 100%;
+  }
+
+  #sermonOutput {
+
+    max-width: 100%;
+  }
+
+  /* =====================================================
+     SERMON LISTS
+  ===================================================== */
+
+  .sermon-list,
+  .sermons-grid {
+
+    grid-template-columns: 1fr !important;
+  }
+
+  .sermon-card {
+
+    width: 100%;
+  }
+
+  /* =====================================================
+     PRAYER WALL
+  ===================================================== */
+
+  .prayer-grid,
+  .prayer-wall,
+  .prayer-container {
+
+    display: grid;
+
+    grid-template-columns: 1fr !important;
+  }
+
+  .prayer-card {
+
+    width: 100%;
+  }
+
+  /* =====================================================
+     NETWORK PAGE
+  ===================================================== */
+
+  .pastor-grid,
+  .network-grid {
+
+    grid-template-columns: 1fr !important;
+  }
+
+  .pastor-card {
+
+    width: 100%;
+  }
+
+  /* =====================================================
+     PROFILE PAGES
+  ===================================================== */
+
+  .profile-grid {
+
+    grid-template-columns: 1fr !important;
+  }
+
+  .profile-card {
+
+    width: 100%;
+  }
+
+  /* =====================================================
+     MODALS
+  ===================================================== */
+
+  .modal-content {
+
+    width: 95% !important;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+  }
+
+  /* =====================================================
+     TABLES
+  ===================================================== */
+
+  table {
+
+    display: block;
+
+    overflow-x: auto;
+
+    white-space: nowrap;
+  }
+
+  /* =====================================================
+     BUTTONS
+  ===================================================== */
+
+  button {
+
+    min-height: 48px;
+  }
+
+  /* =====================================================
+     IMAGES
+  ===================================================== */
+
+  img {
+
+    max-width: 100%;
+
+    height: auto;
+  }
+
+}
+
+/* ===================================
+   MOBILE NAVIGATION
+=================================== */
+
+.mobile-menu-btn {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #111827;
+    font-size: 28px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        right: 15px;
+
+        width: 240px;
+
+        flex-direction: column;
+        gap: 10px;
+
+        padding: 16px;
+
+        border-radius: 12px;
+
+        background: rgba(15, 23, 42, 0.96);
+
+        backdrop-filter: blur(12px);
+
+        z-index: 9999;
+    }
+
+    .nav-links.mobile-open {
+        display: flex;
+    }
+
+    .nav-links a,
+    .nav-links button {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* ===================================
+   MOBILE SERMON SETTINGS
+=================================== */
+@media (max-width: 768px) {
+  .sidebar-scroll {
+    display: block !important; /* Ensure it’s visible */
+  }
+
+  .mobile-settings-toggle {
+    display: none !important; /* Hide toggle button */
+  }
+}
+
+/* =========================
+   MOBILE SERMON TABS
+========================= */
+
+/* Mobile sermon tabs */
+.mobile-sermon-tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mobile-tab {
+  flex: 1;
+  padding: 8px 0;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #f0f2ff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+.mobile-tab:last-child {
+  margin-right: 0;
+}
+
+.mobile-tab.active {
+  background-color: #3b66ff;
+  color: white;
+  border-color: #3b66ff;
+}
+
+/* =====================================
+   FIXED TOP NAVBAR
+===================================== */
+
+.navbar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 9999;
+
+  background: white;
+
+  border-bottom: 1px solid #E5E7EB;
+}
+
+/* Prevent content hiding behind navbar */
+#app{
+  padding-top: 90px;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: 92px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+#app {
+  padding-top: 105px; /* to prevent overlap */
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    height: 88px;
+    padding: 0 16px;
+  }
+}
+/* =====================================
+   MOBILE DRAWER
+===================================== */
+
+.mobile-drawer{
+
+  position:fixed;
+
+  top:92px;
+
+  right:-320px;
+
+  width:300px;
+
+  height:calc(100vh - 92px);
+
+  background:white;
+
+  box-shadow:
+    -5px 0 25px rgba(
+      0,
+      0,
+      0,
+      0.12
+    );
+
+  transition:.3s ease;
+
+  z-index:9998;
+
+  overflow-y:auto;
+}
+
+.mobile-drawer.open{
+  right:0;
+}
+
+.mobile-drawer-header{
+
+  padding:20px;
+
+  border-bottom:
+    1px solid #e5e7eb;
+}
+
+.mobile-drawer-user{
+
+  font-size:14px;
+
+  color:#6b7280;
+
+  margin-top:6px;
+}
+
+.mobile-drawer-links{
+
+  padding:12px;
+}
+
+.mobile-drawer-links a{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  padding:14px;
+
+  border-radius:10px;
+
+  text-decoration:none;
+
+  color:#111827;
+
+  font-weight:600;
+}
+
+.mobile-drawer-links a:hover{
+
+  background:#f5f7fb;
+}
+
+/* =====================================
+   FINAL MOBILE NAVBAR FIX
+===================================== */
+
+@media (max-width:768px){
+
+  .navbar{
+
+    flex-direction:row !important;
+
+    justify-content:space-between !important;
+
+    align-items:center !important;
+
+    height:88px;
+
+    padding:0 16px !important;
+  }
+
+  .nav-left{
+
+    width:auto !important;
+
+    justify-content:flex-start !important;
+  }
+
+  .mobile-menu-btn{
+
+    display:flex !important;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:44px;
+
+    height:44px;
+
+    margin-left:auto;
+
+    font-size:32px;
+
+    color:#111827;
+
+    background:transparent;
+
+    border:none;
+
+    z-index:10001;
+  }
+
+  .nav-links{
+    display:none !important;
+  }
+}
+
+/* =====================================
+   MOBILE DRAWER BUTTONS
+===================================== */
+
+.mobile-drawer-links button {
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  margin-bottom: 8px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #111827;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition: all .2s ease;
+}
+
+.mobile-drawer-links button:hover {
+
+  background: #f5f7fb;
+
+  transform: translateX(4px);
+}
+
+.mobile-drawer-links button:last-child {
+
+  color: #dc2626;
+}
+.mobile-drawer {
+  display: none;
+}
+
+@media (max-width:768px){
+
+  .mobile-drawer{
+    display:block;
+  }
+
+}
+
+@media (max-width:768px){
+
+  .mobile-menu-btn{
+
+    display:flex !important;
+
+    align-items:center !important;
+
+    justify-content:center !important;
+
+    width:48px !important;
+
+    height:48px !important;
+
+    font-size:32px !important;
+
+    color:#111827 !important;
+
+    background:none !important;
+
+    border:none !important;
+
+    opacity:1 !important;
+
+    visibility:visible !important;
+
+    z-index:10002 !important;
+  }
+
+}
+
+.footer{
+  padding:24px;
+  text-align:center;
+  border-top:1px solid #E5E7EB;
+  background:#fff;
+}
+
+.footer-brand{
+  font-weight:600;
+  margin-bottom:8px;
+}
+
+.footer-tagline{
+  font-size:.9rem;
+  color:#6B7280;
+  margin-bottom:12px;
+}
+
+.footer-links{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.footer-links a{
+  color:#2563EB;
+  text-decoration:none;
+  font-weight:500;
+}
+
+.footer-links a:hover{
+  text-decoration:underline;
+}

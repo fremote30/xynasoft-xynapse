@@ -6,7 +6,7 @@ from api.models.user import User
 from api.models.follow import PastorFollower
 
 from api.core.security import decode_token
-
+from datetime import datetime
 
 router = APIRouter(
     prefix="/pastors",
@@ -65,6 +65,51 @@ def get_current_user(
         )
 
     return user
+
+# =========================
+
+# APPLY FOR PASTOR
+
+# =========================
+
+@router.post("/apply")
+def apply_for_pastor(
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+
+
+    current_user = get_current_user(
+        authorization,
+        db
+    )
+
+    # Already pastor
+    if current_user.role == "pastor":
+        raise HTTPException(
+            status_code=400,
+            detail="Already a pastor"
+        )
+
+    # Already pending
+    if current_user.pastor_status == "pending":
+        raise HTTPException(
+            status_code=400,
+            detail="Application already pending"
+        )
+
+    current_user.pastor_status = "pending"
+
+    current_user.pastor_application_date = (
+        datetime.utcnow()
+    )
+
+    db.commit()
+
+    return {
+        "message":
+        "Pastor application submitted successfully"
+    }
 
 
 # =========================

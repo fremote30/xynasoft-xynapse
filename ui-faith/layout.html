@@ -2,42 +2,66 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XynaFaith</title>
-  <link rel="stylesheet" href="/faith/styles.css">
-
-  <style>
-    /* Active link styling for top nav */
-    .nav-links a.nav-active {
-      font-weight: bold;
-      color: #2563eb;
-      border-bottom: 2px solid #2563eb;
-    }
-  </style>
+  <link rel="stylesheet" href="/faith/styles.css" />
 </head>
 
 <body>
 
   <!-- =========================
-       NAVBAR
-  ========================== -->
-  <header class="navbar">
-    <div class="nav-left">
-      <img src="/faith/assets/xynafaith.png" class="logo" alt="XynaFaith Logo">
-      <div class="brand">
-        <div class="brand-title">XynaFaith</div>
-        <div class="brand-sub">
-          <a href="https://xynasoft.com" target="_blank" class="brand-link">
-            Powered by Xynasoft
-          </a>
-        </div>
+     NAVBAR
+========================== -->
+<header class="navbar">
+
+  <!-- LEFT SIDE: Logo + Brand -->
+  <div class="nav-left">
+    <img src="/faith/assets/xynafaith.png" class="logo" alt="XynaFaith Logo" />
+    <div class="brand">
+      <div class="brand-title">XynaFaith</div>
+      <div class="brand-sub">
+        Powered by AI • Guided by Scripture • Led by Pastors
       </div>
     </div>
+  </div>
 
-    <nav class="nav-links" id="navLinks"></nav>
-  </header>
+  <!-- MOBILE MENU BUTTON -->
+  <button
+    id="mobileMenuBtn"
+    class="mobile-menu-btn"
+    onclick="toggleMobileMenu()"
+    aria-label="Toggle Navigation"
+  >
+    ☰
+  </button>
 
+  <!-- DYNAMIC NAVIGATION -->
+  <nav id="topnav" class="nav-links"></nav>
+
+</header>
+
+<!-- MOBILE DRAWER -->
+<nav id="mobileDrawer" class="mobile-drawer">
+  <div class="mobile-drawer-header">
+    <div class="brand-title">XynaFaith</div>
+    <div class="mobile-drawer-user">
+      <span id="mobileDrawerUserName">Guest</span>
+      <span id="mobileDrawerUserRole"></span>
+    </div>
+  </div>
+
+  <div class="mobile-drawer-links">
+    <button onclick="navigate('home')">🏠 Home</button>
+    <button onclick="navigate('dashboard')">📊 Dashboard</button>
+    <button onclick="navigate('sermon')">✍️ Sermon Studio</button>
+    <button onclick="navigate('mysermons')">📚 My Sermons</button>
+    <button onclick="navigate('network')">🌐 Network</button>
+    <button onclick="navigate('prayer')">🙏 Prayer Wall</button>
+    <button onclick="navigate('settings')">⚙️ Settings</button>
+    <button onclick="logout()">🧱 Logout</button>
+  </div>
+</nav>
   <!-- =========================
        SPA CONTENT
   ========================== -->
@@ -46,134 +70,90 @@
   <!-- =========================
        FOOTER
   ========================== -->
-  <footer class="footer">
-    <p>© 2026 XynaFaith. All rights reserved.</p>
-  </footer>
+<footer class="footer">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/faith/app.js"></script>
+  <div class="footer-brand">
+    © 2026 XynaFaith. All rights reserved.
+  </div>
+
+  <div class="footer-tagline">
+    Powered by AI • Guided by Scripture • Led by Pastors
+  </div>
+
+  <div class="footer-links">
+
+    <a
+      href="https://xynasoft.com"
+      target="_blank"
+    >
+      A Xynasoft Platform
+    </a>
+
+    <span>•</span>
+
+    <a
+      href="mailto:support@xynafaith.com"
+    >
+      Contact Us
+    </a>
+
+    <span>•</span>
+
+    <a
+      href="#"
+      onclick="showAIDisclaimer()"
+    >
+      AI Disclaimer
+    </a>
+
+  </div>
+
+</footer>
 
   <!-- =========================
-       NAVBAR + ACTIVE LINK LOGIC
+       EXTERNAL LIBRARIES
   ========================== -->
-  <script>
-    async function hydrateUser() {
-      const token = localStorage.getItem("access_token");
-      const role = localStorage.getItem("userRole");
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-      if (!token) {
-        window.currentUser = null;
-        return null;
-      }
+  <!-- =========================
+       UTILITIES
+  ========================== -->
+  <script defer src="/faith/js/utils/storage.js"></script>
+  <script defer src="/faith/js/utils/toast.js"></script>
+  <script defer src="/faith/js/utils/modal.js"></script>
+  <script defer src="/faith/js/utils/loader.js"></script>
+  <script defer src="/faith/js/utils/auth.js"></script>
 
-      try {
-        const res = await fetch("/auth/me", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error();
+  <!-- =========================
+       CORE
+  ========================== -->
+  <script defer src="/faith/js/router.js"></script>
+  <script defer src="/faith/js/core.js"></script>
 
-        const user = await res.json();
+  <!-- =========================
+       FEATURE MODULES
+  ========================== -->
+  <script defer src="/faith/js/dashboard.js"></script>
+  <script defer src="/faith/js/admin.js"></script>
+  <script defer src="/faith/js/sermon.js"></script>
+  <script defer src="/faith/js/collaboration.js"></script>
+  <script defer src="/faith/js/network.js"></script>
+  <script defer src="/faith/js/platform.js"></script>
 
-        // ✅ FORCE ROLE CONSISTENCY
-        user.role = user.role || role;
-        window.currentUser = user;
+  <!-- =========================
+       RECOVERY
+  ========================== -->
+  <script defer src="/faith/js/recovery.js"></script>
 
-        // ✅ Persist role again
-        localStorage.setItem("userRole", user.role);
+  <!-- =========================
+       ERROR HANDLER
+  ========================== -->
+  <script defer src="/faith/js/error-handler.js"></script>
 
-        return user;
-      } catch {
-        window.currentUser = { role: role };
-        return window.currentUser;
-      }
-    }
-
-function renderNavbar() {
-  const nav = document.getElementById("navLinks");
-  if (!nav) return;
-
-  const token = localStorage.getItem("access_token");
-  const role = window.currentUser?.role || localStorage.getItem("userRole");
-  const currentPage = window.currentPage || "";
-
-  // Home always included
-  let links = [
-    { page: "home", label: "Home" }
-  ];
-
-  if (!token) {
-    links.push(
-      { page: "login", label: "Login" },
-      { page: "register", label: "Register" }
-    );
-  } else if (role === "member") {
-    links.push(
-      { page: "member-dashboard", label: "My Feed" },
-      { page: "network", label: "Network" }
-    );
-  } else if (role === "pastor") {
-    links.push(
-      { page: "dashboard", label: "Dashboard" },
-      { page: "sermon", label: "Sermon Studio" },
-      { page: "network", label: "Network" },
-      { page: "mysermons", label: "My Sermons" }
-    );
-  }
-
-  // Render nav links with active highlight
-  nav.innerHTML = links.map(link => {
-    const activeClass = link.page === currentPage ? "nav-active" : "";
-    return `<a onclick="navigate('${link.page}')" class="${activeClass}">${link.label}</a>`;
-  }).join("") + (token ? `<a onclick="logout()" style="color:#ef4444;">Logout</a>` : "");
-}
-
-    // Wrap navigate to update currentPage for highlighting
-    const originalNavigate = window.navigate;
-    window.navigate = async function(page) {
-      window.currentPage = page; // Track active page
-      if (typeof originalNavigate === "function") {
-        await originalNavigate(page);
-      }
-      renderNavbar(); // Refresh navbar highlight
-    };
-
-    async function logout() {
-      try {
-        await fetch("/auth/logout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refresh_token: localStorage.getItem("refresh_token") })
-        });
-      } catch (err) {
-        console.error("Logout error:", err);
-      }
-
-      if (window.dashboardInterval) clearInterval(window.dashboardInterval);
-
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("userRole");
-      localStorage.removeItem("user");
-
-      window.currentUser = null;
-
-      renderNavbar();
-      navigate("home");
-
-      if (typeof showToast === "function") {
-        showToast("Logged out successfully", "success");
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      const user = await hydrateUser();
-      renderNavbar();
-
-      if (user?.role === "member") navigate("member-dashboard");
-      else if (user?.role === "pastor") navigate("dashboard");
-      else navigate("home");
-    });
-  </script>
+  <!-- =========================
+       APP BOOTSTRAP
+  ========================== -->
+  <script defer src="/faith/js/app.js"></script>
 
 </body>
 </html>

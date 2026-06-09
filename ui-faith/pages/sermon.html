@@ -2,12 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sermon Studio — XynaFaith</title>
+  <meta
+    name="viewport"
+    content="
+      width=device-width,
+      initial-scale=1.0
+    "
+  >
 
-  <link rel="stylesheet" href="/faith/styles.css">
+  <title>
+    Sermon Studio — XynaFaith
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="/faith/styles.css"
+  >
 
 <style>
+
 body{
   margin:0;
   background:#F5F7FB;
@@ -15,22 +28,34 @@ body{
   color:#111827;
 }
 
+/* ===================================== */
 /* LAYOUT */
+/* ===================================== */
 .studio-layout{
   display:grid;
-  grid-template-columns:320px 1fr 280px;
+  grid-template-columns:
+    320px
+    1fr
+    280px;
+
   min-height:100vh;
   gap:24px;
   padding:24px;
 }
 
+/* ===================================== */
 /* SIDEBARS */
+/* ===================================== */
 .studio-sidebar,
 .action-sidebar{
   background:#FFFFFF;
   border-radius:24px;
   padding:24px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.04);
+  box-shadow:
+    0 4px 20px rgba(
+      0,0,0,0.04
+    );
+
   height:fit-content;
 }
 
@@ -38,7 +63,22 @@ body{
   margin:0 0 20px;
 }
 
+/* ===================================== */
+/* MOBILE SETTINGS */
+/* ===================================== */
+.mobile-settings-toggle{
+  display:none;
+  border:none;
+  background:#EEF2FF;
+  padding:12px 14px;
+  border-radius:12px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* ===================================== */
 /* TABS */
+/* ===================================== */
 .studio-tabs{
   display:flex;
   gap:10px;
@@ -56,15 +96,19 @@ body{
 }
 
 .tab-btn.active{
-  background:linear-gradient(
-    135deg,
-    #2563EB,
-    #4F46E5
-  );
+  background:
+    linear-gradient(
+      135deg,
+      #2563EB,
+      #4F46E5
+    );
+
   color:white;
 }
 
+/* ===================================== */
 /* INPUTS */
+/* ===================================== */
 .sidebar-card{
   margin-bottom:24px;
 }
@@ -98,7 +142,9 @@ textarea{
   resize:none;
 }
 
+/* ===================================== */
 /* UPLOAD */
+/* ===================================== */
 .upload-card{
   margin-top:20px;
 }
@@ -111,6 +157,10 @@ textarea{
   background:#F8FAFC;
 }
 
+.upload-drop p{
+  margin-top:0;
+}
+
 .upload-drop span{
   display:block;
   margin-bottom:16px;
@@ -118,23 +168,69 @@ textarea{
   font-size:13px;
 }
 
+/* ===================================== */
 /* BUTTONS */
+/* ===================================== */
 .generate-btn{
   width:100%;
   border:none;
   padding:16px;
   border-radius:16px;
-  background:linear-gradient(
-    135deg,
-    #2563EB,
-    #4F46E5
-  );
+  background:
+    linear-gradient(
+      135deg,
+      #2563EB,
+      #4F46E5
+    );
+
   color:white;
   font-weight:700;
   cursor:pointer;
   margin-top:10px;
 }
 
+.generate-btn{
+  width:100%;
+  border:none;
+  padding:16px;
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563EB,
+      #4F46E5
+    );
+
+  color:#FFFFFF !important;
+
+  font-weight:700;
+
+  cursor:pointer;
+
+  margin-top:10px;
+
+  font-size:14px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  transition:all 0.25s ease;
+}
+
+.generate-btn:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 10px 24px rgba(
+      37,
+      99,
+      235,
+      0.25
+    );
+}
 .view-btn,
 .btn-secondary{
   width:100%;
@@ -147,7 +243,9 @@ textarea{
   font-weight:600;
 }
 
+/* ===================================== */
 /* ADVANCED */
+/* ===================================== */
 .advanced-wrapper{
   margin-bottom:20px;
 }
@@ -164,12 +262,17 @@ textarea{
   margin-top:14px;
 }
 
+/* ===================================== */
 /* MAIN */
+/* ===================================== */
 .studio-main{
   background:#FFFFFF;
   border-radius:24px;
   padding:32px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.04);
+  box-shadow:
+    0 4px 20px rgba(
+      0,0,0,0.04
+    );
 }
 
 .main-header{
@@ -196,15 +299,23 @@ textarea{
   cursor:pointer;
 }
 
+/* ===================================== */
 /* SERMON CANVAS */
+/* ===================================== */
 .sermon-canvas{
   min-height:700px;
   border:1px solid #E5E7EB;
   border-radius:24px;
   padding:60px;
   background:#FFFFFF;
+
+  overflow-wrap:break-word;
+  overflow-x:hidden;
 }
 
+/* ===================================== */
+/* EMPTY STATE */
+/* ===================================== */
 .empty-state{
   text-align:center;
   margin-top:140px;
@@ -220,7 +331,14 @@ textarea{
   font-size:18px;
 }
 
+.empty-icon{
+  font-size:60px;
+  margin-bottom:24px;
+}
+
+/* ===================================== */
 /* RIGHT ACTIONS */
+/* ===================================== */
 .action-card{
   margin-bottom:24px;
 }
@@ -241,7 +359,9 @@ textarea{
   font-weight:600;
 }
 
+/* ===================================== */
 /* TIP */
+/* ===================================== */
 .studio-tip{
   margin-top:24px;
   padding:16px;
@@ -251,7 +371,16 @@ textarea{
   line-height:1.6;
 }
 
-/* MOBILE */
+/* ===================================== */
+/* MOBILE ACTION BAR */
+/* ===================================== */
+.mobile-action-bar{
+  display:none;
+}
+
+/* ===================================== */
+/* TABLET */
+/* ===================================== */
 @media(max-width:1200px){
 
   .studio-layout{
@@ -263,6 +392,102 @@ textarea{
   }
 
 }
+
+/* ===================================== */
+/* MOBILE */
+/* ===================================== */
+@media(max-width:768px){
+
+  .studio-layout{
+    padding:14px;
+    gap:16px;
+  }
+
+  .studio-main{
+    padding:20px;
+  }
+
+  .sermon-canvas{
+    padding:24px;
+    min-height:400px;
+  }
+
+  .main-header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:14px;
+  }
+
+  .mobile-settings-toggle{
+    display:block;
+  }
+
+  .studio-sidebar{
+    position:relative;
+  }
+
+  
+  /* Mobile Tabs Control Visibility */
+
+#mobileInputsTab{
+  display:block;
+}
+
+#mobileOutputTab{
+  display:none;
+}
+
+#mobileActionsTab{
+  display:none;
+}
+
+  .action-sidebar{
+    display:none;
+  }
+
+  .mobile-action-bar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+
+    background:white;
+
+    display:flex;
+    justify-content:space-around;
+
+    padding:12px;
+
+    border-top:
+      1px solid #E5E7EB;
+
+    z-index:999;
+  }
+
+  .mobile-action-bar button{
+    border:none;
+    background:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-size:13px;
+    color:#111827;
+  }
+
+  .empty-state{
+    margin-top:80px;
+  }
+
+  .empty-state h2{
+    font-size:24px;
+  }
+
+  .empty-state p{
+    font-size:16px;
+  }
+
+}
+
 </style>
 </head>
 
@@ -277,9 +502,12 @@ textarea{
 
     <div class="sidebar-header">
 
-      <h2>✍️ Create Sermon</h2>
+      <h2>
+        ✍️ Create Sermon
+      </h2>
 
-      <!-- MOBILE SETTINGS BUTTON -->
+        
+      <!-- MOBILE SETTINGS -->
       <button
         class="mobile-settings-toggle"
         onclick="toggleMobileSidebar()"
@@ -290,62 +518,217 @@ textarea{
     </div>
 
     <!-- COLLAPSIBLE CONTENT -->
-    <div class="sidebar-scroll">
+    <div
+      id="mobileInputsTab"
+      class="sidebar-scroll"
+    >
 
       <!-- TABS -->
       <div class="studio-tabs">
-        <button class="tab-btn active">Create</button>
-        <button class="tab-btn">Rewrite</button>
-        <button class="tab-btn">Multiverse</button>
-        <button class="tab-btn">Cross-Ref</button>
+
+        <button
+          class="tab-btn active"
+        >
+          Create
+        </button>
+
+        <button
+         class="tab-btn" id="rewriteTab" onclick="activateRewriteMode()">
+          🔄 Rewrite
+        </button>
+
+           <button
+            class="tab-btn"
+            id="multiverseTab"
+
+            onclick="
+              activateMultiverseMode();
+              generateMultiverse();
+            "
+          >
+            🌌 Multiverse
+          </button>
+        <button
+          class="tab-btn"
+        >
+          Cross-Ref
+        </button>
+
       </div>
 
       <!-- CORE INPUTS -->
       <div class="sidebar-card">
 
-        <h3>📝 Core Inputs</h3>
+        <h3>
+          📝 Core Inputs
+        </h3>
 
-        <label>Your Message / Sermon Prompt</label>
+        <label>
+          Your Message / Sermon Prompt
+        </label>
 
         <textarea
           id="userInput"
-          placeholder="What is your sermon about?"
+          placeholder="
+            What is your sermon about?
+          "
         ></textarea>
 
-        <label>Scripture / Passage</label>
+        <label>
+          Scripture / Passage
+        </label>
 
         <input
           id="bibleInput"
-          placeholder="e.g. John 3:16-17"
+          placeholder="
+            e.g. John 3:16-17
+          "
         >
 
+        <!-- ================================= -->
         <!-- UPLOAD -->
-        <div class="upload-card">
+        <!-- ================================= -->
+<div class="upload-card">
 
-          <h4>📂 Upload Sermon</h4>
+  <!-- ================================= -->
+  <!-- REWRITE INFO -->
+  <!-- ================================= -->
+  <div
+    id="rewriteInfo"
 
-          <div class="upload-drop">
+    style="
+      display:none;
+      margin-bottom:18px;
+      padding:16px;
+      border-radius:16px;
+      background:#EEF4FF;
+      color:#1E3A8A;
+      font-size:14px;
+      line-height:1.7;
+    "
+  >
 
-            <p>Drag & drop your file here</p>
+    ✨ Rewrite Mode Active
 
-            <span>PDF, DOCX, or TXT</span>
+    <br><br>
 
-            <input type="file" id="sermonFile">
+    Transform old sermons,
+    rough outlines,
+    and teaching notes into
+    modern preach-ready messages.
 
-            <button
-              class="btn-secondary"
-              onclick="uploadSermon()"
-            >
-              Browse File
-            </button>
+  </div>
 
-          </div>
+  <!-- ================================= -->
+  <!-- MULTIVERSE INFO -->
+  <!-- ================================= -->
+  <div
+    id="multiverseInfo"
 
-        </div>
+    style="
+      display:none;
+      margin-bottom:18px;
+      padding:16px;
+      border-radius:16px;
+      background:#F5F3FF;
+      color:#5B21B6;
+      font-size:14px;
+      line-height:1.7;
+      border:1px solid #DDD6FE;
+    "
+  >
+
+    🌌 Multiverse Mode Active
+
+    <br><br>
+
+    Explore multiple sermon directions,
+    preaching styles,
+    emotional tones,
+    and ministry angles from one topic.
+
+  </div>
+
+  <h4>
+    📂 Upload Sermon
+  </h4>
+
+  <div class="upload-drop">
+
+    <p>
+      Drag & drop your file here
+    </p>
+
+    <span>
+      PDF, DOCX, or TXT
+    </span>
+
+    <!-- SAFE FILE INPUT -->
+    <input
+      type="file"
+      id="sermonFile"
+      accept="
+        .pdf,
+        .docx,
+        .txt
+      "
+      hidden
+    >
+
+    <!-- CHOOSE FILE BUTTON -->
+    <button
+      class="generate-btn"
+
+      style="
+        margin-top:0;
+        margin-bottom:14px;
+      "
+
+      onclick="
+        document
+          .getElementById(
+            'sermonFile'
+          )
+          .click()
+      "
+    >
+      📂 Choose File
+    </button>
+
+    <!-- FILE NAME -->
+    <div
+      id="uploadFileName"
+
+      style="
+        margin-top:12px;
+        margin-bottom:14px;
+        font-size:13px;
+        color:#64748B;
+        font-weight:600;
+      "
+    >
+      No file selected
+    </div>
+
+    <!-- UPLOAD ACTION -->
+    <button
+      class="generate-btn"
+
+      onclick="uploadSermon()"
+    >
+      ✨ Upload & Rewrite
+    </button>
+
+  </div>
+
+</div>
+
 
       </div>
 
+      <!-- ================================= -->
       <!-- ADVANCED -->
+      <!-- ================================= -->
       <div class="advanced-wrapper">
 
         <div class="advanced-toggle">
@@ -354,43 +737,90 @@ textarea{
 
         <div class="advanced-panel">
 
-          <label>Denomination</label>
+          <label>
+            Denomination
+          </label>
 
           <select id="denomination">
-            <option value="general">General</option>
-            <option value="baptist">Baptist</option>
-            <option value="pentecostal">Pentecostal</option>
-            <option value="catholic">Catholic</option>
+
+            <option value="general">
+              General
+            </option>
+
+            <option value="baptist">
+              Baptist
+            </option>
+
+            <option value="pentecostal">
+              Pentecostal
+            </option>
+
+            <option value="catholic">
+              Catholic
+            </option>
+
           </select>
 
-          <label>Audience</label>
+          <label>
+            Audience
+          </label>
 
           <input
             id="audience"
-            placeholder="Youth, Church, Conference..."
+            placeholder="
+              Youth, Church, Conference...
+            "
           >
 
-          <label>Local Context</label>
+          <label>
+            Local Context
+          </label>
 
           <input
             id="context"
-            placeholder="Community challenges..."
+            placeholder="
+              Community challenges...
+            "
           >
 
-          <label>Tone</label>
+          <label>
+            Tone
+          </label>
 
           <select id="tone">
-            <option value="balanced">Balanced</option>
-            <option value="teaching">Teaching</option>
-            <option value="passionate">Passionate</option>
+
+            <option value="balanced">
+              Balanced
+            </option>
+
+            <option value="teaching">
+              Teaching
+            </option>
+
+            <option value="passionate">
+              Passionate
+            </option>
+
           </select>
 
-          <label>Duration</label>
+          <label>
+            Duration
+          </label>
 
           <select id="duration">
-            <option value="15">15 min</option>
-            <option value="30">30 min</option>
-            <option value="45">45 min</option>
+
+            <option value="15">
+              15 min
+            </option>
+
+            <option value="30">
+              30 min
+            </option>
+
+            <option value="45">
+              45 min
+            </option>
+
           </select>
 
         </div>
@@ -414,8 +844,14 @@ textarea{
 
       <!-- HINT -->
       <div class="studio-tip">
+
         💡 Start → Expand → Refine → Preach
-        🔥 Use Multiverse for deeper sermons
+
+        <br><br>
+
+        🔥 Use Multiverse
+        for deeper sermons
+
       </div>
 
     </div>
@@ -423,18 +859,25 @@ textarea{
   </aside>
 
   <!-- ===================================== -->
-  <!-- MAIN SERMON CANVAS -->
+  <!-- MAIN -->
   <!-- ===================================== -->
-  <main class="studio-main">
+  <main
+    id="mobileOutputTab"
+    class="studio-main"
+    style="display:none;"
+  >
 
     <div class="main-header">
 
       <div>
 
-        <h1>📖 Sermon Output</h1>
+        <h1>
+          📖 Sermon Output
+        </h1>
 
         <p>
-          Generated with ✨ purpose and powered by AI.
+          Generated with ✨ purpose
+          and powered by AI.
         </p>
 
       </div>
@@ -449,58 +892,241 @@ textarea{
 
     </div>
 
+    <!-- ================================= -->
     <!-- SERMON OUTPUT -->
+    <!-- ================================= -->
+            <!-- ================================= -->
+        <!-- MULTIVERSE OUTPUT -->
+        <!-- ================================= -->
+        <div
+          id="multiverseOutput"
+
+          style="
+            display:none;
+            margin-bottom:30px;
+          "
+        >
+
+          <!-- MULTIVERSE SERMONS
+              RENDER HERE -->
+
+        </div>
+    
     <div
       id="sermonOutput"
       class="sermon-canvas"
       contenteditable="true"
     >
+     
+      <!-- LOADER -->
+      <div
+        id="uploadLoader"
 
-      <div class="empty-state">
+        style="
+          display:none;
+          text-align:center;
+          padding:60px 30px;
+        "
+      >
 
-        <div class="empty-icon">
+        <div
+          style="
+            font-size:48px;
+            margin-bottom:24px;
+          "
+        >
           ✨
         </div>
 
-        <h2>
-          Ready to help craft your next message
-        </h2>
+        <h3
+          id="uploadLoaderTitle"
 
-        <p>
-          Generate sermons, refine ideas,
-          build illustrations, and prepare
-          impactful teachings powered by AI.
+          style="
+            margin-bottom:14px;
+            font-size:24px;
+          "
+        >
+          Rewriting uploaded sermon...
+        </h3>
+
+        <p
+          id="uploadLoaderText"
+
+          style="
+            color:#64748B;
+            line-height:1.8;
+            font-size:16px;
+            max-width:500px;
+            margin:auto;
+          "
+        >
+          AI is restructuring your sermon
+          into a polished message.
         </p>
 
       </div>
+      <!-- EMPTY -->
+     
+      <div
+            id="emptyState"
+            class="empty-state"
+          >
+
+            <div class="empty-icon">
+              ✨
+            </div>
+
+            <h2>
+              Ready to help craft
+              your next message
+            </h2>
+
+            <p>
+              Generate sermons,
+              refine ideas,
+              build illustrations,
+              and prepare impactful
+              teachings powered by AI.
+            </p>
+
+          </div>
 
     </div>
+
+    <!-- ================================= -->
+<!-- COLLABORATION THREAD -->
+<!-- ================================= -->
+
+<div
+  id="collaborationSection"
+  class="feature-card"
+  style="margin-top:28px; display:none;"
+>
+  <!-- HEADER -->
+  <div
+    style="
+      margin-bottom:22px;
+    "
+  >
+
+    <h2
+      style="
+        margin-bottom:8px;
+      "
+    >
+      🤝 Collaboration Thread
+    </h2>
+
+    <p
+      style="
+        color:#64748B;
+        line-height:1.7;
+      "
+    >
+      Discuss sermon ideas,
+      feedback, and ministry insights.
+    </p>
+
+  </div>
+
+  <!-- COMMENTS -->
+  <div
+    id="sermonComments"
+
+    style="
+      display:grid;
+      gap:14px;
+      margin-bottom:22px;
+    "
+  >
+
+    <div
+      style="
+        color:#64748B;
+      "
+    >
+      No comments yet
+    </div>
+
+  </div>
+
+  <!-- ADD COMMENT -->
+  <div
+    style="
+      display:grid;
+      gap:14px;
+    "
+  >
+
+    <textarea
+
+      id="sermonCommentInput"
+
+      rows="4"
+
+      placeholder="
+        Add collaboration feedback...
+      "
+
+      style="
+        width:100%;
+        padding:16px;
+        border-radius:16px;
+        border:1px solid #D1D5DB;
+        resize:none;
+      "
+    ></textarea>
+
+    <button
+      onclick="addSermonComment()"
+    >
+      💬 Add Comment
+    </button>
+
+  </div>
+
+</div>
+
 
   </main>
 
   <!-- ===================================== -->
-  <!-- RIGHT ACTION PANEL -->
+  <!-- RIGHT ACTIONS -->
   <!-- ===================================== -->
-  <aside class="action-sidebar">
+  <aside
+    id="mobileActionsTab"
+    class="action-sidebar"
+    style="display:none;"
+  >
 
     <!-- REFINE -->
     <div class="action-card">
 
-      <h3>✨ Refine</h3>
+      <h3>
+        ✨ Refine
+      </h3>
 
-      <button onclick="refine('deepen')">
+      <button
+        onclick="refine('deepen')"
+      >
         ✨ Make Deeper
       </button>
 
-      <button onclick="refine('illustration')">
+      <button
+        onclick="refine('illustration')"
+      >
         🔥 Add Illustration
       </button>
 
-      <button onclick="refine('simplify')">
+      <button
+        onclick="refine('simplify')"
+      >
         🧒 Simplify
       </button>
 
-      <button onclick="refine('scripture')">
+      <button
+        onclick="refine('scripture')"
+      >
         📖 Add Scripture
       </button>
 
@@ -509,34 +1135,72 @@ textarea{
     <!-- ACTIONS -->
     <div class="action-card">
 
-      <h3>⚡ Actions</h3>
+      <h3>
+        ⚡ Actions
+      </h3>
 
-      <button onclick="saveCurrentSermon()">
+      <button
+        onclick="saveCurrentSermon()"
+      >
         💾 Save Sermon
       </button>
-
-      <button onclick="exportPDF()">
-        🧾 Export
+      <button
+        onclick="updateCurrentSermon()"
+      >
+        📝 Update Sermon
+      </button>
+      <button
+            onclick="printSermon()"
+          >
+            🖨 Print Sermon
       </button>
 
-      <button onclick="openPreachMode()">
+      <button
+            onclick="exportPDF()"
+          >
+            🧾 Export PDF
+      </button>
+      <button
+            onclick="exportDOCX()"
+      >
+           📝 Export DOCX
+      </button>
+      <button
+        onclick="copySermon()"
+      >
+        📋 Copy Sermon
+      </button>
+
+      <button
+        onclick="openShareModal()"
+      >
+        🚀 Share Hub
+      </button>
+
+      <button
+        onclick="openPreachMode()"
+      >
         🎤 Preach Mode
       </button>
 
-      <button onclick="shareWhatsApp()">
+      <button
+        onclick="shareWhatsApp()"
+      >
         📲 WhatsApp
       </button>
-
-      <button onclick="shareWithPastor()">
+      <button
+        onclick="openPastorShareModal()"
+      >
         🤝 Share with Pastor
       </button>
-
     </div>
 
     <!-- COLLAB -->
     <div class="action-card">
 
-      <h3>💬 Collaboration</h3>
+      <h3>
+        💬 Collaboration
+      </h3>
 
       <button>
         💬 Comments
@@ -557,22 +1221,37 @@ textarea{
 <!-- ===================================== -->
 <div class="mobile-action-bar">
 
-  <button onclick="saveCurrentSermon()">
-    💾
-    <span>Save</span>
+  <button
+    onclick="showMobileTab('inputs')"
+  >
+    📝
+    <span>Inputs</span>
   </button>
 
-  <button onclick="exportPDF()">
-    🧾
-    <span>Export</span>
+  <button
+    onclick="showMobileTab('output')"
+  >
+    📖
+    <span>Output</span>
   </button>
 
-  <button onclick="openPreachMode()">
+  <button
+    onclick="showMobileTab('actions')"
+  >
+    ⚡
+    <span>Actions</span>
+  </button>
+
+  <button
+    onclick="openPreachMode()"
+  >
     🎤
     <span>Preach</span>
   </button>
 
-  <button onclick="shareWhatsApp()">
+  <button
+    onclick="shareWhatsApp()"
+  >
     📲
     <span>Share</span>
   </button>
@@ -581,39 +1260,546 @@ textarea{
 
 <script>
 
-function toggleMobileSidebar(){
+function scrollToTop(){
 
-  const sidebar =
-    document.querySelector(".studio-sidebar");
-
-  sidebar.classList.toggle("open");
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function toggleMobileSidebar(){
 
-  const toggle =
-    document.querySelector(".advanced-toggle");
+  const sidebar =
+    document.querySelector(
+      ".studio-sidebar"
+    );
 
-  const panel =
-    document.querySelector(".advanced-panel");
+  sidebar.classList.toggle(
+    "open"
+  );
 
-  panel.style.display = "none";
+}
 
-  toggle.addEventListener("click", () => {
+/* ===================================== */
+/* ADVANCED TOGGLE */
+/* ===================================== */
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
 
-    if(panel.style.display === "none"){
-      panel.style.display = "block";
-    } else {
+    const toggle =
+      document.querySelector(
+        ".advanced-toggle"
+      );
+
+    const panel =
+      document.querySelector(
+        ".advanced-panel"
+      );
+
+    if (panel) {
+
       panel.style.display = "none";
+
     }
 
-  });
+    if (toggle && panel) {
+
+      toggle.addEventListener(
+        "click",
+        () => {
+
+          if (
+            panel.style.display
+            === "none"
+          ) {
+
+            panel.style.display =
+              "block";
+
+          } else {
+
+            panel.style.display =
+              "none";
+          }
+
+        }
+      );
+    }
+
+    /* ================================= */
+    /* FILE NAME DISPLAY */
+    /* ================================= */
+    const fileInput =
+      document.getElementById(
+        "sermonFile"
+      );
+
+    if (fileInput) {
+
+      fileInput.addEventListener(
+        "change",
+        () => {
+
+          const label =
+            document.getElementById(
+              "uploadFileName"
+            );
+
+          if (
+            fileInput.files &&
+            fileInput.files[0]
+          ) {
+
+            label.innerHTML =
+              "📄 " +
+              fileInput.files[0].name;
+
+          } else {
+
+            label.innerHTML =
+              "No file selected";
+          }
+
+        }
+      );
+    }
 
 });
 
+/* ===================================== */
+/* REWRITE MODE */
+/* ===================================== */
+function activateRewriteMode(){
+
+  // =============================
+  // SHOW INFO PANEL
+  // =============================
+  const info =
+    document.getElementById(
+      "rewriteInfo"
+    );
+
+  if(info){
+
+    info.style.display =
+      "block";
+  }
+
+  // =============================
+  // ACTIVATE TAB
+  // =============================
+  document
+    .querySelectorAll(
+      ".tab-btn"
+    )
+
+    .forEach(tab => {
+
+      tab.classList.remove(
+        "active"
+      );
+
+    });
+
+  const rewriteTab =
+    document.getElementById(
+      "rewriteTab"
+    );
+
+  if(rewriteTab){
+
+    rewriteTab.classList.add(
+      "active"
+    );
+  }
+
+}
+
+/* ===================================== */
+/* MULTIVERSE MODE */
+/* ===================================== */
+function activateMultiverseMode(){
+
+  // =============================
+  // HIDE REWRITE INFO
+  // =============================
+  const rewriteInfo =
+    document.getElementById(
+      "rewriteInfo"
+    );
+
+  if(rewriteInfo){
+
+    rewriteInfo.style.display =
+      "none";
+  }
+
+  // =============================
+  // SHOW MULTIVERSE INFO
+  // =============================
+  const multiverseInfo =
+    document.getElementById(
+      "multiverseInfo"
+    );
+
+  if(multiverseInfo){
+
+    multiverseInfo.style.display =
+      "block";
+  }
+
+  // =============================
+  // ACTIVE TAB
+  // =============================
+  document
+    .querySelectorAll(
+      ".tab-btn"
+    )
+
+    .forEach(tab => {
+
+      tab.classList.remove(
+        "active"
+      );
+
+    });
+
+  const multiverseTab =
+    document.getElementById(
+      "multiverseTab"
+    );
+
+  if(multiverseTab){
+
+    multiverseTab.classList.add(
+      "active"
+    );
+  }
+
+  // =============================
+  // HIDE NORMAL OUTPUT
+  // =============================
+  const sermonOutput =
+    document.getElementById(
+      "sermonOutput"
+    );
+
+  if(sermonOutput){
+
+    sermonOutput.style.display =
+      "none";
+  }
+
+  // =============================
+  // SHOW MULTIVERSE OUTPUT
+  // =============================
+  const multiverseOutput =
+    document.getElementById(
+      "multiverseOutput"
+    );
+
+  if(multiverseOutput){
+
+    multiverseOutput.style.display =
+      "block";
+  }
+
+}
 </script>
 
+<!-- ================================= -->
+<!-- SHARE MODAL -->
+<!-- ================================= -->
+ <!-- ================================= -->
+<!-- PASTOR SHARE MODAL -->
+<!-- ================================= -->
+<div
+  id="pastorShareModal"
+
+  style="
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+    padding:20px;
+  "
+>
+
+  <div
+
+    style="
+      width:100%;
+      max-width:520px;
+      background:white;
+      border-radius:28px;
+      padding:28px;
+    "
+  >
+
+    <!-- HEADER -->
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:24px;
+      "
+    >
+
+      <h2>
+        🤝 Share With Pastor
+      </h2>
+
+      <button
+
+        onclick="closePastorShareModal()"
+
+        style="
+          width:40px;
+          height:40px;
+          border:none;
+          border-radius:999px;
+          background:#F3F4F6;
+          cursor:pointer;
+        "
+      >
+        ✕
+      </button>
+
+    </div>
+
+   <!-- SEARCH PASTOR -->
+<div
+  style="
+    margin-bottom:18px;
+  "
+>
+
+  <label
+    style="
+      display:block;
+      margin-bottom:8px;
+      font-weight:600;
+    "
+  >
+    Search Pastor
+  </label>
+
+  <input
+
+    type="text"
+
+    id="pastorSearchInput"
+
+    placeholder="
+      Search pastor by name
+    "
+
+    oninput="
+      searchPastors(this.value)
+    "
+
+    style="
+      width:100%;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid #D1D5DB;
+    "
+  >
+
+</div>
+
+<!-- RESULTS -->
+<div
+
+  id="pastorSearchResults"
+
+  style="
+    margin-bottom:22px;
+    display:grid;
+    gap:10px;
+  "
+></div>
+
+<!-- SELECTED -->
+<div
+  id="selectedPastor"
+
+  style="
+    display:none;
+    margin-bottom:22px;
+    padding:14px;
+    border-radius:14px;
+    background:#EEF2FF;
+    color:#312E81;
+    font-weight:600;
+  "
+></div>
+    <!-- COMMENT -->
+    <div
+      style="
+        margin-bottom:22px;
+      "
+    >
+
+      <label
+        style="
+          display:block;
+          margin-bottom:8px;
+          font-weight:600;
+        "
+      >
+        Comment
+      </label>
+
+      <textarea
+
+        id="sharePastorComment"
+
+        placeholder="Add a message..."
+
+        rows="4"
+
+        style="
+          width:100%;
+          padding:14px;
+          border-radius:14px;
+          border:1px solid #D1D5DB;
+          resize:none;
+        "
+      ></textarea>
+
+    </div>
+
+    <!-- ACTION -->
+    <button
+      onclick="shareWithPastor()"
+
+      style="
+        width:100%;
+      "
+    >
+      🚀 Share Sermon
+    </button>
+
+  </div>
+
+</div>
+<div
+  id="shareModal"
+
+  style="
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.65);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    padding:20px;
+  "
+>
+
+  <div
+
+    style="
+      width:100%;
+      max-width:480px;
+      background:white;
+      border-radius:28px;
+      padding:28px;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.2);
+    "
+  >
+
+    <!-- HEADER -->
+    <div
+      style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom:24px;
+      "
+    >
+
+      <h2
+        style="
+          margin:0;
+          font-size:24px;
+        "
+      >
+        🚀 Share Sermon
+      </h2>
+
+      <button
+
+        onclick="closeShareModal()"
+
+        style="
+          background:#F3F4F6;
+          border:none;
+          width:40px;
+          height:40px;
+          border-radius:999px;
+          cursor:pointer;
+          font-size:18px;
+        "
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <!-- ACTIONS -->
+    <div
+      style="
+        display:grid;
+        gap:14px;
+      "
+    >
+
+      <button
+        onclick="shareWhatsApp()"
+      >
+        📲 Share WhatsApp
+      </button>
+
+      <button
+        onclick="copySermon()"
+      >
+        📋 Copy Sermon
+      </button>
+
+      <button
+        onclick="exportPDF()"
+      >
+        🧾 Export PDF
+      </button>
+
+      <button
+        onclick="exportDOCX()"
+      >
+        📝 Export DOCX
+      </button>
+
+      <button
+        onclick="printSermon()"
+      >
+        🖨 Print Sermon
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 <script src="/faith/app.js"></script>
 
 </body>

@@ -2,7 +2,10 @@
 
   <!-- 🔥 BACK -->
   <div class="back-bar">
-    <button onclick="navigate('dashboard')" class="btn-back">
+    <button
+      onclick="navigate('dashboard')"
+      class="btn-back"
+    >
       ← Back to Dashboard
     </button>
   </div>
@@ -11,29 +14,48 @@
   <!-- HEADER -->
   <!-- ========================= -->
   <div class="page-header">
-    <h1>📚 My Sermons</h1>
+
+    <h1>
+      📚 My Sermons
+    </h1>
+
     <p class="subtext">
       View, edit, and manage your saved sermons
     </p>
+
   </div>
 
   <!-- ========================= -->
   <!-- ACTION BAR -->
   <!-- ========================= -->
   <div class="top-actions">
-    <button class="btn-primary" onclick="navigate('sermon')">
+
+    <button
+      class="btn-primary"
+      onclick="navigate('sermon')"
+    >
       ✨ Create New Sermon
     </button>
+
   </div>
 
   <!-- ========================= -->
-  <!-- SERMON LIST -->
+  <!-- MY SERMONS -->
   <!-- ========================= -->
-  <div id="sermonList" class="sermon-list">
+  <div
+    id="mySermonsList"
+    class="sermons-grid"
+  >
 
     <!-- LOADING STATE -->
     <div class="loading-state">
-      ⏳ Loading sermons...
+
+      <div class="loading-spinner"></div>
+
+      <p>
+        Loading sermons...
+      </p>
+
     </div>
 
   </div>
@@ -41,29 +63,67 @@
   <!-- ========================= -->
   <!-- EMPTY STATE -->
   <!-- ========================= -->
-  <div id="emptyState" class="empty-state" style="display:none;">
-    <h3>No sermons yet</h3>
-    <p>Start by creating your first sermon 🙏</p>
+  <div
+    id="emptyState"
+    class="empty-state"
 
-    <button class="btn-primary" onclick="navigate('sermon')">
+    style="display:none;"
+  >
+
+    <h3>
+      No sermons yet
+    </h3>
+
+    <p>
+      Start by creating your first sermon 🙏
+    </p>
+
+    <button
+      class="btn-primary"
+      onclick="navigate('sermon')"
+    >
       ✨ Create Sermon
     </button>
+
   </div>
 
   <!-- ========================= -->
-  <!-- 🔥 NEW: SHARED SERMONS -->
+  <!-- SHARED SERMONS -->
   <!-- ========================= -->
-  <div class="page-header" style="margin-top:30px;">
-    <h2>🤝 Shared With Me</h2>
+  <div
+    class="page-header"
+
+    style="
+      margin-top:40px;
+    "
+  >
+
+    <h2>
+      🤝 Shared With Me
+    </h2>
+
     <p class="subtext">
       Sermons shared by other pastors
     </p>
+
   </div>
 
-  <div id="sharedList" class="sermon-list">
+  <!-- ========================= -->
+  <!-- SHARED LIST -->
+  <!-- ========================= -->
+  <div
+    id="sharedList"
+    class="sermons-grid"
+  >
 
     <div class="loading-state">
-      ⏳ Loading shared sermons...
+
+      <div class="loading-spinner"></div>
+
+      <p>
+        Loading shared sermons...
+      </p>
+
     </div>
 
   </div>

@@ -1,10 +1,16 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-
 from api.db.database import Base
 
-
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Boolean,
+    ForeignKey,
+    DateTime,
+    Text
+)
 class User(Base):
 
     __tablename__ = "users"
@@ -26,6 +32,34 @@ class User(Base):
     church = relationship("Church")
 
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+
+    # =====================================
+    # PASTOR APPROVAL SYSTEM
+    # =====================================
+
+    pastor_status = Column(
+        String,
+        default="member",
+        nullable=False
+    )
+
+    pastor_application_date = Column(
+        DateTime,
+        nullable=True
+    )
+
+    pastor_review_date = Column(
+        DateTime,
+        nullable=True
+    )
+
+    pastor_review_notes = Column(
+        Text,
+        nullable=True
+    )
+
+
 
     # =====================================
     # 🔥 RELATIONSHIPS (MUST BE INSIDE CLASS)
