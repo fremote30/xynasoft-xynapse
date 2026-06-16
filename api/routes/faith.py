@@ -64,15 +64,20 @@ async def create_sermon(
         get_current_user
     )
 ):
-
-    if (
-        current_user.role != "admin"
-        and current_user.pastor_status != "approved"
-    ):
+    # =====================================
+    # MEMBER + PASTOR ACCESS
+    # =====================================
+    if current_user.role not in [
+        "member",
+        "pastor",
+        "admin"
+    ]:
         raise HTTPException(
             status_code=403,
-            detail="Pastor approval required to access Sermon Studio"
+            detail="Unauthorized"
         )
+    # =====================================
+
     print("\n==========")
     print("SERMON REQUEST")
     print("Scripture:", payload.scripture)
@@ -117,18 +122,81 @@ async def create_sermon(
 # =========================================
 @router.post("/sermon/refine")
 async def refine_existing_sermon(
-    payload: SermonRefineRequest
+
+    payload: SermonRefineRequest,
+
+    current_user: User = Depends(
+        get_current_user
+    )
 ):
 
-    refined = refine_sermon(
-        payload.sermon,
-        payload.refine_type
-    )
+    try:
 
-    return {
-        "success": True,
-        "sermon": refined
-    }
+        # =========================
+        # PASTOR ONLY
+        # =========================
+        if current_user.role not in [
+            "pastor",
+            "admin"
+        ]:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Pastor verification required"
+            )
+
+        # =========================
+        # VALIDATE INPUT
+        # =========================
+        if not payload.sermon:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Sermon content required"
+            )
+
+        if not payload.refine_type:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Refine type required"
+            )
+
+        # =========================
+        # REFINE
+        # =========================
+        refined = refine_sermon(
+            payload.sermon,
+            payload.refine_type
+        )
+
+        return {
+
+            "success": True,
+
+            "refine_type":
+                payload.refine_type,
+
+            "sermon":
+                refined
+        }
+
+    except HTTPException:
+
+        raise
+
+    except Exception as e:
+
+        print(
+            "REFINE SERMON ERROR:",
+            str(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=
+                "Failed to refine sermon"
+        )
 
 
 # =========================================
@@ -163,9 +231,11 @@ async def sermon_health():
 # =========================================
 @router.post("/sermon/export-pdf")
 async def export_sermon_pdf(
-    payload: dict
+    payload: dict,
+    current_user: User = Depends(
+        get_current_user
+    )
 ):
-
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(
@@ -382,9 +452,11 @@ async def export_sermon_pdf(
 # =========================================
 @router.post("/sermon/export-docx")
 async def export_sermon_docx(
-    payload: dict
+    payload: dict,
+    current_user: User = Depends(
+        get_current_user
+    )
 ):
-
     document = Document()
 
     # =========================
@@ -928,6 +1000,19 @@ async def share_sermon(
     try:
 
         # =========================
+        # PASTOR ONLY
+        # =========================
+        if current_user.role not in [
+            "pastor",
+            "admin"
+        ]:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Pastor verification required"
+            )
+
+        # =========================
         # INPUTS
         # =========================
         sermon_id = payload.get(
@@ -942,6 +1027,23 @@ async def share_sermon(
             "comment",
             ""
         )
+
+        # =========================
+        # VALIDATE INPUT
+        # =========================
+        if not sermon_id:
+
+            raise HTTPException(
+                status_code=400,
+                detail="sermon_id is required"
+            )
+
+        if not to_pastor_id:
+
+            raise HTTPException(
+                status_code=400,
+                detail="to_pastor_id is required"
+            )
 
         # =========================
         # VALIDATE SERMON
@@ -970,6 +1072,77 @@ async def share_sermon(
             )
 
         # =========================
+        # VALIDATE RECIPIENT
+        # =========================
+        recipient = (
+
+            db.query(User)
+
+            .filter(
+                User.id == to_pastor_id
+            )
+
+            .first()
+        )
+
+        if not recipient:
+
+            raise HTTPException(
+                status_code=404,
+                detail="Recipient not found"
+            )
+
+        # =========================
+        # MUST BE PASTOR
+        # =========================
+        if recipient.role != "pastor":
+
+            raise HTTPException(
+                status_code=400,
+                detail="Recipient must be a pastor"
+            )
+
+        # =========================
+        # PREVENT SELF SHARE
+        # =========================
+        if recipient.id == current_user.id:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Cannot share with yourself"
+            )
+
+        # =========================
+        # PREVENT DUPLICATES
+        # =========================
+        existing = (
+
+            db.query(SharedSermon)
+
+            .filter(
+                SharedSermon.sermon_id
+                == sermon.id
+            )
+
+            .filter(
+                SharedSermon.to_pastor_id
+                == recipient.id
+            )
+
+            .first()
+        )
+
+        if existing:
+
+            return {
+
+                "success": True,
+
+                "message":
+                    "Sermon already shared"
+            }
+
+        # =========================
         # CREATE SHARE
         # =========================
         shared = SharedSermon(
@@ -980,7 +1153,7 @@ async def share_sermon(
                 current_user.id,
 
             to_pastor_id=
-                to_pastor_id,
+                recipient.id,
 
             comment=comment
         )
@@ -988,7 +1161,9 @@ async def share_sermon(
         # =========================
         # ANALYTICS
         # =========================
-        sermon.shares += 1
+        sermon.shares = (
+            sermon.shares or 0
+        ) + 1
 
         # =========================
         # SAVE
@@ -1002,8 +1177,12 @@ async def share_sermon(
             "success": True,
 
             "message":
-                "Sermon shared"
+                "Sermon shared successfully"
         }
+
+    except HTTPException:
+
+        raise
 
     except Exception as e:
 
@@ -1015,9 +1194,8 @@ async def share_sermon(
         raise HTTPException(
             status_code=500,
             detail=
-              "Failed to share sermon"
+                "Failed to share sermon"
         )
-    
 # =========================================
 # SEARCH PASTORS
 # =========================================
@@ -1116,6 +1294,19 @@ async def shared_with_me(
     try:
 
         # =========================
+        # PASTOR ONLY
+        # =========================
+        if current_user.role not in [
+            "pastor",
+            "admin"
+        ]:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Pastor verification required"
+            )
+
+        # =========================
         # FETCH SHARED SERMONS
         # =========================
         shared = (
@@ -1135,7 +1326,7 @@ async def shared_with_me(
         )
 
         # =========================
-        # FORMAT
+        # FORMAT RESPONSE
         # =========================
         results = []
 
@@ -1166,10 +1357,14 @@ async def shared_with_me(
                     item.created_at,
 
                 "sender_name":
-                    sender.name,
+                    sender.name
+                    if sender
+                    else "Unknown",
 
                 "sender_email":
                     sender.email
+                    if sender
+                    else ""
             })
 
         return {
@@ -1179,6 +1374,10 @@ async def shared_with_me(
             "shared_sermons":
                 results
         }
+
+    except HTTPException:
+
+        raise
 
     except Exception as e:
 
@@ -1190,7 +1389,7 @@ async def shared_with_me(
         raise HTTPException(
             status_code=500,
             detail=
-              "Failed to load shared sermons"
+                "Failed to load shared sermons"
         )
     
 # =========================================
@@ -1212,6 +1411,22 @@ async def add_sermon_comment(
 
     try:
 
+        # =========================
+        # PASTOR ONLY
+        # =========================
+        if current_user.role not in [
+            "pastor",
+            "admin"
+        ]:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Pastor verification required"
+            )
+
+        # =========================
+        # INPUTS
+        # =========================
         sermon_id = payload.get(
             "sermon_id"
         )
@@ -1220,7 +1435,20 @@ async def add_sermon_comment(
             "comment"
         )
 
-        if not comment_text:
+        # =========================
+        # VALIDATE INPUTS
+        # =========================
+        if not sermon_id:
+
+            raise HTTPException(
+                status_code=400,
+                detail="sermon_id is required"
+            )
+
+        if (
+            not comment_text
+            or not comment_text.strip()
+        ):
 
             raise HTTPException(
                 status_code=400,
@@ -1228,7 +1456,7 @@ async def add_sermon_comment(
             )
 
         # =========================
-        # VALIDATE ACCESS
+        # VALIDATE SERMON
         # =========================
         sermon = (
 
@@ -1257,20 +1485,29 @@ async def add_sermon_comment(
 
             pastor_id=current_user.id,
 
-            comment=comment_text
+            comment=comment_text.strip()
         )
 
         db.add(comment)
 
         db.commit()
 
+        db.refresh(comment)
+
         return {
 
             "success": True,
 
             "message":
-                "Comment added"
+                "Comment added successfully",
+
+            "comment_id":
+                comment.id
         }
+
+    except HTTPException:
+
+        raise
 
     except Exception as e:
 
@@ -1282,7 +1519,7 @@ async def add_sermon_comment(
         raise HTTPException(
             status_code=500,
             detail=
-              "Failed to add comment"
+                "Failed to add comment"
         )
     
 # =========================================
@@ -1304,6 +1541,43 @@ async def get_sermon_comments(
 
     try:
 
+        # =========================
+        # PASTOR ONLY
+        # =========================
+        if current_user.role not in [
+            "pastor",
+            "admin"
+        ]:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Pastor verification required"
+            )
+
+        # =========================
+        # VALIDATE SERMON
+        # =========================
+        sermon = (
+
+            db.query(Sermon)
+
+            .filter(
+                Sermon.id == sermon_id
+            )
+
+            .first()
+        )
+
+        if not sermon:
+
+            raise HTTPException(
+                status_code=404,
+                detail="Sermon not found"
+            )
+
+        # =========================
+        # FETCH COMMENTS
+        # =========================
         comments = (
 
             db.query(SermonComment)
@@ -1320,6 +1594,9 @@ async def get_sermon_comments(
             .all()
         )
 
+        # =========================
+        # FORMAT RESPONSE
+        # =========================
         results = []
 
         for item in comments:
@@ -1337,14 +1614,21 @@ async def get_sermon_comments(
 
                 "pastor_name":
                     item.pastor.name
+                    if item.pastor
+                    else "Unknown"
             })
 
         return {
 
             "success": True,
 
-            "comments": results
+            "comments":
+                results
         }
+
+    except HTTPException:
+
+        raise
 
     except Exception as e:
 
@@ -1356,5 +1640,5 @@ async def get_sermon_comments(
         raise HTTPException(
             status_code=500,
             detail=
-              "Failed to load comments"
+                "Failed to load comments"
         )

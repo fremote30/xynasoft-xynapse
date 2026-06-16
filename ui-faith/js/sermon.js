@@ -20,113 +20,335 @@
     remove
   } = storage || {};
 
-  // =====================================
-  // RESTORE SERMON DRAFT
-  // =====================================
-  function restoreLatestSermon(){
+// =====================================
+// RESTORE SERMON DRAFT
+// =====================================
+function restoreLatestSermon(){
 
-    try {
+  try {
 
-      const latest =
-        localStorage.getItem(
-          "latest_sermon"
-        );
+    const draftKey =
+      getLatestSermonKey();
 
-      const output =
-        $("sermonOutput");
-
-      if(
-        !latest ||
-        !output
-      ){
-        return;
-      }
-
-      const parsed =
-        JSON.parse(latest);
-
-      window.currentGeneratedSermon =
-        parsed;
-
-      renderCurrentSermon(parsed,false);
-
-    } catch(err){
-
-      console.error(
-        "Restore sermon error:",
-        err
-      );
+    if (!draftKey) {
+      return;
     }
+
+    const latest =
+      localStorage.getItem(
+        draftKey
+      );
+
+    const output =
+      $("sermonOutput");
+
+    if(
+      !latest ||
+      !output
+    ){
+      return;
+    }
+
+    const parsed =
+      JSON.parse(
+        latest
+      );
+
+    window.currentGeneratedSermon =
+      parsed;
+
+    renderCurrentSermon(
+      parsed,
+      false
+    );
+
+    console.log(
+      "✅ Draft restored:",
+      draftKey
+    );
+
+  } catch(err){
+
+    console.error(
+      "Restore sermon error:",
+      err
+    );
+  }
+}
+
+// =====================================
+// CLEAR CURRENT SERMON
+// =====================================
+function clearCurrentSermon(){
+
+  if(
+    !confirm(
+      "Clear current sermon draft?"
+    )
+  ){
+    return;
   }
 
-  // =====================================
-  // BIND SERMON STUDIO
-  // =====================================
-function bindSermonStudio() {
+  // =========================
+  // REMOVE SAVED DRAFT
+  // =========================
+  const draftKey =
+    getLatestSermonKey();
 
-  if (!$("userInput"))
-    return;
+  if(draftKey){
 
-  restoreLatestSermon();
+    localStorage.removeItem(
+      draftKey
+    );
+  }
 
-  initializeMobileTabs();
-}
-  // =====================================
-  // GENERATE SERMON
-  // =====================================
-  async function generateSermon() {
+  // =========================
+  // CLEAR MEMORY
+  // =========================
+  window.currentGeneratedSermon =
+    null;
 
-    const output = $("sermonOutput");
+  window.currentSermonId =
+    null;
+
+  // =========================
+  // CLEAR FORM FIELDS
+  // =========================
+  const userInput =
+    $("userInput");
+
+  const bibleInput =
+    $("bibleInput");
+
+  const audience =
+    $("audience");
+
+  const context =
+    $("context");
+
+  const denomination =
+    $("denomination");
+
+  const tone =
+    $("tone");
+
+  const duration =
+    $("duration");
+
+  if(userInput){
+    userInput.value = "";
+  }
+
+  if(bibleInput){
+    bibleInput.value = "";
+  }
+
+  if(audience){
+    audience.value = "";
+  }
+
+  if(context){
+    context.value = "";
+  }
+
+  if(denomination){
+    denomination.value = "general";
+  }
+
+  if(tone){
+    tone.value = "balanced";
+  }
+
+  if(duration){
+    duration.value = "30";
+  }
+
+  // =========================
+  // RESET OUTPUT
+  // =========================
+  const output =
+    $("sermonOutput");
+
+  if(output){
 
     output.innerHTML = `
 
-      <div class="loading-state">
+      <div
+        id="emptyState"
+        class="empty-state"
+      >
 
-        <div class="loading-spinner"></div>
+        <div class="empty-icon">
+          ✨
+        </div>
 
         <h2>
-          ✨ Crafting your sermon...
+          Ready to help craft
+          your next message
         </h2>
 
         <p>
-          Connecting scripture, structure,
-          illustrations, and applications.
+          Generate sermons,
+          refine ideas,
+          build illustrations,
+          and prepare impactful
+          teachings powered by AI.
         </p>
 
       </div>
 
     `;
+  }
 
-    try {
+  // =========================
+  // HIDE COLLABORATION
+  // =========================
+  const collab =
+    $("collaborationSection");
 
-      const payload = {
+  if(collab){
 
-        input:
-          $("userInput")?.value || "",
+    collab.style.display =
+      "none";
+  }
 
-        scripture:
-          $("bibleInput")?.value || "",
-        denomination:
-          $("denomination")?.value || "general",
+  showToast(
+    "🗑️ Sermon cleared",
+    "success"
+  );
+}
 
-        audience:
-          $("audience")?.value || "",
+// =====================================
+// BIND SERMON STUDIO
+// =====================================
+function bindSermonStudio() {
 
-        context:
-          $("context")?.value || "",
+  if (
+    !$("userInput")
+  ){
+    return;
+  }
 
-        tone:
-          $("tone")?.value || "balanced",
+  // =====================================
+  // ROLE-BASED UI
+  // =====================================
+  const isPastor =
+    window.currentUser?.role ===
+      "pastor" ||
+    window.currentUser?.role ===
+      "admin";
 
-        duration:
-          $("duration")?.value || "30"
-      };
+  document
+    .querySelectorAll(
+      ".pastor-only"
+    )
+    .forEach(el => {
 
-      console.log(
-        "SERMON PAYLOAD",
-        payload
-      );
-      const res = await apiFetch(
+      el.style.display =
+        isPastor
+          ? ""
+          : "none";
+    });
+
+  console.log(
+    "ROLE CHECK:",
+    window.currentUser?.role,
+    "isPastor:",
+    isPastor
+  );
+
+  // =====================================
+  // RESTORE DRAFT
+  // =====================================
+  restoreLatestSermon();
+
+  // =====================================
+  // MOBILE TABS
+  // =====================================
+  initializeMobileTabs();
+
+  // =====================================
+  // MEMBER EXPERIENCE
+  // =====================================
+  if (!isPastor) {
+
+    const collaborationSection =
+      $("collaborationSection");
+
+    if (
+      collaborationSection
+    ) {
+
+      collaborationSection.style.display =
+        "none";
+    }
+  }
+}
+
+// =====================================
+// GENERATE SERMON
+// =====================================
+async function generateSermon() {
+
+  const output =
+    $("sermonOutput");
+
+  if (!output) {
+    return;
+  }
+
+  output.innerHTML = `
+
+    <div class="loading-state">
+
+      <div class="loading-spinner"></div>
+
+      <h2>
+        ✨ Crafting your sermon...
+      </h2>
+
+      <p>
+        Connecting scripture, structure,
+        illustrations, and applications.
+      </p>
+
+    </div>
+
+  `;
+
+  try {
+
+    const payload = {
+
+      input:
+        $("userInput")?.value || "",
+
+      scripture:
+        $("bibleInput")?.value || "",
+
+      denomination:
+        $("denomination")?.value || "general",
+
+      audience:
+        $("audience")?.value || "",
+
+      context:
+        $("context")?.value || "",
+
+      tone:
+        $("tone")?.value || "balanced",
+
+      duration:
+        $("duration")?.value || "30"
+    };
+
+    console.log(
+      "SERMON PAYLOAD",
+      payload
+    );
+
+    const res =
+      await apiFetch(
         "/api/v1/faith/sermon",
         {
           method: "POST",
@@ -136,77 +358,108 @@ function bindSermonStudio() {
               "application/json"
           },
 
-          body: JSON.stringify(payload)
+          body: JSON.stringify(
+            payload
+          )
         }
       );
 
-        if (!res.ok) {
+    if (!res.ok) {
 
-        const errorText =
-          await res.text();
-
-        console.error(
-          "Generation API Error:",
-          errorText
-        );
-
-        throw new Error(
-          errorText
-        );
-      }
-
-      const data =
-        await res.json();
-
-      window.currentGeneratedSermon =
-        data;
-
-      set(
-        "latest_sermon",
-        data
-      );
-
-      renderCurrentSermon(data);
-      showMobileTab("output");
-      showToast(
-        "✨ Sermon generated successfully",
-        "success"
-      );
-
-    } catch (err) {
+      const errorText =
+        await res.text();
 
       console.error(
-        "Generate sermon error:",
-        err
+        "Generation API Error:",
+        errorText
       );
 
-      output.innerHTML = `
-
-        <div class="error-state">
-
-          <h2>
-            Unable to generate sermon
-          </h2>
-
-          <p>
-            Please try again.
-          </p>
-
-        </div>
-
-      `;
-
-      showToast(
-        "Failed to generate sermon",
-        "error"
+      throw new Error(
+        errorText
       );
     }
+
+    const data =
+      await res.json();
+
+    // =========================
+    // STORE IN MEMORY
+    // =========================
+    window.currentGeneratedSermon =
+      data;
+
+    // =========================
+    // USER-SPECIFIC DRAFT
+    // =========================
+    const draftKey =
+      getLatestSermonKey();
+
+    if (draftKey) {
+
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify(data)
+      );
+    }
+
+    // =========================
+    // RENDER SERMON
+    // =========================
+    renderCurrentSermon(
+      data
+    );
+
+    // =========================
+    // MOBILE ONLY
+    // =========================
+    if (
+      window.innerWidth <= 768
+    ) {
+
+      showMobileTab(
+        "output"
+      );
+    }
+
+    showToast(
+      "✨ Sermon generated successfully",
+      "success"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Generate sermon error:",
+      err
+    );
+
+    output.innerHTML = `
+
+      <div class="error-state">
+
+        <h2>
+          Unable to generate sermon
+        </h2>
+
+        <p>
+          Please try again.
+        </p>
+
+      </div>
+
+    `;
+
+    showToast(
+      "Failed to generate sermon",
+      "error"
+    );
   }
+}
 
-  // =====================================
-  // RENDER CURRENT SERMON
-  // =====================================
 
+// =====================================
+// RENDER CURRENT SERMON
+// =====================================
 function renderCurrentSermon(
   sermon,
   scroll = true
@@ -221,9 +474,31 @@ function renderCurrentSermon(
   const collaborationSection =
     $("collaborationSection");
 
+  // =====================================
+  // USER ROLE
+  // =====================================
+  const isPastor =
+    window.currentUser?.role === "pastor" ||
+    window.currentUser?.role === "admin";
+
   if (!output) {
     return;
   }
+
+  // =====================================
+  // PASTOR-ONLY UI
+  // =====================================
+  document
+    .querySelectorAll(
+      ".pastor-only"
+    )
+    .forEach(el => {
+
+      el.style.display =
+        isPastor
+          ? ""
+          : "none";
+    });
 
   // =====================================
   // NO SERMON YET
@@ -231,11 +506,13 @@ function renderCurrentSermon(
   if (!sermon) {
 
     if (emptyState) {
+
       emptyState.style.display =
         "block";
     }
 
     if (collaborationSection) {
+
       collaborationSection.style.display =
         "none";
     }
@@ -255,12 +532,14 @@ function renderCurrentSermon(
   }
 
   // =====================================
-  // SHOW COLLABORATION
+  // PASTOR / ADMIN ONLY
   // =====================================
   if (collaborationSection) {
 
     collaborationSection.style.display =
-      "block";
+      isPastor
+        ? "block"
+        : "none";
   }
 
   // =====================================
@@ -272,12 +551,30 @@ function renderCurrentSermon(
     );
 
   // =====================================
+  // LOAD COMMENTS
+  // PASTOR / ADMIN ONLY
+  // =====================================
+  if (
+    isPastor &&
+    sermon.id &&
+    typeof loadSermonComments ===
+      "function"
+  ) {
+
+    loadSermonComments(
+      sermon.id
+    );
+  }
+
+  // =====================================
   // SCROLL TO OUTPUT
   // =====================================
   if (scroll) {
 
     output.scrollIntoView({
+
       behavior: "smooth"
+
     });
   }
 }
@@ -425,89 +722,103 @@ function renderCurrentSermon(
     `;
   }
 
+
   // =====================================
-  // SAVE CURRENT SERMON
-  // =====================================
-  async function saveCurrentSermon(){
+// SAVE CURRENT SERMON
+// =====================================
+async function saveCurrentSermon(){
 
-    const sermon =
-      window.currentGeneratedSermon;
+  const sermon =
+    window.currentGeneratedSermon;
 
-    if(!sermon){
+  if(!sermon){
 
-      showToast(
-        "Generate sermon first",
-        "error"
-      );
+    showToast(
+      "Generate sermon first",
+      "error"
+    );
 
-      return;
-    }
+    return;
+  }
 
-    try {
+  try {
 
-      showToast(
-        "💾 Saving sermon...",
-        "success"
-      );
+    showToast(
+      "💾 Saving sermon...",
+      "success"
+    );
 
-      const response =
+    const response =
       await apiFetch(
 
-          "/api/v1/faith/sermon/save",
+        "/api/v1/faith/sermon/save",
 
-          {
+        {
           method: "POST",
 
           body: JSON.stringify(
-              sermon
+            sermon
           )
-          }
+        }
       );
 
-      if(!response.ok){
+    if(!response.ok){
 
-        throw new Error(
-          "Failed to save sermon"
-        );
-      }
-
-      const data =
-        await response.json();
-
-      set(
-        "latest_sermon",
-        sermon
-      );
-
-      if(data.sermon_id){
-
-        localStorage.setItem(
-          "last_saved_sermon_id",
-          data.sermon_id
-        );
-      }
-
-      window.currentSermonId =
-        data.sermon_id;
-
-      showToast(
-        "✅ Sermon saved",
-        "success"
-      );
-
-    } catch(err){
-
-      console.error(
-        "Save sermon error:",
-        err
-      );
-
-      showToast(
-        "Save failed",
-        "error"
+      throw new Error(
+        "Failed to save sermon"
       );
     }
+
+    const data =
+      await response.json();
+
+    // =========================
+    // USER-SPECIFIC DRAFT
+    // =========================
+    const draftKey =
+      getLatestSermonKey();
+
+    if (
+      draftKey
+    ) {
+
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify(
+          sermon
+        )
+      );
+    }
+
+    if(data.id){
+
+      localStorage.setItem(
+        "last_saved_sermon_id",
+        data.id
+      );
+
+      window.currentSermonId =
+        data.id;
+    }
+
+    showToast(
+      "✅ Sermon saved",
+      "success"
+    );
+
+  } catch(err){
+
+    console.error(
+      "Save sermon error:",
+      err
+    );
+
+    showToast(
+      "Save failed",
+      "error"
+    );
   }
+}
 
   // =====================================
   // UPDATE CURRENT SERMON
@@ -895,7 +1206,49 @@ function renderCurrentSermon(
   // ============================
 // MOBILE TABS FUNCTION
 // ============================
+
+// ============================
+// MOBILE TABS FUNCTION
+// ============================
 function showMobileTab(tab) {
+
+  // =====================================
+  // DESKTOP NEVER USES MOBILE TABS
+  // =====================================
+  if (window.innerWidth > 768) {
+
+    const inputs =
+      document.getElementById(
+        "mobileInputsTab"
+      );
+
+    const output =
+      document.getElementById(
+        "mobileOutputTab"
+      );
+
+    const actions =
+      document.getElementById(
+        "mobileActionsTab"
+      );
+
+    if (inputs) {
+      inputs.style.display =
+        "block";
+    }
+
+    if (output) {
+      output.style.display =
+        "block";
+    }
+
+    if (actions) {
+      actions.style.display =
+        "block";
+    }
+
+    return;
+  }
 
   const inputs =
     document.getElementById(
@@ -912,9 +1265,6 @@ function showMobileTab(tab) {
       "mobileActionsTab"
     );
 
-  // ==========================
-  // SHOW / HIDE SECTIONS
-  // ==========================
   if (inputs) {
     inputs.style.display =
       tab === "inputs"
@@ -936,9 +1286,6 @@ function showMobileTab(tab) {
         : "none";
   }
 
-  // ==========================
-  // TAB ACTIVE STATE
-  // ==========================
   document
     .querySelectorAll(
       ".mobile-tab"
@@ -972,35 +1319,35 @@ function showMobileTab(tab) {
 // =====================================
 function initializeMobileTabs() {
 
-  const inputs =
-    document.getElementById(
-      "mobileInputsTab"
-    );
+  // Desktop should never use mobile tabs
+  if (window.innerWidth > 768) {
 
-  const output =
-    document.getElementById(
-      "mobileOutputTab"
-    );
+    const output =
+      document.getElementById(
+        "mobileOutputTab"
+      );
 
-  const actions =
-    document.getElementById(
-      "mobileActionsTab"
-    );
+    const actions =
+      document.getElementById(
+        "mobileActionsTab"
+      );
 
-  if (
-    inputs ||
-    output ||
-    actions
-  ) {
+    if (output) {
+      output.style.display = "block";
+    }
 
-    showMobileTab(
-      "inputs"
-    );
+    if (actions) {
+      actions.style.display = "block";
+    }
 
-    console.log(
-      "✅ Mobile tabs initialized"
-    );
+    return;
   }
+
+  showMobileTab("inputs");
+
+  console.log(
+    "✅ Mobile tabs initialized"
+  );
 }
 
 
@@ -1016,7 +1363,20 @@ document.addEventListener(
   }
 );
 
+// =====================================
+// USER-SPECIFIC DRAFT KEY
+// =====================================
+function getLatestSermonKey() {
 
+  const userId =
+    window.currentUser?.id;
+
+  if (!userId) {
+    return null;
+  }
+
+  return `latest_sermon_${userId}`;
+}
 // =====================================
 // EXPORTS
 // =====================================
@@ -1043,6 +1403,9 @@ window.saveCurrentSermon =
 
 window.updateCurrentSermon =
   updateCurrentSermon;
+
+window.clearCurrentSermon =
+  clearCurrentSermon;
 
 window.openPreachMode =
   openPreachMode;

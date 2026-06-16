@@ -256,7 +256,7 @@
 
         if (
           user.role === "member" &&
-          ["dashboard", "sermon"]
+          ["dashboard"]
             .includes(page)
         ) {
 
@@ -513,6 +513,7 @@
       }
 
       // MY SERMONS
+      // MY SERMONS
       if (page === "mysermons") {
 
         await loadUserInfo();
@@ -523,7 +524,14 @@
 
         await loadMySermons();
 
-        await loadSharedSermons();
+        // Shared sermons are pastor-only
+        if (
+          window.currentUser &&
+          window.currentUser.role === "pastor"
+        ) {
+
+          await loadSharedSermons();
+        }
       }
 
       // EDIT PROFILE

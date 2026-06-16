@@ -201,6 +201,9 @@ window.logout =
 
     try {
 
+      // =========================
+      // CLEAR AUTH
+      // =========================
       removeToken();
 
       localStorage.removeItem(
@@ -211,39 +214,77 @@ window.logout =
         "userRole"
       );
 
-      window.currentUser = null;
+      // =========================
+      // CLEAR ACTIVE SESSION
+      // =========================
+      window.currentUser =
+        null;
 
+      window.currentGeneratedSermon =
+        null;
+
+      window.currentSermonId =
+        null;
+
+      // =========================
+      // DO NOT REMOVE
+      // USER DRAFTS
+      // =========================
+      // latest_sermon_<userId>
+      // remains intact so users
+      // can restore drafts later
+
+      // =========================
+      // REFRESH NAVBAR
+      // =========================
       if (
         typeof renderNavbar ===
         "function"
       ) {
+
         renderNavbar();
       }
 
+      // =========================
+      // REFRESH MOBILE DRAWER
+      // =========================
       if (
         typeof loadMobileDrawerUser ===
         "function"
       ) {
+
         loadMobileDrawerUser();
       }
 
+      // =========================
+      // CLOSE MOBILE DRAWER
+      // =========================
       const drawer =
         document.getElementById(
           "mobileDrawer"
         );
 
       if (drawer) {
+
         drawer.classList.remove(
           "open"
         );
       }
 
+      // =========================
+      // SUCCESS
+      // =========================
       showToast(
         "Logged out",
         "success"
       );
 
-      navigate("home");
+      // =========================
+      // RETURN HOME
+      // =========================
+      navigate(
+        "home"
+      );
 
     } catch (err) {
 

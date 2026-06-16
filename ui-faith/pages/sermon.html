@@ -999,7 +999,7 @@ textarea{
 
 <div
   id="collaborationSection"
-  class="feature-card"
+  class="feature-card pastor-only"
   style="margin-top:28px; display:none;"
 >
   <!-- HEADER -->
@@ -1100,7 +1100,7 @@ textarea{
   >
 
     <!-- REFINE -->
-    <div class="action-card">
+    <div class="action-card pastor-only">
 
       <h3>
         ✨ Refine
@@ -1150,6 +1150,12 @@ textarea{
         📝 Update Sermon
       </button>
       <button
+        onclick="clearCurrentSermon()"
+      >
+        🗑️ Clear Sermon
+      </button>
+
+      <button
             onclick="printSermon()"
           >
             🖨 Print Sermon
@@ -1178,6 +1184,7 @@ textarea{
       </button>
 
       <button
+        class="pastor-only"
         onclick="openPreachMode()"
       >
         🎤 Preach Mode
@@ -1189,6 +1196,7 @@ textarea{
         📲 WhatsApp
       </button>
       <button
+        class="pastor-only"
         onclick="openPastorShareModal()"
       >
         🤝 Share with Pastor
@@ -1196,7 +1204,7 @@ textarea{
     </div>
 
     <!-- COLLAB -->
-    <div class="action-card">
+    <div class="action-card pastor-only">
 
       <h3>
         💬 Collaboration
@@ -1221,39 +1229,19 @@ textarea{
 <!-- ===================================== -->
 <div class="mobile-action-bar">
 
-  <button
-    onclick="showMobileTab('inputs')"
-  >
+  <button onclick="showMobileTab('inputs')">
     📝
     <span>Inputs</span>
   </button>
 
-  <button
-    onclick="showMobileTab('output')"
-  >
+  <button onclick="showMobileTab('output')">
     📖
     <span>Output</span>
   </button>
 
-  <button
-    onclick="showMobileTab('actions')"
-  >
+  <button onclick="showMobileTab('actions')">
     ⚡
     <span>Actions</span>
-  </button>
-
-  <button
-    onclick="openPreachMode()"
-  >
-    🎤
-    <span>Preach</span>
-  </button>
-
-  <button
-    onclick="shareWhatsApp()"
-  >
-    📲
-    <span>Share</span>
   </button>
 
 </div>

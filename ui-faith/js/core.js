@@ -52,6 +52,8 @@
       nav.innerHTML = `
         <button data-page="home" class="nav-link" onclick="navigate('home')">Home</button>
         <button data-page="member-dashboard" class="nav-link" onclick="navigate('member-dashboard')">Dashboard</button>
+         <button data-page="sermon" class="nav-link" onclick="navigate('sermon')">Sermon Studio</button>
+        <button data-page="mysermons" class="nav-link" onclick="navigate('mysermons')">My Sermons</button>
         <button data-page="network" class="nav-link" onclick="navigate('network')">Network</button>
         <button class="btn-secondary" onclick="typeof logout === 'function' && logout()">Logout</button>
       `;
@@ -98,6 +100,8 @@
         drawerLinks.innerHTML = `
             <button onclick="navigate('home')">🏠 Home</button>
             <button onclick="navigate('member-dashboard')">📊 Dashboard</button>
+            <button onclick="navigate('sermon')">✍️ Sermon Studio</button>
+            <button onclick="navigate('mysermons')">📚 My Sermons</button>
             <button onclick="navigate('network')">🌐 Network</button>
             <button onclick="logout()">🧱 Logout</button>
         `;
