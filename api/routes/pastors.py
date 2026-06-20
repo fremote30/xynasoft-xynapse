@@ -1,3 +1,7 @@
+# LEGACY / FUTURE ROUTES
+# Not currently used by frontend.
+
+
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 
@@ -352,3 +356,148 @@ def member_feed(
         })
 
     return results
+
+# =========================
+# PENDING APPLICATIONS
+# ADMIN ONLY
+# =========================
+@router.get("/pending")
+def get_pending_applications(
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+
+    current_user = get_current_user(
+        authorization,
+        db
+    )
+
+    if current_user.role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required"
+        )
+
+    applications = db.query(User).filter(
+        User.pastor_status == "pending"
+    ).order_by(
+        User.pastor_application_date.desc()
+    ).all()
+
+    results = []
+
+    for user in applications:
+
+        results.append({
+
+            "id": user.id,
+
+            "name": user.name,
+
+            "email": user.email,
+
+            "pastor_status":
+                user.pastor_status,
+
+            "applied_at":
+                user.pastor_application_date
+        })
+
+    return results
+
+# =========================
+# APPROVE PASTOR
+# ADMIN ONLY
+# =========================
+@router.post("/approve/{user_id}")
+def approve_pastor(
+    user_id: int,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+
+    current_user = get_current_user(
+        authorization,
+        db
+    )
+
+    if current_user.role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required"
+        )
+
+    user = db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+    if not user:
+
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    user.role = "pastor"
+
+    user.pastor_status = "approved"
+
+    user.pastor_review_date = (
+        datetime.utcnow()
+    )
+
+    db.commit()
+
+    return {
+        "message":
+            "Pastor approved successfully"
+    }
+
+# =========================
+# REJECT PASTOR
+# ADMIN ONLY
+# =========================
+@router.post("/reject/{user_id}")
+def reject_pastor(
+    user_id: int,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+
+    current_user = get_current_user(
+        authorization,
+        db
+    )
+
+    if current_user.role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required"
+        )
+
+    user = db.query(User).filter(
+        User.id == user_id
+    ).first()
+
+    if not user:
+
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    user.pastor_status = "rejected"
+
+    user.pastor_review_date = (
+        datetime.utcnow()
+    )
+
+    db.commit()
+
+    return {
+        "message":
+            "Application rejected"
+    }

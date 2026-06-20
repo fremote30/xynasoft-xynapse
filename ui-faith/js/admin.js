@@ -119,47 +119,103 @@ async function loadPastorApplications() {
     }
 }
 
+
 async function approvePastor(
-    userId
+  userId
 ) {
 
-    const token =
-        localStorage.getItem(
-            "access_token"
-        );
+  try {
 
-    await fetch(
-        `/api/v1/users/${userId}/approve-pastor`,
+    const token =
+      localStorage.getItem(
+        "access_token"
+      );
+
+    const response =
+      await fetch(
+        `/api/v1/pastors/approve/${userId}`,
         {
-            method: "POST",
-            headers: {
-                Authorization:
-                    `Bearer ${token}`
-            }
+          method: "POST",
+
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
         }
+      );
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Approval failed"
+      );
+    }
+
+    showToast(
+      "✅ Pastor approved",
+      "success"
     );
 
     loadPastorApplications();
+
+  } catch (err) {
+
+    console.error(err);
+
+    showToast(
+      "Approval failed",
+      "error"
+    );
+  }
 }
+
+
+
 async function rejectPastor(
-    userId
+  userId
 ) {
 
-    const token =
-        localStorage.getItem(
-            "access_token"
-        );
+  try {
 
-    await fetch(
-        `/api/v1/users/${userId}/reject-pastor`,
+    const token =
+      localStorage.getItem(
+        "access_token"
+      );
+
+    const response =
+      await fetch(
+        `/api/v1/pastors/reject/${userId}`,
         {
-            method: "POST",
-            headers: {
-                Authorization:
-                    `Bearer ${token}`
-            }
+          method: "POST",
+
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
         }
+      );
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Rejection failed"
+      );
+    }
+
+    showToast(
+      "Application rejected",
+      "success"
     );
 
     loadPastorApplications();
+
+  } catch (err) {
+
+    console.error(err);
+
+    showToast(
+      "Rejection failed",
+      "error"
+    );
+  }
 }

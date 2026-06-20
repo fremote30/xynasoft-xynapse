@@ -634,77 +634,95 @@
     }
   }
 
-  // =====================================
-  // UPGRADE TO PASTOR
-  // =====================================
-  async function upgradeToPastor() {
+// =====================================
+// APPLY FOR PASTOR
+// =====================================
+async function upgradeToPastor() {
 
-    try {
+  try {
 
-      const token =
-        getToken();
+    const token =
+      getToken();
 
-      const response =
-        await fetch(
-          "/api/v1/users/upgrade-to-pastor",
-          {
-            method: "POST",
+    const response =
+      await fetch(
+        "/api/v1/pastors/apply",
+        {
+          method: "POST",
 
-            headers: {
-              "Authorization":
-                `Bearer ${token}`
-            }
+          headers: {
+            Authorization:
+              `Bearer ${token}`
           }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-
-        throw new Error(
-          data.detail ||
-          "Upgrade failed"
-        );
-      }
-
-      window.currentUser =
-        data.user;
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(
-          data.user
-        )
+        }
       );
 
-      localStorage.setItem(
-        "userRole",
-        data.user.role
-      );
+    const data =
+      await response.json();
 
-      showToast(
-        "🎉 You are now a Pastor!",
-        "success"
-      );
+    if (!response.ok) {
 
-      renderNavbar?.();
-
-      navigate(
-        "dashboard"
-      );
-
-    } catch (err) {
-
-      console.error(err);
-
-      showToast(
-        err.message ||
-        "Upgrade failed",
-        "error"
+      throw new Error(
+        data.detail ||
+        "Application failed"
       );
     }
+
+    showToast(
+      "✅ Pastor application submitted",
+      "success"
+    );
+
+    const badge =
+      document.getElementById(
+        "pastorStatusBadge"
+      );
+
+    if (badge) {
+
+      badge.textContent =
+        "Application Pending";
+
+      badge.classList.add(
+        "pending"
+      );
+    }
+
+    const msg =
+      document.getElementById(
+        "pastorUpgradeMessage"
+      );
+
+    if (msg) {
+
+      msg.textContent =
+        "Your application has been submitted and is awaiting administrator review.";
+    }
+
+    const btn =
+      document.getElementById(
+        "upgradePastorBtn"
+      );
+
+    if (btn) {
+
+      btn.disabled = true;
+
+      btn.textContent =
+        "Application Pending";
+    }
+
+  } catch (err) {
+
+    console.error(err);
+
+    showToast(
+      err.message ||
+      "Application failed",
+      "error"
+    );
   }
+}
 
   // =====================================
   // GLOBAL EXPORTS

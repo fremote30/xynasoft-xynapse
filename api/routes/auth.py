@@ -119,7 +119,13 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
                 "id": user.id,
                 "name": user.name,
                 "email": user.email,
-                "role": user.role
+                "role": user.role,
+                "pastor_status": user.pastor_status,
+                "pastor_application_date": (
+                    user.pastor_application_date.isoformat()
+                    if user.pastor_application_date
+                    else None
+                )
             }
             
         }
@@ -202,7 +208,13 @@ def get_me(
             "id": user.id,
             "name": user.name,
             "email": user.email,
-            "role": user.role
+            "role": user.role,
+            "pastor_status": user.pastor_status,
+            "pastor_application_date": (
+                user.pastor_application_date.isoformat()
+                if user.pastor_application_date
+                else None
+            )
         }
 
     except HTTPException:

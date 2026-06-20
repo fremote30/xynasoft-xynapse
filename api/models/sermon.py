@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import (
     Column,
     Integer,
@@ -8,15 +10,23 @@ from sqlalchemy import (
 )
 
 from sqlalchemy.orm import relationship
-
-from datetime import datetime
+from sqlalchemy.dialects.postgresql import JSONB
 
 from api.db.database import Base
-from sqlalchemy.dialects.postgresql import JSONB
+
 
 class Sermon(Base):
 
     __tablename__ = "sermons"
+
+    # =====================================
+    # 🔑 PRIMARY KEY
+    # =====================================
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
     # =====================================
     # 📝 TITLE
@@ -28,7 +38,7 @@ class Sermon(Base):
     )
 
     # =====================================
-    # 📖 SCRIPTURE (NEW)
+    # 📖 SCRIPTURE
     # =====================================
     scripture = Column(
         String,
@@ -36,31 +46,21 @@ class Sermon(Base):
     )
 
     # =====================================
-    # 🔑 CORE FIELDS
-    # =====================================
-    id = Column(
-        Integer,
-        primary_key=True,
-        index=True
-    )
-
-    # =====================================
-    # 🧠 STRUCTURED SERMON JSON
-    # STORES FULL JSON STRING
+    # 🧠 SERMON CONTENT
     # =====================================
     content = Column(
         Text,
         nullable=True
     )
-  
+
     # =====================================
-    # 🧠 STRUCTURED SERMON JSON
-    # FUTURE-PROOF STORAGE
+    # 🧠 FUTURE STRUCTURED JSON STORAGE
     # =====================================
     sermon_data = Column(
         JSONB,
         nullable=True
     )
+
     # =====================================
     # 👤 AUTHOR
     # =====================================
@@ -87,11 +87,11 @@ class Sermon(Base):
         index=True
     )
 
-    #updated_at = Column(
-       # DateTime,
-        #default=datetime.utcnow,
-        #onupdate=datetime.utcnow
-    #)
+    updated_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
 
     # =====================================
     # 📊 ANALYTICS
@@ -110,20 +110,17 @@ class Sermon(Base):
     # 🔗 RELATIONSHIPS
     # =====================================
 
-    # 👤 AUTHOR RELATIONSHIP
     author = relationship(
         "User",
         back_populates="sermons"
     )
 
-    # 🔁 SHARED SERMONS
     shared_sermons = relationship(
         "SharedSermon",
         back_populates="sermon",
         cascade="all, delete-orphan"
     )
 
-    # 💬 COMMENTS
     comments = relationship(
         "SermonComment",
         back_populates="sermon",

@@ -225,57 +225,76 @@
         page = "login";
       }
 
-      // =====================================
-      // ROLE GUARDS
-      // =====================================
-      let user =
-        window.currentUser;
+ // =====================================
+// ROLE GUARDS
+// =====================================
+let user =
+  window.currentUser;
 
-      if (!user) {
+if (!user) {
 
-        const storedRole =
-          localStorage.getItem(
-            "userRole"
-          );
+  const storedRole =
+    localStorage.getItem(
+      "userRole"
+    );
 
-        if (storedRole) {
+  if (storedRole) {
 
-          user = {
-            role: storedRole
-          };
+    user = {
+      role: storedRole
+    };
 
-          window.currentUser =
-            user;
-        }
-      }
+    window.currentUser =
+      user;
+  }
+}
 
-      // =====================================
-      // MEMBER BLOCK
-      // =====================================
-      if (user) {
+if (user) {
 
-        if (
-          user.role === "member" &&
-          ["dashboard"]
-            .includes(page)
-        ) {
+  // =====================================
+  // MEMBER DASHBOARD
+  // =====================================
+  if (
+    user.role === "member" &&
+    page === "dashboard"
+  ) {
 
-          page =
-            "member-dashboard";
-        }
+    page =
+      "member-dashboard";
+  }
 
-        // =====================================
-        // PASTOR BLOCK
-        // =====================================
-        if (
-          user.role === "pastor" &&
-          page ===
-          "member-dashboard"
-        ) {
+  // =====================================
+  // PASTOR DASHBOARD
+  // =====================================
+  if (
+    user.role === "pastor" &&
+    page ===
+      "member-dashboard"
+  ) {
 
-          page = "dashboard";
-        }
-      }
+    page =
+      "dashboard";
+  }
+
+  // =====================================
+  // ADMIN ONLY PAGE
+  // =====================================
+  if (
+    page ===
+      "admin-approvals" &&
+    user.role !==
+      "admin"
+  ) {
+
+    page =
+      user.role ===
+      "member"
+
+        ? "member-dashboard"
+
+        : "dashboard";
+  }
+}
 
       // =====================================
       // FIND ROUTE

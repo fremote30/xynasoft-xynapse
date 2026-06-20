@@ -177,216 +177,170 @@
     }
   }
 
-  // =====================================
-  // LOAD MY SERMONS
-  // =====================================
-  async function loadMySermons() {
+// =====================================
+// LOAD MY SERMONS (STABLE VERSION)
+// =====================================
+async function loadMySermons() {
 
-    try {
+  const container = $("sermonList");
 
-      const container =
-        $("sermonList");
+  if (!container) return;
 
-      if (!container) return;
+  try {
 
+    // =========================
+    // LOADING STATE
+    // =========================
+    container.innerHTML = `
+      <div class="feature-card">
+        <p>⏳ Loading sermons...</p>
+      </div>
+    `;
+
+    // =========================
+    // FETCH DATA
+    // =========================
+    const res = await apiFetch("/api/sermon/my");
+
+    if (!res.ok) {
+      throw new Error("Failed to load sermons");
+    }
+
+    let sermons = await res.json();
+
+    if (!Array.isArray(sermons)) {
+      sermons = [];
+    }
+
+    // =========================
+    // EMPTY STATE
+    // =========================
+    if (sermons.length === 0) {
       container.innerHTML = `
-
         <div class="feature-card">
+          <h3>No sermons yet</h3>
+          <p>Generate and save sermons to see them here.</p>
+          <button class="btn-primary" onclick="navigate('sermon')">
+            ✨ Open Sermon Studio
+          </button>
+        </div>
+      `;
+      return;
+    }
 
-          <p>
-            ⏳ Loading sermons...
-          </p>
+    // =========================
+    // SAFE PREVIEW FUNCTION
+    // =========================
+    const getPreview = (sermon) => {
 
+      let content = sermon.content;
+
+      // handle string JSON safely
+      if (typeof content === "string") {
+        try {
+          content = JSON.parse(content);
+        } catch (e) {
+          content = {};
+        }
+      }
+
+      const text =
+        content?.introduction ||
+        content?.content ||
+        content?.summary ||
+        content?.application ||
+        sermon.title ||
+        "Saved sermon";
+
+      return String(text).substring(0, 180);
+    };
+
+    // =========================
+    // RENDER LIST SAFELY
+    // =========================
+    container.innerHTML = "";
+
+    sermons.forEach((sermon) => {
+
+      const card = document.createElement("div");
+      card.className = "feature-card sermon-library-card";
+
+      const title = sermon.title || "Untitled Sermon";
+
+      let dateText = "";
+      try {
+        dateText = sermon.created_at
+          ? new Date(sermon.created_at).toLocaleDateString()
+          : "";
+      } catch (e) {
+        dateText = "";
+      }
+
+      const preview = getPreview(sermon);
+
+      card.innerHTML = `
+        <div class="sermon-library-top">
+          <div>
+            <h3>${title}</h3>
+            <small>${dateText}</small>
+          </div>
         </div>
 
+        <div class="sermon-library-body">
+          <p>${preview}</p>
+        </div>
+
+        <div class="sermon-library-stats">
+          <span>👁 ${sermon.views ?? 0}</span>
+          <span>🔄 ${sermon.shares ?? 0}</span>
+        </div>
+
+        <div class="sermon-library-actions">
+          <button class="btn-primary" data-id="${sermon.id}">
+            👁 View
+          </button>
+
+          <button class="btn-secondary" data-id="${sermon.id}">
+            ✍ Continue Editing
+          </button>
+
+          <button class="btn-secondary" data-id="${sermon.id}">
+            🗑 Delete
+          </button>
+        </div>
       `;
 
-      const res =
-        await apiFetch(
-          "/api/sermon/my"
-        );
+      // =========================
+      // SAFE EVENT BINDING (NO INLINE JS)
+      // =========================
+      card.querySelector(".btn-primary")
+        .addEventListener("click", () => openSermon(sermon.id));
 
-      if (!res.ok) {
+      card.querySelectorAll(".btn-secondary")[0]
+        .addEventListener("click", () => continueEditing(sermon.id));
 
-        throw new Error(
-          "Failed to load sermons"
-        );
-      }
+      card.querySelectorAll(".btn-secondary")[1]
+        .addEventListener("click", () => deleteSermon(sermon.id));
 
-      const sermons =
-        await res.json();
+      container.appendChild(card);
+    });
 
-      if (!sermons.length) {
+  } catch (err) {
 
-        container.innerHTML = `
+    console.error("Load sermons error:", err);
 
-          <div class="feature-card">
+    const container = $("sermonList");
 
-            <h3>
-              No sermons yet
-            </h3>
-
-            <p>
-              Generate and save sermons
-              to see them here.
-            </p>
-
-            <button
-              class="btn-primary"
-              onclick="navigate('sermon')"
-            >
-              ✨ Open Sermon Studio
-            </button>
-
-          </div>
-
-        `;
-
-        return;
-      }
-
-      container.innerHTML =
-        sermons.map(sermon => `
-
-          <div
-            class="
-              feature-card
-              sermon-library-card
-            "
-          >
-
-            <div
-              class="sermon-library-top"
-            >
-
-              <div>
-
-                <h3>
-                  ${
-                    sermon.title ||
-                    "Untitled Sermon"
-                  }
-                </h3>
-
-                <small>
-                  ${formatDate(
-                    sermon.created_at
-                  )}
-                </small>
-
-              </div>
-
-            </div>
-
-            <div
-              class="sermon-library-body"
-            >
-
-              <p>
-
-                ${
-                  sermon.content
-                    ?.introduction
-
-                    ? sermon.content
-                        .introduction
-                        .substring(0, 180)
-
-                    : "Saved sermon"
-                }...
-
-              </p>
-
-            </div>
-
-            <div
-              class="
-                sermon-library-stats
-              "
-            >
-
-              <span>
-                👁 ${sermon.views || 0}
-              </span>
-
-              <span>
-                🔄 ${sermon.shares || 0}
-              </span>
-
-            </div>
-
-            <div
-              class="
-                sermon-library-actions
-              "
-            >
-
-              <button
-                class="btn-primary"
-
-                onclick="
-                  openSermon(${sermon.id})
-                "
-              >
-                👁 View
-              </button>
-
-              <button
-                class="btn-secondary"
-
-                onclick="
-                  continueEditing(${sermon.id})
-                "
-              >
-                ✍ Continue Editing
-              </button>
-
-              <button
-                class="btn-secondary"
-
-                onclick="
-                  deleteSermon(${sermon.id})
-                "
-              >
-                🗑 Delete
-              </button>
-
-            </div>
-
-          </div>
-
-        `).join("");
-
-    } catch (err) {
-
-      console.error(
-        "Load sermons error:",
-        err
-      );
-
-      const container =
-        $("sermonList");
-
-      if (container) {
-
-        container.innerHTML = `
-
-          <div class="feature-card">
-
-            <h3>
-              Failed to load sermons
-            </h3>
-
-            <p>
-              Please try again later.
-            </p>
-
-          </div>
-
-        `;
-      }
+    if (container) {
+      container.innerHTML = `
+        <div class="feature-card">
+          <h3>Failed to load sermons</h3>
+          <p>Please try again later.</p>
+        </div>
+      `;
     }
   }
+}
 
   // =====================================
   // LOAD SHARED SERMONS

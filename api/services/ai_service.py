@@ -257,7 +257,7 @@ def call_claude(prompt):
             .messages
             .create(
                 model=
-                    "claude-sonnet-4-20250514",
+                    "claude-sonnet-4-6",
 
                 max_tokens=4000,
 
@@ -646,16 +646,12 @@ def generate_ai_response(
                 payload
             )
 
-            if (
-                AI_PROVIDER == "claude"
-                and openai_client
-            ):
+            # =====================================
+            # ALWAYS FALL BACK TO OPENAI
+            # =====================================
+            if openai_client:
 
                 raw = call_openai(prompt)
-
-            elif claude_client:
-
-                raw = call_claude(prompt)
 
             else:
 

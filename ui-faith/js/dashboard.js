@@ -27,12 +27,46 @@
       // =========================
       // ADMIN CARD
       // =========================
-      const adminCard =
+const adminCard =
     $("adminApplicationsCard");
 
 const adminStatsSection =
     $("adminStatsSection");
 
+// TEMP DEBUG FIX
+if (
+    adminCard &&
+    user?.role !== "admin"
+) {
+
+    adminCard.remove();
+}
+
+if (
+    adminStatsSection &&
+    user?.role !== "admin"
+) {
+
+    adminStatsSection.remove();
+}
+// =====================================
+// ALWAYS RESET ADMIN UI
+// =====================================
+if (adminCard) {
+
+    adminCard.style.display =
+        "none";
+}
+
+if (adminStatsSection) {
+
+    adminStatsSection.style.display =
+        "none";
+}
+
+// =====================================
+// ADMIN ONLY
+// =====================================
 if (
     user &&
     user.role === "admin"
@@ -294,7 +328,124 @@ if (
         window.currentUser;
 
       if (!user) return;
+      
+      // =========================
+      // PASTOR REDIRECT
+      // =========================
+      if (
+        user.role === "pastor"
+      ) {
 
+        navigate("dashboard");
+
+        return;
+      }
+
+      // =========================
+      // PASTOR STATUS UI
+      // =========================
+      const badge =
+        $("pastorStatusBadge");
+
+      const message =
+        $("pastorUpgradeMessage");
+
+      const button =
+        $("upgradePastorBtn");
+
+      const card =
+        $("pastorUpgradeCard");
+      const title =
+        $("pastorCardTitle");
+      if (badge) {
+
+        // =====================
+        // PENDING
+        // =====================
+        if (
+          user.pastor_status ===
+          "pending"
+        ) {
+
+          badge.textContent =
+            "Pending Approval";
+
+          if (message) {
+
+            message.textContent =
+              "Your pastor application is currently under review.";
+          }
+
+          if (button) {
+
+            button.disabled =
+              true;
+
+            button.textContent =
+              "Application Pending";
+          }
+        }
+
+        // =====================
+        // REJECTED
+        // =====================
+        else if (
+          user.pastor_status ===
+          "rejected"
+        ) {
+
+          badge.textContent =
+            "Rejected";
+
+          if (title) {
+
+            title.textContent =
+              "Pastor Application Rejected";
+          }
+
+          if (message) {
+
+            message.textContent =
+              "Your pastor application was not approved. You may apply again.";
+          }
+
+          if (button) {
+
+            button.disabled =
+              false;
+
+            button.textContent =
+              "Apply Again";
+          }
+        }
+
+        // =====================
+        // APPROVED
+        // =====================
+        else if (
+          user.pastor_status ===
+          "approved"
+        ) {
+
+          badge.textContent =
+            "Pastor";
+
+          if (card) {
+
+            card.style.display =
+              "none";
+          }
+        }
+
+        // =====================
+        // MEMBER
+        // =====================
+        else {
+
+          badge.textContent =
+            "Member";
+        }
+      }
       // =========================
       // USER NAME
       // =========================
