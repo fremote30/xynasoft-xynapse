@@ -2,6 +2,12 @@
 
   window.currentUser = window.currentUser || null;
 
+// =====================================
+// SERMON LIBRARY PAGINATION
+// =====================================
+window.SERMONS_PER_PAGE = 10;
+window.currentSermonPage = 1;
+
   // =====================================
   // SAFE RUNNER
   // =====================================
@@ -213,6 +219,33 @@ document.addEventListener(
     }
   }
 );
+
+// =====================================
+  // Helper Function
+  // =====================================
+window.safeSermonText = function(content) {
+
+  if (!content) return "Saved sermon";
+
+  // already string
+  if (typeof content === "string") return content;
+
+  // object handling (AI sermons)
+  if (typeof content === "object") {
+
+    return (
+      content.introduction ||
+      content.content ||
+      content.summary ||
+      content.application ||
+      content.points?.[0] ||
+      content.title ||
+      "Saved sermon"
+    );
+  }
+
+  return "Saved sermon";
+};
 
   // =====================================
   // GLOBAL EXPORTS

@@ -23,32 +23,48 @@
   // =====================================
   // OPEN SERMON
   // =====================================
-  async function openSermon(id) {
+window.openSermon = async function (id) {
 
-    try {
+  try {
 
-      localStorage.setItem(
-        "selected_sermon_id",
-        id
-      );
+    const res = await apiFetch(`/api/sermon/${id}`);
 
-      await navigate(
-        "sermon"
-      );
-
-    } catch (err) {
-
-      console.error(
-        "Open sermon error:",
-        err
-      );
-
-      showToast(
-        "Unable to open sermon",
-        "error"
-      );
+    if (!res.ok) {
+      throw new Error("Failed to load sermon");
     }
+
+    const data = await res.json();
+
+    const sermon = data.content || data;
+
+    // =========================
+    // GLOBAL STATE
+    // =========================
+    window.currentGeneratedSermon = sermon;
+    window.currentSermonId = id;
+
+    storage?.set?.("latest_sermon", sermon);
+
+    // =========================
+    // NAVIGATE FIRST
+    // =========================
+    await navigate("sermon");
+
+    // =========================
+    // SAFE RENDER (no race condition)
+    // =========================
+    requestAnimationFrame(() => {
+
+      if (typeof renderCurrentSermon === "function") {
+        renderCurrentSermon(sermon);
+      }
+
+    });
+
+  } catch (err) {
+    console.error("openSermon error:", err);
   }
+};
 
   // =====================================
   // CONTINUE EDITING
@@ -178,13 +194,301 @@
   }
 
 // =====================================
-// LOAD MY SERMONS (STABLE VERSION)
+// RENDER SERMON CARDS
 // =====================================
-async function loadMySermons() {
+function renderSermonCards(sermons) {
 
   const container = $("sermonList");
 
   if (!container) return;
+
+  container.innerHTML = "";
+
+  // =====================================
+  // EMPTY STATE
+  // =====================================
+  if (!sermons.length) {
+
+    container.innerHTML = `
+
+      <div class="feature-card">
+
+        <h3>
+          No sermons found
+        </h3>
+
+        <p>
+          Try another search term.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  // =====================================
+  // PAGINATION
+  // =====================================
+  const visibleSermons =
+    sermons.slice(
+      0,
+      window.currentSermonPage *
+      window.SERMONS_PER_PAGE
+    );
+
+  // =====================================
+  // RENDER CARDS
+  // =====================================
+  visibleSermons.forEach(
+    (sermon) => {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "feature-card sermon-library-card";
+
+      card.setAttribute(
+        "data-sermon-id",
+        sermon.id
+      );
+
+      const title =
+        sermon.title ||
+        "Untitled Sermon";
+
+      let dateText = "";
+
+      try {
+
+        dateText =
+          sermon.created_at
+            ? new Date(
+                sermon.created_at
+              ).toLocaleDateString()
+            : "";
+
+      } catch (e) {}
+
+      const preview =
+        window.safeSermonText(
+          sermon.content
+        ).substring(0, 80);
+
+      card.innerHTML = `
+        <div class="sermon-library-top">
+
+          <div>
+
+            <h3>${title}</h3>
+
+            <small>
+              ${dateText}
+            </small>
+
+          </div>
+
+        </div>
+
+        <div class="sermon-library-body">
+
+          <p>
+            ${preview}
+          </p>
+
+        </div>
+
+        <div class="sermon-library-stats">
+
+          <span>
+            👁 ${sermon.views ?? 0}
+          </span>
+
+          <span>
+            🔄 ${sermon.shares ?? 0}
+          </span>
+
+        </div>
+
+        <div class="sermon-library-actions">
+
+          <button
+            class="btn-primary js-view"
+          >
+            👁 View
+          </button>
+
+          <button
+            class="btn-secondary js-edit"
+          >
+            ✍ Continue Editing
+          </button>
+
+          <button
+            class="btn-secondary js-favorite"
+          >
+            ⭐ Favorite
+          </button>
+
+          <button
+            class="btn-secondary js-delete"
+          >
+            🗑 Delete
+          </button>
+
+        </div>
+      `;
+
+      // =====================================
+      // VIEW
+      // =====================================
+      card.querySelector(".js-view")
+        .addEventListener(
+          "click",
+          () => {
+
+            if (
+              window.openSermon
+            ) {
+
+              window.openSermon(
+                sermon.id
+              );
+            }
+          }
+        );
+
+      // =====================================
+      // EDIT
+      // =====================================
+      card.querySelector(".js-edit")
+        .addEventListener(
+          "click",
+          () => {
+
+            if (
+              typeof continueEditing
+              === "function"
+            ) {
+
+              continueEditing(
+                sermon.id
+              );
+            }
+          }
+        );
+
+      // =====================================
+      // FAVORITE
+      // (future feature)
+      // =====================================
+      card.querySelector(".js-favorite")
+        .addEventListener(
+          "click",
+          () => {
+
+            showToast?.(
+              "⭐ Favorites coming soon",
+              "info"
+            );
+          }
+        );
+
+      // =====================================
+      // DELETE
+      // =====================================
+      card.querySelector(".js-delete")
+        .addEventListener(
+          "click",
+          async () => {
+
+            await deleteSermon?.(
+              sermon.id
+            );
+          }
+        );
+
+      container.appendChild(card);
+    }
+  );
+
+  // =====================================
+  // LOAD MORE BUTTON
+  // =====================================
+  const existingLoadMore =
+    document.getElementById(
+      "loadMoreSermons"
+    );
+
+  if (existingLoadMore) {
+    existingLoadMore.remove();
+  }
+
+  if (
+    sermons.length >
+    visibleSermons.length
+  ) {
+
+    const remaining =
+      sermons.length -
+      visibleSermons.length;
+
+    const btn =
+      document.createElement(
+        "button"
+      );
+
+    btn.id =
+      "loadMoreSermons";
+
+    btn.className =
+      "btn-primary";
+
+    btn.style.margin =
+      "20px auto";
+
+    btn.style.display =
+      "block";
+
+    btn.innerHTML =
+      `Load More (${remaining} remaining)`;
+
+    btn.onclick = () => {
+
+      window.currentSermonPage++;
+
+      renderSermonCards(
+        sermons
+      );
+    };
+
+    container.appendChild(btn);
+  }
+}
+
+
+// =====================================
+// LOAD MY SERMONS (STABLE VERSION)
+// =====================================
+async function loadMySermons() {
+
+  // =========================
+  // 🔒 GUARD (PREVENT DOUBLE LOAD)
+  // =========================
+  if (window.__mySermonsLoading) return;
+
+  window.__mySermonsLoading = true;
+
+  const container = $("sermonList");
+
+  if (!container) {
+
+    window.__mySermonsLoading = false;
+
+    return;
+  }
 
   try {
 
@@ -200,246 +504,544 @@ async function loadMySermons() {
     // =========================
     // FETCH DATA
     // =========================
-    const res = await apiFetch("/api/sermon/my");
+    const res = await apiFetch(
+      "/api/sermon/my"
+    );
 
     if (!res.ok) {
-      throw new Error("Failed to load sermons");
+
+      throw new Error(
+        "Failed to load sermons"
+      );
     }
 
-    let sermons = await res.json();
+    let sermons =
+      await res.json();
 
-    if (!Array.isArray(sermons)) {
+    if (
+      !Array.isArray(
+        sermons
+      )
+    ) {
+
       sermons = [];
+    }
+
+    // =====================================
+    // RESET PAGINATION
+    // =====================================
+    window.currentSermonPage = 1;
+
+    // =====================================
+    // STORE FOR SEARCH/SORT
+    // =====================================
+    window.allSermons =
+      sermons;
+
+    // =====================================
+    // COUNTER
+    // =====================================
+    const sermonCount =
+      document.getElementById(
+        "sermonCount"
+      );
+
+    if (sermonCount) {
+
+      sermonCount.textContent =
+        sermons.length;
     }
 
     // =========================
     // EMPTY STATE
     // =========================
-    if (sermons.length === 0) {
+    if (
+      sermons.length === 0
+    ) {
+
       container.innerHTML = `
         <div class="feature-card">
-          <h3>No sermons yet</h3>
-          <p>Generate and save sermons to see them here.</p>
-          <button class="btn-primary" onclick="navigate('sermon')">
+
+          <h3>
+            No sermons yet
+          </h3>
+
+          <p>
+            Generate and save sermons to see them here.
+          </p>
+
+          <button
+            class="btn-primary"
+            onclick="navigate('sermon')"
+          >
             ✨ Open Sermon Studio
           </button>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    // =========================
+    // CLEAR CONTAINER
+    // =========================
+    container.innerHTML = "";
+
+    // =========================
+    // RENDER CARDS
+    // =========================
+    renderSermonCards(
+      sermons
+    );
+
+    initializeSermonTabs();
+
+    // =========================
+    // SEARCH
+    // =========================
+    const searchInput =
+      document.getElementById(
+        "sermonSearch"
+      );
+
+    if (searchInput) {
+
+      searchInput.oninput =
+        filterSermons;
+    }
+
+    // =========================
+    // SORT
+    // =========================
+    const sortSelect =
+      document.getElementById(
+        "sermonSort"
+      );
+
+    if (sortSelect) {
+
+      sortSelect.onchange =
+        sortSermons;
+    }
+
+  } catch (err) {
+
+    console.error(
+      "Load sermons error:",
+      err
+    );
+
+    container.innerHTML = `
+      <div class="feature-card">
+
+        <h3>
+          Failed to load sermons
+        </h3>
+
+        <p>
+          Please try again later.
+        </p>
+
+      </div>
+    `;
+
+  } finally {
+
+    // =========================
+    // RESET LOCK
+    // =========================
+    window.__mySermonsLoading =
+      false;
+  }
+
+  
+
+}
+
+
+// =====================================
+// FILTER SERMONS
+// =====================================
+function filterSermons() {
+
+  const search =
+    document.getElementById(
+      "sermonSearch"
+    );
+
+  if (
+    !search ||
+    !window.allSermons
+  ) {
+    return;
+  }
+
+  const term =
+    search.value
+      .toLowerCase()
+      .trim();
+
+  // =====================================
+  // FILTER
+  // =====================================
+  let filtered =
+    window.allSermons.filter(
+      sermon => {
+
+        const title =
+          (
+            sermon.title || ""
+          ).toLowerCase();
+
+        const content =
+          window.safeSermonText(
+            sermon.content
+          )
+          .toLowerCase();
+
+        return (
+          title.includes(term) ||
+          content.includes(term)
+        );
+      }
+    );
+
+  // =====================================
+  // APPLY CURRENT SORT
+  // =====================================
+  const sortSelect =
+    document.getElementById(
+      "sermonSort"
+    );
+
+  if (sortSelect) {
+
+    switch (
+      sortSelect.value
+    ) {
+
+      case "title":
+
+        filtered.sort(
+          (a, b) =>
+            (a.title || "")
+              .localeCompare(
+                b.title || ""
+              )
+        );
+
+        break;
+
+      case "oldest":
+
+        filtered.sort(
+          (a, b) =>
+            new Date(
+              a.created_at
+            ) -
+            new Date(
+              b.created_at
+            )
+        );
+
+        break;
+
+      case "mostViewed":
+
+        filtered.sort(
+          (a, b) =>
+            (b.views || 0) -
+            (a.views || 0)
+        );
+
+        break;
+
+      case "mostShared":
+
+        filtered.sort(
+          (a, b) =>
+            (b.shares || 0) -
+            (a.shares || 0)
+        );
+
+        break;
+
+      default:
+
+        filtered.sort(
+          (a, b) =>
+            new Date(
+              b.created_at
+            ) -
+            new Date(
+              a.created_at
+            )
+        );
+    }
+  }
+
+  // =====================================
+  // RESET PAGINATION
+  // =====================================
+  window.currentSermonPage = 1;
+
+  // =====================================
+  // RE-RENDER RESULTS
+  // =====================================
+  renderSermonCards(
+    filtered
+  );
+
+      const count =
+      document.getElementById(
+        "searchResultsCount"
+      );
+
+    if (count) {
+
+              if (term) {
+
+          count.textContent =
+            `${filtered.length} sermon(s) found`;
+
+        } else {
+
+          count.textContent = "";
+        }
+    }
+}
+
+
+// =====================================
+// SORT SERMONS
+// =====================================
+function sortSermons() {
+
+  const select =
+    document.getElementById(
+      "sermonSort"
+    );
+
+  if (
+    !select ||
+    !window.allSermons
+  ) {
+    return;
+  }
+
+  let sermons =
+    [...window.allSermons];
+
+  switch (
+    select.value
+  ) {
+
+    // =========================
+    // TITLE A-Z
+    // =========================
+    case "title":
+
+      sermons.sort(
+        (a, b) =>
+          (a.title || "")
+            .localeCompare(
+              b.title || ""
+            )
+      );
+
+      break;
+
+    // =========================
+    // OLDEST FIRST
+    // =========================
+    case "oldest":
+
+      sermons.sort(
+        (a, b) =>
+          new Date(
+            a.created_at
+          ) -
+          new Date(
+            b.created_at
+          )
+      );
+
+      break;
+
+    // =========================
+    // MOST VIEWED
+    // =========================
+    case "mostViewed":
+
+      sermons.sort(
+        (a, b) =>
+          (b.views || 0) -
+          (a.views || 0)
+      );
+
+      break;
+
+    // =========================
+    // MOST SHARED
+    // =========================
+    case "mostShared":
+
+      sermons.sort(
+        (a, b) =>
+          (b.shares || 0) -
+          (a.shares || 0)
+      );
+
+      break;
+
+    // =========================
+    // NEWEST FIRST (DEFAULT)
+    // =========================
+    default:
+
+      sermons.sort(
+        (a, b) =>
+          new Date(
+            b.created_at
+          ) -
+          new Date(
+            a.created_at
+          )
+      );
+  }
+
+  // =========================
+  // RESET PAGINATION
+  // =========================
+  window.currentSermonPage = 1;
+
+  // =========================
+  // RE-RENDER
+  // =========================
+  renderSermonCards(
+    sermons
+  );
+}
+  // =====================================
+  // LOAD SHARED SERMONS
+  // =====================================
+async function loadSharedSermons() {
+
+  const container = document.getElementById("sharedList");
+  if (!container) return;
+
+  try {
+
+    // =========================
+    // LOADING STATE
+    // =========================
+    container.innerHTML = `
+      <div class="feature-card">
+        <p>⏳ Loading shared sermons...</p>
+      </div>
+    `;
+
+    // =========================
+    // FETCH DATA
+    // =========================
+    const response = await apiFetch(
+      "/api/v1/faith/shared-sermons"
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to load shared sermons");
+    }
+
+    const data = await response.json();
+
+    // =========================
+    // NORMALIZE RESPONSE SAFELY
+    // =========================
+    const shared = Array.isArray(data)
+      ? data
+      : (data.shared_sermons || []);
+ 
+      const sharedCount =
+        document.getElementById("sharedCount");
+
+      if (sharedCount) {
+        sharedCount.textContent = shared.length;
+      }
+
+
+    // =========================
+    // EMPTY STATE
+    // =========================
+    if (!shared.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <h3>No shared sermons yet</h3>
+          <p>When pastors share sermons with you, they will appear here.</p>
         </div>
       `;
       return;
     }
 
     // =========================
-    // SAFE PREVIEW FUNCTION
-    // =========================
-    const getPreview = (sermon) => {
-
-      let content = sermon.content;
-
-      // handle string JSON safely
-      if (typeof content === "string") {
-        try {
-          content = JSON.parse(content);
-        } catch (e) {
-          content = {};
-        }
-      }
-
-      const text =
-        content?.introduction ||
-        content?.content ||
-        content?.summary ||
-        content?.application ||
-        sermon.title ||
-        "Saved sermon";
-
-      return String(text).substring(0, 180);
-    };
-
-    // =========================
-    // RENDER LIST SAFELY
+    // RENDER LIST
     // =========================
     container.innerHTML = "";
 
-    sermons.forEach((sermon) => {
+    shared.forEach(item => {
 
       const card = document.createElement("div");
-      card.className = "feature-card sermon-library-card";
+      card.className = "feature-card sermon-card";
 
-      const title = sermon.title || "Untitled Sermon";
-
-      let dateText = "";
-      try {
-        dateText = sermon.created_at
-          ? new Date(sermon.created_at).toLocaleDateString()
-          : "";
-      } catch (e) {
-        dateText = "";
-      }
-
-      const preview = getPreview(sermon);
+      const title = item.title || "Untitled Sermon";
+      const sender = item.sender_name || "Unknown Pastor";
 
       card.innerHTML = `
-        <div class="sermon-library-top">
-          <div>
-            <h3>${title}</h3>
-            <small>${dateText}</small>
-          </div>
-        </div>
+        <h3>${title}</h3>
 
-        <div class="sermon-library-body">
-          <p>${preview}</p>
-        </div>
+        <p>
+          Shared by: ${sender}
+        </p>
 
-        <div class="sermon-library-stats">
-          <span>👁 ${sermon.views ?? 0}</span>
-          <span>🔄 ${sermon.shares ?? 0}</span>
-        </div>
-
-        <div class="sermon-library-actions">
-          <button class="btn-primary" data-id="${sermon.id}">
-            👁 View
-          </button>
-
-          <button class="btn-secondary" data-id="${sermon.id}">
-            ✍ Continue Editing
-          </button>
-
-          <button class="btn-secondary" data-id="${sermon.id}">
-            🗑 Delete
-          </button>
-        </div>
+        <button class="btn-primary js-open">
+          📖 Open Sermon
+        </button>
       `;
 
       // =========================
-      // SAFE EVENT BINDING (NO INLINE JS)
+      // EVENT BINDING (SAFE)
       // =========================
-      card.querySelector(".btn-primary")
-        .addEventListener("click", () => openSermon(sermon.id));
+      card.querySelector(".js-open")
+        .addEventListener("click", () => {
 
-      card.querySelectorAll(".btn-secondary")[0]
-        .addEventListener("click", () => continueEditing(sermon.id));
+          if (typeof openSavedSermon === "function") {
+            openSavedSermon(item.sermon_id);
+          } else {
+            console.warn("openSavedSermon() not found");
+          }
 
-      card.querySelectorAll(".btn-secondary")[1]
-        .addEventListener("click", () => deleteSermon(sermon.id));
+        });
 
       container.appendChild(card);
     });
 
   } catch (err) {
 
-    console.error("Load sermons error:", err);
+    console.error("Load shared sermons error:", err);
 
-    const container = $("sermonList");
+    showToast(
+      "Unable to load shared sermons",
+      "error"
+    );
 
-    if (container) {
-      container.innerHTML = `
-        <div class="feature-card">
-          <h3>Failed to load sermons</h3>
-          <p>Please try again later.</p>
-        </div>
-      `;
-    }
+    container.innerHTML = `
+      <div class="feature-card">
+        <h3>Failed to load shared sermons</h3>
+        <p>Please try again later.</p>
+      </div>
+    `;
   }
 }
-
-  // =====================================
-  // LOAD SHARED SERMONS
-  // =====================================
-  async function loadSharedSermons(){
-
-    const container =
-      document.getElementById(
-        "sharedList"
-      );
-
-    if(!container){
-      return;
-    }
-
-    try {
-
-      const response =
-        await apiFetch(
-          "/api/v1/faith/sermon/shared-with-me"
-        );
-
-      if(!response.ok){
-
-        throw new Error(
-          "Failed to load shared sermons"
-        );
-      }
-
-      const data =
-        await response.json();
-
-      const shared =
-        data.shared_sermons || [];
-
-      if(!shared.length){
-
-        container.innerHTML = `
-
-          <div class="empty-state">
-
-            <h3>
-              No shared sermons yet
-            </h3>
-
-          </div>
-
-        `;
-
-        return;
-      }
-
-      container.innerHTML =
-        shared.map(item => `
-
-          <div
-            class="
-              feature-card
-              sermon-card
-            "
-          >
-
-            <h3>
-              ${item.title}
-            </h3>
-
-            <p>
-              Shared by:
-              ${item.sender_name}
-            </p>
-
-            <button
-
-              onclick="
-                openSavedSermon(
-                  ${item.sermon_id}
-                )
-              "
-            >
-              📖 Open Sermon
-            </button>
-
-          </div>
-
-        `).join("");
-
-    } catch(err){
-
-      console.error(
-        "Load shared sermons error:",
-        err
-      );
-
-      showToast(
-        "Unable to load shared sermons",
-        "error"
-      );
-    }
-  }
 
   // =====================================
   // OPEN SAVED SERMON
@@ -1016,6 +1618,78 @@ async function loadMySermons() {
     }
   }
 
+  // =====================================
+// SERMON TABS
+// =====================================
+function initializeSermonTabs() {
+
+  const tabMine =
+    document.getElementById(
+      "tabMine"
+    );
+
+  const tabShared =
+    document.getElementById(
+      "tabShared"
+    );
+
+  const sermonList =
+    document.getElementById(
+      "sermonList"
+    );
+
+  const sharedSection =
+    document.getElementById(
+      "sharedSection"
+    );
+
+  if (
+    !tabMine ||
+    !tabShared ||
+    !sermonList ||
+    !sharedSection
+    )  {
+    return;
+  }
+
+  // Default
+  sharedSection.style.display =
+    "none";
+
+  tabMine.onclick = () => {
+
+    tabMine.classList.add(
+      "active"
+    );
+
+    tabShared.classList.remove(
+      "active"
+    );
+
+    sermonList.style.display =
+      "";
+
+    sharedSection.style.display =
+      "none";
+  };
+
+  tabShared.onclick = () => {
+
+    tabShared.classList.add(
+      "active"
+    );
+
+    tabMine.classList.remove(
+      "active"
+    );
+
+    sermonList.style.display =
+      "none";
+
+    sharedSection.style.display =
+      "";
+  };
+}
   // =====================================
   // GLOBAL EXPORTS
   // =====================================

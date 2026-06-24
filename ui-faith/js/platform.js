@@ -582,57 +582,55 @@
     );
   }
 
-  // =====================================
-  // DELETE SERMON
-  // =====================================
-  async function deleteSermon(
-    sermonId
-  ) {
+// =====================================
+// DELETE SERMON
+// =====================================
+async function deleteSermon(sermonId) {
 
-    const confirmed =
-      confirm(
-        "Delete this sermon?"
-      );
+  const confirmed =
+    confirm("Delete this sermon?");
 
-    if (!confirmed) return;
+  if (!confirmed) {
+    return false;
+  }
 
-    try {
+  try {
 
-      const res =
-        await apiFetch(
-          `/api/sermon/${sermonId}`,
-          {
-            method: "DELETE"
-          }
-        );
-
-      if (!res.ok) {
-
-        throw new Error(
-          "Delete failed"
-        );
+    const res = await apiFetch(
+      `/api/sermon/${sermonId}`,
+      {
+        method: "DELETE"
       }
+    );
 
-      showToast(
-        "🗑 Sermon deleted",
-        "success"
-      );
-
-      await loadMySermons();
-
-    } catch (err) {
-
-      console.error(
-        "Delete sermon error:",
-        err
-      );
-
-      showToast(
-        "Delete failed",
-        "error"
+    if (!res.ok) {
+      throw new Error(
+        "Delete failed"
       );
     }
+
+    showToast(
+      "🗑 Sermon deleted",
+      "success"
+    );
+
+    return true;
+
+  } catch (err) {
+
+    console.error(
+      "Delete sermon error:",
+      err
+    );
+
+    showToast(
+      "Delete failed",
+      "error"
+    );
+
+    return false;
   }
+}
 
 // =====================================
 // APPLY FOR PASTOR

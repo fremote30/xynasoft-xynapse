@@ -184,46 +184,42 @@ if (
 
         if (recentContainer) {
 
-          recentContainer.innerHTML =
-            recent.length
+           recentContainer.innerHTML =
+              recent.length
 
-              ? recent.map(s => `
+                ? recent.map(s => `
 
-                <div
-                  class="
-                    sermon-item
-                    clickable
-                  "
+                  <div
+                    class="
+                      sermon-item
+                      clickable
+                    "
+                    onclick="
+                      window.openSermon(${s.id})
+                    "
+                  >
 
-                  onclick="
-                    openSermon(${s.id})
-                  "
-                >
+                    <h4>
+                      ${s.title}
+                    </h4>
 
-                  <h4>
-                    ${s.title}
-                  </h4>
+                    <p>
+                      ${window.safeSermonText(s.content).substring(0, 120)}
+                    </p>
 
-                  <p>
-                    ${formatDate(
-                      s.created_at
-                    )}
-                  </p>
+                    <span>
+                      Shares: ${s.shares ?? 0}
+                    </span>
 
-                  <span>
-                    Shares:
-                    ${s.shares ?? 0}
-                  </span>
+                  </div>
 
-                </div>
+                `).join("")
 
-              `).join("")
+                : `
+                  <p>No recent sermons</p>
+                `;
 
-              : `
-                <p>
-                  No recent sermons
-                </p>
-              `;
+        
         }
       }
 
@@ -281,7 +277,9 @@ if (
                   </span>
 
                   :
-                  ${p.message}
+                  ${typeof p.message === "object"
+                    ? JSON.stringify(p.message)
+                    : p.message}
 
                 </div>
 
@@ -579,7 +577,7 @@ if (
             "
 
             onclick="
-              openSermon(${s.id})
+              window.openSermon(${s.id})
             "
           >
 
@@ -590,8 +588,7 @@ if (
             <br>
 
             <small>
-              Shares:
-              ${s.shares}
+              ${window.safeSermonText(s.content).substring(0, 120)}
             </small>
 
           </div>
@@ -781,50 +778,37 @@ if (
     // START
     // =========================
     window.dashboardInterval =
-      setInterval(async () => {
+        setInterval(async () => {
 
-        const user =
-          window.currentUser;
+          const user = window.currentUser;
+          if (!user) return;
 
-        if (!user) return;
-
-        try {
-
-          // =====================
-          // PASTOR
-          // =====================
+          // 🚨 STOP AUTO REFRESH ON SERMON PAGES
           if (
-            user.role ===
-            "pastor"
+            window.currentPage === "mysermons" ||
+            window.currentPage === "sermon" ||
+            window.currentPage === "network"
           ) {
-
-            await loadDashboard();
-
-            loadTopSermons();
-
-            loadAIInsights();
+            return;
           }
 
-          // =====================
-          // MEMBER
-          // =====================
-          if (
-            user.role ===
-            "member"
-          ) {
+          try {
 
-            await loadMemberDashboard();
+            if (user.role === "pastor") {
+              await loadDashboard();
+              loadTopSermons();
+              loadAIInsights();
+            }
+
+            if (user.role === "member") {
+              await loadMemberDashboard();
+            }
+
+          } catch (err) {
+            console.error("Auto refresh error:", err);
           }
 
-        } catch (err) {
-
-          console.error(
-            "Auto refresh error:",
-            err
-          );
-        }
-
-      }, 30000);
+        }, 30000);
 
     // =========================
     // CLEANUP

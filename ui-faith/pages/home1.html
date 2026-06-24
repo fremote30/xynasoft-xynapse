@@ -1,0 +1,68 @@
+<!-- =========================
+     SIMPLE HERO (TEXT ONLY)
+========================= -->
+<section class="simple-hero">
+
+  <div class="hero-content">
+
+    <h1 class="hero-title">
+      The Global Platform for 
+      <span class="highlight">Pastor Collaboration</span>
+    </h1>
+
+    <p class="hero-sub">
+      XynaFaith helps pastors prepare sermons, collaborate with other ministers, and share messages globally.
+    </p>
+    <p class="hero-sub">Powered by AI • Guided by Scripture • Led by Pastors</p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="handlePrimaryCTA()">
+        Open Pastor Suite
+      </button>
+
+      <button class="btn-secondary" onclick="navigate('network')">
+        Explore Pastors
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     FEATURES SECTION
+========================= -->
+<!-- ========================= FEATURES SECTION ========================= --> 
+ <section class="features"> 
+  <div class="features-header"> <h2>Platform Modules</h2> <p>XynaFaith is building a global ministry platform.</p> </div> 
+  <div class="feature-grid"> <div class="feature-card"> <div class="icon">👤</div> <h3>Pastor Profiles</h3> <p>Create public ministry profiles.</p> <span class="badge live">Live</span> </div> 
+  <div class="feature-card"> <div class="icon">⛪</div> <h3>Church Pages</h3> <p>Church identity and sermon archives.</p> <span class="badge live">Live</span> </div> <div class="feature-card"> <div class="icon">📖</div> <h3>Sermon Engine</h3> <p>Create and publish sermons.</p> <span class="badge live" onclick="navigate('dashboard')">Live</span> </div> 
+  <div class="feature-card"> <div class="icon">🤝</div> <h3>Collaborative Sermons</h3> <p>Multiple pastors preparing sermons together.</p> <span class="badge live" onclick="navigate('dashboard')">Live</span> </div> 
+  <div class="feature-card"> <div class="icon">🌍</div> <h3>Pastor Network</h3> <p>Connect with pastors worldwide.</p> <span class="badge live" onclick="navigate('network')">Live</span> </div> 
+  <div class="feature-card"> <div class="icon">🔍</div> <h3>Sermon Discovery</h3> <p>Search sermons by scripture or topic.</p> <span class="badge live">Live</span> </div> <div class="feature-card"> 
+  <div class="icon">🤖</div> <h3>AI Sermon Intelligence</h3> <p>AI sermon outline generator.</p> <span class="badge soon">Coming Soon</span> </div> <div class="feature-card"> 
+  <div class="icon">💬</div> <h3>Member Engagement</h3> <p>Comments and discussion.</p> <span class="badge soon">Coming Soon</span> </div> 
+  <div class="feature-card"> <div class="icon">👥</div> <h3>Ministry Groups</h3> <p>Communities for collaboration.</p> <span class="badge soon">Coming Soon</span> 
+ </div> <div class="feature-card"> <div class="icon">📊</div> <h3>Analytics Dashboard</h3> <p>Insights on sermon reach.</p> <span class="badge soon">Coming Soon</span> </div> 
+  <div class="feature-card"> <div class="icon">📚</div> <h3>Global Sermon Library</h3> <p>Search sermons worldwide.</p> <span class="badge soon">Coming Soon</span> </div> <div class="feature-card"> <div class="icon">🛒</div> <h3>Marketplace</h3> <p>Discover ministry resources.</p> <span class="badge soon">Coming Soon</span> </div> </div> </section>
+
+
+<!-- =========================
+     CTA LOGIC
+========================= -->
+<script>
+  window.handlePrimaryCTA = function () {
+    try {
+      const token = localStorage.getItem("access_token");
+
+      if (token) {
+        navigate("dashboard");
+      } else {
+        navigate("login");
+      }
+    } catch (e) {
+      console.error("CTA error:", e);
+      navigate("login");
+    }
+  };
+</script>

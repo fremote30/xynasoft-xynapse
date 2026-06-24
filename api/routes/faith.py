@@ -1279,7 +1279,7 @@ async def search_pastors(
 # =========================================
 # SHARED SERMONS INBOX
 # =========================================
-@router.get("/sermon/shared-with-me")
+@router.get("/shared-sermons")
 async def shared_with_me(
 
     db: Session = Depends(

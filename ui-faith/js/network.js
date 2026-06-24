@@ -140,7 +140,7 @@
               class="btn-secondary"
 
               onclick="
-                openSermon(${s.id})
+                window.openSermon(${s.id})
               "
             >
               Read Sermon
@@ -627,7 +627,7 @@
                 "
 
                 onclick="
-                  openSermon(${s.id})
+                  window.openSermon(${s.id})
                 "
               >
 

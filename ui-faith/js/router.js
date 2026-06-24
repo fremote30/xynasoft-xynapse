@@ -180,450 +180,331 @@
   // =====================================
   // MAIN NAVIGATION
   // =====================================
-  async function navigate(page) {
+async function navigate(page) {
 
-    const requestId =
-      ++__navRequestId;
+  const requestId = ++__navRequestId;
+
+  // =====================================
+  // PREVENT DOUBLE NAVIGATION
+  // =====================================
+  if (
+    window.isNavigating &&
+    window.currentPage === page
+  ) {
+    return;
+  }
+
+  window.isNavigating = true;
+
+  // =====================================
+  // GLOBAL NAV STATE TRACKING (NEW)
+  // =====================================
+  window.__navState = {
+    page,
+    requestId,
+    timestamp: Date.now()
+  };
+  // =====================================
+  // CLEANUP PREVIOUS PAGE
+  // =====================================
+  runPageCleanup();
+
+  try {
 
     // =====================================
-    // PREVENT DOUBLE NAVIGATION
+    // AUTH CHECK
     // =====================================
+    const token =
+      typeof getToken === "function"
+        ? getToken()
+        : null;
+
     if (
-      window.isNavigating &&
-      window.currentPage === page
+      protectedRoutes.includes(page) &&
+      !token
     ) {
-      return;
+      page = "login";
     }
 
-    window.isNavigating = true;
-
     // =====================================
-    // CLEANUP PREVIOUS PAGE
+    // ROLE GUARDS
     // =====================================
-    runPageCleanup();
+    let user = window.currentUser;
 
-    try {
+    if (!user) {
+      const storedRole = localStorage.getItem("userRole");
 
-      // =====================================
-      // AUTH CHECK
-      // =====================================
-      const token =
-        typeof getToken ===
-        "function"
-
-          ? getToken()
-
-          : null;
-
-      if (
-        protectedRoutes.includes(
-          page
-        ) &&
-        !token
-      ) {
-
-        page = "login";
+      if (storedRole) {
+        user = { role: storedRole };
+        window.currentUser = user;
       }
-
- // =====================================
-// ROLE GUARDS
-// =====================================
-let user =
-  window.currentUser;
-
-if (!user) {
-
-  const storedRole =
-    localStorage.getItem(
-      "userRole"
-    );
-
-  if (storedRole) {
-
-    user = {
-      role: storedRole
-    };
-
-    window.currentUser =
-      user;
-  }
-}
-
-if (user) {
-
-  // =====================================
-  // MEMBER DASHBOARD
-  // =====================================
-  if (
-    user.role === "member" &&
-    page === "dashboard"
-  ) {
-
-    page =
-      "member-dashboard";
-  }
-
-  // =====================================
-  // PASTOR DASHBOARD
-  // =====================================
-  if (
-    user.role === "pastor" &&
-    page ===
-      "member-dashboard"
-  ) {
-
-    page =
-      "dashboard";
-  }
-
-  // =====================================
-  // ADMIN ONLY PAGE
-  // =====================================
-  if (
-    page ===
-      "admin-approvals" &&
-    user.role !==
-      "admin"
-  ) {
-
-    page =
-      user.role ===
-      "member"
-
-        ? "member-dashboard"
-
-        : "dashboard";
-  }
-}
-
-      // =====================================
-      // FIND ROUTE
-      // =====================================
-      const route =
-        routes[page];
-
-      if (!route) {
-
-        const app =
-          $("app");
-
-        if (app) {
-
-          app.innerHTML =
-            `
-              <div style="padding:60px;text-align:center;">
-                <h2>Page not found</h2>
-              </div>
-            `;
-        }
-
-        return;
-      }
-
-      // =====================================
-      // SET CURRENT PAGE
-      // =====================================
-      window.currentPage =
-        page;
-
-      // =====================================
-      // CLOSE MOBILE MENU
-      // =====================================
-      const nav =
-        document.getElementById(
-          "topnav"
-        );
-
-      if (nav) {
-
-        nav.classList.remove(
-          "mobile-open"
-        );
-      }
-
-      // =====================================
-      // FETCH PAGE
-      // =====================================
-      const res =
-        await fetch(route);
-
-      if (!res.ok) {
-
-        throw new Error(
-          `Failed to load route: ${route}`
-        );
-      }
-
-      if (
-        requestId !==
-        __navRequestId
-      ) {
-        return;
-      }
-
-              const html =
-        await res.text();
-
-      if (
-        !html ||
-        html.trim().length === 0
-      ) {
-
-        throw new Error(
-          `Empty HTML returned for ${page}`
-        );
-      }
-
-      if (
-        requestId !==
-        __navRequestId
-      ) {
-        return;
-      }
-
-      // =====================================
-      // APP CONTAINER
-      // =====================================
-      const app =
-        $("app");
-
-      if (!app) {
-
-        throw new Error(
-          "#app container missing"
-        );
-      }
-
-      // =====================================
-      // INJECT PAGE
-      // =====================================
-            console.log(
-          "✅ Injecting page:",
-          page
-        );
-
-        console.log(
-          "📄 HTML length:",
-          html.length
-        );
-
-        app.innerHTML = html;
-
-      // =====================================
-      // REFRESH USER
-      // =====================================
-      if (
-        typeof getCurrentUser ===
-        "function"
-      ) {
-
-        try {
-
-          const latestUser =
-            await getCurrentUser();
-
-          if (latestUser) {
-
-            window.currentUser =
-              latestUser;
-          }
-
-        } catch (err) {
-
-          console.error(
-            "User refresh failed:",
-            err
-          );
-        }
-      }
-
-        // =====================================
-        // SET CURRENT PAGE
-        // =====================================
-        window.currentPage =
-          page;
-      // =====================================
-      // NAVBAR
-      // =====================================
-      if (
-        typeof renderNavbar ===
-        "function"
-      ) {
-
-        renderNavbar();
-      }
-
-      // =====================================
-      // AUTH FORMS
-      // =====================================
-      safeRun(
-        () => bindAuthForms(),
-        "auth"
-      );
-
-      safeRun(
-        () => bindPasswordToggle(),
-        "password"
-      );
-
-      if (
-      typeof bindSermonStudio ===
-      "function"
-    ) {
-
-      safeRun(
-        () => bindSermonStudio(),
-        "sermon"
-      );
     }
 
-      // =====================================
-      // PAGE LOADERS
-      // =====================================
+    if (user) {
 
-      // DASHBOARD
-      if (page === "dashboard") {
-
-        await loadUserInfo();
-
-        await loadDashboard();
-
-        loadTopSermons();
-
-        loadAIInsights();
-
-        startDashboardAutoRefresh();
+      if (user.role === "member" && page === "dashboard") {
+        page = "member-dashboard";
       }
 
-      // MEMBER DASHBOARD
+      if (user.role === "pastor" && page === "member-dashboard") {
+        page = "dashboard";
+      }
+
       if (
-        page ===
-        "member-dashboard"
+        page === "admin-approvals" &&
+        user.role !== "admin"
       ) {
-
-        await loadUserInfo();
-
-        await loadMemberDashboard();
-
-        startDashboardAutoRefresh();
+        page =
+          user.role === "member"
+            ? "member-dashboard"
+            : "dashboard";
       }
+    }
 
-      // NETWORK
-      if (page === "network") {
+    // =====================================
+    // FIND ROUTE
+    // =====================================
+    const route = routes[page];
 
-        await loadUserInfo();
-
-        await loadNetworkPage();
-      }
-
-      if (page ==="admin-approvals") {
-
-          await loadUserInfo();
-
-          await loadPastorApplications();
-      }
-
-      // SERMON
-      if (page === "sermon") {
-
-        await loadUserInfo();
-
-        loadSelectedSermon();
-      }
-
-      // MY SERMONS
-      // MY SERMONS
-      if (page === "mysermons") {
-
-        await loadUserInfo();
-
-        await waitForElement(
-          "sermonList"
-        );
-
-        await loadMySermons();
-
-        // Shared sermons are pastor-only
-        if (
-          window.currentUser &&
-          window.currentUser.role === "pastor"
-        ) {
-
-          await loadSharedSermons();
-        }
-      }
-
-      // EDIT PROFILE
-      if (
-        page ===
-        "edit-profile"
-      ) {
-
-        await loadUserInfo();
-
-        await loadProfilePage();
-      }
-
-      // PASTOR PROFILE
-      if (
-        page ===
-        "pastor-profile"
-      ) {
-
-        await loadUserInfo();
-
-        await loadPastorProfilePage();
-      }
-
-      console.log(
-        `✅ Loaded page: ${page}`
-      );
-
-    } catch (err) {
-
-            console.error(
-        "🔥 Navigation crash:",
-        err
-      );
-
-      console.error(
-        "Failed page:",
-        page
-      );
-
-      const app =
-        $("app");
+    if (!route) {
+      const app = $("app");
 
       if (app) {
-
         app.innerHTML = `
-
-          <div
-            style="
-              padding:60px;
-              text-align:center;
-            "
-          >
-
-            <h2>
-              Error loading page
-            </h2>
-
-            <p>
-              ${err.message}
-            </p>
-
+          <div style="padding:60px;text-align:center;">
+            <h2>Page not found</h2>
           </div>
-
         `;
       }
 
-    } finally {
-
-      window.isNavigating =
-        false;
+      return;
     }
+
+    // =====================================
+    // SET CURRENT PAGE (IMPORTANT FIX ADDED HERE)
+    // =====================================
+    window.currentPage = page;
+
+    // 🔥 RESET PAGE STATE FLAGS (CRITICAL FIX)
+    window.__mySermonsLoading = false;
+    window.__mySermonsLoaded = false;
+
+    // =====================================
+    // CLOSE MOBILE MENU
+    // =====================================
+    const nav = document.getElementById("topnav");
+
+    if (nav) {
+      nav.classList.remove("mobile-open");
+    }
+
+    // =====================================
+    // FETCH PAGE
+    // =====================================
+    const res = await fetch(route);
+
+    if (!res.ok) {
+      throw new Error(`Failed to load route: ${route}`);
+    }
+
+    if (requestId !== __navRequestId) return;
+
+    const html = await res.text();
+
+    if (!html || html.trim().length === 0) {
+      throw new Error(`Empty HTML returned for ${page}`);
+    }
+
+    if (requestId !== __navRequestId) return;
+
+    // =====================================
+    // INJECT PAGE
+    // =====================================
+    const app = $("app");
+
+    if (!app) {
+      throw new Error("#app container missing");
+    }
+
+    console.log("✅ Injecting page:", page);
+    app.innerHTML = html;
+
+    // =====================================
+    // REFRESH USER
+    // =====================================
+    if (typeof getCurrentUser === "function") {
+      try {
+        const latestUser = await getCurrentUser();
+
+        if (latestUser) {
+          window.currentUser = latestUser;
+        }
+      } catch (err) {
+        console.error("User refresh failed:", err);
+      }
+    }
+
+    window.currentPage = page;
+
+    // =====================================
+    // NAVBAR
+    // =====================================
+    if (typeof renderNavbar === "function") {
+      renderNavbar();
+    }
+
+    // =====================================
+    // AUTH FORMS
+    // =====================================
+    safeRun(() => bindAuthForms(), "auth");
+    safeRun(() => bindPasswordToggle(), "password");
+
+    if (typeof bindSermonStudio === "function") {
+      safeRun(() => bindSermonStudio(), "sermon");
+    }
+
+    // =====================================
+    // PAGE LOADERS
+    // =====================================
+
+    if (page === "dashboard") {
+      await loadUserInfo();
+      await loadDashboard();
+      loadTopSermons();
+      loadAIInsights();
+      startDashboardAutoRefresh();
+    }
+
+    if (page === "member-dashboard") {
+      await loadUserInfo();
+      await loadMemberDashboard();
+      startDashboardAutoRefresh();
+    }
+
+    if (page === "network") {
+      await loadUserInfo();
+      await loadNetworkPage();
+    }
+
+    if (page === "admin-approvals") {
+      await loadUserInfo();
+      await loadPastorApplications();
+    }
+
+    if (page === "sermon") {
+      await loadUserInfo();
+      loadSelectedSermon();
+    }
+
+    // =====================================
+    // MY SERMONS (FIXED SAFETY)
+    // =====================================
+    // MY SERMONS
+    if (page === "mysermons") {
+
+      console.log("🔥 ENTERED MYSERMONS");
+
+      await loadUserInfo();
+
+      await waitForElement("sermonList");
+
+      // =====================================
+      // IGNORE STALE NAVIGATION CALLS
+      // =====================================
+      const nav = window.__navState;
+
+      if (!nav || nav.page !== "mysermons") {
+        console.log("⏭ Skipping stale mysermons load");
+        return;
+      }
+
+      // =====================================
+      // PREVENT DOUBLE LOAD
+      // =====================================
+      if (window.__mySermonsLoaded) {
+
+        console.log(
+          "⏭ My sermons already loaded"
+        );
+
+        // still allow shared sermons
+        if (
+          window.currentUser &&
+          window.currentUser.role !== "member"
+        ) {
+
+          console.log(
+            "🔥 Loading shared sermons (cached page)"
+          );
+
+          await loadSharedSermons();
+        }
+
+        return;
+      }
+
+      console.log("🔥 Loading My Sermons");
+
+      await loadMySermons();
+
+      window.__mySermonsLoaded = true;
+
+      console.log(
+        "🔥 USER:",
+        window.currentUser
+      );
+
+      if (
+        window.currentUser &&
+        window.currentUser.role !== "member"
+      ) {
+
+        console.log(
+          "🔥 Loading Shared Sermons"
+        );
+
+        await loadSharedSermons();
+
+      } else {
+
+        console.log(
+          "⏭ Shared sermons skipped. Role:",
+          window.currentUser?.role
+        );
+      }
+    }
+    
+    if (page === "edit-profile") {
+      await loadUserInfo();
+      await loadProfilePage();
+    }
+
+    if (page === "pastor-profile") {
+      await loadUserInfo();
+      await loadPastorProfilePage();
+    }
+
+    console.log(`✅ Loaded page: ${page}`);
+
+  } catch (err) {
+
+    console.error("🔥 Navigation crash:", err);
+
+    const app = $("app");
+
+    if (app) {
+      app.innerHTML = `
+        <div style="padding:60px;text-align:center;">
+          <h2>Error loading page</h2>
+          <p>${err.message}</p>
+        </div>
+      `;
+    }
+
+  } finally {
+    window.isNavigating = false;
   }
+}
 
   // =====================================
   // GLOBAL EXPORT

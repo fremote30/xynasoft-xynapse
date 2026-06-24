@@ -1,72 +1,175 @@
 <div class="sermon-container">
 
-  <!-- 🔥 BACK -->
+  <!-- ===================================== -->
+  <!-- BACK -->
+  <!-- ===================================== -->
   <div class="back-bar">
+
     <button
       onclick="navigate('dashboard')"
       class="btn-back"
     >
       ← Back to Dashboard
     </button>
+
   </div>
 
-  <!-- ========================= -->
+  <!-- ===================================== -->
   <!-- HEADER -->
-  <!-- ========================= -->
-  <div class="page-header">
+  <!-- ===================================== -->
+  <div class="page-header sermon-header">
 
-    <h1>
-      📚 My Sermons
-    </h1>
+    <div class="sermon-header-left">
 
-    <p class="subtext">
-      View, edit, and manage your saved sermons
-    </p>
+      <h1>
+        📚 My Sermons
+      </h1>
 
-  </div>
-
-  <!-- ========================= -->
-  <!-- ACTION BAR -->
-  <!-- ========================= -->
-  <div class="top-actions">
-
-    <button
-      class="btn-primary"
-      onclick="navigate('sermon')"
-    >
-      ✨ Create New Sermon
-    </button>
-
-  </div>
-
-  <!-- ========================= -->
-  <!-- MY SERMONS -->
-  <!-- ========================= -->
-  <div
-    id="sermonList"
-    class="sermons-grid"
-  >
-
-    <!-- LOADING STATE -->
-    <div class="loading-state">
-
-      <div class="loading-spinner"></div>
-
-      <p>
-        Loading sermons...
+      <p class="subtext">
+        View, edit, search, and manage your saved sermons
       </p>
+
+    </div>
+
+    <div class="sermon-header-right">
+
+      <button
+        class="btn-primary"
+        onclick="navigate('sermon')"
+      >
+        ✨ Create New Sermon
+      </button>
 
     </div>
 
   </div>
 
-  <!-- ========================= -->
+  <!-- ===================================== -->
+  <!-- STATS BAR -->
+  <!-- ===================================== -->
+  <div class="sermon-stats">
+
+    <div class="feature-card mini-stat">
+
+      <h3 id="sermonCount">
+        0
+      </h3>
+
+      <p>
+        Saved Sermons
+      </p>
+
+    </div>
+
+    <div class="feature-card mini-stat">
+
+      <h3 id="sharedCount">
+        0
+      </h3>
+
+      <p>
+        Shared With Me
+      </p>
+
+    </div>
+
+  </div>
+ 
+
+  <!-- ===================================== -->
+    <!-- TABS -->
+    <!-- ===================================== -->
+    <div class="sermon-tabs">
+
+      <button
+        id="tabMine"
+        class="sermon-tab active"
+      >
+        📚 My Sermons
+      </button>
+
+      <button
+        id="tabShared"
+        class="sermon-tab"
+      >
+        🤝 Shared With Me
+      </button>
+
+    </div>
+  <!-- ===================================== -->
+  <!-- SEARCH BAR -->
+  <!-- ===================================== -->
+  <div class="sermon-toolbar">
+
+    <input
+      id="sermonSearch"
+      class="search-input"
+      type="text"
+      placeholder="🔍 Search sermons..."
+    />
+    <div
+      id="searchResultsCount"
+      class="search-count"
+    ></div>
+    <select
+      id="sermonSort"
+      class="sort-select"
+    >
+
+      <option value="newest">
+            Newest First
+            </option>
+
+            <option value="oldest">
+            Oldest First
+            </option>
+
+            <option value="title">
+            Title A-Z
+            </option>
+
+            <option value="mostViewed">
+            Most Viewed
+            </option>
+
+            <option value="mostShared">
+            Most Shared
+        </option>
+
+    </select>
+
+  </div>
+
+  <!-- ===================================== -->
+  <!-- SERMON LIBRARY -->
+  <!-- ===================================== -->
+  <div class="library-wrapper">
+
+    <div
+      id="sermonList"
+      class="sermons-grid"
+    >
+
+      <div class="loading-state">
+
+        <div class="loading-spinner"></div>
+
+        <p>
+          Loading sermons...
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ===================================== -->
   <!-- EMPTY STATE -->
-  <!-- ========================= -->
+  <!-- ===================================== -->
   <div
     id="emptyState"
     class="empty-state"
-
     style="display:none;"
   >
 
@@ -87,15 +190,15 @@
 
   </div>
 
-  <!-- ========================= -->
-  <!-- SHARED SERMONS -->
-  <!-- ========================= -->
+  <!-- ===================================== -->
+<!-- SHARED SECTION -->
+<!-- ===================================== -->
+
+<div id="sharedSection">
+
   <div
     class="page-header"
-
-    style="
-      margin-top:40px;
-    "
+    style="margin-top:40px;"
   >
 
     <h2>
@@ -108,9 +211,6 @@
 
   </div>
 
-  <!-- ========================= -->
-  <!-- SHARED LIST -->
-  <!-- ========================= -->
   <div
     id="sharedList"
     class="sermons-grid"
@@ -127,5 +227,9 @@
     </div>
 
   </div>
+
+</div>
+
+  
 
 </div>
