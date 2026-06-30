@@ -213,7 +213,7 @@ app.include_router(
     prayer_router,
     prefix="/api/v1"
 )
-print("✅ Pastor routes loaded")
+print("✅ Prayer routes loaded")
 
 # =====================================
 # PASTOR PROFILE

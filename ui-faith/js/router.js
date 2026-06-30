@@ -46,6 +46,9 @@
     "admin-approvals":
       "/faith/pages/admin-approvals.html",
 
+    prayer: 
+      "/faith/pages/prayer.html",
+
     "pastor-profile":
       "/faith/pages/pastor-profile.html"
   };
@@ -62,6 +65,8 @@
     "network",
 
     "member-dashboard",
+
+    "prayer",
 
     "mysermons"
   ];
@@ -353,6 +358,9 @@ async function navigate(page) {
       renderNavbar();
     }
 
+    if (typeof refreshPrayerNotifications === "function") {
+      await refreshPrayerNotifications();
+    }
     // =====================================
     // AUTH FORMS
     // =====================================
@@ -482,6 +490,14 @@ async function navigate(page) {
     if (page === "pastor-profile") {
       await loadUserInfo();
       await loadPastorProfilePage();
+    }
+
+    if (page === "prayer") {
+      await loadUserInfo();
+
+      if (typeof loadPrayerWall === "function") {
+        await loadPrayerWall();
+      }
     }
 
     console.log(`✅ Loaded page: ${page}`);

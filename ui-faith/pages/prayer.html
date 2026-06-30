@@ -1,0 +1,123 @@
+<section class="prayer-wall-page">
+
+  <div class="prayer-hero">
+    <div>
+      <span class="eyebrow">XynaFaith Community</span>
+      <h1>Prayer Wall</h1>
+      <p>
+        Share prayer requests, pray for others, celebrate answered prayers,
+        and build a daily rhythm of faith together.
+      </p>
+    </div>
+
+    <button class="btn-primary" onclick="openPrayerComposer()">
+      🙏 Submit Prayer
+    </button>
+  </div>
+
+  <div class="prayer-stats-grid" id="prayerStatsGrid">
+    <div class="stat-card">
+      <span>Total Prayers</span>
+      <strong id="prayerStatTotal">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>This Week</span>
+      <strong id="prayerStatWeek">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Answered</span>
+      <strong id="prayerStatAnswered">0</strong>
+    </div>
+
+    <div class="stat-card">
+      <span>Praying Today</span>
+      <strong id="prayerStatToday">0</strong>
+    </div>
+  </div>
+
+  <div class="prayer-toolbar">
+    <input
+      id="prayerSearch"
+      class="input"
+      type="search"
+      placeholder="Search prayers, categories, or names..."
+      oninput="handlePrayerSearch()"
+    />
+
+    <div class="prayer-filters">
+      <button class="filter-chip active" data-filter="recent" onclick="setPrayerFilter('recent')">
+        Recent
+      </button>
+
+      <button class="filter-chip" data-filter="most_prayed" onclick="setPrayerFilter('most_prayed')">
+        Most Prayed
+      </button>
+
+      <button class="filter-chip" data-filter="answered" onclick="setPrayerFilter('answered')">
+        Answered
+      </button>
+
+      <button class="filter-chip" data-filter="my" onclick="setPrayerFilter('my')">
+        My Prayers
+      </button>
+    </div>
+  </div>
+
+  <div id="prayerFeed" class="prayer-feed">
+    <div class="empty-state">
+      <h3>Loading Prayer Wall...</h3>
+      <p>Please wait while we gather the latest prayer requests.</p>
+    </div>
+  </div>
+
+  <div class="load-more-wrap">
+    <button id="loadMorePrayersBtn" class="btn-secondary" onclick="loadMorePrayers()">
+      Load More
+    </button>
+  </div>
+
+</section>
+
+
+<!-- PRAYER COMPOSER MODAL -->
+<div id="prayerComposerModal" class="modal-overlay hidden">
+  <div class="modal-card prayer-modal-card">
+
+    <div class="modal-header">
+      <h2>Submit Prayer Request</h2>
+      <button class="modal-close" onclick="closePrayerComposer()">×</button>
+    </div>
+
+    <textarea
+      id="newPrayerMessage"
+      class="input textarea"
+      rows="6"
+      placeholder="What would you like the community to pray about?"
+    ></textarea>
+
+    <select id="newPrayerCategory" class="input">
+      <option value="">Select category</option>
+      <option value="Healing">Healing</option>
+      <option value="Family">Family</option>
+      <option value="Faith">Faith</option>
+      <option value="Work">Work</option>
+      <option value="School">School</option>
+      <option value="Grief">Grief</option>
+      <option value="Guidance">Guidance</option>
+      <option value="Thanksgiving">Thanksgiving</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label class="checkbox-row">
+      <input id="newPrayerAnonymous" type="checkbox" />
+      Post anonymously
+    </label>
+
+    <button class="btn-primary full-width" onclick="submitPrayer()">
+      Submit Prayer
+    </button>
+
+  </div>
+</div>

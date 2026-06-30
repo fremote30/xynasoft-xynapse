@@ -36,6 +36,15 @@
     ☰
   </button>
 
+  <button
+    id="notificationBell"
+    class="notification-bell hidden"
+    onclick="togglePrayerNotifications()"
+    title="Notifications"
+  >
+    🔔
+    <span id="notificationBadge" class="notification-badge hidden">0</span>
+  </button>
   <!-- DYNAMIC NAVIGATION -->
   <nav id="topnav" class="nav-links"></nav>
 
@@ -139,6 +148,7 @@
   <script defer src="/faith/js/collaboration.js"></script>
   <script defer src="/faith/js/network.js"></script>
   <script defer src="/faith/js/platform.js"></script>
+  <script defer src="/faith/js/prayer.js"></script>
 
   <!-- =========================
        RECOVERY

@@ -123,7 +123,6 @@ window.currentSermonPage = 1;
             <button onclick="navigate('sermon')">✍️ Sermon Studio</button>
             <button onclick="navigate('mysermons')">📚 My Sermons</button>
             <button onclick="navigate('network')">🌐 Network</button>
-            <button onclick="navigate('prayer')">🙏 Prayer Wall</button>
             <button onclick="navigate('settings')">⚙️ Settings</button>
             <button onclick="logout()">🧱 Logout</button>
         `;

@@ -1,21 +1,24 @@
 <div class="app clean-app">
-
   <div class="clean-main">
 
     <!-- HERO -->
-    <section class="simple-hero">
+    <section class="simple-hero member-dashboard-hero">
       <div class="hero-content">
 
         <div class="hero-top-row">
 
           <div>
+            <span class="eyebrow">Member Dashboard</span>
+
             <h1 class="hero-title">
-              Welcome back, <span class="highlight" id="userName">User</span>
+              Welcome back,
+              <span class="highlight" id="userName">User</span>
             </h1>
 
             <p class="hero-sub">
-              Stay connected with your pastors and grow in faith.
+              Follow pastors, discover sermons, share prayer requests, and grow in faith with the XynaFaith community.
             </p>
+
             <div class="pastor-status-wrapper">
               <span id="pastorStatusBadge" class="status-badge">
                 Member
@@ -25,14 +28,13 @@
 
           <!-- PASTOR UPGRADE -->
           <div id="pastorUpgradeContainer">
-
-            <div id="pastorUpgradeCard">
+            <div id="pastorUpgradeCard" class="member-upgrade-card">
 
               <h3 id="pastorCardTitle">Become a Pastor</h3>
 
               <p id="pastorUpgradeMessage">
-                Apply for pastor verification to access Sermon Studio,
-                create sermons, and collaborate with other ministers.
+                Apply for pastor verification to access advanced sermon tools,
+                ministry collaboration, and verified pastor features.
               </p>
 
               <button
@@ -43,50 +45,64 @@
               </button>
 
             </div>
-
           </div>
 
         </div>
 
         <div class="hero-buttons">
           <button class="btn-primary" onclick="navigate('network')">
-            Explore Sermons
+            🌐 Explore Pastors
           </button>
 
-          <button class="btn-secondary" onclick="navigate('member-dashboard')">
-            My Feed
+          <button class="btn-secondary" onclick="navigate('prayer')">
+            🙏 Prayer Wall
+          </button>
+
+          <button class="btn-secondary" onclick="navigate('sermon')">
+            ✍️ Try Sermon Studio
           </button>
         </div>
 
       </div>
     </section>
 
-    <!-- MEMBER FEED -->
-    <section class="features">
+    <!-- MEMBER CONTENT -->
+    <section class="features member-dashboard-section">
+
+      <!-- FEED -->
       <div class="features-header">
-        <h2>Your Feed</h2>
-        <p>Latest sermons from pastors you follow</p>
+        <h2>Your Faith Feed</h2>
+        <p>Latest sermons and updates from pastors you follow.</p>
       </div>
 
-      <div id="memberFeed" class="feed-grid">
+      <div id="memberFeed" class="feed-grid member-feed-panel">
         <p>Loading feed...</p>
       </div>
-    
+
+      <!-- DISCOVER -->
       <div class="features-header">
         <h2>Discover</h2>
+        <p>Explore sermons, pastors, insights, and community prayer.</p>
       </div>
 
-      <div class="feature-grid">
+      <div class="feature-grid member-discover-grid">
 
-        <div class="feature-card">
+        <div class="feature-card member-action-card" onclick="navigate('network')">
+          <div class="icon">🌐</div>
+          <h3>Find Pastors</h3>
+          <p>Discover and follow pastors across the XynaFaith community.</p>
+          <button class="btn-secondary">Explore Network</button>
+        </div>
+
+        <div class="feature-card member-action-card">
           <div class="icon">🔥</div>
           <h3>Trending Sermons</h3>
           <div id="topSermons">
             <p>Loading...</p>
           </div>
         </div>
-   
-        <div class="feature-card">
+
+        <div class="feature-card member-action-card">
           <div class="icon">💡</div>
           <h3>Faith Insights</h3>
           <div id="aiInsights">
@@ -94,40 +110,88 @@
           </div>
         </div>
 
-        <div class="feature-card">
-          <h3>🌐 Find Pastors</h3>
-          <p>Discover and follow pastors</p>
-        </div>
-
       </div>
-    
+
+      <!-- ACTIVITY -->
       <div class="features-header">
         <h2>Your Activity</h2>
       </div>
 
-      <div class="stats-grid">
+      <div class="feature-grid member-activity-grid">
 
-        <div class="feature-card">
-          <h3>Sermons Viewed</h3>
+        <div class="feature-card dashboard-stats-card">
+          <h3>📖 Sermons Viewed</h3>
           <p id="sermonCount">0</p>
+          <span>Your sermon activity</span>
         </div>
 
-        <div class="feature-card">
-          <h3>Pastors Following</h3>
+        <div class="feature-card dashboard-stats-card">
+          <h3>👥 Pastors Following</h3>
           <p id="memberCount">0</p>
-        </div>
-
-        <div class="feature-card prayer-wall-card">
-          <h3>🙏 Prayer Wall</h3>
-
-          <div id="prayerWall">
-            <p>Loading prayers...</p>
-          </div>
+          <span>Your ministry network</span>
         </div>
 
       </div>
+
+      <!-- PRAYER WALL FLAGSHIP -->
+      <div class="dashboard-prayer-section member-prayer-section">
+
+        <div class="dashboard-prayer-copy">
+          <span class="eyebrow">Community Prayer</span>
+
+          <h2>Pray, support, and celebrate answered prayers.</h2>
+
+          <p>
+            Share prayer requests, encourage others, and stay connected with the faith community throughout the week.
+          </p>
+        </div>
+
+        <div class="feature-card prayer-wall-card dashboard-prayer-widget dashboard-prayer-wide">
+
+          <div class="dashboard-prayer-header">
+            <div>
+              <div class="icon">🙏</div>
+              <h3>Prayer Wall</h3>
+              <p>Pray with the XynaFaith community today.</p>
+            </div>
+          </div>
+
+          <div class="dashboard-prayer-stats">
+            <div>
+              <strong id="dashboardPrayerTotal">0</strong>
+              <span>Total</span>
+            </div>
+
+            <div>
+              <strong id="dashboardPrayerAnswered">0</strong>
+              <span>Answered</span>
+            </div>
+
+            <div>
+              <strong id="dashboardPrayerToday">0</strong>
+              <span>Praying Today</span>
+            </div>
+          </div>
+
+          <div id="prayerWall" class="dashboard-prayer-list">
+            <p>Loading prayers...</p>
+          </div>
+
+          <div class="dashboard-prayer-actions">
+            <button class="btn-primary" onclick="navigate('prayer')">
+              Open Prayer Wall
+            </button>
+
+            <button class="btn-secondary" onclick="navigate('prayer')">
+              Submit Prayer
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
     </section>
 
   </div>
-
 </div>

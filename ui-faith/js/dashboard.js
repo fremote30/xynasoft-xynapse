@@ -12,525 +12,286 @@
     document.getElementById(id);
 
   // =====================================
-  // LOAD DASHBOARD
+  // LOAD DASHBOARDPRAYER
   // =====================================
-  async function loadDashboard() {
+async function loadDashboardPrayerWidget() {
+  const container = $("prayerWall");
 
-    try {
+  if (!container) return;
 
-      // =========================
-      // USER
-      // =========================
-      const user =
-        window.currentUser;
+  container.innerHTML = `<p>Loading recent prayers...</p>`;
 
-      // =========================
-      // ADMIN CARD
-      // =========================
-const adminCard =
-    $("adminApplicationsCard");
+  // =========================
+  // ANALYTICS — SAFE
+  // =========================
+  try {
+    const analyticsRes = await apiFetch("/api/v1/prayers/analytics");
 
-const adminStatsSection =
-    $("adminStatsSection");
+    if (analyticsRes.ok) {
+      const analytics = await analyticsRes.json();
 
-// TEMP DEBUG FIX
-if (
-    adminCard &&
-    user?.role !== "admin"
-) {
+      if ($("dashboardPrayerTotal")) {
+        $("dashboardPrayerTotal").textContent = analytics.total_prayers || 0;
+      }
 
-    adminCard.remove();
+      if ($("dashboardPrayerAnswered")) {
+        $("dashboardPrayerAnswered").textContent = analytics.answered_prayers || 0;
+      }
+
+      if ($("dashboardPrayerToday")) {
+        $("dashboardPrayerToday").textContent = analytics.people_praying_today || 0;
+      }
+    }
+  } catch (err) {
+    console.warn("Prayer analytics skipped:", err);
+  }
+
+  // =========================
+  // RECENT PRAYERS — SAFE
+  // =========================
+  try {
+    const prayerRes = await apiFetch("/api/v1/dashboard/recent-prayers");
+
+    if (!prayerRes.ok) {
+      throw new Error("Failed to load recent prayers");
+    }
+
+    const prayers = await prayerRes.json();
+
+    container.innerHTML = prayers.length
+      ? prayers.slice(0, 3).map(p => `
+        <div class="dashboard-prayer-item">
+          <strong>${p.user_name || "Anonymous"}</strong>
+          <p>${typeof p.message === "object" ? JSON.stringify(p.message) : p.message}</p>
+          <small>${typeof formatDate === "function" ? formatDate(p.created_at) : ""}</small>
+        </div>
+      `).join("")
+      : `
+        <div class="dashboard-prayer-empty">
+          <p>No prayers yet.</p>
+          <button class="btn-primary" onclick="navigate('prayer')">
+            Submit the first prayer
+          </button>
+        </div>
+      `;
+
+  } catch (err) {
+    console.error("Prayer widget error:", err);
+
+    container.innerHTML = `
+      <p>Could not load Prayer Wall preview.</p>
+      <button class="btn-secondary" onclick="navigate('prayer')">
+        Open Prayer Wall
+      </button>
+    `;
+  }
 }
 
-if (
-    adminStatsSection &&
-    user?.role !== "admin"
-) {
-
-    adminStatsSection.remove();
-}
-// =====================================
-// ALWAYS RESET ADMIN UI
-// =====================================
-if (adminCard) {
-
-    adminCard.style.display =
-        "none";
-}
-
-if (adminStatsSection) {
-
-    adminStatsSection.style.display =
-        "none";
-}
 
 // =====================================
-// ADMIN ONLY
+// LOAD DASHBOARD
 // =====================================
-if (
-    user &&
-    user.role === "admin"
-) {
+async function loadDashboard() {
+  try {
+    const user = window.currentUser;
+
+    const adminCard = $("adminApplicationsCard");
+    const adminStatsSection = $("adminStatsSection");
+
+    if (adminCard && user?.role !== "admin") {
+      adminCard.remove();
+    }
+
+    if (adminStatsSection && user?.role !== "admin") {
+      adminStatsSection.remove();
+    }
 
     if (adminCard) {
-
-        adminCard.style.display =
-            "block";
+      adminCard.style.display = "none";
     }
 
     if (adminStatsSection) {
-
-        adminStatsSection.style.display =
-            "grid";
+      adminStatsSection.style.display = "none";
     }
 
-    await loadAdminStats();
+    if (user && user.role === "admin") {
+      if (adminCard) adminCard.style.display = "block";
+      if (adminStatsSection) adminStatsSection.style.display = "grid";
+      await loadAdminStats();
+    }
+
+    if (user) {
+      const heroTitle = document.querySelector(".hero-title");
+      if (heroTitle) {
+        heroTitle.innerHTML = `Welcome back, <span class="highlight">${user.name}</span>!`;
+      }
+
+      const heroSub = document.querySelector(".hero-sub");
+      if (heroSub) {
+        heroSub.textContent = "Manage your sermons and lead your congregation.";
+      }
+    }
+
+    const summaryRes = await apiFetch("/api/v1/dashboard/summary");
+
+    if (!summaryRes.ok) {
+      throw new Error("Summary fetch failed");
+    }
+
+    const summary = await summaryRes.json();
+
+    if ($("sermonCount")) {
+      $("sermonCount").innerText = summary.total_sermons ?? 0;
+    }
+
+    if ($("memberCount")) {
+      $("memberCount").innerText = summary.total_members ?? 0;
+    }
+
+    if ($("engagementRate")) {
+      const rate = summary.engagement ?? 0;
+      $("engagementRate").style.width = rate + "%";
+      $("engagementRate").textContent = rate + "%";
+    }
+
+    const recentContainer = $("recentSermons");
+
+    if (recentContainer) {
+      recentContainer.innerHTML = `<p>Loading...</p>`;
+    }
+
+    const recentRes = await apiFetch("/api/v1/dashboard/recent-sermons");
+
+    if (recentRes.ok) {
+      const recent = await recentRes.json();
+
+      if (recentContainer) {
+        recentContainer.innerHTML = recent.length
+          ? recent.map(s => `
+            <div class="sermon-item clickable" onclick="window.openSermon(${s.id})">
+              <h4>${s.title}</h4>
+              <p>${window.safeSermonText(s.content).substring(0, 120)}</p>
+              <span>Shares: ${s.shares ?? 0}</span>
+            </div>
+          `).join("")
+          : `<p>No recent sermons</p>`;
+      }
+    }
+
+    await loadTopSermons();
+    await loadAIInsights();
+    await loadDashboardPrayerWidget();
+
+  } catch (err) {
+    console.error("Dashboard load error:", err);
+    showToast?.("Failed to load dashboard data", "error");
+  }
 }
 
-      if (user) {
+// =====================================
+// MEMBER DASHBOARD
+// =====================================
+async function loadMemberDashboard() {
+  try {
+    const user = window.currentUser;
 
-        const heroTitle =
-          document.querySelector(
-            ".hero-title"
-          );
+    if (!user) return;
 
-        if (heroTitle) {
+    if (user.role === "pastor") {
+      navigate("dashboard");
+      return;
+    }
 
-          heroTitle.innerHTML =
-            `Welcome back, <span class="highlight">${user.name}</span>!`;
+    const badge = $("pastorStatusBadge");
+    const message = $("pastorUpgradeMessage");
+    const button = $("upgradePastorBtn");
+    const card = $("pastorUpgradeCard");
+    const title = $("pastorCardTitle");
+
+    if (badge) {
+      if (user.pastor_status === "pending") {
+        badge.textContent = "Pending Approval";
+
+        if (message) {
+          message.textContent = "Your pastor application is currently under review.";
         }
 
-        const heroSub =
-          document.querySelector(
-            ".hero-sub"
-          );
-
-        if (heroSub) {
-
-          heroSub.textContent =
-            "Manage your sermons and lead your congregation.";
+        if (button) {
+          button.disabled = true;
+          button.textContent = "Application Pending";
         }
+
+      } else if (user.pastor_status === "rejected") {
+        badge.textContent = "Rejected";
+
+        if (title) {
+          title.textContent = "Pastor Application Rejected";
+        }
+
+        if (message) {
+          message.textContent = "Your pastor application was not approved. You may apply again.";
+        }
+
+        if (button) {
+          button.disabled = false;
+          button.textContent = "Apply Again";
+        }
+
+      } else if (user.pastor_status === "approved") {
+        badge.textContent = "Pastor";
+
+        if (card) {
+          card.style.display = "none";
+        }
+
+      } else {
+        badge.textContent = "Member";
       }
+    }
 
-      // =========================
-      // SUMMARY
-      // =========================
-      const summaryRes =
-        await apiFetch(
-          "/api/v1/dashboard/summary"
-        );
+    const nameEl = $("userName");
 
-      if (!summaryRes.ok) {
+    if (nameEl) {
+      nameEl.textContent = user.name;
+    }
 
-        throw new Error(
-          "Summary fetch failed"
-        );
-      }
+    const summaryRes = await apiFetch("/api/v1/dashboard/summary");
 
-      const summary =
-        await summaryRes.json();
+    if (summaryRes.ok) {
+      const summary = await summaryRes.json();
 
-      // =========================
-      // COUNTS
-      // =========================
       if ($("sermonCount")) {
-
-        $("sermonCount").innerText =
-          summary.total_sermons ?? 0;
+        $("sermonCount").innerText = summary.total_sermons ?? 0;
       }
 
       if ($("memberCount")) {
-
-        $("memberCount").innerText =
-          summary.total_members ?? 0;
+        $("memberCount").innerText = summary.total_members ?? 0;
       }
 
-      // =========================
-      // ENGAGEMENT
-      // =========================
+      const engagement = summary.engagement ?? 0;
+
       if ($("engagementRate")) {
-
-        const rate =
-          summary.engagement ?? 0;
-
-        $("engagementRate").style.width =
-          rate + "%";
-
-        $("engagementRate").textContent =
-          rate + "%";
+        $("engagementRate").textContent = `${engagement}%`;
       }
 
-      // =========================
-      // RECENT SERMONS
-      // =========================
-      const recentContainer =
-        $("recentSermons");
-
-      if (recentContainer) {
-
-        recentContainer.innerHTML =
-          `<p>Loading...</p>`;
+      if ($("engagementFill")) {
+        $("engagementFill").style.width = `${engagement}%`;
       }
-
-      const recentRes =
-        await apiFetch(
-          "/api/v1/dashboard/recent-sermons"
-        );
-
-      if (recentRes.ok) {
-
-        const recent =
-          await recentRes.json();
-
-        if (recentContainer) {
-
-           recentContainer.innerHTML =
-              recent.length
-
-                ? recent.map(s => `
-
-                  <div
-                    class="
-                      sermon-item
-                      clickable
-                    "
-                    onclick="
-                      window.openSermon(${s.id})
-                    "
-                  >
-
-                    <h4>
-                      ${s.title}
-                    </h4>
-
-                    <p>
-                      ${window.safeSermonText(s.content).substring(0, 120)}
-                    </p>
-
-                    <span>
-                      Shares: ${s.shares ?? 0}
-                    </span>
-
-                  </div>
-
-                `).join("")
-
-                : `
-                  <p>No recent sermons</p>
-                `;
-
-        
-        }
-      }
-
-      // =========================
-      // TOP SERMONS
-      // =========================
-      await loadTopSermons();
-
-      // =========================
-      // AI INSIGHTS
-      // =========================
-      await loadAIInsights();
-
-      // =========================
-      // PRAYER WALL
-      // =========================
-      const prayerContainer =
-        $("prayerWall");
-
-      if (prayerContainer) {
-
-        prayerContainer.innerHTML =
-          `<p>Loading recent prayers...</p>`;
-      }
-
-      try {
-
-        const prayerRes =
-          await apiFetch(
-            "/api/v1/dashboard/recent-prayers"
-          );
-
-        if (prayerRes.ok) {
-
-          const prayers =
-            await prayerRes.json();
-
-          prayerContainer.innerHTML =
-            prayers.length
-
-              ? prayers.map(p => `
-
-                <div class="prayer-item">
-
-                  <strong>
-                    ${p.user_name}
-                  </strong>
-
-                  <span class="timestamp">
-
-                    (${formatDate(
-                      p.created_at
-                    )})
-
-                  </span>
-
-                  :
-                  ${typeof p.message === "object"
-                    ? JSON.stringify(p.message)
-                    : p.message}
-
-                </div>
-
-              `).join("")
-
-              : `
-                <p>
-                  No prayers yet
-                </p>
-              `;
-        }
-
-      } catch (e) {
-
-        if (prayerContainer) {
-
-          prayerContainer.innerHTML =
-            `<p>Failed to load prayers</p>`;
-        }
-      }
-
-    } catch (err) {
-
-      console.error(
-        "Dashboard load error:",
-        err
-      );
-
-      showToast?.(
-        "Failed to load dashboard data",
-        "error"
-      );
     }
-  }
 
-  // =====================================
-  // MEMBER DASHBOARD
-  // =====================================
-  async function loadMemberDashboard() {
-
-    try {
-
-      const user =
-        window.currentUser;
-
-      if (!user) return;
-      
-      // =========================
-      // PASTOR REDIRECT
-      // =========================
-      if (
-        user.role === "pastor"
-      ) {
-
-        navigate("dashboard");
-
-        return;
-      }
-
-      // =========================
-      // PASTOR STATUS UI
-      // =========================
-      const badge =
-        $("pastorStatusBadge");
-
-      const message =
-        $("pastorUpgradeMessage");
-
-      const button =
-        $("upgradePastorBtn");
-
-      const card =
-        $("pastorUpgradeCard");
-      const title =
-        $("pastorCardTitle");
-      if (badge) {
-
-        // =====================
-        // PENDING
-        // =====================
-        if (
-          user.pastor_status ===
-          "pending"
-        ) {
-
-          badge.textContent =
-            "Pending Approval";
-
-          if (message) {
-
-            message.textContent =
-              "Your pastor application is currently under review.";
-          }
-
-          if (button) {
-
-            button.disabled =
-              true;
-
-            button.textContent =
-              "Application Pending";
-          }
-        }
-
-        // =====================
-        // REJECTED
-        // =====================
-        else if (
-          user.pastor_status ===
-          "rejected"
-        ) {
-
-          badge.textContent =
-            "Rejected";
-
-          if (title) {
-
-            title.textContent =
-              "Pastor Application Rejected";
-          }
-
-          if (message) {
-
-            message.textContent =
-              "Your pastor application was not approved. You may apply again.";
-          }
-
-          if (button) {
-
-            button.disabled =
-              false;
-
-            button.textContent =
-              "Apply Again";
-          }
-        }
-
-        // =====================
-        // APPROVED
-        // =====================
-        else if (
-          user.pastor_status ===
-          "approved"
-        ) {
-
-          badge.textContent =
-            "Pastor";
-
-          if (card) {
-
-            card.style.display =
-              "none";
-          }
-        }
-
-        // =====================
-        // MEMBER
-        // =====================
-        else {
-
-          badge.textContent =
-            "Member";
-        }
-      }
-      // =========================
-      // USER NAME
-      // =========================
-      const nameEl =
-        $("userName");
-
-      if (nameEl) {
-
-        nameEl.textContent =
-          user.name;
-      }
-
-      // =========================
-      // SUMMARY
-      // =========================
-      const summaryRes =
-        await apiFetch(
-          "/api/v1/dashboard/summary"
-        );
-
-      if (summaryRes.ok) {
-
-        const summary =
-          await summaryRes.json();
-
-        if ($("sermonCount")) {
-
-          $("sermonCount").innerText =
-            summary.total_sermons ?? 0;
-        }
-
-        if ($("memberCount")) {
-
-          $("memberCount").innerText =
-            summary.total_members ?? 0;
-        }
-
-        const engagement =
-          summary.engagement ?? 0;
-
-        if ($("engagementRate")) {
-
-          $("engagementRate").textContent =
-            `${engagement}%`;
-        }
-
-        if ($("engagementFill")) {
-
-          $("engagementFill").style.width =
-            `${engagement}%`;
-        }
-      }
-
-      // =========================
-      // MEMBER FEED
-      // =========================
-      if (
-        typeof loadMemberFeed ===
-        "function"
-      ) {
-
-        await loadMemberFeed();
-      }
-
-      // =========================
-      // TOP SERMONS
-      // =========================
-      await loadTopSermons();
-
-      // =========================
-      // AI INSIGHTS
-      // =========================
-      await loadAIInsights();
-
-    } catch (err) {
-
-      console.error(
-        "Member dashboard error:",
-        err
-      );
-
-      showToast?.(
-        "Failed to load dashboard",
-        "error"
-      );
+    if (typeof loadMemberFeed === "function") {
+      await loadMemberFeed();
     }
+
+    await loadTopSermons();
+    await loadAIInsights();
+    await loadDashboardPrayerWidget();
+
+  } catch (err) {
+    console.error("Member dashboard error:", err);
+    showToast?.("Failed to load dashboard", "error");
   }
+}
 
   // =====================================
   // TOP SERMONS
