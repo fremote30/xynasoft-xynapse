@@ -8,7 +8,6 @@ Create Date: 2026-06-29 06:22:20.749223
 from typing import Sequence, Union
 
 from alembic import op
-import sqlalchemy as sa
 
 
 revision: str = "30dec66b204d"
@@ -18,133 +17,92 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    """Upgrade schema."""
+    """Production-safe upgrade.
+
+    Render already has prayers and prayer_reactions, so every table,
+    column, index, and constraint must be created defensively.
+    """
 
     # =========================
-    # ENGAGEMENT TABLES
+    # TABLES
     # =========================
-    op.create_table(
-        "prayer_bookmarks",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("prayer_id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["prayer_id"], ["prayers.id"]),
-        sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint(
-            "prayer_id",
-            "user_id",
-            name="uq_prayer_user_bookmark"
-        ),
-    )
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS prayer_bookmarks (
+            id SERIAL PRIMARY KEY,
+            prayer_id INTEGER NOT NULL REFERENCES prayers(id),
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            created_at TIMESTAMP WITHOUT TIME ZONE
+        );
+    """)
 
-    op.create_index(op.f("ix_prayer_bookmarks_id"), "prayer_bookmarks", ["id"], unique=False)
-    op.create_index(op.f("ix_prayer_bookmarks_prayer_id"), "prayer_bookmarks", ["prayer_id"], unique=False)
-    op.create_index(op.f("ix_prayer_bookmarks_user_id"), "prayer_bookmarks", ["user_id"], unique=False)
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS prayer_comments (
+            id SERIAL PRIMARY KEY,
+            prayer_id INTEGER NOT NULL REFERENCES prayers(id),
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            user_name VARCHAR NOT NULL,
+            parent_id INTEGER REFERENCES prayer_comments(id),
+            comment TEXT NOT NULL,
+            is_pastor_response BOOLEAN,
+            is_pinned BOOLEAN,
+            is_hidden BOOLEAN,
+            created_at TIMESTAMP WITHOUT TIME ZONE,
+            updated_at TIMESTAMP WITHOUT TIME ZONE
+        );
+    """)
 
-    op.create_table(
-        "prayer_comments",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("prayer_id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("user_name", sa.String(), nullable=False),
-        sa.Column("parent_id", sa.Integer(), nullable=True),
-        sa.Column("comment", sa.Text(), nullable=False),
-        sa.Column("is_pastor_response", sa.Boolean(), nullable=True),
-        sa.Column("is_pinned", sa.Boolean(), nullable=True),
-        sa.Column("is_hidden", sa.Boolean(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.Column("updated_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["parent_id"], ["prayer_comments.id"]),
-        sa.ForeignKeyConstraint(["prayer_id"], ["prayers.id"]),
-        sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
-        sa.PrimaryKeyConstraint("id"),
-    )
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS prayer_notifications (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            prayer_id INTEGER REFERENCES prayers(id),
+            notification_type VARCHAR NOT NULL,
+            message TEXT NOT NULL,
+            is_read BOOLEAN,
+            created_at TIMESTAMP WITHOUT TIME ZONE
+        );
+    """)
 
-    op.create_index(op.f("ix_prayer_comments_created_at"), "prayer_comments", ["created_at"], unique=False)
-    op.create_index(op.f("ix_prayer_comments_id"), "prayer_comments", ["id"], unique=False)
-    op.create_index(op.f("ix_prayer_comments_prayer_id"), "prayer_comments", ["prayer_id"], unique=False)
-    op.create_index(op.f("ix_prayer_comments_user_id"), "prayer_comments", ["user_id"], unique=False)
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS prayer_reactions (
+            id SERIAL PRIMARY KEY,
+            prayer_id INTEGER NOT NULL REFERENCES prayers(id),
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            reaction_type VARCHAR NOT NULL,
+            created_at TIMESTAMP WITHOUT TIME ZONE
+        );
+    """)
 
-    op.create_table(
-        "prayer_notifications",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("prayer_id", sa.Integer(), nullable=True),
-        sa.Column("notification_type", sa.String(), nullable=False),
-        sa.Column("message", sa.Text(), nullable=False),
-        sa.Column("is_read", sa.Boolean(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["prayer_id"], ["prayers.id"]),
-        sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
-        sa.PrimaryKeyConstraint("id"),
-    )
-
-    op.create_index(op.f("ix_prayer_notifications_created_at"), "prayer_notifications", ["created_at"], unique=False)
-    op.create_index(op.f("ix_prayer_notifications_id"), "prayer_notifications", ["id"], unique=False)
-    op.create_index(op.f("ix_prayer_notifications_prayer_id"), "prayer_notifications", ["prayer_id"], unique=False)
-    op.create_index(op.f("ix_prayer_notifications_user_id"), "prayer_notifications", ["user_id"], unique=False)
-
-    op.create_table(
-        "prayer_reactions",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("prayer_id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("reaction_type", sa.String(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["prayer_id"], ["prayers.id"]),
-        sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
-        sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint(
-            "prayer_id",
-            "user_id",
-            "reaction_type",
-            name="uq_prayer_user_reaction"
-        ),
-    )
-
-    op.create_index(op.f("ix_prayer_reactions_id"), "prayer_reactions", ["id"], unique=False)
-    op.create_index(op.f("ix_prayer_reactions_prayer_id"), "prayer_reactions", ["prayer_id"], unique=False)
-    op.create_index(op.f("ix_prayer_reactions_user_id"), "prayer_reactions", ["user_id"], unique=False)
-
-    op.create_table(
-        "prayer_reports",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("prayer_id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("reason", sa.String(), nullable=False),
-        sa.Column("details", sa.Text(), nullable=True),
-        sa.Column("created_at", sa.DateTime(), nullable=True),
-        sa.ForeignKeyConstraint(["prayer_id"], ["prayers.id"]),
-        sa.ForeignKeyConstraint(["user_id"], ["users.id"]),
-        sa.PrimaryKeyConstraint("id"),
-    )
-
-    op.create_index(op.f("ix_prayer_reports_id"), "prayer_reports", ["id"], unique=False)
-    op.create_index(op.f("ix_prayer_reports_prayer_id"), "prayer_reports", ["prayer_id"], unique=False)
-    op.create_index(op.f("ix_prayer_reports_user_id"), "prayer_reports", ["user_id"], unique=False)
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS prayer_reports (
+            id SERIAL PRIMARY KEY,
+            prayer_id INTEGER NOT NULL REFERENCES prayers(id),
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            reason VARCHAR NOT NULL,
+            details TEXT,
+            created_at TIMESTAMP WITHOUT TIME ZONE
+        );
+    """)
 
     # =========================
-    # PRAYERS TABLE UPGRADES
+    # PRAYERS TABLE COLUMNS
     # =========================
-    op.add_column("prayers", sa.Column("category", sa.String(), nullable=True))
-    op.add_column("prayers", sa.Column("status", sa.String(), nullable=True))
-    op.add_column("prayers", sa.Column("is_anonymous", sa.Boolean(), nullable=True))
-    op.add_column("prayers", sa.Column("is_hidden", sa.Boolean(), nullable=True))
-    op.add_column("prayers", sa.Column("is_locked", sa.Boolean(), nullable=True))
-    op.add_column("prayers", sa.Column("prayer_count", sa.Integer(), nullable=True))
-    op.add_column("prayers", sa.Column("support_count", sa.Integer(), nullable=True))
-    op.add_column("prayers", sa.Column("comment_count", sa.Integer(), nullable=True))
-    op.add_column("prayers", sa.Column("share_count", sa.Integer(), nullable=True))
-    op.add_column("prayers", sa.Column("answered_at", sa.DateTime(), nullable=True))
-    op.add_column("prayers", sa.Column("updated_at", sa.DateTime(), nullable=True))
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS category VARCHAR;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS status VARCHAR;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS is_anonymous BOOLEAN;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS is_hidden BOOLEAN;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS is_locked BOOLEAN;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS prayer_count INTEGER;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS support_count INTEGER;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS comment_count INTEGER;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS share_count INTEGER;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS answered_at TIMESTAMP WITHOUT TIME ZONE;")
+    op.execute("ALTER TABLE prayers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITHOUT TIME ZONE;")
 
     # =========================
-    # SAFE BACKFILL FOR EXISTING PRAYERS
+    # SAFE BACKFILL
     # =========================
-    op.execute(
-        """
+    op.execute("""
         UPDATE prayers
         SET
             status = COALESCE(status, 'still_praying'),
@@ -155,59 +113,81 @@ def upgrade() -> None:
             support_count = COALESCE(support_count, 0),
             comment_count = COALESCE(comment_count, 0),
             share_count = COALESCE(share_count, 0),
-            updated_at = COALESCE(updated_at, created_at)
-        """
-    )
+            updated_at = COALESCE(updated_at, created_at);
+    """)
 
-    op.create_index(op.f("ix_prayers_category"), "prayers", ["category"], unique=False)
-    op.create_index(op.f("ix_prayers_is_hidden"), "prayers", ["is_hidden"], unique=False)
-    op.create_index(op.f("ix_prayers_status"), "prayers", ["status"], unique=False)
-    op.create_index(op.f("ix_prayers_user_id"), "prayers", ["user_id"], unique=False)
+    # =========================
+    # INDEXES
+    # =========================
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_bookmarks_id ON prayer_bookmarks (id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_bookmarks_prayer_id ON prayer_bookmarks (prayer_id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_bookmarks_user_id ON prayer_bookmarks (user_id);")
+
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_comments_created_at ON prayer_comments (created_at);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_comments_id ON prayer_comments (id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_comments_prayer_id ON prayer_comments (prayer_id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_comments_user_id ON prayer_comments (user_id);")
+
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_notifications_created_at ON prayer_notifications (created_at);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_notifications_id ON prayer_notifications (id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_notifications_prayer_id ON prayer_notifications (prayer_id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_notifications_user_id ON prayer_notifications (user_id);")
+
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_reactions_id ON prayer_reactions (id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_reactions_prayer_id ON prayer_reactions (prayer_id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_reactions_user_id ON prayer_reactions (user_id);")
+
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_reports_id ON prayer_reports (id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_reports_prayer_id ON prayer_reports (prayer_id);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayer_reports_user_id ON prayer_reports (user_id);")
+
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayers_category ON prayers (category);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayers_is_hidden ON prayers (is_hidden);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayers_status ON prayers (status);")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_prayers_user_id ON prayers (user_id);")
+
+    # =========================
+    # UNIQUE CONSTRAINTS
+    # =========================
+    op.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM pg_constraint
+                WHERE conname = 'uq_prayer_user_bookmark'
+            ) THEN
+                ALTER TABLE prayer_bookmarks
+                ADD CONSTRAINT uq_prayer_user_bookmark
+                UNIQUE (prayer_id, user_id);
+            END IF;
+        END $$;
+    """)
+
+    op.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM pg_constraint
+                WHERE conname = 'uq_prayer_user_reaction'
+            ) THEN
+                ALTER TABLE prayer_reactions
+                ADD CONSTRAINT uq_prayer_user_reaction
+                UNIQUE (prayer_id, user_id, reaction_type);
+            END IF;
+        END $$;
+    """)
 
 
 def downgrade() -> None:
-    """Downgrade schema."""
+    """Safe downgrade for development only."""
 
-    op.drop_index(op.f("ix_prayers_user_id"), table_name="prayers")
-    op.drop_index(op.f("ix_prayers_status"), table_name="prayers")
-    op.drop_index(op.f("ix_prayers_is_hidden"), table_name="prayers")
-    op.drop_index(op.f("ix_prayers_category"), table_name="prayers")
+    op.execute("DROP TABLE IF EXISTS prayer_reports CASCADE;")
+    op.execute("DROP TABLE IF EXISTS prayer_notifications CASCADE;")
+    op.execute("DROP TABLE IF EXISTS prayer_comments CASCADE;")
+    op.execute("DROP TABLE IF EXISTS prayer_bookmarks CASCADE;")
 
-    op.drop_column("prayers", "updated_at")
-    op.drop_column("prayers", "answered_at")
-    op.drop_column("prayers", "share_count")
-    op.drop_column("prayers", "comment_count")
-    op.drop_column("prayers", "support_count")
-    op.drop_column("prayers", "prayer_count")
-    op.drop_column("prayers", "is_locked")
-    op.drop_column("prayers", "is_hidden")
-    op.drop_column("prayers", "is_anonymous")
-    op.drop_column("prayers", "status")
-    op.drop_column("prayers", "category")
-
-    op.drop_index(op.f("ix_prayer_reports_user_id"), table_name="prayer_reports")
-    op.drop_index(op.f("ix_prayer_reports_prayer_id"), table_name="prayer_reports")
-    op.drop_index(op.f("ix_prayer_reports_id"), table_name="prayer_reports")
-    op.drop_table("prayer_reports")
-
-    op.drop_index(op.f("ix_prayer_reactions_user_id"), table_name="prayer_reactions")
-    op.drop_index(op.f("ix_prayer_reactions_prayer_id"), table_name="prayer_reactions")
-    op.drop_index(op.f("ix_prayer_reactions_id"), table_name="prayer_reactions")
-    op.drop_table("prayer_reactions")
-
-    op.drop_index(op.f("ix_prayer_notifications_user_id"), table_name="prayer_notifications")
-    op.drop_index(op.f("ix_prayer_notifications_prayer_id"), table_name="prayer_notifications")
-    op.drop_index(op.f("ix_prayer_notifications_id"), table_name="prayer_notifications")
-    op.drop_index(op.f("ix_prayer_notifications_created_at"), table_name="prayer_notifications")
-    op.drop_table("prayer_notifications")
-
-    op.drop_index(op.f("ix_prayer_comments_user_id"), table_name="prayer_comments")
-    op.drop_index(op.f("ix_prayer_comments_prayer_id"), table_name="prayer_comments")
-    op.drop_index(op.f("ix_prayer_comments_id"), table_name="prayer_comments")
-    op.drop_index(op.f("ix_prayer_comments_created_at"), table_name="prayer_comments")
-    op.drop_table("prayer_comments")
-
-    op.drop_index(op.f("ix_prayer_bookmarks_user_id"), table_name="prayer_bookmarks")
-    op.drop_index(op.f("ix_prayer_bookmarks_prayer_id"), table_name="prayer_bookmarks")
-    op.drop_index(op.f("ix_prayer_bookmarks_id"), table_name="prayer_bookmarks")
-    op.drop_table("prayer_bookmarks")
+    # Do not drop prayers or prayer_reactions in production because they may pre-exist.
+    op.execute("DROP INDEX IF EXISTS ix_prayers_user_id;")
+    op.execute("DROP INDEX IF EXISTS ix_prayers_status;")
+    op.execute("DROP INDEX IF EXISTS ix_prayers_is_hidden;")
+    op.execute("DROP INDEX IF EXISTS ix_prayers_category;")
