@@ -6,15 +6,23 @@ from datetime import datetime, timedelta
 from api.db.database import get_db
 from api.core.dependencies import get_current_user
 
+from api.services.prayer_service import (
+    display_name,
+    is_admin,
+    is_pastor_or_admin,
+    create_notification,
+    prayer_to_dict
+)
+
 from api.models.prayer import (
     Prayer,
+    PrayerRecipient,
     PrayerReaction,
     PrayerComment,
     PrayerBookmark,
     PrayerReport,
     PrayerNotification
 )
-
 from api.schemas.prayer import (
     PrayerCreate,
     PrayerUpdateStatus,
@@ -25,80 +33,6 @@ from api.schemas.prayer import (
 
 router = APIRouter()
 
-
-# =====================================
-# HELPERS
-# =====================================
-def display_name(prayer: Prayer):
-    return "Anonymous" if prayer.is_anonymous else prayer.user_name
-
-
-def is_admin(user):
-    return getattr(user, "role", "") == "admin"
-
-
-def is_pastor_or_admin(user):
-    return getattr(user, "role", "") in ["pastor", "admin"]
-
-
-def create_notification(db, user_id, prayer_id, notification_type, message):
-    notification = PrayerNotification(
-        user_id=user_id,
-        prayer_id=prayer_id,
-        notification_type=notification_type,
-        message=message
-    )
-    db.add(notification)
-
-
-def prayer_to_dict(prayer: Prayer, user=None, db: Session = None):
-    has_prayed = False
-    has_supported = False
-    is_bookmarked = False
-    can_update_status = False
-
-    if user and db:
-        has_prayed = db.query(PrayerReaction).filter(
-            PrayerReaction.prayer_id == prayer.id,
-            PrayerReaction.user_id == user.id,
-            PrayerReaction.reaction_type == "prayed"
-        ).first() is not None
-
-        has_supported = db.query(PrayerReaction).filter(
-            PrayerReaction.prayer_id == prayer.id,
-            PrayerReaction.user_id == user.id,
-            PrayerReaction.reaction_type == "support"
-        ).first() is not None
-
-        is_bookmarked = db.query(PrayerBookmark).filter(
-            PrayerBookmark.prayer_id == prayer.id,
-            PrayerBookmark.user_id == user.id
-        ).first() is not None
-
-        can_update_status = (
-            prayer.user_id == user.id or
-            getattr(user, "role", "") == "admin"
-        )
-
-    return {
-        "id": prayer.id,
-        "message": prayer.message,
-        "user_name": display_name(prayer),
-        "category": prayer.category,
-        "status": prayer.status,
-        "is_anonymous": prayer.is_anonymous,
-        "is_locked": prayer.is_locked,
-        "prayer_count": prayer.prayer_count or 0,
-        "support_count": prayer.support_count or 0,
-        "comment_count": prayer.comment_count or 0,
-        "share_count": prayer.share_count or 0,
-        "created_at": prayer.created_at,
-        "answered_at": prayer.answered_at,
-        "has_prayed": has_prayed,
-        "has_supported": has_supported,
-        "is_bookmarked": is_bookmarked,
-        "can_update_status": can_update_status
-    }
 
 # =====================================
 # CREATE PRAYER
@@ -114,15 +48,51 @@ def create_prayer(
     if not message:
         raise HTTPException(status_code=400, detail="Prayer message required")
 
+    visibility = payload.visibility or "community"
+
+    has_recipients = bool(payload.recipients)
+
+    if has_recipients and visibility == "community":
+        visibility = "mixed"
+
+    if not has_recipients and visibility not in ["community"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Selected recipients are required for private prayers"
+        )
+
     prayer = Prayer(
         message=message,
         category=payload.category,
+        visibility=visibility,
         is_anonymous=payload.is_anonymous,
         user_id=user.id,
         user_name=user.name or user.email or "XynaFaith User"
     )
 
     db.add(prayer)
+    db.flush()
+
+    for recipient in payload.recipients:
+        if recipient.user_id == user.id:
+            continue
+
+        prayer_recipient = PrayerRecipient(
+            prayer_id=prayer.id,
+            recipient_user_id=recipient.user_id,
+            recipient_role=recipient.role
+        )
+
+        db.add(prayer_recipient)
+
+        create_notification(
+            db,
+            recipient.user_id,
+            prayer.id,
+            "prayer_received",
+            f"{user.name} sent you a prayer request."
+        )
+
     db.commit()
     db.refresh(prayer)
 
@@ -131,7 +101,65 @@ def create_prayer(
         "prayer": prayer_to_dict(prayer, user, db)
     }
 
+# =====================================
+# PRAYER INBOX
+# =====================================
+@router.get("/prayers/inbox")
+def prayer_inbox(
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    rows = db.query(PrayerRecipient).filter(
+        PrayerRecipient.recipient_user_id == user.id
+    ).order_by(
+        PrayerRecipient.created_at.desc()
+    ).all()
 
+    prayers = []
+
+    for row in rows:
+        prayer = db.query(Prayer).filter(
+            Prayer.id == row.prayer_id,
+            Prayer.is_hidden == False
+        ).first()
+
+        if prayer:
+            item = prayer_to_dict(prayer, user, db)
+            item["recipient_status"] = {
+                "is_read": row.is_read,
+                "prayed_at": row.prayed_at,
+                "responded_at": row.responded_at
+            }
+            prayers.append(item)
+
+    return {
+        "success": True,
+        "items": prayers
+    }
+
+
+# =====================================
+# SENT PRAYERS
+# =====================================
+@router.get("/prayers/sent")
+def sent_prayers(
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    prayers = db.query(Prayer).filter(
+        Prayer.user_id == user.id,
+        Prayer.is_hidden == False
+    ).order_by(
+        Prayer.created_at.desc()
+    ).all()
+
+    return {
+        "success": True,
+        "items": [
+            prayer_to_dict(p, user, db)
+            for p in prayers
+        ]
+    }
 # =====================================
 # PRAYER FEED
 # =====================================
@@ -144,8 +172,7 @@ def prayer_feed(
     db: Session = Depends(get_db),
     user=Depends(get_current_user)
 ):
-    query = db.query(Prayer).filter(Prayer.is_hidden == False)
-
+    query = db.query(Prayer).filter(Prayer.is_hidden == False,Prayer.visibility.in_(["community", "mixed"]))
     if search:
         query = query.filter(
             or_(

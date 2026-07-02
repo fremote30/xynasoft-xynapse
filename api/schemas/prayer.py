@@ -1,12 +1,23 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
+
+
+class PrayerRecipientCreate(BaseModel):
+    user_id: int
+    role: Optional[str] = None
 
 
 class PrayerCreate(BaseModel):
     message: str
     category: Optional[str] = None
     is_anonymous: bool = False
+
+    # community | private | mixed
+    visibility: str = "community"
+
+    # selected pastors/members
+    recipients: List[PrayerRecipientCreate] = []
 
 
 class PrayerUpdateStatus(BaseModel):
@@ -32,6 +43,7 @@ class PrayerOut(BaseModel):
     message: str
     user_name: str
     category: Optional[str]
+    visibility: Optional[str]
     status: str
     is_anonymous: bool
     prayer_count: int
