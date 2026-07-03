@@ -2,15 +2,17 @@
 
   const API_BASE = window.API_BASE || "/api/v1";
   let prayerState = {
-    filter: "recent",
-    search: "",
-    skip: 0,
-    limit: 10,
-    loading: false,
-    hasMore: true
-  };
+  view: "wall",
+  filter: "recent",
+  search: "",
+  skip: 0,
+  limit: 10,
+  loading: false,
+  hasMore: true,
+  selectedRecipients: []
+};
 
-  function getTokenSafe() {
+ function getTokenSafe() {
     if (typeof getToken === "function") return getToken();
     return localStorage.getItem("access_token");
   }
@@ -282,20 +284,130 @@ function answeredCelebration(prayer) {
     }
   }
 
-  window.loadPrayerWall = async function () {
-    prayerState = {
-      filter: "recent",
-      search: "",
-      skip: 0,
-      limit: 10,
-      loading: false,
-      hasMore: true
-    };
+async function loadPrayerInbox() {
+  const feed = document.getElementById("prayerFeed");
+  const loadMoreBtn = document.getElementById("loadMorePrayersBtn");
 
-    await loadPrayerAnalytics();
-    await loadPrayerFeed(true);
-    await loadPrayerNotifications();
+  if (loadMoreBtn) loadMoreBtn.style.display = "none";
+  if (!feed) return;
+
+  feed.innerHTML = `
+    <div class="empty-state">
+      <h3>Loading Prayer Inbox...</h3>
+      <p>Checking private prayer requests sent to you.</p>
+    </div>
+  `;
+
+  try {
+    const data = await prayerFetch("/prayers/inbox");
+    const items = data.items || [];
+
+    feed.innerHTML = items.length
+      ? items.map(prayerCard).join("")
+      : `
+        <div class="empty-state">
+          <h3>No private prayer requests</h3>
+          <p>When someone sends you a prayer request, it will appear here.</p>
+        </div>
+      `;
+  } catch (err) {
+    console.error("Prayer inbox failed:", err);
+
+    feed.innerHTML = `
+      <div class="empty-state error">
+        <h3>Could not load inbox</h3>
+        <p>${escapeHTML(err.message)}</p>
+      </div>
+    `;
+  }
+}
+
+
+async function loadSentPrayers() {
+  const feed = document.getElementById("prayerFeed");
+  const loadMoreBtn = document.getElementById("loadMorePrayersBtn");
+
+  if (loadMoreBtn) loadMoreBtn.style.display = "none";
+  if (!feed) return;
+
+  feed.innerHTML = `
+    <div class="empty-state">
+      <h3>Loading Sent Prayers...</h3>
+      <p>Reviewing prayer requests you have submitted.</p>
+    </div>
+  `;
+
+  try {
+    const data = await prayerFetch("/prayers/sent");
+    const items = data.items || [];
+
+    feed.innerHTML = items.length
+      ? items.map(prayerCard).join("")
+      : `
+        <div class="empty-state">
+          <h3>No sent prayers yet</h3>
+          <p>Prayer requests you submit will appear here.</p>
+        </div>
+      `;
+  } catch (err) {
+    console.error("Sent prayers failed:", err);
+
+    feed.innerHTML = `
+      <div class="empty-state error">
+        <h3>Could not load sent prayers</h3>
+        <p>${escapeHTML(err.message)}</p>
+      </div>
+    `;
+  }
+}
+
+window.loadPrayerWall = async function () {
+  prayerState = {
+    view: "wall",
+    filter: "recent",
+    search: "",
+    skip: 0,
+    limit: 10,
+    loading: false,
+    hasMore: true,
+    selectedRecipients: []
   };
+
+  await loadPrayerAnalytics();
+  await loadPrayerFeed(true);
+  await loadPrayerNotifications();
+};
+
+window.setPrayerView = async function (view) {
+  prayerState.view = view;
+
+  document.querySelectorAll("[data-view]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.view === view);
+  });
+
+  const filters = document.getElementById("prayerFeedFilters");
+  const search = document.getElementById("prayerSearch");
+
+  if (filters) {
+    filters.style.display = view === "wall" ? "flex" : "none";
+  }
+
+  if (search) {
+    search.style.display = view === "wall" ? "block" : "none";
+  }
+
+  if (view === "inbox") {
+    await loadPrayerInbox();
+    return;
+  }
+
+  if (view === "sent") {
+    await loadSentPrayers();
+    return;
+  }
+
+  await loadPrayerFeed(true);
+};
 
   window.loadMorePrayers = async function () {
     await loadPrayerFeed(false);
@@ -333,40 +445,100 @@ function answeredCelebration(prayer) {
     if (modal) modal.classList.add("hidden");
   };
 
-  window.submitPrayer = async function () {
-    const message = document.getElementById("newPrayerMessage")?.value.trim();
-    const category = document.getElementById("newPrayerCategory")?.value || null;
-    const isAnonymous = document.getElementById("newPrayerAnonymous")?.checked || false;
+window.submitPrayer = async function () {
+  const message = document.getElementById("newPrayerMessage")?.value.trim();
+  const category = document.getElementById("newPrayerCategory")?.value || null;
+  const isAnonymous = document.getElementById("newPrayerAnonymous")?.checked || false;
 
-    if (!message) {
-      alert("Prayer message is required.");
-      return;
+  const sendToCommunity = document.getElementById("sendToCommunity")?.checked || false;
+  const sendToSelectedPeople = document.getElementById("sendToSelectedPeople")?.checked || false;
+
+  let visibility = "community";
+
+  if (
+    sendToCommunity &&
+    sendToSelectedPeople &&
+    prayerState.selectedRecipients.length
+  ) {
+    visibility = "mixed";
+  } else if (
+    !sendToCommunity &&
+    sendToSelectedPeople &&
+    prayerState.selectedRecipients.length
+  ) {
+    visibility = "selected";
+  } else {
+    visibility = "community";
+  }
+
+  if (!message) {
+    alert("Prayer message is required.");
+    return;
+  }
+
+  if (!sendToCommunity && !prayerState.selectedRecipients.length) {
+    alert("Please choose Community Prayer Wall or select at least one person.");
+    return;
+  }
+
+  try {
+    await prayerFetch("/prayers", {
+      method: "POST",
+      body: JSON.stringify({
+        message,
+        category,
+        visibility,
+        recipients: prayerState.selectedRecipients,
+        is_anonymous: isAnonymous
+      })
+    });
+
+    document.getElementById("newPrayerMessage").value = "";
+    document.getElementById("newPrayerCategory").value = "";
+    document.getElementById("newPrayerAnonymous").checked = false;
+
+    const communityBox = document.getElementById("sendToCommunity");
+    if (communityBox) communityBox.checked = true;
+
+    const selectedBox = document.getElementById("sendToSelectedPeople");
+    if (selectedBox) selectedBox.checked = false;
+
+    const recipientSearchBox = document.getElementById("recipientSearchBox");
+    if (recipientSearchBox) recipientSearchBox.classList.add("hidden");
+
+    const recipientInput = document.getElementById("recipientSearch");
+    if (recipientInput) recipientInput.value = "";
+
+    const recipientResults = document.getElementById("recipientResults");
+    if (recipientResults) {
+      recipientResults.innerHTML = `
+        <p class="text-muted">
+          Start typing a pastor or member's name...
+        </p>
+      `;
     }
 
-    try {
-      await prayerFetch("/prayers", {
-        method: "POST",
-        body: JSON.stringify({
-          message,
-          category,
-          is_anonymous: isAnonymous
-        })
-      });
+    prayerState.selectedRecipients = [];
+    renderPrayerRecipients();
 
-      document.getElementById("newPrayerMessage").value = "";
-      document.getElementById("newPrayerCategory").value = "";
-      document.getElementById("newPrayerAnonymous").checked = false;
 
-      closePrayerComposer();
+    closePrayerComposer();
 
-      await loadPrayerAnalytics();
+    await loadPrayerAnalytics();
+
+    if (prayerState.view === "sent") {
+      await loadSentPrayers();
+    } else if (prayerState.view === "inbox") {
+      await loadPrayerInbox();
+    } else {
       await loadPrayerFeed(true);
-
-    } catch (err) {
-      alert("Could not submit prayer.");
-      console.error(err);
     }
-  };
+
+  } catch (err) {
+    alert("Could not submit prayer.");
+    console.error(err);
+  }
+};
 
 window.reactToPrayer = async function (prayerId, reactionType) {
   const card = document.querySelector(`[data-prayer-id="${prayerId}"]`);
@@ -684,8 +856,130 @@ window.togglePrayerNotifications = async function () {
   }
 };
 
+
+window.toggleRecipientSearch = function () {
+  const checked = document.getElementById("sendToSelectedPeople")?.checked;
+  const box = document.getElementById("recipientSearchBox");
+
+  if (box) {
+    box.classList.toggle("hidden", !checked);
+  }
+
+  if (!checked) {
+    prayerState.selectedRecipients = [];
+    renderPrayerRecipients();
+  }
+};
+
 window.refreshPrayerNotifications = async function () {
   await loadPrayerNotifications();
 };
+
+window.searchPrayerRecipients = async function () {
+  const input = document.getElementById("recipientSearch");
+  const results = document.getElementById("recipientResults");
+
+  if (!input || !results) return;
+
+  const q = input.value.trim();
+
+  if (!q || q.length < 2) {
+    results.innerHTML = `
+      <p class="text-muted">
+        Start typing a pastor or member's name...
+      </p>
+    `;
+    return;
+  }
+
+  try {
+    const users = await prayerFetch(
+      `/users/search?q=${encodeURIComponent(q)}`
+    );
+
+    results.innerHTML = users.length
+      ? users.map(user => `
+        <button
+          class="recipient-result"
+          onclick="addPrayerRecipient(
+            ${user.id},
+            '${escapeHTML(user.name || user.email || "User")}',
+            '${escapeHTML(user.role || "member")}',
+            '${escapeHTML(user.email || "")}'
+          )"
+        >
+          <span>${escapeHTML(user.name || user.email || "User")}</span>
+          <small>${escapeHTML(user.role || "member")}</small>
+        </button>
+      `).join("")
+      : `<p class="text-muted">No users found.</p>`;
+
+  } catch (err) {
+    console.error("Recipient search failed:", err);
+    results.innerHTML = `<p class="text-muted">Could not search users.</p>`;
+  }
+};
+
+
+window.addPrayerRecipient = function (id, name, role, email = null) {
+  const exists = prayerState.selectedRecipients.some(
+    user => user.user_id === id
+  );
+
+  if (exists) return;
+
+  prayerState.selectedRecipients.push({
+    user_id: id,
+    role: role || "member",
+    name: name || "User",
+    email
+  });
+
+  renderPrayerRecipients();
+
+  const input = document.getElementById("recipientSearch");
+  const results = document.getElementById("recipientResults");
+
+  if (input) input.value = "";
+
+  if (results) {
+    results.innerHTML = `
+      <p class="text-muted">
+        Start typing a pastor or member's name...
+      </p>
+    `;
+  }
+};
+
+window.removePrayerRecipient = function (id) {
+  prayerState.selectedRecipients = prayerState.selectedRecipients.filter(
+    user => user.user_id !== id
+  );
+
+  renderPrayerRecipients();
+};
+
+function renderPrayerRecipients() {
+  const container = document.getElementById("selectedRecipients");
+
+  if (!container) return;
+
+  if (!prayerState.selectedRecipients.length) {
+    container.innerHTML = `
+      <p class="text-muted">
+        No recipients selected.
+      </p>
+    `;
+    return;
+  }
+
+  container.innerHTML = prayerState.selectedRecipients.map(user => `
+    <div class="recipient-chip">
+      <span>${escapeHTML(user.name || "User")}</span>
+      <small>${escapeHTML(user.role || "member")}</small>
+      <button onclick="removePrayerRecipient(${user.user_id})">×</button>
+    </div>
+  `).join("");
+}
 
 })();

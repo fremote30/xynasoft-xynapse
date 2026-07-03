@@ -2,11 +2,11 @@
 
   <div class="prayer-hero">
     <div>
-      <span class="eyebrow">XynaFaith Community</span>
+      <span class="eyebrow">XynaFaith Prayer Network</span>
       <h1>Prayer Wall</h1>
       <p>
-        Share prayer requests, pray for others, celebrate answered prayers,
-        and build a daily rhythm of faith together.
+        Share prayer requests publicly, send private prayer requests,
+        pray for others, and celebrate answered prayers together.
       </p>
     </div>
 
@@ -37,6 +37,20 @@
     </div>
   </div>
 
+  <div class="prayer-view-tabs">
+    <button class="filter-chip active" data-view="wall" onclick="setPrayerView('wall')">
+      🌍 Prayer Wall
+    </button>
+
+    <button class="filter-chip" data-view="inbox" onclick="setPrayerView('inbox')">
+      📥 Inbox
+    </button>
+
+    <button class="filter-chip" data-view="sent" onclick="setPrayerView('sent')">
+      📤 Sent
+    </button>
+  </div>
+
   <div class="prayer-toolbar">
     <input
       id="prayerSearch"
@@ -46,7 +60,7 @@
       oninput="handlePrayerSearch()"
     />
 
-    <div class="prayer-filters">
+    <div class="prayer-filters" id="prayerFeedFilters">
       <button class="filter-chip active" data-filter="recent" onclick="setPrayerFilter('recent')">
         Recent
       </button>
@@ -81,23 +95,37 @@
 </section>
 
 
-<!-- PRAYER COMPOSER MODAL -->
+<!-- =========================================
+     PRAYER COMPOSER MODAL
+========================================= -->
 <div id="prayerComposerModal" class="modal-overlay hidden">
+
   <div class="modal-card prayer-modal-card">
 
     <div class="modal-header">
-      <h2>Submit Prayer Request</h2>
-      <button class="modal-close" onclick="closePrayerComposer()">×</button>
+      <h2>🙏 Submit Prayer Request</h2>
+
+      <button
+        class="modal-close"
+        onclick="closePrayerComposer()"
+      >
+        ×
+      </button>
     </div>
 
+    <!-- Prayer Message -->
     <textarea
       id="newPrayerMessage"
       class="input textarea"
       rows="6"
-      placeholder="What would you like the community to pray about?"
+      placeholder="What would you like others to pray about?"
     ></textarea>
 
-    <select id="newPrayerCategory" class="input">
+    <!-- Category -->
+    <select
+      id="newPrayerCategory"
+      class="input"
+    >
       <option value="">Select category</option>
       <option value="Healing">Healing</option>
       <option value="Family">Family</option>
@@ -110,14 +138,87 @@
       <option value="Other">Other</option>
     </select>
 
+    <hr class="prayer-divider">
+
+    <!-- =====================================
+         RECIPIENTS
+    ====================================== -->
+    <div class="prayer-audience-box">
+
+      <h3>Who should receive this prayer?</h3>
+
+      <label class="checkbox-row">
+        <input
+          id="sendToCommunity"
+          type="checkbox"
+          checked
+        />
+        🌍 Community Prayer Wall
+      </label>
+
+      <label class="checkbox-row">
+        <input
+          id="sendToSelectedPeople"
+          type="checkbox"
+          onchange="toggleRecipientSearch()"
+        />
+        👥 Send to Specific People
+      </label>
+
+      <div
+        id="recipientSearchBox"
+        class="recipient-search-box hidden"
+      >
+
+        <input
+          id="recipientSearch"
+          class="input"
+          type="search"
+          placeholder="Search pastors or members..."
+          oninput="searchPrayerRecipients()"
+        />
+
+        <div
+          id="recipientResults"
+          class="recipient-results"
+        >
+          <p class="text-muted">
+            Start typing a pastor or member's name...
+          </p>
+        </div>
+
+        <div
+          id="selectedRecipients"
+          class="recipient-chip-container"
+        >
+          <p class="text-muted">
+            No recipients selected.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <hr class="prayer-divider">
+
+    <!-- Anonymous -->
     <label class="checkbox-row">
-      <input id="newPrayerAnonymous" type="checkbox" />
-      Post anonymously
+      <input
+        id="newPrayerAnonymous"
+        type="checkbox"
+      />
+      🙈 Post anonymously on the Community Prayer Wall
     </label>
 
-    <button class="btn-primary full-width" onclick="submitPrayer()">
-      Submit Prayer
+    <!-- Submit -->
+    <button
+      class="btn-primary full-width"
+      onclick="submitPrayer()"
+    >
+      🙏 Submit Prayer
     </button>
 
   </div>
+
 </div>

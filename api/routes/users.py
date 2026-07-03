@@ -278,3 +278,37 @@ def get_admin_stats(
         "pending_applications": pending_applications,
         "sermons": sermons
     }
+
+# =========================
+# USER SEARCH
+# =========================
+@router.get("/search")
+def search_users(
+    q: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    query = q.strip()
+
+    if len(query) < 2:
+        return []
+
+    users = db.query(User).filter(
+        User.id != current_user.id,
+        User.role.in_(["member", "pastor", "admin"]),
+        (
+            User.name.ilike(f"%{query}%") |
+            User.email.ilike(f"%{query}%")
+        )
+    ).limit(20).all()
+
+    return [
+        {
+            "id": user.id,
+            "name": user.name or user.email,
+            "email": user.email,
+            "role": user.role,
+            "pastor_status": user.pastor_status
+        }
+        for user in users
+    ]
