@@ -280,11 +280,12 @@ def get_admin_stats(
     }
 
 # =========================
-# USER SEARCH
+# USER SEARCH 2.0
 # =========================
 @router.get("/search")
 def search_users(
     q: str,
+    type: str = "all",
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -293,22 +294,41 @@ def search_users(
     if len(query) < 2:
         return []
 
-    users = db.query(User).filter(
+    users_query = db.query(User).filter(
         User.id != current_user.id,
         User.role.in_(["member", "pastor", "admin"]),
         (
             User.name.ilike(f"%{query}%") |
             User.email.ilike(f"%{query}%")
         )
-    ).limit(20).all()
+    )
 
-    return [
-        {
+    if type == "pastor":
+        users_query = users_query.filter(User.role == "pastor")
+
+    elif type == "member":
+        users_query = users_query.filter(User.role == "member")
+
+    users = users_query.limit(20).all()
+
+    results = []
+
+    for user in users:
+        profile = db.query(PastorProfile).filter(
+            PastorProfile.user_id == user.id
+        ).first()
+
+        results.append({
             "id": user.id,
             "name": user.name or user.email,
             "email": user.email,
             "role": user.role,
-            "pastor_status": user.pastor_status
-        }
-        for user in users
-    ]
+            "pastor_status": user.pastor_status,
+            "verified": user.role == "pastor" and user.pastor_status == "approved",
+            "church": getattr(profile, "church_name", None) if profile else None,
+            "city": getattr(profile, "city", None) if profile else None,
+            "country": getattr(profile, "country", None) if profile else None,
+            "avatar": getattr(profile, "profile_image_url", None) if profile else None
+        })
+
+    return results

@@ -209,12 +209,27 @@ async function navigate(page) {
     requestId,
     timestamp: Date.now()
   };
+  
   // =====================================
-  // CLEANUP PREVIOUS PAGE
-  // =====================================
-  runPageCleanup();
+// CLEANUP PREVIOUS PAGE
+// =====================================
+ runPageCleanup();
 
-  try {
+// =====================================
+// STOP PAGE AUTO-REFRESHERS
+// =====================================
+
+// Dashboard auto refresh
+if (window.dashboardInterval) {
+  clearInterval(window.dashboardInterval);
+}
+
+// Prayer Wall live updates
+if (typeof window.stopPrayerLiveUpdates === "function") {
+  window.stopPrayerLiveUpdates();
+}
+
+try {
 
     // =====================================
     // AUTH CHECK

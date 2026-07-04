@@ -12,6 +12,8 @@
   selectedRecipients: []
 };
 
+let prayerLiveTimer = null;
+
  function getTokenSafe() {
     if (typeof getToken === "function") return getToken();
     return localStorage.getItem("access_token");
@@ -104,8 +106,11 @@ function answeredCelebration(prayer) {
 
   return `
     <div class="answered-celebration">
-      <strong>🎉 Praise God — this prayer was answered.</strong>
-      <p>Thank you for praying with the XynaFaith community.</p>
+      <div class="answered-icon">🎉</div>
+      <div>
+        <strong>Prayer Answered</strong>
+        <p>God answered this request. Thank you for praying with the XynaFaith community.</p>
+      </div>
     </div>
   `;
 }
@@ -195,6 +200,121 @@ function answeredCelebration(prayer) {
     `;
   }
 
+
+  function prayerCardV2(prayer) {
+  const name = prayer.user_name || "Anonymous";
+  const initials = name.charAt(0).toUpperCase();
+  const visibility = prayer.visibility || "community";
+
+  const visibilityBadge =
+    visibility === "mixed"
+      ? "🌍 Shared"
+      : visibility === "selected"
+        ? "🔒 Private"
+        : "🌍 Community";
+
+  const answeredBadge =
+    prayer.status === "answered"
+      ? `<span class="prayer-card-badge answered">🎉 Answered</span>`
+      : prayer.status === "partially_answered"
+        ? `<span class="prayer-card-badge partial">Partially Answered</span>`
+        : `<span class="prayer-card-badge praying">Still Praying</span>`;
+
+  return `
+    <article class="prayer-card-v2" data-prayer-id="${prayer.id}">
+
+      <div class="prayer-card-v2-header">
+
+        <div class="prayer-author">
+          <div class="prayer-avatar">${escapeHTML(initials)}</div>
+
+          <div>
+            <h3>${escapeHTML(name)}</h3>
+            <p>
+              ${escapeHTML(prayer.category || "Prayer")}
+              • ${timeAgo(prayer.created_at)}
+            </p>
+          </div>
+        </div>
+
+        <div class="prayer-card-badges">
+          <span class="prayer-card-badge visibility">
+            ${visibilityBadge}
+          </span>
+
+          ${answeredBadge}
+        </div>
+
+      </div>
+
+      <p class="prayer-card-v2-message">
+        ${escapeHTML(prayer.message)}
+      </p>
+
+      ${answeredCelebration(prayer)}
+
+      <div class="prayer-card-v2-stats">
+        <span>🙏 ${prayer.prayer_count || 0} prayed</span>
+        <span>❤️ ${prayer.support_count || 0} support</span>
+        <span>💬 ${prayer.comment_count || 0} comments</span>
+        <span>📤 ${prayer.share_count || 0} shares</span>
+      </div>
+
+      <div class="prayer-card-v2-actions">
+
+        <button
+          class="${prayer.has_prayed ? "active" : ""}"
+          onclick="reactToPrayer(${prayer.id}, 'prayed')"
+        >
+          🙏 Pray
+        </button>
+
+        <button
+          class="${prayer.has_supported ? "active" : ""}"
+          onclick="reactToPrayer(${prayer.id}, 'support')"
+        >
+          ❤️ Support
+        </button>
+
+        <button onclick="togglePrayerComments(${prayer.id})">
+          💬 Comment
+        </button>
+
+        <button
+          class="${prayer.is_bookmarked ? "active" : ""}"
+          onclick="togglePrayerBookmark(${prayer.id})"
+        >
+          🔖 Save
+        </button>
+
+        <button onclick="sharePrayer(${prayer.id})">
+          📤 Share
+        </button>
+
+      </div>
+
+      <div id="comments-${prayer.id}" class="prayer-comments hidden">
+        <div class="comment-list" id="commentList-${prayer.id}">
+          Loading comments...
+        </div>
+
+        <div class="comment-box">
+          <input
+            id="commentInput-${prayer.id}"
+            class="input"
+            placeholder="Encourage, share scripture, or post an update..."
+          />
+
+          <button class="btn-primary" onclick="submitPrayerComment(${prayer.id})">
+            Send
+          </button>
+        </div>
+      </div>
+
+    </article>
+  `;
+}
+
   async function loadPrayerAnalytics() {
     try {
       const data = await prayerFetch("/prayers/analytics");
@@ -209,80 +329,85 @@ function answeredCelebration(prayer) {
     }
   }
 
-  async function loadPrayerFeed(reset = true) {
-    if (prayerState.loading) return;
+async function loadPrayerFeed(reset = true) {
+  if (prayerState.loading) return;
 
-    prayerState.loading = true;
+  prayerState.loading = true;
 
-    const feed = document.getElementById("prayerFeed");
-    const loadMoreBtn = document.getElementById("loadMorePrayersBtn");
+  const feed = document.getElementById("prayerFeed");
+  const loadMoreBtn = document.getElementById("loadMorePrayersBtn");
 
-    if (!feed) return;
+  if (!feed) return;
+
+  if (reset) {
+    prayerState.skip = 0;
+    prayerState.hasMore = true;
+
+    feed.innerHTML = `
+      <div class="empty-state">
+        <h3>Loading Prayer Network...</h3>
+        <p>Connecting you to the global prayer community.</p>
+      </div>
+    `;
+  }
+
+  try {
+    const params = new URLSearchParams({
+      filter: prayerState.filter,
+      skip: prayerState.skip,
+      limit: prayerState.limit
+    });
+
+    if (prayerState.search) {
+      params.set("search", prayerState.search);
+    }
+
+    const data = await prayerFetch(`/prayers/feed?${params.toString()}`);
+    const items = data.items || [];
 
     if (reset) {
-      prayerState.skip = 0;
-      prayerState.hasMore = true;
+      feed.innerHTML = "";
+    }
+
+    if (items.length === 0 && prayerState.skip === 0) {
       feed.innerHTML = `
         <div class="empty-state">
-          <h3>Loading prayers...</h3>
-          <p>Gathering the latest community requests.</p>
+          <h3>No prayers yet</h3>
+          <p>Be the first to share a prayer with the community.</p>
+          <button class="btn-primary" onclick="openPrayerComposer()">
+            🙏 Submit Prayer
+          </button>
         </div>
       `;
+    } else {
+      feed.insertAdjacentHTML(
+        "beforeend",
+        items.map(prayerCardV2).join("")
+      );
     }
 
-    try {
-      const params = new URLSearchParams({
-        filter: prayerState.filter,
-        skip: prayerState.skip,
-        limit: prayerState.limit
-      });
+    prayerState.skip += prayerState.limit;
+    prayerState.hasMore = items.length === prayerState.limit;
 
-      if (prayerState.search) {
-        params.set("search", prayerState.search);
-      }
-
-      const data = await prayerFetch(`/prayers/feed?${params.toString()}`);
-      const items = data.items || [];
-
-      if (reset) {
-        feed.innerHTML = "";
-      }
-
-      if (items.length === 0 && prayerState.skip === 0) {
-        feed.innerHTML = `
-          <div class="empty-state">
-            <h3>No prayers found</h3>
-            <p>Be the first to share a prayer request with the community.</p>
-            <button class="btn-primary" onclick="openPrayerComposer()">Submit Prayer</button>
-          </div>
-        `;
-      } else {
-        feed.insertAdjacentHTML(
-          "beforeend",
-          items.map(prayerCard).join("")
-        );
-      }
-
-      prayerState.skip += prayerState.limit;
-      prayerState.hasMore = items.length === prayerState.limit;
-
-      if (loadMoreBtn) {
-        loadMoreBtn.style.display = prayerState.hasMore ? "inline-flex" : "none";
-      }
-
-    } catch (err) {
-      console.error("Prayer feed failed:", err);
-
-      feed.innerHTML = `
-        <div class="empty-state error">
-          <h3>Could not load Prayer Wall</h3>
-          <p>${escapeHTML(err.message)}</p>
-        </div>
-      `;
-    } finally {
-      prayerState.loading = false;
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = prayerState.hasMore
+        ? "inline-flex"
+        : "none";
     }
+
+  } catch (err) {
+    console.error("Prayer feed failed:", err);
+
+    feed.innerHTML = `
+      <div class="empty-state error">
+        <h3>Could not load Prayer Wall</h3>
+        <p>${escapeHTML(err.message)}</p>
+      </div>
+    `;
+  } finally {
+    prayerState.loading = false;
   }
+}
 
 async function loadPrayerInbox() {
   const feed = document.getElementById("prayerFeed");
@@ -362,6 +487,7 @@ async function loadSentPrayers() {
 }
 
 window.loadPrayerWall = async function () {
+
   prayerState = {
     view: "wall",
     filter: "recent",
@@ -376,6 +502,9 @@ window.loadPrayerWall = async function () {
   await loadPrayerAnalytics();
   await loadPrayerFeed(true);
   await loadPrayerNotifications();
+
+  // Start automatic refresh every 30 seconds
+  startPrayerLiveUpdates();
 };
 
 window.setPrayerView = async function (view) {
@@ -542,13 +671,12 @@ window.submitPrayer = async function () {
 
 window.reactToPrayer = async function (prayerId, reactionType) {
   const card = document.querySelector(`[data-prayer-id="${prayerId}"]`);
+
   const button = card?.querySelector(
     `button[onclick="reactToPrayer(${prayerId}, '${reactionType}')"]`
   );
 
-  if (button?.classList.contains("active")) {
-    return;
-  }
+  if (button?.classList.contains("active")) return;
 
   if (button) {
     button.classList.add("active");
@@ -566,14 +694,16 @@ window.reactToPrayer = async function (prayerId, reactionType) {
     const prayer = data.prayer;
 
     if (prayer && card) {
-      const stats = card.querySelector(".prayer-card-stats");
+      const stats =
+        card.querySelector(".prayer-card-v2-stats") ||
+        card.querySelector(".prayer-card-stats");
 
       if (stats) {
         stats.innerHTML = `
-          <span>${prayer.prayer_count || 0} prayed</span>
-          <span>${prayer.support_count || 0} supports</span>
-          <span>${prayer.comment_count || 0} comments</span>
-          <span>${prayer.share_count || 0} shares</span>
+          <span>🙏 ${prayer.prayer_count || 0} prayed</span>
+          <span>❤️ ${prayer.support_count || 0} support</span>
+          <span>💬 ${prayer.comment_count || 0} comments</span>
+          <span>📤 ${prayer.share_count || 0} shares</span>
         `;
       }
     }
@@ -589,9 +719,7 @@ window.reactToPrayer = async function (prayerId, reactionType) {
     }
 
   } finally {
-    if (button) {
-      button.disabled = false;
-    }
+    if (button) button.disabled = false;
   }
 };
 
@@ -668,6 +796,75 @@ window.sharePrayer = async function (prayerId) {
   }
 };
 
+async function loadPrayerComments(prayerId) {
+  const list = document.getElementById(`commentList-${prayerId}`);
+
+  if (!list) return;
+
+  list.innerHTML = `
+    <div class="comment-empty">
+      Loading encouragements...
+    </div>
+  `;
+
+  try {
+    const data = await prayerFetch(`/prayers/${prayerId}/comments`);
+    const comments = data.items || [];
+
+    if (!comments.length) {
+      list.innerHTML = `
+        <div class="comment-empty">
+          No encouragements yet. Be the first to pray or share scripture.
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = comments.map(comment => `
+      <div class="comment-card-v2 ${comment.is_pastor_response ? "pastor-comment" : ""}">
+        <div class="comment-avatar">
+          ${escapeHTML((comment.user_name || "U").charAt(0).toUpperCase())}
+        </div>
+
+        <div class="comment-body">
+          <div class="comment-header">
+            <strong>${escapeHTML(comment.user_name || "XynaFaith User")}</strong>
+
+            ${comment.is_pastor_response
+              ? `<span class="pastor-response-badge">✓ Pastor Response</span>`
+              : ""
+            }
+
+            ${comment.is_pinned
+              ? `<span class="pastor-response-badge">📌 Pinned</span>`
+              : ""
+            }
+          </div>
+
+          ${comment.is_pastor_response
+            ? `<div class="pastor-encouragement-label">
+                Ministry encouragement
+              </div>`
+            : ""
+          }
+
+          <p>${escapeHTML(comment.comment)}</p>
+
+          <span class="comment-time">${timeAgo(comment.created_at)}</span>
+        </div>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    list.innerHTML = `
+      <div class="comment-empty error">
+        Could not load comments.
+      </div>
+    `;
+    console.error(err);
+  }
+}
+
   window.togglePrayerComments = async function (prayerId) {
     const box = document.getElementById(`comments-${prayerId}`);
 
@@ -680,50 +877,7 @@ window.sharePrayer = async function (prayerId) {
     }
   };
 
-  async function loadPrayerComments(prayerId) {
-    const list = document.getElementById(`commentList-${prayerId}`);
 
-    if (!list) return;
-
-    list.innerHTML = "Loading comments...";
-
-    try {
-      const data = await prayerFetch(`/prayers/${prayerId}/comments`);
-      const comments = data.items || [];
-
-      if (!comments.length) {
-        list.innerHTML = `
-          <div class="comment-empty">
-            No comments yet. Be the first to encourage this person.
-          </div>
-        `;
-        return;
-      }
-
-      list.innerHTML = comments.map(comment => `
-        <div class="comment-card ${comment.is_pastor_response ? "pastor-comment" : ""}">
-          <div class="comment-header">
-            <strong>
-              ${comment.is_pastor_response ? "✝️ " : ""}
-              ${escapeHTML(comment.user_name)}
-            </strong>
-
-            ${comment.is_pastor_response ? `<span class="pastor-response-badge">Pastor Response</span>` : ""}
-          </div>
-
-          ${comment.is_pastor_response ? `<div class="pastor-encouragement-label">📌 Encouragement from a verified ministry leader</div>` : ""}
-
-          <p>${escapeHTML(comment.comment)}</p>
-
-          <span class="comment-time">${timeAgo(comment.created_at)}</span>
-        </div>
-      `).join("");
-
-    } catch (err) {
-      list.innerHTML = "Could not load comments.";
-      console.error(err);
-    }
-  }
 
   window.updatePrayerStatus = async function (prayerId, status) {
   try {
@@ -741,7 +895,7 @@ window.sharePrayer = async function (prayerId) {
   }
 };
 
-  window.submitPrayerComment = async function (prayerId) {
+window.submitPrayerComment = async function (prayerId) {
   const input = document.getElementById(`commentInput-${prayerId}`);
   const comment = input?.value.trim();
 
@@ -750,11 +904,9 @@ window.sharePrayer = async function (prayerId) {
   input.disabled = true;
 
   try {
-    await prayerFetch(`/prayers/${prayerId}/comments`, {
+    const data = await prayerFetch(`/prayers/${prayerId}/comments`, {
       method: "POST",
-      body: JSON.stringify({
-        comment
-      })
+      body: JSON.stringify({ comment })
     });
 
     input.value = "";
@@ -762,11 +914,13 @@ window.sharePrayer = async function (prayerId) {
     await loadPrayerComments(prayerId);
 
     const card = document.querySelector(`[data-prayer-id="${prayerId}"]`);
-    const statSpans = card?.querySelectorAll(".prayer-card-stats span");
+    const statSpans = card?.querySelectorAll(
+      ".prayer-card-v2-stats span, .prayer-card-stats span"
+    );
 
     if (statSpans && statSpans[2]) {
       const current = parseInt(statSpans[2].textContent) || 0;
-      statSpans[2].textContent = `${current + 1} comments`;
+      statSpans[2].textContent = `💬 ${current + 1} comments`;
     }
 
   } catch (err) {
@@ -875,6 +1029,7 @@ window.refreshPrayerNotifications = async function () {
   await loadPrayerNotifications();
 };
 
+
 window.searchPrayerRecipients = async function () {
   const input = document.getElementById("recipientSearch");
   const results = document.getElementById("recipientResults");
@@ -892,26 +1047,59 @@ window.searchPrayerRecipients = async function () {
     return;
   }
 
+  results.innerHTML = `
+    <p class="text-muted">Searching...</p>
+  `;
+
   try {
     const users = await prayerFetch(
-      `/users/search?q=${encodeURIComponent(q)}`
+      `/users/search?q=${encodeURIComponent(q)}&type=all`
     );
 
     results.innerHTML = users.length
-      ? users.map(user => `
-        <button
-          class="recipient-result"
-          onclick="addPrayerRecipient(
-            ${user.id},
-            '${escapeHTML(user.name || user.email || "User")}',
-            '${escapeHTML(user.role || "member")}',
-            '${escapeHTML(user.email || "")}'
-          )"
-        >
-          <span>${escapeHTML(user.name || user.email || "User")}</span>
-          <small>${escapeHTML(user.role || "member")}</small>
-        </button>
-      `).join("")
+      ? users.map(user => {
+          const selected = prayerState.selectedRecipients.some(
+            r => r.user_id === user.id
+          );
+
+          return `
+            <button
+              class="recipient-result ${selected ? "selected" : ""}"
+              ${selected ? "disabled" : ""}
+              onclick="addPrayerRecipient(
+                ${user.id},
+                '${escapeHTML(user.name || user.email || "User")}',
+                '${escapeHTML(user.role || "member")}',
+                '${escapeHTML(user.email || "")}'
+              )"
+            >
+              <div class="recipient-avatar">
+                ${user.avatar
+                  ? `<img src="${escapeHTML(user.avatar)}" alt="">`
+                  : `<span>${escapeHTML((user.name || "U").charAt(0).toUpperCase())}</span>`
+                }
+              </div>
+
+              <div class="recipient-info">
+                <strong>
+                  ${escapeHTML(user.name || user.email || "User")}
+                  ${user.verified ? `<span class="verified-badge">✓ Pastor</span>` : ""}
+                </strong>
+
+                <small>
+                  ${escapeHTML(user.role || "member")}
+                  ${user.church ? ` • ${escapeHTML(user.church)}` : ""}
+                  ${user.city ? ` • ${escapeHTML(user.city)}` : ""}
+                  ${user.country ? `, ${escapeHTML(user.country)}` : ""}
+                </small>
+              </div>
+
+              <span class="recipient-add">
+                ${selected ? "Selected" : "+ Add"}
+              </span>
+            </button>
+          `;
+        }).join("")
       : `<p class="text-muted">No users found.</p>`;
 
   } catch (err) {
@@ -930,8 +1118,8 @@ window.addPrayerRecipient = function (id, name, role, email = null) {
 
   prayerState.selectedRecipients.push({
     user_id: id,
-    role: role || "member",
-    name: name || "User",
+    name,
+    role,
     email
   });
 
@@ -966,20 +1154,92 @@ function renderPrayerRecipients() {
 
   if (!prayerState.selectedRecipients.length) {
     container.innerHTML = `
-      <p class="text-muted">
-        No recipients selected.
-      </p>
+      <p class="text-muted">No recipients selected.</p>
     `;
     return;
   }
 
-  container.innerHTML = prayerState.selectedRecipients.map(user => `
-    <div class="recipient-chip">
-      <span>${escapeHTML(user.name || "User")}</span>
-      <small>${escapeHTML(user.role || "member")}</small>
-      <button onclick="removePrayerRecipient(${user.user_id})">×</button>
-    </div>
-  `).join("");
+  container.innerHTML = prayerState.selectedRecipients.map(user => {
+    const initial = (user.name || "U").charAt(0).toUpperCase();
+
+    return `
+      <div class="recipient-chip-v2">
+        <span class="recipient-chip-avatar">${escapeHTML(initial)}</span>
+
+        <span class="recipient-chip-text">
+          <strong>${escapeHTML(user.name || "User")}</strong>
+          <small>${escapeHTML(user.role || "member")}</small>
+        </span>
+
+        <button onclick="removePrayerRecipient(${user.user_id})">×</button>
+      </div>
+    `;
+  }).join("");
 }
+
+// =====================================
+// LIVE PRAYER UPDATES
+// =====================================
+
+function startPrayerLiveUpdates() {
+
+  stopPrayerLiveUpdates();
+
+  prayerLiveTimer = setInterval(async () => {
+
+    // Only run while Prayer Wall is open
+    if (window.currentPage !== "prayer") return;
+
+    try {
+
+      // Refresh analytics
+      await loadPrayerAnalytics();
+
+      // Refresh notification badge
+      if (typeof refreshPrayerNotifications === "function") {
+        await refreshPrayerNotifications();
+      }
+
+      // Refresh notification drawer
+      await loadPrayerNotifications();
+
+      // Refresh current view
+      switch (prayerState.view) {
+
+        case "wall":
+          await loadPrayerFeed(true);
+          break;
+
+        case "inbox":
+          await loadPrayerInbox();
+          break;
+
+        case "sent":
+          await loadSentPrayers();
+          break;
+      }
+
+    } catch (err) {
+
+      console.error(
+        "Prayer live update failed:",
+        err
+      );
+
+    }
+
+  }, 30000);
+
+}
+
+function stopPrayerLiveUpdates() {
+  if (prayerLiveTimer) {
+    clearInterval(prayerLiveTimer);
+    prayerLiveTimer = null;
+  }
+}
+
+window.stopPrayerLiveUpdates = stopPrayerLiveUpdates;
+
 
 })();

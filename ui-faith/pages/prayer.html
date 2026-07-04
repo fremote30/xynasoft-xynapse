@@ -144,25 +144,33 @@
          RECIPIENTS
     ====================================== -->
     <div class="prayer-audience-box">
-
+      
       <h3>Who should receive this prayer?</h3>
 
-      <label class="checkbox-row">
-        <input
-          id="sendToCommunity"
-          type="checkbox"
-          checked
-        />
-        🌍 Community Prayer Wall
+      <label class="checkbox-row audience-option">
+
+          <input id="sendToCommunity"
+                type="checkbox"
+                checked>
+
+          <div>
+              <strong>🌍 Community Prayer Wall</strong>
+              <p>Anyone can see and pray for this request.</p>
+          </div>
+
       </label>
 
-      <label class="checkbox-row">
-        <input
-          id="sendToSelectedPeople"
-          type="checkbox"
-          onchange="toggleRecipientSearch()"
-        />
-        👥 Send to Specific People
+      <label class="checkbox-row audience-option">
+
+          <input id="sendToSelectedPeople"
+                type="checkbox"
+                onchange="toggleRecipientSearch()">
+
+          <div>
+              <strong>👥 Send to Specific People</strong>
+              <p>Send this prayer privately to pastors or members.</p>
+          </div>
+
       </label>
 
       <div
@@ -197,18 +205,19 @@
         </div>
 
       </div>
-
+      
     </div>
 
     <hr class="prayer-divider">
 
     <!-- Anonymous -->
-    <label class="checkbox-row">
-      <input
-        id="newPrayerAnonymous"
-        type="checkbox"
-      />
-      🙈 Post anonymously on the Community Prayer Wall
+    <label class="checkbox-row anonymous-row">
+        <input id="newPrayerAnonymous" type="checkbox">
+
+        <div>
+            <strong>🙈 Post anonymously</strong>
+            <p>Your name will not appear on the Community Prayer Wall.</p>
+        </div>
     </label>
 
     <!-- Submit -->

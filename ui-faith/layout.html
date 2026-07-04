@@ -36,18 +36,19 @@
     ☰
   </button>
 
-  <button
-    id="notificationBell"
-    class="notification-bell hidden"
-    onclick="togglePrayerNotifications()"
-    title="Notifications"
-  >
-    🔔
-    <span id="notificationBadge" class="notification-badge hidden">0</span>
-  </button>
   <!-- DYNAMIC NAVIGATION -->
   <nav id="topnav" class="nav-links"></nav>
-
+  
+        <button
+        id="notificationBell"
+        class="notification-bell hidden"
+        onclick="togglePrayerNotifications()"
+        aria-label="Prayer Notifications"
+        title="Notifications"
+      >
+        🔔
+        <span id="notificationBadge" class="notification-badge hidden">0</span>
+      </button>
 </header>
 
 <!-- MOBILE DRAWER -->
