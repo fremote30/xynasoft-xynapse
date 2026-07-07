@@ -225,6 +225,14 @@ app.include_router(
 
 print("✅ Pastor profile routes loaded")
 
+# =====================================
+# PASTOR PROFILE IMAGE UPLOADS
+# =====================================
+app.include_router(
+    upload.router,
+    prefix="/sermon"
+)
+
 # ================================
 # 📁 FRONTEND (SPA)
 # ================================
@@ -236,6 +244,24 @@ FAITH_DIR = os.path.join(
     BASE_DIR,
     "ui-faith"
 )
+
+UPLOADS_DIR = os.path.join(
+    BASE_DIR,
+    "uploads"
+)
+
+os.makedirs(
+    UPLOADS_DIR,
+    exist_ok=True
+)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory=UPLOADS_DIR),
+    name="uploads"
+)
+
+print("✅ Uploads mounted at /uploads")
 
 print("📁 BASE_DIR:", BASE_DIR)
 print("📁 UI DIR:", FAITH_DIR)

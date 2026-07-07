@@ -91,32 +91,87 @@
     <!-- =========================
          DISCOVER PASTORS
     ========================== -->
-    <section class="features">
+      <section class="features network-directory-section">
 
-      <div class="features-header">
-        <h2>🌐 Discover Pastors</h2>
-        <p>Connect with pastors and ministries across the XynaFaith ecosystem</p>
-      </div>
-
-      <div
-        id="pastorGrid"
-        class="feature-grid"
-      >
-
-        <!-- DYNAMICALLY LOADED -->
-
-        <div class="feature-card">
-          <div class="icon">⛪</div>
-
-          <h3>Loading pastors...</h3>
-
-          <p>Please wait...</p>
+        <div class="features-header">
+          <span class="eyebrow">XynaFaith Global Directory</span>
+          <h2>🌐 Discover Pastors</h2>
+          <p>Search pastors, ministries, denominations, and locations across the XynaFaith network.</p>
         </div>
 
-      </div>
+        <div class="network-quick-stats">
+          <div>
+            <strong id="networkPastorCount">0</strong>
+            <span>Pastors</span>
+          </div>
 
-    </section>
+          <div>
+            <strong id="networkMemberCount">0</strong>
+            <span>Members</span>
+          </div>
 
+          <div>
+            <strong id="networkSermonCount">0</strong>
+            <span>Sermons</span>
+          </div>
+
+          <div>
+            <strong id="networkPrayerCount">0</strong>
+            <span>Prayers</span>
+          </div>
+        </div>
+
+        <div id="featuredPastor" class="featured-pastor-wrap">
+          <div class="feature-card">
+            <h3>Loading featured pastor...</h3>
+          </div>
+        </div>
+
+        <div class="network-search-panel">
+          <input
+            id="pastorSearchInput"
+            class="input"
+            type="search"
+            placeholder="Search pastors, churches, cities, countries..."
+            oninput="filterPastorDirectory()"
+          />
+
+          <div class="network-filter-row">
+            <button class="filter-chip active" data-filter="all" onclick="setPastorDirectoryFilter('all')">
+              All
+            </button>
+
+            <button class="filter-chip" data-filter="Pentecostal" onclick="setPastorDirectoryFilter('Pentecostal')">
+              Pentecostal
+            </button>
+
+            <button class="filter-chip" data-filter="Prayer" onclick="setPastorDirectoryFilter('Prayer')">
+              Prayer
+            </button>
+
+            <button class="filter-chip" data-filter="Teaching" onclick="setPastorDirectoryFilter('Teaching')">
+              Teaching
+            </button>
+
+            <button class="filter-chip" data-filter="United States" onclick="setPastorDirectoryFilter('United States')">
+              United States
+            </button>
+
+            <button class="filter-chip" data-filter="Ghana" onclick="setPastorDirectoryFilter('Ghana')">
+              Ghana
+            </button>
+          </div>
+        </div>
+
+        <div id="pastorGrid" class="pastor-grid-v2">
+          <div class="feature-card">
+            <div class="icon">⛪</div>
+            <h3>Loading pastors...</h3>
+            <p>Please wait...</p>
+          </div>
+        </div>
+
+      </section>
     <!-- =========================
          TRENDING CATEGORIES
     ========================== -->

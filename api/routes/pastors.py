@@ -12,6 +12,10 @@ from api.models.follow import PastorFollower
 from api.core.security import decode_token
 from datetime import datetime
 
+from api.models.pastor_profile import PastorProfile
+from api.models.sermon import Sermon
+
+
 router = APIRouter(
     prefix="/pastors",
     tags=["Pastors"]
@@ -127,7 +131,9 @@ def get_pastors(
 
     current_user = None
 
+    # =====================================
     # OPTIONAL AUTH
+    # =====================================
     if authorization and authorization.startswith("Bearer "):
 
         token = authorization.split(" ")[1]
@@ -142,21 +148,67 @@ def get_pastors(
                 User.id == int(user_id)
             ).first()
 
-    # =========================
-    # GET ALL PASTORS
-    # =========================
-    pastors = db.query(User).filter(
-        User.role == "pastor"
-    ).all()
+    # =====================================
+    # DIRECTORY VISIBILITY
+    # =====================================
+    if current_user:
+
+        # Logged-in users can discover:
+        # - Public ministries
+        # - Members-only ministries
+        pastors = (
+            db.query(User)
+            .join(
+                PastorProfile,
+                PastorProfile.user_id == User.id
+            )
+            .filter(
+                User.role.in_(["pastor", "admin"]),
+                PastorProfile.visibility.in_([
+                    "public",
+                    "members"
+                ])
+            )
+            .all()
+        )
+
+    else:
+
+        # Anonymous visitors only see public ministries
+        pastors = (
+            db.query(User)
+            .join(
+                PastorProfile,
+                PastorProfile.user_id == User.id
+            )
+            .filter(
+                User.role.in_(["pastor", "admin"]),
+                PastorProfile.visibility == "public"
+            )
+            .all()
+        )
 
     results = []
 
     for pastor in pastors:
 
+        profile = db.query(PastorProfile).filter(
+            PastorProfile.user_id == pastor.id
+        ).first()
+
+        if not profile:
+            continue
+
         follower_count = db.query(
             PastorFollower
         ).filter(
             PastorFollower.pastor_id == pastor.id
+        ).count()
+
+        sermon_count = db.query(
+            Sermon
+        ).filter(
+            Sermon.author_id == pastor.id
         ).count()
 
         is_following = False
@@ -173,15 +225,51 @@ def get_pastors(
             is_following = existing is not None
 
         results.append({
+
             "id": pastor.id,
+            "user_id": pastor.id,
+
             "name": pastor.name,
             "email": pastor.email,
+
             "followers": follower_count,
-            "is_following": is_following
+            "sermon_count": sermon_count,
+            "is_following": is_following,
+
+            "church_name": profile.church_name,
+            "bio": profile.bio,
+            "mission_statement": profile.mission_statement,
+
+            "denomination": profile.denomination,
+            "ministry_focus": profile.ministry_focus,
+            "specialties": profile.specialties,
+
+            "years_in_ministry": profile.years_in_ministry,
+
+            "location": profile.location,
+            "city": profile.city,
+            "state": profile.state,
+            "country": profile.country,
+
+            "languages": profile.languages,
+
+            "profile_image": profile.profile_image,
+            "cover_image": profile.cover_image,
+            "church_logo": profile.church_logo,
+
+            "slug": profile.slug,
+
+            "is_verified": profile.is_verified,
+
+            # Backward compatibility
+            "is_public": profile.is_public,
+
+            # New privacy model
+            "visibility": profile.visibility or "public"
+
         })
 
     return results
-
 
 # =========================
 # FOLLOW PASTOR

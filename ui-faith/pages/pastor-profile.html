@@ -1,126 +1,198 @@
 <div class="app clean-app">
-
   <div class="clean-main">
 
-    <!-- =========================
-         HERO
-    ========================== -->
-    <section class="simple-hero">
+    <section class="public-pastor-profile">
 
-      <div class="hero-content">
+      <div class="public-cover" id="publicCover">
+        <div class="public-avatar" id="publicAvatar">P</div>
+      </div>
 
-        <h1 class="hero-title">
+      <div class="public-profile-main">
 
-          <span
-            class="highlight"
-            id="pastorName"
-          >
-            Pastor
-          </span>
+        <div class="public-profile-header">
+          <div>
+            <span class="eyebrow">Public Pastor Profile</span>
 
-        </h1>
+            <h1 id="pastorName">Pastor</h1>
 
-        <p
-          class="hero-sub"
-          id="pastorBio"
-        >
-          Ministry profile
-        </p>
+            <p id="pastorBio">
+              Ministry profile
+            </p>
 
-        <div class="hero-buttons">
+            <div class="public-badges">
 
-          <button
-            id="followBtn"
-            class="btn-primary"
-          >
-            Follow
-          </button>
+                <span
+                    id="verifiedBadge"
+                    class="public-badge hidden"
+                >
+                    ✅ Verified Pastor
+                </span>
 
+                <span id="visibilityBadge" class="public-badge hidden">🌍 Public Ministry </span>
+
+                <span
+                    id="denominationView"
+                    class="public-badge"
+                >
+                    Denomination
+                </span>
+
+                <span
+                    id="locationView"
+                    class="public-badge"
+                >
+                    Location
+                </span>
+
+            </div>
+
+              <!-- Church Branding -->
+              <div id="churchBrandRow"
+                  class="church-brand-row hidden">
+
+                <div id="churchLogoPublic"
+                    class="church-logo-public">
+
+                  ⛪
+
+                </div>
+
+                    <!-- =========================
+                          CHURCH BRAND
+                      ========================= -->
+                      <div id="churchBrandRow" class="church-brand-row hidden">
+
+                        <div
+                          id="churchLogoPublic"
+                          class="church-logo-public"
+                        >
+                          ⛪
+                        </div>
+
+                        <div class="church-brand-info">
+
+                          <strong id="churchBrandName">
+                            Grace International Church
+                          </strong>
+
+                          <div class="church-brand-meta">
+
+                            <span id="churchCityView">
+                              Baltimore
+                            </span>
+
+                            <span class="dot">•</span>
+
+                            <span id="churchCountryView">
+                              United States
+                            </span>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+              </div>
+          </div>
+
+          <div class="public-actions">
+            <button id="followBtn" class="btn-primary">
+              Follow
+            </button>
+
+            <button class="btn-secondary" onclick="navigate('prayer')">
+              Send Prayer
+            </button>
+
+            <button class="btn-secondary" onclick="sharePastorProfile()">
+              Share
+            </button>
+            <button id="editProfileBtn" class="btn-secondary hidden" onclick="navigate('edit-profile')" >
+              Edit Profile
+            </button>
+          </div>
+        </div>
+
+        <div class="public-stats-grid">
+          <div>
+            <strong id="followersView">0</strong>
+            <span>Followers</span>
+          </div>
+
+          <div>
+            <strong id="sermonCountView">0</strong>
+            <span>Sermons</span>
+          </div>
+
+          <div>
+            <strong id="yearsView">0</strong>
+            <span>Years Ministry</span>
+          </div>
+
+          <div>
+            <strong id="countryView">—</strong>
+            <span>Country</span>
+          </div>
         </div>
 
       </div>
 
     </section>
 
-    <!-- =========================
-         PROFILE INFO
-    ========================== -->
-    <section class="features">
+    <section class="public-profile-grid">
 
-      <div class="features-header">
+      <div class="public-profile-column">
 
-        <h2>Ministry Information</h2>
-
-      </div>
-
-      <div class="feature-grid">
-
-        <div class="feature-card">
-
-          <h3>Church</h3>
-
-          <p id="churchNameView">
-            —
-          </p>
-
+        <div class="profile-section">
+          <h2>About Ministry</h2>
+          <p id="fullBioView">—</p>
         </div>
 
-        <div class="feature-card">
-
-          <h3>Ministry Focus</h3>
-
-          <p id="ministryFocusView">
-            —
-          </p>
-
+        <div class="profile-section">
+          <h2>Mission</h2>
+          <p id="missionView">—</p>
         </div>
 
-        <div class="feature-card">
+        <div class="profile-section">
+          <h2>Ministry Details</h2>
 
-          <h3>Location</h3>
-
-          <p id="locationView">
-            —
-          </p>
-
-        </div>
-
-        <div class="feature-card">
-
-          <h3>Followers</h3>
-
-          <p id="followersView">
-            0
-          </p>
-
+          <div class="public-detail-list">
+            <div><strong>Church</strong><span id="churchNameView">—</span></div>
+            <div><strong>Focus</strong><span id="ministryFocusView">—</span></div>
+            <div><strong>Specialties</strong><span id="specialtiesView">—</span></div>
+            <div><strong>Languages</strong><span id="languagesView">—</span></div>
+            <div><strong>Favorite Scripture</strong><span id="favoriteScriptureView">—</span></div>
+            <div><strong>Service Times</strong><span id="serviceTimesView">—</span></div>
+          </div>
         </div>
 
       </div>
 
-    </section>
+      <div class="public-profile-column">
 
-    <!-- =========================
-         SERMONS
-    ========================== -->
-    <section class="features">
+        <div class="profile-section">
+          <h2>Contact & Links</h2>
 
-      <div class="features-header">
+          <div class="public-link-list">
+            <a id="websiteView" href="#" target="_blank">Website</a>
+            <a id="facebookView" href="#" target="_blank">Facebook</a>
+            <a id="youtubeView" href="#" target="_blank">YouTube</a>
+            <a id="instagramView" href="#" target="_blank">Instagram</a>
+            <a id="twitterView" href="#" target="_blank">X / Twitter</a>
+          </div>
+        </div>
 
-        <h2>Recent Sermons</h2>
+        <div class="profile-section">
+          <h2>Recent Sermons</h2>
 
-      </div>
-
-      <div
-        id="pastorSermons"
-        class="feed-grid"
-      >
-
-        <p>Loading sermons...</p>
+          <div id="pastorSermons" class="public-sermon-list">
+            <p>Loading sermons...</p>
+          </div>
+        </div>
 
       </div>
 
     </section>
 
   </div>
-
 </div>

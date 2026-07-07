@@ -5279,3 +5279,1245 @@ select {
   }
 
 }
+
+/* ================================
+   PASTOR PROFILE EDIT 2.0
+================================ */
+
+.profile-edit-hero {
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 0 18px;
+}
+
+.profile-cover-preview {
+  height: 260px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, .22), transparent 35%),
+    linear-gradient(135deg, #eff6ff, #ffffff);
+  border: 1px solid #e5e7eb;
+  position: relative;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+}
+
+.profile-avatar-preview {
+  position: absolute;
+  left: 36px;
+  bottom: -42px;
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  border: 5px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: 900;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, .18);
+}
+
+.profile-edit-heading {
+  margin-top: 58px;
+}
+
+.profile-edit-heading h1 {
+  margin: 8px 0;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.profile-edit-heading p {
+  color: #667085;
+  font-size: 1.05rem;
+}
+
+.profile-edit-layout {
+  max-width: 1100px;
+  margin: 0 auto 70px;
+  padding: 0 18px;
+}
+
+.profile-edit-form {
+  display: grid;
+  gap: 22px;
+}
+
+.profile-section {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, .05);
+}
+
+.profile-section h2 {
+  margin: 0 0 18px;
+  font-size: 1.35rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profile-save-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .profile-cover-preview {
+    height: 190px;
+  }
+
+  .profile-avatar-preview {
+    left: 22px;
+    bottom: -36px;
+    width: 82px;
+    height: 82px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-save-row button {
+    width: 100%;
+  }
+}
+/* ================================
+   PROFILE SETTINGS ALIGNMENT
+================================ */
+
+.profile-section-subtitle {
+  margin: -8px 0 20px;
+  color: #667085;
+  font-size: 0.95rem;
+}
+
+.profile-settings-section .profile-setting-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  padding: 16px 0 !important;
+  margin: 0 !important;
+  border-top: 1px solid #eef2f7;
+  cursor: pointer;
+  text-align: left !important;
+}
+
+.profile-settings-section .profile-setting-row:first-of-type {
+  border-top: none;
+}
+
+.profile-settings-section .profile-setting-row input {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 3px 0 0 0 !important;
+  flex: 0 0 18px !important;
+}
+
+.profile-setting-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-setting-main strong {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+.profile-setting-main span {
+  color: #667085;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* ================================
+   PUBLIC PASTOR PROFILE 2.0
+================================ */
+
+.public-pastor-profile {
+  max-width: 1120px;
+  margin: 28px auto;
+  padding: 0 18px;
+}
+
+.public-cover {
+  height: 280px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, .24), transparent 35%),
+    linear-gradient(135deg, #eff6ff, #ffffff);
+  border: 1px solid #e5e7eb;
+  position: relative;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+}
+
+.public-avatar {
+  position: absolute;
+  left: 40px;
+  bottom: -58px;
+  width: 132px;
+  height: 132px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  border: 6px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  font-weight: 900;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .2);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.public-profile-main {
+  margin-top: 80px;
+}
+
+.public-profile-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.public-profile-header h1 {
+  margin: 8px 0;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+}
+
+.public-profile-header p {
+  max-width: 720px;
+  color: #667085;
+  line-height: 1.7;
+}
+
+.public-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.public-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.public-badge {
+  display: inline-flex;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 7px 11px;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.public-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.public-stats-grid div {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .05);
+}
+
+.public-stats-grid strong {
+  display: block;
+  font-size: 1.6rem;
+  color: #111827;
+}
+
+.public-stats-grid span {
+  color: #667085;
+  font-size: .85rem;
+}
+
+.public-profile-grid {
+  max-width: 1120px;
+  margin: 26px auto 70px;
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 22px;
+}
+
+.public-profile-column {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+}
+
+.public-detail-list {
+  display: grid;
+  gap: 12px;
+}
+
+.public-detail-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid #eef2f7;
+}
+
+.public-detail-list div:first-child {
+  border-top: none;
+}
+
+.public-detail-list strong {
+  color: #111827;
+}
+
+.public-detail-list span {
+  color: #667085;
+  text-align: right;
+}
+
+.public-link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.public-link-list a {
+  display: inline-flex;
+  text-decoration: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 9px 13px;
+  color: #1d4ed8;
+  font-weight: 800;
+  background: white;
+}
+
+.public-sermon-list {
+  display: grid;
+  gap: 12px;
+}
+
+.public-sermon-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px;
+  background: white;
+}
+
+.public-sermon-card h3 {
+  margin: 0 0 6px;
+}
+
+.public-sermon-card small {
+  color: #667085;
+}
+
+@media (max-width: 820px) {
+  .public-cover {
+    height: 210px;
+  }
+
+  .public-avatar {
+    left: 24px;
+    width: 88px;
+    height: 88px;
+    bottom: -38px;
+  }
+
+  .public-profile-header {
+    flex-direction: column;
+  }
+
+  .public-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .public-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .public-profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ================================
+   NETWORK PASTOR CARDS 2.0
+================================ */
+
+.network-filter-row {
+  max-width: 1100px;
+  margin: 0 auto 22px;
+  padding: 0 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pastor-grid-v2 {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.pastor-card-v2 {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, .06);
+}
+
+.pastor-card-cover {
+  height: 92px;
+  background:
+    radial-gradient(circle at top left, rgba(37,99,235,.25), transparent 40%),
+    linear-gradient(135deg, #eff6ff, #ffffff);
+}
+
+.pastor-card-body {
+  position: relative;
+  padding: 54px 20px 20px;
+}
+
+.pastor-card-avatar {
+  position: absolute;
+  top: -38px;
+  left: 20px;
+  width: 76px;
+  height: 76px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  border: 4px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.pastor-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pastor-card-title-row h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.pastor-verified-badge {
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pastor-card-meta,
+.pastor-card-location {
+  margin: 8px 0 0;
+  color: #667085;
+  font-size: .9rem;
+}
+
+.pastor-card-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.pastor-card-stats div {
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  padding: 12px;
+  background: #f9fafb;
+}
+
+.pastor-card-stats strong {
+  display: block;
+  font-size: 1.2rem;
+}
+
+.pastor-card-stats span {
+  color: #667085;
+  font-size: .78rem;
+}
+
+.pastor-card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.pastor-card-actions button {
+  flex: 1;
+}
+
+@media (max-width: 980px) {
+  .pastor-grid-v2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .pastor-grid-v2 {
+    grid-template-columns: 1fr;
+  }
+
+  .pastor-card-actions {
+    flex-direction: column;
+  }
+}
+
+/* ================================
+   MODERN PROFILE IMAGE UPLOADS
+================================ */
+
+.profile-media-section {
+  position: relative;
+}
+
+.cover-upload-card {
+  cursor: pointer;
+  margin-bottom: 24px;
+}
+
+.cover-upload-preview {
+  height: 230px;
+  border-radius: 24px;
+  border: 2px dashed #c7d2fe;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, .18), transparent 35%),
+    linear-gradient(135deg, #eff6ff, #ffffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.upload-overlay {
+  text-align: center;
+  background: rgba(255,255,255,.82);
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px 22px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, .08);
+}
+
+.upload-overlay span {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.upload-overlay strong {
+  display: block;
+  font-weight: 900;
+}
+
+.upload-overlay small {
+  color: #667085;
+}
+
+.media-upload-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.avatar-upload-card,
+.logo-upload-card {
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  padding: 22px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .05);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.avatar-upload-preview,
+.church-logo-preview {
+  width: 112px;
+  height: 112px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  border: 4px solid #ffffff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, .16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  font-weight: 900;
+  background-size: cover;
+  background-position: center;
+}
+
+.church-logo-preview {
+  border-radius: 22px;
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.camera-pill {
+  position: absolute;
+  top: 88px;
+  left: calc(50% + 30px);
+  border: none;
+  border-radius: 999px;
+  background: #2563eb;
+  color: white;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(37, 99, 235, .35);
+}
+
+.avatar-upload-card strong,
+.logo-upload-card strong {
+  margin-top: 4px;
+}
+
+.avatar-upload-card small,
+.logo-upload-card small {
+  color: #667085;
+}
+
+.uploading {
+  opacity: .65;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .cover-upload-preview {
+    height: 170px;
+  }
+
+  .media-upload-row {
+    grid-template-columns: 1fr;
+  }
+
+  .avatar-upload-preview,
+  .church-logo-preview {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+/* =========================
+   CHURCH BRAND
+========================= */
+
+.church-brand-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+
+    margin-top:22px;
+
+    padding:16px 18px;
+
+    background:#fff;
+
+    border:1px solid #ececec;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.05);
+
+    max-width:420px;
+}
+
+.church-logo-public{
+
+    width:64px;
+    height:64px;
+
+    border-radius:16px;
+
+    background:#eef4ff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:30px;
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    flex-shrink:0;
+
+}
+
+.church-brand-info strong{
+
+    display:block;
+
+    font-size:1.05rem;
+
+    font-weight:700;
+
+    color:#1e293b;
+
+}
+
+.church-brand-meta{
+
+    margin-top:4px;
+
+    color:#64748b;
+
+    font-size:.9rem;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+}
+
+.church-brand-meta .dot{
+
+    opacity:.45;
+
+}
+
+/* ==========================================
+   PASTOR NETWORK CARDS 3.0
+========================================== */
+
+.pastor-card-v3{
+
+    background:#fff;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    border:1px solid #e8edf5;
+
+    box-shadow:0 12px 30px rgba(15,23,42,.06);
+
+    transition:.25s;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.pastor-card-v3:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 20px 45px rgba(15,23,42,.12);
+
+}
+
+.pastor-card-v3-cover{
+
+    height:120px;
+
+    background:
+        linear-gradient(135deg,#2563eb,#7c3aed);
+
+    background-size:cover;
+
+    background-position:center;
+
+}
+
+.pastor-card-v3-body{
+
+    padding:22px;
+
+    margin-top:-54px;
+
+}
+
+.pastor-card-v3-avatar{
+
+    width:108px;
+
+    height:108px;
+
+    border-radius:999px;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    font-size:42px;
+
+    font-weight:800;
+
+    border:5px solid #fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background-size:cover;
+
+    background-position:center;
+
+    margin-bottom:18px;
+
+}
+
+.pastor-card-v3-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+}
+
+.pastor-card-v3-header h3{
+
+    margin:0;
+
+    font-size:1.25rem;
+
+}
+
+.pastor-card-v3-header p{
+
+    margin-top:4px;
+
+    color:#64748b;
+
+}
+
+.pastor-card-verify{
+
+    background:#dbeafe;
+
+    color:#2563eb;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    font-size:.78rem;
+
+    font-weight:700;
+
+}
+
+.pastor-card-verify.muted{
+
+    background:#f1f5f9;
+
+    color:#64748b;
+
+}
+
+.pastor-card-v3-meta{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    margin:18px 0;
+
+}
+
+.pastor-card-v3-meta span{
+
+    background:#f8fafc;
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    font-size:.82rem;
+
+}
+
+.pastor-card-v3-bio{
+
+    color:#475569;
+
+    line-height:1.6;
+
+    margin-bottom:18px;
+
+}
+
+.pastor-card-v3-church{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px;
+
+    background:#f8fafc;
+
+    border-radius:18px;
+
+    margin-bottom:18px;
+
+}
+
+.pastor-card-v3-logo{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:14px;
+
+    background:#eef2ff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background-size:cover;
+
+    background-position:center;
+
+    font-size:22px;
+
+}
+
+.pastor-card-v3-church strong{
+
+    display:block;
+
+}
+
+.pastor-card-v3-church span{
+
+    color:#64748b;
+
+    font-size:.85rem;
+
+}
+
+.pastor-card-v3-stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    text-align:center;
+
+    margin:20px 0;
+
+}
+
+.pastor-card-v3-stats strong{
+
+    display:block;
+
+    font-size:1.25rem;
+
+}
+
+.pastor-card-v3-stats span{
+
+    color:#64748b;
+
+    font-size:.82rem;
+
+}
+
+.pastor-card-v3-actions{
+
+    display:flex;
+
+    gap:12px;
+
+}
+
+.pastor-card-v3-actions button{
+
+    flex:1;
+
+}
+
+@media (max-width:768px){
+
+    .pastor-card-v3-body{
+
+        padding:18px;
+
+    }
+
+    .pastor-card-v3-avatar{
+
+        width:90px;
+
+        height:90px;
+
+        font-size:34px;
+
+    }
+
+    .pastor-card-v3-actions{
+
+        flex-direction:column;
+
+    }
+
+}
+
+/* ==========================================
+   NETWORK DIRECTORY 2.0
+========================================== */
+
+.network-directory-section {
+  padding-top: 24px;
+}
+
+.network-quick-stats {
+  max-width: 1120px;
+  margin: 0 auto 24px;
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.network-quick-stats div {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .05);
+}
+
+.network-quick-stats strong {
+  display: block;
+  font-size: 1.6rem;
+}
+
+.network-quick-stats span {
+  color: #667085;
+  font-size: .85rem;
+}
+
+.network-search-panel {
+  max-width: 1120px;
+  margin: 0 auto 24px;
+  padding: 0 18px;
+}
+
+.network-search-panel input {
+  margin-bottom: 14px;
+}
+
+.featured-pastor-wrap {
+  max-width: 1120px;
+  margin: 0 auto 24px;
+  padding: 0 18px;
+}
+
+.featured-pastor-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+}
+
+.featured-pastor-cover {
+  height: 150px;
+  background:
+    radial-gradient(circle at top left, rgba(37,99,235,.24), transparent 35%),
+    linear-gradient(135deg, #eff6ff, #ffffff);
+  background-size: cover;
+  background-position: center;
+}
+
+.featured-pastor-content {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 0 24px 24px;
+  margin-top: -48px;
+}
+
+.featured-pastor-avatar {
+  width: 104px;
+  height: 104px;
+  border-radius: 999px;
+  border: 5px solid white;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  font-weight: 900;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .18);
+}
+
+.featured-pastor-info h3 {
+  margin: 8px 0 4px;
+  font-size: 1.55rem;
+}
+
+.featured-pastor-info p {
+  margin: 0;
+  color: #667085;
+}
+
+.featured-pastor-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.featured-pastor-meta span {
+  background: #f8fafc;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: .82rem;
+}
+
+.featured-pastor-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 820px) {
+  .network-quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .featured-pastor-content {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .featured-pastor-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .featured-pastor-actions button {
+    flex: 1;
+  }
+}
+
+@media (max-width: 520px) {
+  .network-quick-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-pastor-actions {
+    flex-direction: column;
+  }
+}
+
+.profile-setting-select {
+  margin-top: 18px;
+  padding: 18px;
+  border-top: 1px solid #eef2f7;
+}
+
+.profile-setting-select label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.profile-setting-help {
+  margin-top: 10px;
+  color: #667085;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.profile-link-card {
+  margin: 18px 0 22px;
+  padding: 16px 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-link-card strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.profile-link-card p {
+  margin: 0;
+  color: #667085;
+  font-size: 0.92rem;
+  word-break: break-all;
+}
+
+@media (max-width: 640px) {
+  .profile-link-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-link-card button {
+    width: 100%;
+  }
+}

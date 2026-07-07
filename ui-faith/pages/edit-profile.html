@@ -1,111 +1,334 @@
 <div class="app clean-app">
-
   <div class="clean-main">
 
-    <!-- =========================
-         HERO
-    ========================== -->
-    <section class="simple-hero">
-
-      <div class="hero-content">
-
-        <h1 class="hero-title">
-          Edit Your
-          <span class="highlight">
-            Ministry Profile
-          </span>
-        </h1>
-
-        <p class="hero-sub">
-          Customize your public ministry identity on XynaFaith.
-        </p>
-
+    <section class="profile-edit-hero">
+      <div class="profile-cover-preview" id="coverPreview">
+        <div class="profile-avatar-preview" id="avatarPreview">P</div>
       </div>
 
+      <div class="profile-edit-heading">
+        <span class="eyebrow">Pastor Profile 2.0</span>
+        <h1>Edit Ministry Profile</h1>
+        <p>Build a public ministry page members can discover, follow, and contact.</p>
+      </div>
     </section>
 
-    <!-- =========================
-         PROFILE FORM
-    ========================== -->
-    <section class="features">
+    <section class="profile-edit-layout">
 
-      <div class="features-header">
+      <form id="profileForm" class="profile-edit-form" onsubmit="event.preventDefault(); saveProfile();">
+          <div class="profile-section profile-media-section">
+            <h2>Public Identity</h2>
+            <p class="profile-section-subtitle">
+              Upload photos that represent you, your church, and your ministry.
+            </p>
 
-        <h2>Pastor Profile</h2>
+            <input id="profileImageFile" type="file" accept="image/*" hidden onchange="uploadPastorProfileImage('profile')" />
+            <input id="coverImageFile" type="file" accept="image/*" hidden onchange="uploadPastorProfileImage('cover')" />
+            <input id="churchLogoFile" type="file" accept="image/*" hidden onchange="uploadPastorProfileImage('churchLogo')" />
 
-        <p>
-          This information will appear on your public pastor page.
-        </p>
+            <input id="profileImage" type="hidden" />
+            <input id="coverImage" type="hidden" />
+            <input id="churchLogo" type="hidden" />
 
-      </div>
+            <div class="cover-upload-card" onclick="document.getElementById('coverImageFile').click()">
+              <div id="coverUploadPreview" class="cover-upload-preview">
+                <div class="upload-overlay">
+                  <span>🖼️</span>
+                  <strong>Change Cover Image</strong>
+                  <small>Tap or drag image to upload</small>
+                </div>
+              </div>
+            </div>
 
-      <div class="feature-card">
+            <div class="media-upload-row">
+              <div class="avatar-upload-card" onclick="document.getElementById('profileImageFile').click()">
+                <div id="avatarUploadPreview" class="avatar-upload-preview">P</div>
+                <button type="button" class="camera-pill">📷</button>
+                <strong>Pastor Photo</strong>
+                <small>Recommended 400×400</small>
+              </div>
 
-        <form id="profileForm">
+              <div class="logo-upload-card" onclick="document.getElementById('churchLogoFile').click()">
+                <div id="churchLogoPreview" class="church-logo-preview">⛪</div>
+                <button type="button" class="camera-pill">📷</button>
+                <strong>Church Logo</strong>
+                <small>Recommended 400×400</small>
+              </div>
+            </div>
 
-          <div class="form-group">
-            <label>Bio</label>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Public Slug</label>
+                <input id="profileSlug" placeholder="john-doe" oninput="updatePublicProfileLinkPreview()" />
+              </div>
 
-            <textarea
-              id="profileBio"
-              rows="5"
-              placeholder="Tell people about your ministry..."
-            ></textarea>
+              <div class="form-group">
+                <label>Church Name</label>
+                <input id="churchName" placeholder="Grace Community Church" />
+              </div>
+            </div>
+            <div class="profile-link-card">
+              <div>
+                <strong>Public Ministry Link</strong>
+                <p id="publicProfileLinkText">
+                  Your public profile link will appear after you save a slug.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="btn-secondary"
+                onclick="copyPublicProfileLink()"
+              >
+                Copy Link
+              </button>
+            </div>
+            <div class="form-group">
+              <label>Bio</label>
+              <textarea id="profileBio" rows="5" placeholder="Tell people about your ministry..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Mission Statement</label>
+              <textarea id="missionStatement" rows="4" placeholder="What is your ministry mission?"></textarea>
+            </div>
+          </div>
+
+        <div class="profile-section">
+          <h2>Ministry Details</h2>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Ministry Focus</label>
+              <input id="ministryFocus" placeholder="Prayer, Youth, Healing..." />
+            </div>
+
+            <div class="form-group">
+              <label>Denomination</label>
+              <input id="denomination" placeholder="Pentecostal, Baptist..." />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Years in Ministry</label>
+              <input id="yearsInMinistry" type="number" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label>Ordination Year</label>
+              <input id="ordinationYear" type="number" min="1900" />
+            </div>
           </div>
 
           <div class="form-group">
-            <label>Church Name</label>
-
-            <input
-              type="text"
-              id="churchName"
-              placeholder="Enter church name"
-            >
+            <label>Specialties</label>
+            <input id="specialties" placeholder="Marriage, Youth, Missions, Counseling" />
           </div>
 
           <div class="form-group">
-            <label>Ministry Focus</label>
+            <label>Favorite Scripture</label>
+            <input id="favoriteScripture" placeholder="John 3:16" />
+          </div>
 
-            <input
-              type="text"
-              id="ministryFocus"
-              placeholder="Prayer, Youth, Healing..."
-            >
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Languages</label>
+              <input id="languages" placeholder="English, Twi, Spanish" />
+            </div>
+
+            <div class="form-group">
+              <label>Service Times</label>
+              <input id="serviceTimes" placeholder="Sundays 10:00 AM" />
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h2>Church & Location</h2>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Church Size</label>
+              <input id="churchSize" placeholder="50–100, 500+, etc." />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>City</label>
+              <input id="profileCity" />
+            </div>
+
+            <div class="form-group">
+              <label>State / Province</label>
+              <input id="profileState" />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Country</label>
+              <input id="profileCountry" />
+            </div>
+
+            <div class="form-group">
+              <label>Time Zone</label>
+              <input id="timeZone" placeholder="America/New_York" />
+            </div>
           </div>
 
           <div class="form-group">
-            <label>Location</label>
+            <label>Location Display</label>
+            <input id="profileLocation" placeholder="Baltimore, Maryland, USA" />
+          </div>
+        </div>
 
-            <input
-              type="text"
-              id="profileLocation"
-              placeholder="City, Country"
-            >
+        <div class="profile-section">
+          <h2>Contact & Social Links</h2>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Website</label>
+              <input id="profileWebsite" placeholder="https://..." />
+            </div>
+
+            <div class="form-group">
+              <label>Public Email</label>
+              <input id="emailPublic" placeholder="pastor@church.org" />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Phone</label>
+              <input id="profilePhone" />
+            </div>
+
+            <div class="form-group">
+              <label>Facebook</label>
+              <input id="facebook" />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>YouTube</label>
+              <input id="youtube" />
+            </div>
+
+            <div class="form-group">
+              <label>Instagram</label>
+              <input id="instagram" />
+            </div>
           </div>
 
           <div class="form-group">
-            <label>Website</label>
-
-            <input
-              type="text"
-              id="profileWebsite"
-              placeholder="https://..."
-            >
+            <label>X / Twitter</label>
+            <input id="twitter" />
           </div>
+        </div>
 
-          <button
-            type="submit"
-            class="btn-primary"
-          >
-            Save Profile
-          </button>
+              <div class="profile-section profile-settings-section">
 
-        </form>
+                <h2>Privacy & Ministry Settings</h2>
 
-      </div>
+                <p class="profile-section-subtitle">
+                  Control how members connect with your ministry and who can discover your public profile.
+                </p>
+
+                <!-- Prayer Requests -->
+                <label class="profile-setting-row">
+
+                  <input
+                    id="acceptsPrayerRequests"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <div class="profile-setting-main">
+
+                    <strong>Accept Private Prayer Requests</strong>
+
+                    <span>
+                      Allow members to send confidential prayer requests directly to you.
+                    </span>
+
+                  </div>
+
+                </label>
+
+                <!-- Direct Messages -->
+                <label class="profile-setting-row">
+
+                  <input
+                    id="allowDirectMessages"
+                    type="checkbox"
+                    checked
+                  />
+
+                  <div class="profile-setting-main">
+
+                    <strong>Allow Direct Messages</strong>
+
+                    <span>
+                      Allow members to contact you through XynaFaith messaging.
+                    </span>
+
+                  </div>
+
+                </label>
+
+                <!-- Visibility -->
+                <div class="profile-setting-select">
+
+                  <label for="profileVisibility">
+
+                    <strong>Ministry Profile Visibility</strong>
+
+                  </label>
+
+                  <select
+                    id="profileVisibility"
+                    class="input"
+                    onchange="updateVisibilityDescription()"
+                  >
+
+                    <option value="public">
+                      🌍 Public Ministry
+                    </option>
+
+                    <option value="members">
+                      👥 XynaFaith Community
+                    </option>
+
+                    <option value="private">
+                      🔒 Private Ministry
+                    </option>
+
+                  </select>
+
+                  <p
+                    id="visibilityDescription"
+                    class="profile-setting-help"
+                  >
+
+                    Anyone can discover your ministry profile.
+
+                  </p>
+
+                </div>
+
+              </div>
+
+        <div class="profile-save-row">
+          <button class="btn-primary" type="submit">Save Ministry Profile</button>
+          <button class="btn-secondary" type="button" onclick="previewMyPastorProfile()">Preview Public Profile</button>
+        </div>
+
+      </form>
 
     </section>
 
   </div>
-
 </div>

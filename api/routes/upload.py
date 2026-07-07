@@ -289,3 +289,79 @@ async def upload_sermon(
         if os.path.exists(temp_path):
 
             os.remove(temp_path)
+
+
+# =========================================
+# IMAGE UPLOAD CONFIG
+# =========================================
+IMAGE_UPLOAD_DIR = "uploads/pastor_profiles"
+
+ALLOWED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+]
+
+MAX_IMAGE_SIZE = 3 * 1024 * 1024  # 3MB
+
+os.makedirs(
+    IMAGE_UPLOAD_DIR,
+    exist_ok=True
+)
+
+
+# =========================================
+# PASTOR PROFILE IMAGE UPLOAD
+# =========================================
+@router.post("/pastor-image")
+async def upload_pastor_image(
+    file: UploadFile = File(...),
+    user=Depends(get_current_user)
+) -> Dict:
+
+    if not file.filename:
+        raise HTTPException(
+            400,
+            "No image provided"
+        )
+
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(
+            400,
+            "Only JPG, PNG, or WEBP images are allowed"
+        )
+
+    contents = await file.read()
+
+    if len(contents) > MAX_IMAGE_SIZE:
+        raise HTTPException(
+            400,
+            "Image too large (max 3MB)"
+        )
+
+    ext = file.filename.split(".")[-1].lower()
+
+    if ext not in ["jpg", "jpeg", "png", "webp"]:
+        raise HTTPException(
+            400,
+            "Invalid image extension"
+        )
+
+    safe_filename = (
+        f"{user.id}_"
+        f"{uuid.uuid4().hex}."
+        f"{ext}"
+    )
+
+    file_path = os.path.join(
+        IMAGE_UPLOAD_DIR,
+        safe_filename
+    )
+
+    with open(file_path, "wb") as f:
+        f.write(contents)
+
+    return {
+        "success": True,
+        "url": f"/uploads/pastor_profiles/{safe_filename}"
+    }
