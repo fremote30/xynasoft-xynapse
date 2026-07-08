@@ -303,13 +303,19 @@ function setChecked(id, value) {
   // =====================================
 async function loadPastors() {
   try {
-    const res = await apiFetch("/api/v1/pastors/");
-
+    
+    const res = await apiFetch("/api/v1/pastors/?limit=20&offset=0");
     if (!res.ok) {
       throw new Error("Failed to load pastors");
     }
 
-    allPastors = await res.json();
+    const data = await res.json();
+
+    allPastors = data.items || [];
+
+    window.pastorHasMore = data.has_more;
+    window.pastorOffset = data.offset + data.count;
+    window.pastorLimit = data.limit;
 
     updateNetworkQuickStats(allPastors);
     renderFeaturedPastor(allPastors);
@@ -337,16 +343,26 @@ async function loadPastors() {
 
 function updateNetworkQuickStats(pastors) {
   setTextSafe("networkPastorCount", pastors.length);
-  setTextSafe("networkSermonCount", pastors.reduce(
-    (sum, p) => sum + Number(p.sermon_count || 0),
-    0
-  ));
 
-  const memberCount = $("memberCount")?.textContent || "0";
+  setTextSafe(
+    "networkSermonCount",
+    pastors.reduce(
+      (sum, p) => sum + Number(p.sermon_count || 0),
+      0
+    )
+  );
+
+  const memberCount =
+    $("memberCount")?.textContent ||
+    window.lastMemberCount ||
+    "0";
+
   setTextSafe("networkMemberCount", memberCount);
 
-  const prayerCount = document.querySelectorAll(".prayer-item").length || 0;
-  setTextSafe("networkPrayerCount", prayerCount);
+  const prayerItems =
+    document.querySelectorAll(".prayer-item").length;
+
+  setTextSafe("networkPrayerCount", prayerItems || 0);
 }
 
 function setTextSafe(id, value) {
@@ -442,23 +458,21 @@ function renderPastorDirectory(pastors) {
     return;
   }
 
-  const visiblePastors = pastors.slice(0, pastorDisplayLimit);
-
   container.innerHTML = `
-    ${visiblePastors.map(pastorCardHTML).join("")}
+  ${pastors.map(pastorCardHTML).join("")}
 
-    ${
-      pastors.length > pastorDisplayLimit
-        ? `
-          <div class="load-more-wrap pastor-load-more">
-            <button class="btn-secondary" onclick="loadMorePastors()">
-              Load More Pastors
-            </button>
-          </div>
-        `
-        : ""
-    }
-  `;
+  ${
+    window.pastorHasMore
+      ? `
+        <div class="load-more-wrap pastor-load-more">
+          <button class="btn-secondary" onclick="loadMorePastors()">
+            Load More Pastors
+          </button>
+        </div>
+      `
+      : ""
+  }
+`;
 }
 
 function pastorCardHTML(pastor) {
@@ -1154,52 +1168,103 @@ window.previewMyPastorProfile = async function () {
   navigate("pastor-profile");
 };
 
-window.filterPastorDirectory = function (resetLimit = true) {
-  if (resetLimit) {
-    pastorDisplayLimit = 3;
+window.filterPastorDirectory = async function () {
+  try {
+    const searchText = ($("pastorSearchInput")?.value || "").trim();
+
+    const filterText =
+      activePastorFilter && activePastorFilter !== "all"
+        ? activePastorFilter
+        : "";
+
+    const q = [searchText, filterText]
+      .filter(Boolean)
+      .join(" ");
+
+    const params = new URLSearchParams({
+      limit: 20,
+      offset: 0
+    });
+
+    if (q) {
+      params.set("q", q);
+    }
+
+    const res = await apiFetch(`/api/v1/pastors/?${params.toString()}`);
+
+    if (!res.ok) {
+      throw new Error("Search failed");
+    }
+
+    const data = await res.json();
+
+    allPastors = data.items || [];
+
+    window.pastorHasMore = data.has_more;
+    window.pastorOffset = data.offset + data.count;
+    window.pastorLimit = data.limit;
+    window.currentPastorSearch = q;
+
+    renderFeaturedPastor(allPastors);
+    renderPastorDirectory(allPastors);
+
+  } catch (err) {
+    console.error("Pastor search error:", err);
+    showToast?.("Could not search pastors", "error");
   }
-
-  const q = ($("pastorSearchInput")?.value || "").toLowerCase().trim();
-
-  const filtered = allPastors.filter(p => {
-    const haystack = [
-      p.name,
-      p.church_name,
-      p.city,
-      p.state,
-      p.country,
-      p.denomination,
-      p.ministry_focus,
-      p.specialties,
-      p.languages
-    ].join(" ").toLowerCase();
-
-    const matchesSearch = !q || haystack.includes(q);
-
-    const matchesFilter =
-      activePastorFilter === "all" ||
-      haystack.includes(activePastorFilter.toLowerCase());
-
-    return matchesSearch && matchesFilter;
-  });
-
-  renderPastorDirectory(filtered);
 };
 
 window.setPastorDirectoryFilter = function (filter) {
-  activePastorFilter = filter;
+  activePastorFilter = filter || "all";
 
   document.querySelectorAll(".network-filter-row .filter-chip").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.filter === filter);
+    btn.classList.toggle("active", btn.dataset.filter === activePastorFilter);
   });
 
   window.filterPastorDirectory();
 };
 
-window.loadMorePastors = function () {
-  pastorDisplayLimit += 3;
-  window.filterPastorDirectory(false);
+
+window.loadMorePastors = async function () {
+  try {
+    const limit = window.pastorLimit || 20;
+    const offset = window.pastorOffset || allPastors.length;
+    const q = window.currentPastorSearch || "";
+
+    const params = new URLSearchParams({
+      limit,
+      offset
+    });
+
+    if (q) {
+      params.set("q", q);
+    }
+
+    const res = await apiFetch(`/api/v1/pastors/?${params.toString()}`);
+
+    if (!res.ok) {
+      throw new Error("Failed to load more pastors");
+    }
+
+    const data = await res.json();
+
+    allPastors = [
+      ...allPastors,
+      ...(data.items || [])
+    ];
+
+    window.pastorHasMore = data.has_more;
+    window.pastorOffset = data.offset + data.count;
+    window.pastorLimit = data.limit;
+
+    renderPastorDirectory(allPastors);
+
+  } catch (err) {
+    console.error("Load more pastors error:", err);
+    showToast?.("Could not load more pastors", "error");
+  }
 };
+
 
 function updatePublicProfileLinkPreview() {
   const slug = ($("profileSlug")?.value || "")

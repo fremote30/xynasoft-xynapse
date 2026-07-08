@@ -127,41 +127,68 @@
           </div>
         </div>
 
-        <div class="network-search-panel">
-          <input
-            id="pastorSearchInput"
-            class="input"
-            type="search"
-            placeholder="Search pastors, churches, cities, countries..."
-            oninput="filterPastorDirectory()"
-          />
+                  <!-- ========================= -->
+          <!-- SEARCH + FILTERS -->
+          <!-- ========================= -->
 
-          <div class="network-filter-row">
-            <button class="filter-chip active" data-filter="all" onclick="setPastorDirectoryFilter('all')">
-              All
-            </button>
+          <div class="network-search-section">
 
-            <button class="filter-chip" data-filter="Pentecostal" onclick="setPastorDirectoryFilter('Pentecostal')">
-              Pentecostal
-            </button>
+            <input
+              id="pastorSearchInput"
+              class="network-search-input"
+              type="search"
+              placeholder="Search pastors, churches, cities, countries..."
+              autocomplete="off"
+              oninput="filterPastorDirectory()"
+            />
 
-            <button class="filter-chip" data-filter="Prayer" onclick="setPastorDirectoryFilter('Prayer')">
-              Prayer
-            </button>
+            <div class="network-filter-row">
 
-            <button class="filter-chip" data-filter="Teaching" onclick="setPastorDirectoryFilter('Teaching')">
-              Teaching
-            </button>
+              <button
+                class="filter-chip active"
+                data-filter="all"
+                onclick="setPastorDirectoryFilter('all')">
+                All
+              </button>
 
-            <button class="filter-chip" data-filter="United States" onclick="setPastorDirectoryFilter('United States')">
-              United States
-            </button>
+              <button
+                class="filter-chip"
+                data-filter="Pentecostal"
+                onclick="setPastorDirectoryFilter('Pentecostal')">
+                Pentecostal
+              </button>
 
-            <button class="filter-chip" data-filter="Ghana" onclick="setPastorDirectoryFilter('Ghana')">
-              Ghana
-            </button>
+              <button
+                class="filter-chip"
+                data-filter="Prayer"
+                onclick="setPastorDirectoryFilter('Prayer')">
+                Prayer
+              </button>
+
+              <button
+                class="filter-chip"
+                data-filter="Teaching"
+                onclick="setPastorDirectoryFilter('Teaching')">
+                Teaching
+              </button>
+
+              <button
+                class="filter-chip"
+                data-filter="United States"
+                onclick="setPastorDirectoryFilter('United States')">
+                United States
+              </button>
+
+              <button
+                class="filter-chip"
+                data-filter="Ghana"
+                onclick="setPastorDirectoryFilter('Ghana')">
+                Ghana
+              </button>
+
+            </div>
+
           </div>
-        </div>
 
         <div id="pastorGrid" class="pastor-grid-v2">
           <div class="feature-card">

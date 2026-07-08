@@ -14,7 +14,7 @@ from datetime import datetime
 
 from api.models.pastor_profile import PastorProfile
 from api.models.sermon import Sermon
-
+from sqlalchemy import or_
 
 router = APIRouter(
     prefix="/pastors",
@@ -126,72 +126,75 @@ def apply_for_pastor(
 @router.get("/")
 def get_pastors(
     authorization: str = Header(None),
+    limit: int = 20,
+    offset: int = 0,
+    q: str = "",
     db: Session = Depends(get_db)
 ):
 
     current_user = None
 
-    # =====================================
-    # OPTIONAL AUTH
-    # =====================================
     if authorization and authorization.startswith("Bearer "):
-
         token = authorization.split(" ")[1]
-
         payload = decode_token(token)
 
         if payload:
-
             user_id = payload.get("sub")
 
             current_user = db.query(User).filter(
                 User.id == int(user_id)
             ).first()
 
-    # =====================================
-    # DIRECTORY VISIBILITY
-    # =====================================
     if current_user:
-
-        # Logged-in users can discover:
-        # - Public ministries
-        # - Members-only ministries
-        pastors = (
+        query = (
             db.query(User)
-            .join(
-                PastorProfile,
-                PastorProfile.user_id == User.id
-            )
+            .join(PastorProfile, PastorProfile.user_id == User.id)
             .filter(
                 User.role.in_(["pastor", "admin"]),
-                PastorProfile.visibility.in_([
-                    "public",
-                    "members"
-                ])
+                PastorProfile.visibility.in_(["public", "members"])
             )
-            .all()
         )
-
     else:
-
-        # Anonymous visitors only see public ministries
-        pastors = (
+        query = (
             db.query(User)
-            .join(
-                PastorProfile,
-                PastorProfile.user_id == User.id
-            )
+            .join(PastorProfile, PastorProfile.user_id == User.id)
             .filter(
                 User.role.in_(["pastor", "admin"]),
                 PastorProfile.visibility == "public"
             )
-            .all()
         )
+
+    search = (q or "").strip()
+
+    if search:
+        pattern = f"%{search}%"
+
+        query = query.filter(
+            or_(
+                User.name.ilike(pattern),
+                User.email.ilike(pattern),
+                PastorProfile.church_name.ilike(pattern),
+                PastorProfile.city.ilike(pattern),
+                PastorProfile.state.ilike(pattern),
+                PastorProfile.country.ilike(pattern),
+                PastorProfile.denomination.ilike(pattern),
+                PastorProfile.ministry_focus.ilike(pattern),
+                PastorProfile.specialties.ilike(pattern),
+                PastorProfile.languages.ilike(pattern)
+            )
+        )
+
+    pastors = (
+        query
+        .order_by(User.name.asc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
 
     results = []
 
     for pastor in pastors:
-
         profile = db.query(PastorProfile).filter(
             PastorProfile.user_id == pastor.id
         ).first()
@@ -199,25 +202,18 @@ def get_pastors(
         if not profile:
             continue
 
-        follower_count = db.query(
-            PastorFollower
-        ).filter(
+        follower_count = db.query(PastorFollower).filter(
             PastorFollower.pastor_id == pastor.id
         ).count()
 
-        sermon_count = db.query(
-            Sermon
-        ).filter(
+        sermon_count = db.query(Sermon).filter(
             Sermon.author_id == pastor.id
         ).count()
 
         is_following = False
 
         if current_user and current_user.role == "member":
-
-            existing = db.query(
-                PastorFollower
-            ).filter(
+            existing = db.query(PastorFollower).filter(
                 PastorFollower.member_id == current_user.id,
                 PastorFollower.pastor_id == pastor.id
             ).first()
@@ -225,10 +221,8 @@ def get_pastors(
             is_following = existing is not None
 
         results.append({
-
             "id": pastor.id,
             "user_id": pastor.id,
-
             "name": pastor.name,
             "email": pastor.email,
 
@@ -260,16 +254,18 @@ def get_pastors(
             "slug": profile.slug,
 
             "is_verified": profile.is_verified,
-
-            # Backward compatibility
             "is_public": profile.is_public,
-
-            # New privacy model
             "visibility": profile.visibility or "public"
-
         })
 
-    return results
+    return {
+        "items": results,
+        "limit": limit,
+        "offset": offset,
+        "count": len(results),
+        "has_more": len(results) == limit,
+        "q": search
+    }
 
 # =========================
 # FOLLOW PASTOR
