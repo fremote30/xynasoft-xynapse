@@ -5,7 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XynaFaith</title>
-  <link rel="stylesheet" href="/faith/styles.css" />
+ <!-- Existing production CSS -->
+<link rel="stylesheet" href="/faith/styles.css">
+
+<!-- New modular CSS — loaded second -->
+<link rel="stylesheet" href="/faith/css/styles.css">
 </head>
 
 <body>
@@ -78,6 +82,14 @@
   <main id="app"></main>
 
   <!-- =========================
+     MOBILE BOTTOM NAVIGATION
+      ========================== -->
+      <nav
+        id="mobileBottomNav"
+        class="mobile-bottom-nav"
+        aria-label="Mobile primary navigation"
+      ></nav>
+  <!-- =========================
        FOOTER
   ========================== -->
 <footer class="footer">
@@ -148,8 +160,12 @@
   <script defer src="/faith/js/sermon.js"></script>
   <script defer src="/faith/js/collaboration.js"></script>
   <script defer src="/faith/js/network.js"></script>
+  <script defer src="/faith/js/member-profile.js"></script>
   <script defer src="/faith/js/platform.js"></script>
   <script defer src="/faith/js/prayer.js"></script>
+  <script src="/faith/js/search.js"></script>
+
+
 
   <!-- =========================
        RECOVERY
