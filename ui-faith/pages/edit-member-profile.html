@@ -1,0 +1,373 @@
+<div class="app clean-app">
+  <div class="clean-main">
+
+    <!-- =========================
+         HERO
+    ========================== -->
+    <section class="profile-edit-hero member-profile-edit-hero">
+
+      <div class="member-profile-hero-card">
+
+        <div
+          id="memberAvatarPreview"
+          class="member-profile-avatar-preview"
+        >
+          M
+        </div>
+
+        <div>
+          <span class="eyebrow">Member Profile</span>
+
+          <h1>Edit Your Profile</h1>
+
+          <p>
+            Personalize your XynaFaith experience and control
+            how other community members can connect with you.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         FORM
+    ========================== -->
+    <section class="profile-edit-layout">
+
+      <form
+        id="memberProfileForm"
+        class="profile-edit-form"
+        onsubmit="event.preventDefault(); saveMemberProfile();"
+      >
+
+        <!-- =========================
+             PROFILE PHOTO
+        ========================== -->
+        <div class="profile-section profile-media-section">
+
+          <h2>Profile Photo</h2>
+
+          <p class="profile-section-subtitle">
+            Add a photo so pastors and community members can recognize you.
+          </p>
+
+          <input
+            id="memberProfileImageFile"
+            type="file"
+            accept="image/*"
+            hidden
+            onchange="uploadMemberProfileImage()"
+          />
+
+          <input
+            id="memberProfileImage"
+            type="hidden"
+          />
+
+          <div
+            class="member-avatar-upload-card"
+            onclick="document.getElementById('memberProfileImageFile').click()"
+          >
+
+            <div
+              id="memberAvatarUploadPreview"
+              class="member-profile-avatar-preview large"
+            >
+              M
+            </div>
+
+            <button
+              type="button"
+              class="camera-pill"
+            >
+              📷
+            </button>
+
+            <strong>Choose Profile Photo</strong>
+
+            <small>
+              JPG, PNG, or WebP. Recommended 400×400.
+            </small>
+
+          </div>
+
+        </div>
+
+        <!-- =========================
+             ABOUT
+        ========================== -->
+        <div class="profile-section">
+
+          <h2>About Me</h2>
+
+          <div class="form-group">
+            <label for="memberBio">Bio</label>
+
+            <textarea
+              id="memberBio"
+              rows="5"
+              maxlength="1000"
+              placeholder="Share a little about yourself and your faith journey..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="memberFavoriteScripture">
+              Favorite Scripture
+            </label>
+
+            <input
+              id="memberFavoriteScripture"
+              type="text"
+              placeholder="Proverbs 3:5–6"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="memberSlug">
+              Public Profile Slug
+            </label>
+
+            <input
+              id="memberSlug"
+              type="text"
+              placeholder="frederick-mote"
+              oninput="updateMemberProfileLinkPreview()"
+            />
+          </div>
+
+          <div class="profile-link-card">
+
+            <div>
+              <strong>Member Profile Link</strong>
+
+              <p id="memberProfileLinkText">
+                Your member profile link will appear after you add a slug.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="copyMemberProfileLink()"
+            >
+              Copy Link
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- =========================
+             LOCATION
+        ========================== -->
+        <div class="profile-section">
+
+          <h2>Location & Languages</h2>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="memberCity">City</label>
+
+              <input
+                id="memberCity"
+                type="text"
+                placeholder="Baltimore"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="memberState">State / Province</label>
+
+              <input
+                id="memberState"
+                type="text"
+                placeholder="Maryland"
+              />
+            </div>
+
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="memberCountry">Country</label>
+
+              <input
+                id="memberCountry"
+                type="text"
+                placeholder="United States"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="memberLanguages">Languages</label>
+
+              <input
+                id="memberLanguages"
+                type="text"
+                placeholder="English, Twi, Spanish"
+              />
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- =========================
+             FAITH & COMMUNITY
+        ========================== -->
+        <div class="profile-section">
+
+          <h2>Faith & Community</h2>
+
+          <div class="form-group">
+            <label for="memberChurchName">
+              Church Name
+            </label>
+
+            <input
+              id="memberChurchName"
+              type="text"
+              placeholder="Grace Community Church"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="memberMinistryInterests">
+              Ministry Interests
+            </label>
+
+            <textarea
+              id="memberMinistryInterests"
+              rows="3"
+              placeholder="Youth ministry, worship, missions, Bible study..."
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="memberPrayerInterests">
+              Prayer Interests
+            </label>
+
+            <textarea
+              id="memberPrayerInterests"
+              rows="3"
+              placeholder="Healing, family, spiritual growth, employment..."
+            ></textarea>
+          </div>
+
+        </div>
+
+        <!-- =========================
+             PRIVACY
+        ========================== -->
+        <div class="profile-section profile-settings-section">
+
+          <h2>Privacy & Communication</h2>
+
+          <p class="profile-section-subtitle">
+            Choose who can view your profile and how the community may contact you.
+          </p>
+
+          <div class="profile-setting-select">
+
+            <label for="memberVisibility">
+              <strong>Profile Visibility</strong>
+            </label>
+
+            <select
+              id="memberVisibility"
+              class="input"
+              onchange="updateMemberVisibilityDescription()"
+            >
+              <option value="public">
+                🌍 Public
+              </option>
+
+              <option value="members">
+                👥 XynaFaith Community
+              </option>
+
+              <option value="private">
+                🔒 Private
+              </option>
+            </select>
+
+            <p
+              id="memberVisibilityDescription"
+              class="profile-setting-help"
+            >
+              Only signed-in XynaFaith members can view your profile.
+            </p>
+
+          </div>
+
+          <label class="profile-setting-row">
+
+            <input
+              id="memberAllowDirectMessages"
+              type="checkbox"
+              checked
+            />
+
+            <div class="profile-setting-main">
+              <strong>Allow Direct Messages</strong>
+
+              <span>
+                Allow other XynaFaith users to send you messages.
+              </span>
+            </div>
+
+          </label>
+
+          <label class="profile-setting-row">
+
+            <input
+              id="memberReceiveNotifications"
+              type="checkbox"
+              checked
+            />
+
+            <div class="profile-setting-main">
+              <strong>Receive Notifications</strong>
+
+              <span>
+                Receive updates about prayers, pastors, sermons, and community activity.
+              </span>
+            </div>
+
+          </label>
+
+        </div>
+
+        <!-- =========================
+             ACTIONS
+        ========================== -->
+        <div class="profile-save-row">
+
+          <button
+            type="submit"
+            class="btn-primary"
+          >
+            Save Member Profile
+          </button>
+
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="navigate('member-dashboard')"
+          >
+            Back to Dashboard
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+</div>

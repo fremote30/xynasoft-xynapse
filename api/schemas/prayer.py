@@ -22,6 +22,7 @@ class PrayerCreate(BaseModel):
 
 class PrayerUpdateStatus(BaseModel):
     status: str
+    answer_testimony: str | None = None
 
 
 class PrayerReactionCreate(BaseModel):

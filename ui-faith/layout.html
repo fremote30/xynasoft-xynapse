@@ -3,139 +3,286 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>XynaFaith</title>
- <!-- Existing production CSS -->
-<link rel="stylesheet" href="/faith/styles.css">
 
-<!-- New modular CSS — loaded second -->
-<link rel="stylesheet" href="/faith/css/styles.css">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <title>XynaFaith</title>
+
+  <!-- Existing production stylesheet -->
+  <link rel="stylesheet" href="/faith/styles.css" />
+
+  <!-- Sunday beta mobile-navigation overrides -->
+  <link rel="stylesheet" href="/faith/css/mobile.css" />
 </head>
 
 <body>
 
   <!-- =========================
-     NAVBAR
-========================== -->
-<header class="navbar">
+       NAVBAR
+  ========================== -->
+  <header class="navbar">
 
-  <!-- LEFT SIDE: Logo + Brand -->
-  <div class="nav-left">
-    <img src="/faith/assets/xynafaith.png" class="logo" alt="XynaFaith Logo" />
-    <div class="brand">
-      <div class="brand-title">XynaFaith</div>
-      <div class="brand-sub">
-        Powered by AI • Guided by Scripture • Led by Pastors
+    <div class="nav-left">
+
+      <img
+        src="/faith/assets/xynafaith.png"
+        class="logo"
+        alt="XynaFaith Logo"
+      />
+
+      <div class="brand">
+
+        <div class="brand-title">
+          XynaFaith
+        </div>
+
+        <div class="brand-sub">
+          Powered by AI • Guided by Scripture • Led by Pastors
+        </div>
+
       </div>
+
     </div>
-  </div>
 
-  <!-- MOBILE MENU BUTTON -->
-  <button
-    id="mobileMenuBtn"
-    class="mobile-menu-btn"
-    onclick="toggleMobileMenu()"
-    aria-label="Toggle Navigation"
-  >
-    ☰
-  </button>
 
-  <!-- DYNAMIC NAVIGATION -->
-  <nav id="topnav" class="nav-links"></nav>
-  
-        <button
+    <!-- DESKTOP NAVIGATION -->
+    <nav
+      id="topnav"
+      class="nav-links"
+      aria-label="Primary navigation"
+    ></nav>
+
+
+    <!-- MOBILE ACTIONS -->
+    <div class="mobile-header-actions">
+
+
+      <button
         id="notificationBell"
         class="notification-bell hidden"
+        type="button"
         onclick="togglePrayerNotifications()"
-        aria-label="Prayer Notifications"
+        aria-label="Prayer notifications"
         title="Notifications"
       >
-        🔔
-        <span id="notificationBadge" class="notification-badge hidden">0</span>
+
+        <span aria-hidden="true">
+          🔔
+        </span>
+
+        <span
+          id="notificationBadge"
+          class="notification-badge hidden"
+        >
+          0
+        </span>
+
       </button>
-</header>
 
-<!-- MOBILE DRAWER -->
-<nav id="mobileDrawer" class="mobile-drawer">
-  <div class="mobile-drawer-header">
-    <div class="brand-title">XynaFaith</div>
-    <div class="mobile-drawer-user">
-      <span id="mobileDrawerUserName">Guest</span>
-      <span id="mobileDrawerUserRole"></span>
+
+
+      <button
+        id="mobileMenuBtn"
+        class="mobile-menu-btn"
+        type="button"
+        onclick="toggleMobileMenu()"
+        aria-label="Open navigation menu"
+        aria-controls="mobileDrawer"
+        aria-expanded="false"
+      >
+
+        <span aria-hidden="true">
+          ☰
+        </span>
+
+      </button>
+
+
     </div>
-  </div>
 
-  <div class="mobile-drawer-links">
-    <button onclick="navigate('home')">🏠 Home</button>
-    <button onclick="navigate('dashboard')">📊 Dashboard</button>
-    <button onclick="navigate('sermon')">✍️ Sermon Studio</button>
-    <button onclick="navigate('mysermons')">📚 My Sermons</button>
-    <button onclick="navigate('network')">🌐 Network</button>
-    <button onclick="navigate('prayer')">🙏 Prayer Wall</button>
-    <button onclick="navigate('settings')">⚙️ Settings</button>
-    <button onclick="logout()">🧱 Logout</button>
-  </div>
-</nav>
+
+  </header>
+
+
+
+  <!-- =========================
+       MOBILE DRAWER
+  ========================== -->
+  <nav
+    id="mobileDrawer"
+    class="mobile-drawer"
+    aria-label="Mobile navigation"
+    aria-hidden="true"
+  >
+
+
+    <div class="mobile-drawer-header">
+
+
+      <button
+        id="mobileDrawerClose"
+        class="mobile-drawer-close"
+        type="button"
+        onclick="closeMobileMenu()"
+        aria-label="Close navigation menu"
+      >
+
+        <span aria-hidden="true">
+          ×
+        </span>
+
+      </button>
+
+
+
+      <div class="brand-title">
+        XynaFaith
+      </div>
+
+
+
+      <div class="mobile-drawer-user">
+
+        <div class="mobile-drawer-user-copy">
+
+
+          <span
+            id="mobileDrawerUserName"
+            class="mobile-drawer-user-name"
+          >
+            Guest
+          </span>
+
+
+
+          <span
+            id="mobileDrawerUserRole"
+            class="mobile-drawer-user-role"
+          ></span>
+
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <div class="mobile-drawer-links">
+
+      <!-- Dynamic links rendered by core.js -->
+
+    </div>
+
+
+  </nav>
+
+
+
+  <!-- MOBILE DRAWER OVERLAY -->
+  <div
+    id="mobileDrawerOverlay"
+    class="mobile-drawer-overlay"
+    onclick="closeMobileMenu()"
+    aria-hidden="true"
+  ></div>
+
+
+
   <!-- =========================
        SPA CONTENT
   ========================== -->
   <main id="app"></main>
 
-  <!-- =========================
-     MOBILE BOTTOM NAVIGATION
-      ========================== -->
-      <nav
-        id="mobileBottomNav"
-        class="mobile-bottom-nav"
-        aria-label="Mobile primary navigation"
-      ></nav>
+
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav
+    id="mobileBottomNav"
+    class="mobile-bottom-nav"
+    aria-label="Mobile primary navigation"
+  ></nav>
+
+
+
+
   <!-- =========================
        FOOTER
   ========================== -->
-<footer class="footer">
+  <footer class="footer">
 
-  <div class="footer-brand">
-    © 2026 XynaFaith. All rights reserved.
-  </div>
 
-  <div class="footer-tagline">
-    Powered by AI • Guided by Scripture • Led by Pastors
-  </div>
+    <div class="footer-brand">
+      © 2026 XynaFaith. All rights reserved.
+    </div>
 
-  <div class="footer-links">
 
-    <a
-      href="https://xynasoft.com"
-      target="_blank"
-    >
-      A Xynasoft Platform
-    </a>
+    <div class="footer-tagline">
+      Powered by AI • Guided by Scripture • Led by Pastors
+    </div>
 
-    <span>•</span>
 
-    <a
-      href="mailto:support@xynafaith.com"
-    >
-      Contact Us
-    </a>
 
-    <span>•</span>
+    <div class="footer-links">
 
-    <a
-      href="#"
-      onclick="showAIDisclaimer()"
-    >
-      AI Disclaimer
-    </a>
 
-  </div>
+      <a
+        href="https://xynasoft.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        A Xynasoft Platform
+      </a>
 
-</footer>
+
+
+      <span aria-hidden="true">
+        •
+      </span>
+
+
+
+      <a href="mailto:support@xynafaith.com">
+        Contact Us
+      </a>
+
+
+
+      <span aria-hidden="true">
+        •
+      </span>
+
+
+
+      <a
+        href="#"
+        onclick="event.preventDefault(); showAIDisclaimer();"
+      >
+        AI Disclaimer
+      </a>
+
+
+    </div>
+
+
+  </footer>
+
+
 
   <!-- =========================
        EXTERNAL LIBRARIES
   ========================== -->
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/chart.js"
+  ></script>
+
+
 
   <!-- =========================
        UTILITIES
@@ -146,11 +293,15 @@
   <script defer src="/faith/js/utils/loader.js"></script>
   <script defer src="/faith/js/utils/auth.js"></script>
 
+
+
   <!-- =========================
        CORE
   ========================== -->
   <script defer src="/faith/js/router.js"></script>
   <script defer src="/faith/js/core.js"></script>
+
+
 
   <!-- =========================
        FEATURE MODULES
@@ -163,7 +314,7 @@
   <script defer src="/faith/js/member-profile.js"></script>
   <script defer src="/faith/js/platform.js"></script>
   <script defer src="/faith/js/prayer.js"></script>
-  <script src="/faith/js/search.js"></script>
+  <script defer src="/faith/js/search.js"></script>
 
 
 
@@ -172,15 +323,21 @@
   ========================== -->
   <script defer src="/faith/js/recovery.js"></script>
 
+
+
   <!-- =========================
        ERROR HANDLER
   ========================== -->
   <script defer src="/faith/js/error-handler.js"></script>
+
+
 
   <!-- =========================
        APP BOOTSTRAP
   ========================== -->
   <script defer src="/faith/js/app.js"></script>
 
+
 </body>
+
 </html>

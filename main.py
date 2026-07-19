@@ -17,7 +17,7 @@ from api.models.pastor_profile import PastorProfile
 
 from api.models import shared_sermon
 from api.models import sermon_comment
-
+from api.models.member_recent_sermon import MemberRecentSermon
 # ================================
 # DATABASE
 # ================================
@@ -53,6 +53,13 @@ from api.routes.pastor_profile import (
     router as pastor_profile_router
 )
 
+# ✅ Member Profile
+from api.models.member_profile import MemberProfile
+
+from api.routes.member_profile import (
+    router as member_profile_router
+)
+
 # ✅ Sermon CRUD
 from api.routes.sermon_routes import (
     router as sermon_crud_router
@@ -80,6 +87,11 @@ from api.models.prayer import Prayer
 from api.routes.prayer_routes import (
     router as prayer_router
 )
+
+# =========================================
+# Search
+# =========================================
+from api.routes import search
 
 # ================================
 # 🚀 INIT APP
@@ -226,13 +238,24 @@ app.include_router(
 print("✅ Pastor profile routes loaded")
 
 # =====================================
-# PASTOR PROFILE IMAGE UPLOADS
+# MEMBER PROFILE
 # =====================================
 app.include_router(
-    upload.router,
-    prefix="/sermon"
+    member_profile_router,
+    prefix="/api/v1"
 )
 
+print("✅ Member profile routes loaded")
+
+# =====================================
+# SEARCH 
+# =====================================
+app.include_router(
+    search.router,
+    prefix="/api/v1",
+    tags=["Search"]
+)
+print("✅ Search routes loaded")
 # ================================
 # 📁 FRONTEND (SPA)
 # ================================

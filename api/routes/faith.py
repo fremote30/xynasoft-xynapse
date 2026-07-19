@@ -781,113 +781,208 @@ async def get_my_sermons(
 # =========================================
 @router.get("/sermon/{sermon_id}")
 async def get_single_sermon(
-
     sermon_id: int,
-
-    db: Session = Depends(
-        get_db
-    ),
-
-    current_user: User = Depends(
-        get_current_user
-    )
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
-
     try:
-
-        # =========================
-        # OWNED SERMON
-        # =========================
+        # =====================================
+        # LOAD SERMON
+        # =====================================
         sermon = (
-
             db.query(Sermon)
-
             .filter(
                 Sermon.id == sermon_id
             )
-
-            .filter(
-                Sermon.author_id
-                == current_user.id
-            )
-
             .first()
         )
 
-        # =========================
-        # SHARED ACCESS
-        # =========================
         if not sermon:
-
-            shared = (
-
-                db.query(SharedSermon)
-
-                .filter(
-                    SharedSermon.sermon_id
-                    == sermon_id
-                )
-
-                .filter(
-                    SharedSermon.to_pastor_id
-                    == current_user.id
-                )
-
-                .first()
-            )
-
-            if shared:
-
-                sermon = shared.sermon
-
-        # =========================
-        # NOT FOUND
-        # =========================
-        if not sermon:
-
             raise HTTPException(
                 status_code=404,
                 detail="Sermon not found"
             )
 
-        # =========================
-        # STRUCTURED DATA
-        # =========================
-        if sermon.sermon_data:
-
-            return {
-
-                "success": True,
-
-                "sermon":
-                    sermon.sermon_data
-            }
-
-        # =========================
-        # LEGACY FALLBACK
-        # =========================
-        parsed = json.loads(
-            sermon.content
+        # =====================================
+        # ACCESS CONTROL
+        # =====================================
+        is_owner = (
+            sermon.author_id ==
+            current_user.id
         )
 
+        is_public = bool(
+            sermon.is_public
+        )
+
+        is_admin = (
+            getattr(
+                current_user,
+                "role",
+                ""
+            ) == "admin"
+        )
+
+        has_shared_access = False
+
+        if not is_owner:
+            shared = (
+                db.query(SharedSermon)
+                .filter(
+                    SharedSermon.sermon_id ==
+                    sermon.id,
+                    SharedSermon.to_pastor_id ==
+                    current_user.id
+                )
+                .first()
+            )
+
+            has_shared_access = (
+                shared is not None
+            )
+
+        if not (
+            is_owner or
+            is_public or
+            is_admin or
+            has_shared_access
+        ):
+            raise HTTPException(
+                status_code=403,
+                detail=(
+                    "You do not have permission "
+                    "to view this sermon"
+                )
+            )
+
+        # =====================================
+        # NORMALIZE SERMON CONTENT
+        # =====================================
+        sermon_content = {}
+
+        if (
+            sermon.sermon_data and
+            isinstance(
+                sermon.sermon_data,
+                dict
+            )
+        ):
+            sermon_content = dict(
+                sermon.sermon_data
+            )
+
+        elif sermon.content:
+            try:
+                parsed = json.loads(
+                    sermon.content
+                )
+
+                if isinstance(
+                    parsed,
+                    dict
+                ):
+                    sermon_content = parsed
+                else:
+                    sermon_content = {
+                        "introduction":
+                            str(parsed)
+                    }
+
+            except (
+                json.JSONDecodeError,
+                TypeError
+            ):
+                sermon_content = {
+                    "introduction":
+                        sermon.content
+                }
+
+        # =====================================
+        # ENSURE REQUIRED METADATA
+        # =====================================
+        sermon_content["id"] = (
+            sermon.id
+        )
+
+        sermon_content["title"] = (
+            sermon_content.get(
+                "title"
+            )
+            or sermon.title
+            or "Untitled Sermon"
+        )
+
+        sermon_content["scripture"] = (
+            sermon_content.get(
+                "scripture"
+            )
+            or sermon.scripture
+            or ""
+        )
+
+        sermon_content["author_id"] = (
+            sermon.author_id
+        )
+
+        sermon_content["author_name"] = (
+            sermon.author.name
+            if sermon.author
+            else ""
+        )
+
+        sermon_content["is_public"] = (
+            bool(
+                sermon.is_public
+            )
+        )
+
+        sermon_content["created_at"] = (
+            sermon.created_at
+        )
+
+        sermon_content["updated_at"] = (
+            sermon.updated_at
+        )
+
+        sermon_content["views"] = (
+            sermon.views or 0
+        )
+
+        sermon_content["shares"] = (
+            sermon.shares or 0
+        )
+
+        # =====================================
+        # UPDATE VIEW COUNT
+        # =====================================
+        sermon.views = (
+            sermon.views or 0
+        ) + 1
+
+        db.commit()
+
+        # =====================================
+        # RESPONSE
+        # =====================================
         return {
-
             "success": True,
-
-            "sermon": parsed
+            "sermon": sermon_content
         }
 
+    except HTTPException:
+        raise
+
     except Exception as e:
+        db.rollback()
 
         print(
             "GET SERMON ERROR:",
-            str(e)
+            repr(e)
         )
 
         raise HTTPException(
             status_code=500,
-            detail=
-              "Failed to load sermon"
+            detail="Failed to load sermon"
         )
     
 # =========================================

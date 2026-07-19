@@ -13,6 +13,7 @@
 };
 
 let prayerLiveTimer = null;
+let activeTestimonyPrayerId = null;
 
  function getTokenSafe() {
     if (typeof getToken === "function") return getToken();
@@ -104,12 +105,25 @@ let prayerLiveTimer = null;
 function answeredCelebration(prayer) {
   if (prayer.status !== "answered") return "";
 
+  const testimony = prayer.answer_testimony
+    ? `
+      <blockquote class="answered-testimony">
+        “${escapeHTML(prayer.answer_testimony)}”
+      </blockquote>
+    `
+    : "";
+
   return `
     <div class="answered-celebration">
       <div class="answered-icon">🎉</div>
+
       <div>
         <strong>Prayer Answered</strong>
-        <p>God answered this request. Thank you for praying with the XynaFaith community.</p>
+        <p>
+          God answered this request. Thank you for praying with the XynaFaith community.
+        </p>
+
+        ${testimony}
       </div>
     </div>
   `;
@@ -201,7 +215,85 @@ function answeredCelebration(prayer) {
   }
 
 
-  function prayerCardV2(prayer) {
+  function prayerJourney(prayer) {
+  const answered = prayer.status === "answered";
+  const hasPastorResponse = prayer.has_pastor_response;
+
+  return `
+    <div class="prayer-journey">
+      <div class="journey-step active">
+        <span>1</span>
+        <small>Submitted</small>
+      </div>
+
+      <div class="journey-line active"></div>
+
+      <div class="journey-step active">
+        <span>2</span>
+        <small>Praying</small>
+      </div>
+
+      <div class="journey-line ${hasPastorResponse ? "active" : ""}"></div>
+
+      <div class="journey-step ${hasPastorResponse ? "active" : ""}">
+        <span>3</span>
+        <small>Encouraged</small>
+      </div>
+
+      <div class="journey-line ${answered ? "active" : ""}"></div>
+
+      <div class="journey-step ${answered ? "active" : ""}">
+        <span>4</span>
+        <small>Answered</small>
+      </div>
+    </div>
+  `;
+}
+
+function pastorEncouragementCard(prayer) {
+  const response = prayer.featured_pastor_response;
+
+  if (!response) return "";
+
+  return `
+    <div class="pastor-encouragement-card">
+
+      <div class="pastor-encouragement-icon">
+        🙏
+      </div>
+
+      <div class="pastor-encouragement-content">
+
+        <div class="pastor-encouragement-header">
+          <strong>Pastor Encouragement</strong>
+
+          ${
+            response.is_pinned
+              ? `<span class="pastor-response-badge">📌 Pinned</span>`
+              : ""
+          }
+        </div>
+
+        <p class="pastor-encouragement-name">
+          ${escapeHTML(response.user_name || "Pastor")}
+        </p>
+
+        <blockquote>
+          “${escapeHTML(response.comment || "")}”
+        </blockquote>
+
+        <small>
+          ${timeAgo(response.created_at)}
+        </small>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+function prayerCardV2(prayer) {
   const name = prayer.user_name || "Anonymous";
   const initials = name.charAt(0).toUpperCase();
   const visibility = prayer.visibility || "community";
@@ -251,6 +343,9 @@ function answeredCelebration(prayer) {
         ${escapeHTML(prayer.message)}
       </p>
 
+      
+      ${prayerJourney(prayer)}
+      ${pastorEncouragementCard(prayer)}
       ${answeredCelebration(prayer)}
 
       <div class="prayer-card-v2-stats">
@@ -879,21 +974,132 @@ async function loadPrayerComments(prayerId) {
 
 
 
-  window.updatePrayerStatus = async function (prayerId, status) {
+window.updatePrayerStatus = async function (prayerId, status) {
   try {
+    if (status === "answered") {
+      openTestimonyModal(prayerId);
+      return;
+    }
+
     await prayerFetch(`/prayers/${prayerId}/status`, {
       method: "PATCH",
-      body: JSON.stringify({ status })
+      body: JSON.stringify({
+        status,
+        answer_testimony: null
+      })
     });
 
-    await loadPrayerAnalytics();
-    await loadPrayerFeed(true);
+    await refreshCurrentPrayerView();
+
+    showToast?.("Prayer status updated", "success");
 
   } catch (err) {
     console.error("Prayer status update failed:", err);
-    alert("Could not update prayer status.");
+    showToast?.("Could not update prayer status", "error");
   }
 };
+
+function openTestimonyModal(prayerId) {
+  activeTestimonyPrayerId = prayerId;
+
+  const modal = document.getElementById("testimonyModal");
+  const textarea = document.getElementById("testimonyText");
+
+  if (textarea) {
+    textarea.value = "";
+  }
+
+  if (modal) {
+    modal.classList.remove("hidden");
+  }
+
+  setTimeout(() => {
+    textarea?.focus();
+  }, 50);
+}
+
+window.openTestimonyModal = openTestimonyModal;
+
+
+window.closeTestimonyModal = function () {
+  const modal = document.getElementById("testimonyModal");
+  const textarea = document.getElementById("testimonyText");
+
+  if (modal) {
+    modal.classList.add("hidden");
+  }
+
+  if (textarea) {
+    textarea.value = "";
+  }
+
+  activeTestimonyPrayerId = null;
+};
+
+
+window.savePrayerTestimony = async function () {
+  const prayerId = activeTestimonyPrayerId;
+  const textarea = document.getElementById("testimonyText");
+  const testimony = textarea?.value.trim() || "";
+
+  if (!prayerId) {
+    showToast?.("Prayer not selected", "error");
+    return;
+  }
+
+  if (!testimony) {
+    showToast?.("Please share how the prayer was answered", "error");
+    textarea?.focus();
+    return;
+  }
+
+  const saveButton = document.querySelector(
+    "#testimonyModal .btn-primary"
+  );
+
+  if (saveButton) {
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+  }
+
+  try {
+    await prayerFetch(`/prayers/${prayerId}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        status: "answered",
+        answer_testimony: testimony
+      })
+    });
+
+    window.closeTestimonyModal();
+
+    await refreshCurrentPrayerView();
+
+    showToast?.("Testimony shared successfully 🎉", "success");
+
+  } catch (err) {
+    console.error("Testimony save failed:", err);
+    showToast?.("Could not share testimony", "error");
+
+  } finally {
+    if (saveButton) {
+      saveButton.disabled = false;
+      saveButton.textContent = "🎉 Share Testimony";
+    }
+  }
+};
+
+async function refreshCurrentPrayerView() {
+  await loadPrayerAnalytics();
+
+  if (prayerState.view === "inbox") {
+    await loadPrayerInbox();
+  } else if (prayerState.view === "sent") {
+    await loadSentPrayers();
+  } else {
+    await loadPrayerFeed(true);
+  }
+}
 
 window.submitPrayerComment = async function (prayerId) {
   const input = document.getElementById(`commentInput-${prayerId}`);

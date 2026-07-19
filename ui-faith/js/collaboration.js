@@ -66,76 +66,73 @@ window.openSermon = async function (id) {
   }
 };
 
-  // =====================================
-  // CONTINUE EDITING
-  // =====================================
-  async function continueEditing(
-    sermonId
-  ) {
+// =====================================
+// CONTINUE EDITING
+// =====================================
+async function continueEditing(
+  sermonId
+) {
+  const normalizedSermonId =
+    Number(sermonId);
 
-    try {
+  if (!normalizedSermonId) {
+    showToast?.(
+      "Sermon ID is missing",
+      "error"
+    );
 
-      const res =
-        await apiFetch(
-          `/api/sermon/${sermonId}`
-        );
-
-      if (!res.ok) {
-
-        throw new Error(
-          "Failed to load sermon"
-        );
-      }
-
-      const data =
-        await res.json();
-
-      window.currentGeneratedSermon =
-        data.content;
-
-      set(
-        "latest_sermon",
-        data.content
-      );
-
-      await navigate(
-        "sermon"
-      );
-
-      renderCurrentSermon(
-        data.content,
-        false
-      );
-
-      if ($("userInput")) {
-
-        $("userInput").value =
-          data.content?.title || "";
-      }
-
-      showToast(
-        "✍ Sermon loaded",
-        "success"
-      );
-
-    } catch (err) {
-
-      console.error(
-        "Continue editing error:",
-        err
-      );
-
-      showToast(
-        "Unable to load sermon",
-        "error"
-      );
-    }
+    return;
   }
+
+  // Use the same reliable loader used by
+  // Continue Reading and shared sermons.
+  if (
+    typeof window.openSavedSermon !==
+    "function"
+  ) {
+    showToast?.(
+      "Sermon loader is unavailable",
+      "error"
+    );
+
+    return;
+  }
+
+  try {
+    await window.openSavedSermon(
+      normalizedSermonId
+    );
+
+    showToast?.(
+      "✍ Sermon ready for editing",
+      "success"
+    );
+
+  } catch (err) {
+    console.error(
+      "Continue editing error:",
+      err
+    );
+
+    showToast?.(
+      err.message ||
+      "Unable to load sermon",
+      "error"
+    );
+  }
+}
 
   // =====================================
   // LOAD SELECTED SERMON
   // =====================================
   async function loadSelectedSermon() {
+    if (window.__openingSavedSermon) {
+      console.log(
+        "⏭ Skipping loadSelectedSermon during saved-sermon navigation"
+      );
+
+      return;
+    }
 
     const id =
       localStorage.getItem(
@@ -1043,89 +1040,262 @@ async function loadSharedSermons() {
   }
 }
 
-  // =====================================
-  // OPEN SAVED SERMON
-  // =====================================
-  async function openSavedSermon(
-    sermonId
-  ){
+// =====================================
+// OPEN SAVED SERMON
+// =====================================
+async function openSavedSermon(
+  sermonId
+) {
+  const normalizedSermonId =
+    Number(sermonId);
 
-    try {
+  if (!normalizedSermonId) {
+    showToast?.(
+      "Sermon ID is missing",
+      "error"
+    );
 
-      const response =
-        await apiFetch(
+    return;
+  }
 
-          `/api/v1/faith/sermon/${sermonId}`
+  // Prevent router.js and sermon.js from
+  // restoring another cached sermon while
+  // this sermon is opening.
+  window.__openingSavedSermon =
+    true;
 
-        );
+  try {
+    // =====================================
+    // LOAD FULL SERMON
+    // =====================================
+    const response =
+      await apiFetch(
+        `/api/v1/faith/sermon/${normalizedSermonId}`
+      );
 
-      if(!response.ok){
+    const data =
+      await response
+        .json()
+        .catch(() => ({}));
 
-        throw new Error(
-          "Failed to open sermon"
+    if (!response.ok) {
+      throw new Error(
+        data.detail ||
+        "Failed to open sermon"
+      );
+    }
+
+    const sermon =
+      data.sermon ||
+      data;
+
+    if (
+      !sermon ||
+      !sermon.id
+    ) {
+      throw new Error(
+        "Sermon data missing"
+      );
+    }
+
+    const resolvedSermonId =
+      Number(
+        sermon.id ||
+        normalizedSermonId
+      );
+
+    console.log(
+      "📖 Loaded saved sermon:",
+      sermon
+    );
+
+    // =====================================
+    // RECORD RECENT SERMON FOR MEMBERS
+    // =====================================
+    if (
+      window.currentUser?.role ===
+      "member"
+    ) {
+      try {
+        const recentResponse =
+          await apiFetch(
+            `/api/v1/member-profile/recent-sermon/${resolvedSermonId}`,
+            {
+              method: "POST"
+            }
+          );
+
+        if (!recentResponse.ok) {
+          const recentError =
+            await recentResponse
+              .json()
+              .catch(() => ({}));
+
+          console.warn(
+            "Recent sermon tracking failed:",
+            recentError.detail ||
+            recentResponse.status
+          );
+        }
+
+      } catch (recentErr) {
+        console.warn(
+          "Could not record recent sermon:",
+          recentErr
         );
       }
+    }
 
-      const data =
-        await response.json();
+    // =====================================
+    // STORE BEFORE NAVIGATION
+    // =====================================
+    window.currentGeneratedSermon =
+      sermon;
 
-      const sermon =
-        data.sermon;
+    window.currentSermonId =
+      resolvedSermonId;
 
-      window.currentGeneratedSermon =
-        sermon;
-
-      window.currentSermonId =
-        sermonId;
-
+    if (
+      typeof set ===
+      "function"
+    ) {
       set(
         "latest_sermon",
         sermon
       );
+    }
 
-      await navigate(
-        "sermon"
-      );
+    const currentUserId =
+      window.currentUser?.id;
 
-      const output =
-        await waitForElement(
-          "sermonOutput"
-        );
+    const userDraftKey =
+      currentUserId
+        ? `latest_sermon_${currentUserId}`
+        : null;
 
-      if(output){
-
-        renderCurrentSermon(
+    if (userDraftKey) {
+      localStorage.setItem(
+        userDraftKey,
+        JSON.stringify(
           sermon
-        );
-
-        if(
-          window.currentSermonId
-        ){
-
-          loadSermonComments(
-            window.currentSermonId
-          );
-        }
-      }
-
-      showToast(
-        "✅ Sermon opened",
-        "success"
-      );
-
-    } catch(err){
-
-      console.error(
-        "Open sermon error:",
-        err
-      );
-
-      showToast(
-        "Failed to open sermon",
-        "error"
+        )
       );
     }
+
+    // =====================================
+    // NAVIGATE TO SERMON STUDIO
+    // =====================================
+    await navigate(
+      "sermon"
+    );
+
+    const output =
+      await waitForElement(
+        "sermonOutput",
+        5000
+      );
+
+    if (!output) {
+      throw new Error(
+        "Sermon workspace did not load"
+      );
+    }
+
+    // Allow the dynamically injected page
+    // and its bindings to finish.
+    await new Promise(resolve =>
+      requestAnimationFrame(() =>
+        requestAnimationFrame(resolve)
+      )
+    );
+
+    // =====================================
+    // RESTORE STATE AFTER NAVIGATION
+    // =====================================
+    window.currentGeneratedSermon =
+      sermon;
+
+    window.currentSermonId =
+      resolvedSermonId;
+
+    if (
+      typeof set ===
+      "function"
+    ) {
+      set(
+        "latest_sermon",
+        sermon
+      );
+    }
+
+    if (userDraftKey) {
+      localStorage.setItem(
+        userDraftKey,
+        JSON.stringify(
+          sermon
+        )
+      );
+    }
+
+    // =====================================
+    // RENDER SERMON
+    // renderCurrentSermon now handles:
+    // - restoring form fields
+    // - global state
+    // - ownership
+    // - read-only mode
+    // - output rendering
+    // - comments
+    // =====================================
+    if (
+      typeof window.renderCurrentSermon !==
+      "function"
+    ) {
+      throw new Error(
+        "Sermon renderer is unavailable"
+      );
+    }
+
+    window.renderCurrentSermon(
+      sermon,
+      false
+    );
+
+    // =====================================
+    // SHOW OUTPUT WORKSPACE
+    // =====================================
+    if (
+      typeof window.showMobileTab ===
+      "function"
+    ) {
+      window.showMobileTab(
+        "output"
+      );
+    }
+
+    showToast?.(
+      "✅ Sermon opened",
+      "success"
+    );
+
+  } catch (err) {
+    console.error(
+      "Open sermon error:",
+      err
+    );
+
+    showToast?.(
+      err.message ||
+      "Failed to open sermon",
+      "error"
+    );
+
+  } finally {
+    window.__openingSavedSermon =
+      false;
   }
+}
+
 
   // =====================================
   // SHARE WITH PASTOR

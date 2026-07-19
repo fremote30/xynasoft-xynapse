@@ -6521,3 +6521,2167 @@ select {
     width: 100%;
   }
 }
+
+.answered-testimony {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-left: 4px solid #22c55e;
+  background: #f0fdf4;
+  border-radius: 12px;
+  color: #166534;
+  font-style: italic;
+}
+
+/* ======================================================
+   PASTOR ENCOURAGEMENT CARD
+====================================================== */
+
+.pastor-encouragement-card{
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+
+    margin:18px 0;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:linear-gradient(
+        135deg,
+        #f8fffb,
+        #eefbf4
+    );
+
+    border:1px solid #b7e4c7;
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.06);
+}
+
+.pastor-encouragement-icon{
+
+    width:54px;
+    height:54px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:26px;
+
+    background:#22c55e;
+    color:#fff;
+
+    flex-shrink:0;
+}
+
+.pastor-encouragement-content{
+
+    flex:1;
+
+}
+
+.pastor-encouragement-header{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:12px;
+
+    margin-bottom:6px;
+}
+
+.pastor-encouragement-header strong{
+
+    color:#166534;
+
+    font-size:1rem;
+}
+
+.pastor-response-badge{
+
+    background:#dcfce7;
+
+    color:#166534;
+
+    padding:4px 10px;
+
+    border-radius:999px;
+
+    font-size:.72rem;
+
+    font-weight:700;
+}
+
+.pastor-encouragement-name{
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:10px;
+}
+
+.pastor-encouragement-content blockquote{
+
+    margin:0;
+
+    padding:14px;
+
+    border-left:4px solid #22c55e;
+
+    background:white;
+
+    border-radius:12px;
+
+    color:#334155;
+
+    font-style:italic;
+
+    line-height:1.7;
+}
+
+.pastor-encouragement-content small{
+
+    display:block;
+
+    margin-top:10px;
+
+    color:#64748b;
+}
+
+/* ==========================================
+   PRAYER JOURNEY TIMELINE
+========================================== */
+
+.prayer-journey {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  background: #f8fafc;
+  overflow-x: auto;
+}
+
+.journey-step {
+  min-width: 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.journey-step span {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  transition: 0.2s ease;
+}
+
+.journey-step small {
+  margin-top: 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.journey-step.active {
+  color: #166534;
+}
+
+.journey-step.active span {
+  background: #22c55e;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.25);
+}
+
+.journey-line {
+  flex: 1;
+  min-width: 34px;
+  height: 3px;
+  margin: 0 4px 22px;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.journey-line.active {
+  background: #22c55e;
+}
+
+@media (max-width: 640px) {
+  .prayer-journey {
+    padding: 14px 10px;
+  }
+
+  .journey-step {
+    min-width: 66px;
+  }
+
+  .journey-step span {
+    width: 30px;
+    height: 30px;
+  }
+
+  .journey-step small {
+    font-size: 0.69rem;
+  }
+
+  .journey-line {
+    min-width: 22px;
+  }
+}
+
+/* ==========================================
+   TESTIMONY MODAL
+========================================== */
+
+.testimony-modal{
+
+    max-width:650px;
+
+}
+
+.testimony-modal textarea{
+
+    margin-top:20px;
+
+    min-height:180px;
+
+    resize:vertical;
+
+}
+
+.testimony-modal p{
+
+    color:#64748b;
+
+    margin-top:10px;
+
+    line-height:1.7;
+
+}
+
+.modal-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:12px;
+
+    margin-top:24px;
+
+}
+
+/* ==========================================
+   MEMBER DASHBOARD PROFILE HERO
+========================================== */
+
+.member-hero-info {
+  width: 100%;
+}
+
+.member-hero-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.member-dashboard-avatar {
+  width: 96px;
+  height: 96px;
+  min-width: 96px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #7c3aed
+  );
+
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 800;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border: 4px solid #ffffff;
+
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.16);
+}
+
+.member-favorite-scripture {
+  display: inline-flex;
+  align-items: center;
+
+  margin-top: 10px;
+  padding: 9px 13px;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  line-height: 1.45;
+}
+
+@media (max-width: 700px) {
+  .member-hero-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .member-dashboard-avatar {
+    width: 82px;
+    height: 82px;
+    min-width: 82px;
+    font-size: 1.7rem;
+  }
+
+  .member-favorite-scripture {
+    width: 100%;
+  }
+}
+/* ==========================================
+   MEMBER PROFILE EDITOR
+========================================== */
+
+.member-profile-edit-hero {
+  margin-bottom: 28px;
+}
+
+.member-profile-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+
+  padding: 28px;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(37, 99, 235, 0.14),
+      transparent 42%
+    ),
+    linear-gradient(
+      135deg,
+      #f8fbff,
+      #ffffff
+    );
+
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+
+  box-shadow:
+    0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+.member-profile-hero-card h1 {
+  margin: 6px 0 8px;
+}
+
+.member-profile-hero-card p {
+  margin: 0;
+  max-width: 680px;
+
+  color: #64748b;
+  line-height: 1.65;
+}
+
+/* ==========================================
+   MEMBER AVATAR
+========================================== */
+
+.member-profile-avatar-preview {
+  width: 92px;
+  height: 92px;
+  min-width: 92px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #7c3aed
+  );
+
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 800;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border: 4px solid #ffffff;
+
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.16);
+}
+
+.member-profile-avatar-preview.large {
+  width: 124px;
+  height: 124px;
+  min-width: 124px;
+
+  font-size: 2.5rem;
+}
+
+/* ==========================================
+   MEMBER PHOTO UPLOAD CARD
+========================================== */
+
+.member-avatar-upload-card {
+  position: relative;
+
+  max-width: 320px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 24px;
+
+  border: 1px dashed #cbd5e1;
+  border-radius: 22px;
+
+  background: #f8fafc;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.member-avatar-upload-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.member-avatar-upload-card strong {
+  margin-top: 4px;
+}
+
+.member-avatar-upload-card small {
+  color: #64748b;
+  text-align: center;
+}
+
+.member-avatar-upload-card .camera-pill {
+  position: absolute;
+
+  top: 104px;
+  left: calc(50% + 24px);
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+
+  background: #2563eb;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 700px) {
+  .member-profile-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding: 22px;
+  }
+
+  .member-profile-avatar-preview {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+
+    font-size: 1.7rem;
+  }
+
+  .member-profile-avatar-preview.large {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+  }
+
+  .member-avatar-upload-card {
+    width: 100%;
+    max-width: none;
+  }
+
+  .member-avatar-upload-card .camera-pill {
+    top: 94px;
+  }
+}
+
+.hero-top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+  gap: 32px;
+  align-items: center;
+}
+
+#pastorUpgradeContainer {
+  width: 100%;
+}
+
+.member-upgrade-card {
+  width: 100%;
+  max-width: 360px;
+  margin-left: auto;
+}
+
+.member-dashboard-avatar {
+  width: 116px;
+  height: 116px;
+  min-width: 116px;
+}
+
+.member-favorite-scripture {
+  display: block;
+  max-width: 380px;
+  margin-top: 14px;
+  padding: 14px 16px;
+}
+
+@media (max-width: 900px) {
+  .hero-top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .member-upgrade-card {
+    max-width: none;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .member-dashboard-avatar {
+    width: 92px;
+    height: 92px;
+    min-width: 92px;
+  }
+}
+
+/* ==========================================
+   MEMBER DASHBOARD — JOURNEY GRID
+========================================== */
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 34px;
+}
+
+.journey-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+
+  min-height: 250px;
+  padding: 24px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+
+  box-shadow:
+    0 14px 34px rgba(15, 23, 42, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.journey-card:hover {
+  transform: translateY(-3px);
+  border-color: #cbd5e1;
+
+  box-shadow:
+    0 18px 42px rgba(15, 23, 42, 0.09);
+}
+
+.journey-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+
+  background: #f1f5f9;
+
+  font-size: 1.5rem;
+}
+
+.journey-card h3 {
+  margin: 2px 0 0;
+  font-size: 1.15rem;
+  color: #0f172a;
+}
+
+.journey-card p {
+  flex: 1;
+
+  margin: 0;
+
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.journey-card .btn-secondary {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 4px;
+}
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media (max-width: 860px) {
+  .journey-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journey-card {
+    min-height: auto;
+  }
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 560px) {
+  .journey-grid {
+    gap: 14px;
+  }
+
+  .journey-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .journey-icon {
+    width: 46px;
+    height: 46px;
+    font-size: 1.3rem;
+  }
+
+  .journey-card .btn-secondary {
+    width: 100%;
+  }
+}
+.member-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 34px;
+}
+
+@media (max-width: 960px) {
+  .member-activity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .member-activity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================
+   MEMBER DASHBOARD PROFILE HERO
+========================================== */
+
+.member-hero-info {
+  width: 100%;
+}
+
+.member-hero-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.member-dashboard-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 999px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #ffffff;
+
+  font-size: 2rem;
+  font-weight: 800;
+
+  border: 4px solid #ffffff;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+}
+
+.member-favorite-scripture {
+  display: inline-flex;
+  align-items: center;
+
+  margin-top: 10px;
+  padding: 9px 12px;
+
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  box-shadow: 0 5px 16px rgba(15, 23, 42, 0.05);
+}
+
+@media (max-width: 640px) {
+  .member-hero-top {
+    flex-direction: column;
+  }
+
+  .member-dashboard-avatar {
+    width: 76px;
+    height: 76px;
+    font-size: 1.7rem;
+  }
+
+  .member-favorite-scripture {
+    display: flex;
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   SUGGESTED PASTORS
+========================================== */
+
+.suggested-pastors-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.suggested-pastor-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.suggested-pastor-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #ffffff;
+
+  font-size: 1.35rem;
+  font-weight: 800;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.suggested-pastor-content h3 {
+  margin: 0 0 4px;
+}
+
+.suggested-pastor-content p {
+  margin: 0 0 4px;
+  color: #475569;
+}
+
+.suggested-pastor-content small {
+  color: #64748b;
+}
+
+.suggested-pastor-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.suggested-pastor-actions button {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .suggested-pastors-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================
+   GLOBAL SEARCH
+========================================== */
+
+.navbar-search{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin:0 18px;
+
+    flex:1;
+
+    max-width:420px;
+
+    min-width:220px;
+
+}
+
+.navbar-search-input{
+
+    flex:1;
+
+    height:42px;
+
+    padding:0 16px;
+
+    border-radius:999px;
+
+    border:1px solid #d8dce3;
+
+    background:#ffffff;
+
+    font-size:14px;
+
+    transition:.2s;
+
+}
+
+.navbar-search-input:focus{
+
+    outline:none;
+
+    border-color:#4F46E5;
+
+    box-shadow:
+        0 0 0 3px rgba(79,70,229,.12);
+
+}
+
+.navbar-search-btn{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    background:#4F46E5;
+
+    color:white;
+
+    font-size:16px;
+
+    transition:.2s;
+
+}
+
+.navbar-search-btn:hover{
+
+    transform:translateY(-1px);
+
+    background:#4338CA;
+
+}
+
+/* ==========================================
+   MOBILE SEARCH
+========================================== */
+
+@media (max-width:768px){
+
+    .navbar-search{
+
+        order:100;
+
+        width:100%;
+
+        max-width:none;
+
+        margin:12px 0 0 0;
+
+    }
+
+    .navbar-search-input{
+
+        width:100%;
+
+    }
+
+}
+
+.search-result-section{
+
+    margin-bottom:32px;
+
+}
+
+.search-section-heading{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:16px;
+
+}
+
+.search-result-grid{
+
+    display:grid;
+
+    gap:16px;
+
+}
+
+.search-result-card{
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.search-result-card:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.search-result-meta{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin-top:10px;
+
+    font-size:13px;
+
+    color:#666;
+
+}
+
+.search-result-type{
+
+    display:inline-block;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    color:#4F46E5;
+
+    margin-bottom:6px;
+
+}
+@media (max-width:768px){
+
+    .search-result-card{
+
+        padding:18px;
+
+    }
+
+}
+
+/* ==========================================
+   CLICKABLE SEARCH RESULTS
+========================================== */
+
+.search-result-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-height: 88px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.search-result-card:focus-visible {
+  outline: 3px solid rgba(79, 70, 229, 0.25);
+  outline-offset: 3px;
+}
+
+.search-result-card:active {
+  transform: scale(0.99);
+}
+
+.search-result-opening {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.search-result-opening::after {
+  content: "";
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: search-result-spin 0.7s linear infinite;
+}
+
+@keyframes search-result-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.search-result-icon,
+.search-result-avatar {
+  flex: 0 0 auto;
+}
+
+.search-result-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-pastor-image,
+.search-pastor-placeholder {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+}
+
+.search-pastor-image {
+  object-fit: cover;
+}
+
+.search-pastor-placeholder {
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: 700;
+  background: #eef2ff;
+}
+
+.search-prayer-message {
+  margin: 4px 0 0;
+  line-height: 1.55;
+}
+
+/* ==========================================
+   MOBILE SEARCH RESULTS
+========================================== */
+
+@media (max-width: 768px) {
+
+  .search-result-card {
+    gap: 12px;
+    min-height: 76px;
+    padding: 16px;
+    touch-action: manipulation;
+  }
+
+  .search-pastor-image,
+  .search-pastor-placeholder {
+    width: 44px;
+    height: 44px;
+  }
+
+  .search-result-meta {
+    gap: 6px 10px;
+    font-size: 12px;
+  }
+
+  .search-result-card h3 {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+}
+
+/* =====================================
+   PREMIUM SEARCH RESULTS
+===================================== */
+
+
+.search-result-section {
+
+    margin: 2rem auto;
+
+    max-width: 1100px;
+
+}
+
+
+.search-section-heading {
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:1rem;
+
+}
+
+
+.search-section-heading h2 {
+
+    font-size:1.4rem;
+
+    font-weight:700;
+
+}
+
+
+.search-section-heading span {
+
+    background:
+      rgba(59,130,246,.12);
+
+    color:#2563eb;
+
+    padding:
+      4px 12px;
+
+    border-radius:20px;
+
+    font-size:.85rem;
+
+}
+
+
+
+/* GRID */
+
+.search-result-grid {
+
+    display:grid;
+
+    grid-template-columns:
+      repeat(
+        auto-fit,
+        minmax(280px,1fr)
+      );
+
+    gap:1rem;
+
+}
+
+
+
+/* CARD */
+
+.search-result-card {
+
+    display:flex;
+
+    gap:1rem;
+
+    align-items:flex-start;
+
+    padding:1.25rem;
+
+    min-height:150px;
+
+    cursor:pointer;
+
+    transition:
+      transform .2s ease,
+      box-shadow .2s ease;
+
+}
+
+
+
+.search-result-card:hover {
+
+    transform:
+      translateY(-3px);
+
+    box-shadow:
+      0 10px 30px
+      rgba(0,0,0,.08);
+
+}
+
+
+
+/* ICON */
+
+.search-result-icon {
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+      rgba(59,130,246,.1);
+
+    font-size:1.4rem;
+
+}
+
+
+
+/* AVATAR */
+
+.search-result-avatar {
+
+    width:55px;
+
+    height:55px;
+
+    flex-shrink:0;
+
+}
+
+
+.search-pastor-image,
+.search-pastor-placeholder {
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+
+
+.search-pastor-placeholder {
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-weight:bold;
+
+}
+
+
+
+/* CONTENT */
+
+.search-result-content {
+
+    flex:1;
+
+}
+
+
+.search-result-type {
+
+    font-size:.75rem;
+
+    color:#6366f1;
+
+    font-weight:600;
+
+}
+
+
+
+.search-result-content h3 {
+
+    margin:.3rem 0;
+
+    font-size:1.15rem;
+
+}
+
+
+
+.search-result-subtitle {
+
+    color:#64748b;
+
+    margin:.4rem 0;
+
+}
+
+
+
+.search-result-meta {
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:.5rem;
+
+    margin-top:.7rem;
+
+    font-size:.8rem;
+
+    color:#64748b;
+
+}
+
+
+
+.search-result-meta span {
+
+    background:#f1f5f9;
+
+    padding:
+      3px 8px;
+
+    border-radius:10px;
+
+}
+
+
+
+.search-prayer-message {
+
+    line-height:1.5;
+
+}
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .search-result-grid {
+
+        grid-template-columns:
+        1fr;
+
+    }
+
+
+    .search-result-card {
+
+        padding:1rem;
+
+    }
+
+}
+
+/* =====================================
+   XynaFaith Premium Navbar Step 1
+===================================== */
+
+
+/* Main navbar layout */
+
+#topnav {
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-end;
+
+    gap:24px;
+
+}
+
+
+/* Search */
+
+.navbar-search {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+
+.navbar-search-input {
+
+    width:220px;
+
+    height:40px;
+
+    border-radius:20px;
+
+    border:1px solid #dbe3ef;
+
+    padding:0 18px;
+
+    font-size:14px;
+
+    outline:none;
+
+}
+
+
+.navbar-search-input:focus {
+
+    border-color:#2563eb;
+
+}
+
+
+
+.navbar-search-btn {
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#4f46e5;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+}
+
+
+/* Navigation links */
+
+.navbar-links {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:28px;
+
+}
+
+
+
+#topnav .nav-link {
+
+    background:none !important;
+
+    border:none !important;
+
+    padding:6px 0 !important;
+
+    color:#334155;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    position:relative;
+
+}
+
+
+/* Hover */
+
+#topnav .nav-link:hover {
+
+    color:#2563eb;
+
+}
+
+
+/* Active */
+
+#topnav .nav-link.nav-active {
+
+    color:#2563eb;
+
+}
+
+
+
+#topnav .nav-link.nav-active::after {
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    right:0;
+
+    bottom:-8px;
+
+    height:3px;
+
+    border-radius:5px;
+
+    background:#2563eb;
+
+}
+
+
+/* Actions */
+
+.navbar-actions {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+
+
+.nav-action {
+
+    background:none;
+
+    border:none;
+
+    padding:8px 14px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+
+
+.nav-action:hover {
+
+    color:#2563eb;
+
+}
+
+
+
+.nav-action.primary {
+
+    color:white;
+
+    background:#2563eb;
+
+    border-radius:20px;
+
+}
+
+/* =====================================
+   NAVBAR FINAL OVERRIDE
+===================================== */
+
+
+/* Reset old button styling */
+
+#topnav button {
+
+    font-family: inherit;
+
+}
+
+
+/* Navigation */
+
+#topnav .nav-link {
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:transparent !important;
+
+    color:#334155 !important;
+
+    border:none !important;
+
+    box-shadow:none !important;
+
+    padding:8px 4px !important;
+
+    border-radius:0 !important;
+
+}
+
+
+
+#topnav .nav-link:hover {
+
+    color:#2563eb !important;
+
+}
+
+
+
+/* Active */
+
+#topnav .nav-link.nav-active {
+
+    color:#2563eb !important;
+
+}
+
+
+
+#topnav .nav-link.nav-active::after {
+
+    content:"";
+
+    position:absolute;
+
+    bottom:-10px;
+
+    height:3px;
+
+    background:#2563eb;
+
+    border-radius:10px;
+
+}
+
+
+
+/* Guest buttons */
+
+
+#topnav .nav-action {
+
+    background:white;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:20px;
+
+    padding:8px 18px;
+
+    color:#334155;
+
+}
+
+
+
+#topnav .nav-action:hover {
+
+    background:#f8fafc;
+
+}
+
+
+
+#topnav .nav-action.primary {
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+}
+
+
+#topnav .nav-action.primary:hover {
+
+    background:#1d4ed8;
+
+}
+
+/* =====================================
+   XynaFaith Premium Icon Navigation
+===================================== */
+
+#topnav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 22px;
+  min-width: 0;
+}
+
+/* =====================================
+   FACEBOOK-STYLE SEARCH
+===================================== */
+
+.navbar-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: min(320px, 28vw);
+  min-width: 210px;
+  height: 46px;
+  padding: 0 14px;
+  background: #f0f2f5;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.navbar-search:focus-within {
+  background: #ffffff;
+  border-color: #c9d8ff;
+  box-shadow:
+    0 0 0 4px
+    rgba(37, 99, 235, 0.10);
+}
+
+.navbar-search-icon {
+  width: 21px;
+  height: 21px;
+  margin-right: 10px;
+  color: #667085;
+  flex-shrink: 0;
+}
+
+.navbar-search-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.navbar-search-input {
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #182230;
+  font-size: 14px;
+}
+
+.navbar-search-input::placeholder {
+  color: #667085;
+}
+
+.navbar-search-submit {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}
+
+/* =====================================
+   NAVIGATION LINKS
+===================================== */
+
+.navbar-links {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 8px;
+}
+
+#topnav .nav-link {
+  position: relative;
+  display: inline-flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 74px;
+  height: 62px;
+  padding: 7px 10px !important;
+  border: none !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #667085 !important;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+#topnav .nav-link:hover {
+  color: #2563eb !important;
+  background: #f5f7fb !important;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.nav-icon svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-label {
+  margin-top: 5px;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Active navigation */
+
+#topnav .nav-link.nav-active {
+  color: #2563eb !important;
+  background: transparent !important;
+}
+
+#topnav .nav-link.nav-active::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px 999px 0 0;
+  background: #2563eb;
+}
+
+/* Guest login/register now match Home and Network */
+
+#topnav .guest-nav-link {
+  color: #667085 !important;
+  background: transparent !important;
+}
+
+/* =====================================
+   RESPONSIVE DESKTOP
+===================================== */
+
+@media (max-width: 1200px) {
+
+  #topnav {
+    gap: 12px;
+  }
+
+  .navbar-search {
+    width: 240px;
+  }
+
+  #topnav .nav-link {
+    min-width: 62px;
+    padding-inline: 6px !important;
+  }
+
+  .nav-label {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+
+  .navbar-search {
+    width: 210px;
+  }
+
+  .nav-label {
+    display: none;
+  }
+
+  #topnav .nav-link {
+    min-width: 48px;
+    height: 52px;
+  }
+}
+
+/* =====================================
+   SEARCH TEXT CENTERING
+===================================== */
+
+.navbar-search {
+  position: relative;
+  justify-content: center;
+}
+
+.navbar-search-icon {
+  position: absolute;
+  left: 18px;
+  width: 21px;
+  height: 21px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.navbar-search-input {
+  width: 100% !important;
+  padding: 0 46px !important;
+  text-align: center !important;
+}
+
+.navbar-search-input::placeholder {
+  text-align: center;
+}
+
+
+/* =====================================
+   ENSURE HOME NAV ITEM IS VISIBLE
+===================================== */
+
+#topnav .nav-link[data-page="home"] {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #667085 !important;
+}
+
+#topnav .nav-link[data-page="home"] .nav-icon,
+#topnav .nav-link[data-page="home"] .nav-label {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#topnav .nav-link[data-page="home"] .nav-icon {
+  display: flex !important;
+}
+
+#topnav .nav-link[data-page="home"] .nav-label {
+  display: block !important;
+}
+
+#topnav .nav-link[data-page="home"].nav-active {
+  color: #2563eb !important;
+}
+
+/* =====================================
+   KEEP ACTIVE NAV ICONS AND LABELS VISIBLE
+===================================== */
+
+#topnav .nav-link.nav-active {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #2563eb !important;
+  background: transparent !important;
+}
+
+#topnav .nav-link.nav-active .nav-icon {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: inherit !important;
+}
+
+#topnav .nav-link.nav-active .nav-label {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: inherit !important;
+}
+
+#topnav .nav-link.nav-active .nav-icon svg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  stroke: currentColor !important;
+}
+
+/* Preserve the active underline */
+
+#topnav .nav-link.nav-active::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px 999px 0 0;
+  background: #2563eb;
+}
+
+/* =====================================
+   FINAL FIX — ACTIVE NAV ICON VISIBILITY
+===================================== */
+
+#topnav button.nav-link.nav-active {
+  color: #2563eb !important;
+}
+
+/* Preserve the icon container */
+#topnav button.nav-link.nav-active > .nav-icon {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: 24px !important;
+  height: 24px !important;
+
+  position: static !important;
+  transform: none !important;
+
+  color: #2563eb !important;
+}
+
+/* Preserve the actual SVG */
+#topnav button.nav-link.nav-active > .nav-icon > svg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  width: 23px !important;
+  height: 23px !important;
+
+  position: static !important;
+  transform: none !important;
+
+  fill: none !important;
+  stroke: #2563eb !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* Preserve every path/shape inside the SVG */
+#topnav button.nav-link.nav-active > .nav-icon > svg path,
+#topnav button.nav-link.nav-active > .nav-icon > svg circle,
+#topnav button.nav-link.nav-active > .nav-icon > svg rect,
+#topnav button.nav-link.nav-active > .nav-icon > svg line,
+#topnav button.nav-link.nav-active > .nav-icon > svg polyline,
+#topnav button.nav-link.nav-active > .nav-icon > svg polygon {
+  display: initial !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  fill: none !important;
+  stroke: #2563eb !important;
+}
+
+/* Preserve label */
+#topnav button.nav-link.nav-active > .nav-label {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #2563eb !important;
+}
+
+/* Preserve underline */
+#topnav button.nav-link.nav-active::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+
+  height: 3px;
+  border-radius: 999px 999px 0 0;
+  background: #2563eb;
+}

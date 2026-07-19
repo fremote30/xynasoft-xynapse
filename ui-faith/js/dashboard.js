@@ -11,6 +11,19 @@
   const $ = (id) =>
     document.getElementById(id);
 
+
+  // =====================================
+// ESCAPE HTML
+// =====================================
+const escapeHTML = (value = "") => {
+
+  const div = document.createElement("div");
+
+  div.textContent = String(value);
+
+  return div.innerHTML;
+
+};
   // =====================================
   // LOAD DASHBOARDPRAYER
   // =====================================
@@ -197,11 +210,14 @@ async function loadMemberDashboard() {
 
     if (!user) return;
 
-    if (user.role === "pastor") {
+    if (user.role === "pastor" || user.role === "admin") {
       navigate("dashboard");
       return;
     }
 
+    // =====================================
+    // PASTOR APPLICATION STATUS
+    // =====================================
     const badge = $("pastorStatusBadge");
     const message = $("pastorUpgradeMessage");
     const button = $("upgradePastorBtn");
@@ -213,7 +229,8 @@ async function loadMemberDashboard() {
         badge.textContent = "Pending Approval";
 
         if (message) {
-          message.textContent = "Your pastor application is currently under review.";
+          message.textContent =
+            "Your pastor application is currently under review.";
         }
 
         if (button) {
@@ -225,11 +242,13 @@ async function loadMemberDashboard() {
         badge.textContent = "Rejected";
 
         if (title) {
-          title.textContent = "Pastor Application Rejected";
+          title.textContent =
+            "Pastor Application Rejected";
         }
 
         if (message) {
-          message.textContent = "Your pastor application was not approved. You may apply again.";
+          message.textContent =
+            "Your pastor application was not approved. You may apply again.";
         }
 
         if (button) {
@@ -249,47 +268,259 @@ async function loadMemberDashboard() {
       }
     }
 
+    // =====================================
+    // BASIC USER NAME
+    // =====================================
     const nameEl = $("userName");
 
     if (nameEl) {
-      nameEl.textContent = user.name;
+      nameEl.textContent =
+        user.name || "Member";
     }
 
-    const summaryRes = await apiFetch("/api/v1/dashboard/summary");
+    // =====================================
+    // LOAD MEMBER PROFILE
+    // =====================================
+    try {
+      const profileRes = await apiFetch(
+        "/api/v1/member-profile/me"
+      );
 
-    if (summaryRes.ok) {
-      const summary = await summaryRes.json();
+      const profileData = await profileRes
+        .json()
+        .catch(() => ({}));
 
-      if ($("sermonCount")) {
-        $("sermonCount").innerText = summary.total_sermons ?? 0;
+      if (!profileRes.ok) {
+        throw new Error(
+          profileData.detail ||
+          "Failed to load member profile"
+        );
       }
 
-      if ($("memberCount")) {
-        $("memberCount").innerText = summary.total_members ?? 0;
+      const profile = profileData;
+
+      window.currentMemberProfile = profile;
+
+      const avatar =
+        $("memberDashboardAvatar");
+
+      if (avatar) {
+        if (profile.profile_image) {
+          avatar.style.backgroundImage =
+            `url('${profile.profile_image}')`;
+
+          avatar.style.backgroundSize =
+            "cover";
+
+          avatar.style.backgroundPosition =
+            "center";
+
+          avatar.style.backgroundRepeat =
+            "no-repeat";
+
+          avatar.textContent = "";
+        } else {
+          avatar.style.backgroundImage = "";
+
+          avatar.textContent =
+            (
+              profile.name ||
+              user.name ||
+              "M"
+            )
+              .charAt(0)
+              .toUpperCase();
+        }
       }
 
-      const engagement = summary.engagement ?? 0;
+      const locationEl =
+        $("memberDashboardLocation");
 
-      if ($("engagementRate")) {
-        $("engagementRate").textContent = `${engagement}%`;
+      if (locationEl) {
+        const location = [
+          profile.city,
+          profile.state,
+          profile.country
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        locationEl.textContent =
+          location
+            ? `📍 ${location}`
+            : "🌎 Growing in faith every day.";
       }
 
-      if ($("engagementFill")) {
-        $("engagementFill").style.width = `${engagement}%`;
+      const favoriteVerseEl =
+        $("memberFavoriteVerse");
+
+      if (favoriteVerseEl) {
+        favoriteVerseEl.textContent =
+          profile.favorite_scripture
+            ? `📖 ${profile.favorite_scripture}`
+            : "📖 Add your favorite scripture in Edit Profile.";
+      }
+
+    } catch (profileErr) {
+      console.error(
+        "Member profile dashboard load failed:",
+        profileErr
+      );
+    }
+
+    // =====================================
+    // MEMBER ACTIVITY SUMMARY
+    // =====================================
+    try {
+      const activityRes = await apiFetch(
+        "/api/v1/member-profile/me/activity"
+      );
+
+      const activityData = await activityRes
+        .json()
+        .catch(() => ({}));
+
+      if (!activityRes.ok) {
+        throw new Error(
+          activityData.detail ||
+          "Failed to load member activity"
+        );
+      }
+
+      if ($("followingPastorsCount")) {
+        $("followingPastorsCount").textContent =
+          activityData.following_pastors ?? 0;
+      }
+
+      if ($("savedSermonsCount")) {
+        $("savedSermonsCount").textContent =
+          activityData.saved_sermons ?? 0;
+      }
+
+      if ($("memberPrayerCount")) {
+        $("memberPrayerCount").textContent =
+          activityData.prayer_requests ?? 0;
+      }
+
+      if ($("memberAnsweredPrayerCount")) {
+        $("memberAnsweredPrayerCount").textContent =
+          activityData.answered_prayers ?? 0;
+      }
+
+    } catch (activityErr) {
+      console.error(
+        "Member activity load failed:",
+        activityErr
+      );
+
+      if ($("followingPastorsCount")) {
+        $("followingPastorsCount").textContent = "0";
+      }
+
+      if ($("savedSermonsCount")) {
+        $("savedSermonsCount").textContent = "0";
+      }
+
+      if ($("memberPrayerCount")) {
+        $("memberPrayerCount").textContent = "0";
+      }
+
+      if ($("memberAnsweredPrayerCount")) {
+        $("memberAnsweredPrayerCount").textContent = "0";
       }
     }
 
-    if (typeof loadMemberFeed === "function") {
+    // =====================================
+    // GENERAL DASHBOARD SUMMARY
+    // =====================================
+    try {
+      const summaryRes = await apiFetch(
+        "/api/v1/dashboard/summary"
+      );
+
+      if (summaryRes.ok) {
+        const summary =
+          await summaryRes.json();
+
+        if ($("sermonCount")) {
+          $("sermonCount").innerText =
+            summary.total_sermons ?? 0;
+        }
+
+        if ($("memberCount")) {
+          $("memberCount").innerText =
+            summary.total_members ?? 0;
+        }
+
+        const engagement =
+          summary.engagement ?? 0;
+
+        if ($("engagementRate")) {
+          $("engagementRate").textContent =
+            `${engagement}%`;
+        }
+
+        if ($("engagementFill")) {
+          $("engagementFill").style.width =
+            `${engagement}%`;
+        }
+      }
+
+    } catch (summaryErr) {
+      console.error(
+        "General dashboard summary failed:",
+        summaryErr
+      );
+    }
+
+    // =====================================
+    // MEMBER CONTENT
+    // =====================================
+    if (
+      typeof loadMemberFeed === "function"
+    ) {
       await loadMemberFeed();
     }
 
-    await loadTopSermons();
-    await loadAIInsights();
-    await loadDashboardPrayerWidget();
+    if (
+      typeof loadTopSermons === "function"
+    ) {
+      await loadTopSermons();
+    }
+
+    if (
+      typeof loadAIInsights === "function"
+    ) {
+      await loadAIInsights();
+    }
+    if (
+      typeof loadSuggestedPastors === "function"
+    ) {
+      await loadSuggestedPastors();
+    }
+
+    if (
+      typeof loadContinueReading === "function"
+    ) {
+      await loadContinueReading();
+    }
+    if (
+      typeof loadDashboardPrayerWidget ===
+      "function"
+    ) {
+      await loadDashboardPrayerWidget();
+    }
 
   } catch (err) {
-    console.error("Member dashboard error:", err);
-    showToast?.("Failed to load dashboard", "error");
+    console.error(
+      "Member dashboard error:",
+      err
+    );
+
+    showToast?.(
+      "Failed to load dashboard",
+      "error"
+    );
   }
 }
 
@@ -373,6 +604,647 @@ async function loadMemberDashboard() {
       }
     }
   }
+
+// =====================================
+// SUGGESTED PASTORS
+// =====================================
+async function loadSuggestedPastors() {
+  const container = $("suggestedPastors");
+
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="feature-card">
+      <p>Loading pastor suggestions...</p>
+    </div>
+  `;
+
+  try {
+    const res = await apiFetch(
+      "/api/v1/pastors/?limit=3&offset=0"
+    );
+
+    const data = await res
+      .json()
+      .catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(
+        data.detail ||
+        "Failed to load suggested pastors"
+      );
+    }
+
+    const pastors = data.items || [];
+
+    if (!pastors.length) {
+      container.innerHTML = `
+        <div class="feature-card empty-state">
+          <h3>No suggestions yet</h3>
+          <p>Explore the Network to discover pastors.</p>
+
+          <button
+            class="btn-secondary"
+            onclick="navigate('network')"
+          >
+            Explore Network
+          </button>
+        </div>
+      `;
+
+      return;
+    }
+
+    container.innerHTML = pastors
+      .map(pastor => {
+        const location = [
+          pastor.city,
+          pastor.state,
+          pastor.country
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        const initial = (
+          pastor.name ||
+          "P"
+        )
+          .charAt(0)
+          .toUpperCase();
+
+        const image = pastor.profile_image
+          ? `
+            <div
+              class="suggested-pastor-avatar"
+              style="
+                background-image:url('${pastor.profile_image}');
+                background-size:cover;
+                background-position:center;
+              "
+            ></div>
+          `
+          : `
+            <div class="suggested-pastor-avatar">
+              ${initial}
+            </div>
+          `;
+
+        return `
+          <article class="feature-card suggested-pastor-card">
+
+            ${image}
+
+            <div class="suggested-pastor-content">
+              <h3>
+                ${pastor.name || "Pastor"}
+              </h3>
+
+              <p>
+                ${pastor.church_name || "XynaFaith Ministry"}
+              </p>
+
+              <small>
+                ${location || pastor.denomination || "XynaFaith Network"}
+              </small>
+            </div>
+
+            <div class="suggested-pastor-actions">
+              <button
+                class="btn-secondary"
+                onclick="openPastorProfile(${pastor.id})"
+              >
+                View Profile
+              </button>
+
+              ${
+                window.currentUser?.role === "member"
+                  ? `
+                    <button
+                      class="btn-primary"
+                      onclick="followPastor(${pastor.id})"
+                    >
+                      Follow
+                    </button>
+                  `
+                  : ""
+              }
+            </div>
+
+          </article>
+        `;
+      })
+      .join("");
+
+  } catch (err) {
+    console.error(
+      "Suggested pastors load failed:",
+      err
+    );
+
+    container.innerHTML = `
+      <div class="feature-card empty-state error">
+        <h3>Could not load suggestions</h3>
+        <p>Please try again later.</p>
+      </div>
+    `;
+  }
+}
+
+window.loadSuggestedPastors =
+  loadSuggestedPastors;
+
+
+// =====================================
+// CONTINUE READING
+// =====================================
+async function loadContinueReading() {
+  const container =
+    $("continueReadingSection");
+
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="feature-card">
+      <p>Loading sermon...</p>
+    </div>
+  `;
+
+  try {
+    let sermon = null;
+    let source = "";
+
+    // =====================================
+    // 1. SERVER-SAVED RECENT SERMON
+    // =====================================
+    if (
+      window.currentUser?.role ===
+      "member"
+    ) {
+      try {
+        const recentRes =
+          await apiFetch(
+            "/api/v1/member-profile/recent-sermon"
+          );
+
+        const recentData =
+          await recentRes
+            .json()
+            .catch(() => ({}));
+
+        if (
+          recentRes.ok &&
+          recentData.sermon &&
+          recentData.sermon.id
+        ) {
+          sermon =
+            recentData.sermon;
+
+          source =
+            "server";
+
+        } else if (
+          !recentRes.ok
+        ) {
+          console.warn(
+            "Recent sermon request failed:",
+            recentData.detail ||
+            recentRes.status
+          );
+        }
+
+      } catch (recentErr) {
+        console.warn(
+          "Server recent sermon unavailable:",
+          recentErr
+        );
+      }
+    }
+
+    // =====================================
+    // 2. LOCAL STORAGE FALLBACK
+    // Only saved sermons with a database ID
+    // may appear in Continue Reading.
+    // =====================================
+    if (!sermon) {
+      const cached =
+        localStorage.getItem(
+          "latest_sermon"
+        );
+
+      if (cached) {
+        try {
+          const parsed =
+            JSON.parse(cached);
+
+          if (
+            parsed &&
+            (
+              parsed.id ||
+              parsed.sermon_id ||
+              parsed.sermon?.id
+            )
+          ) {
+            sermon = parsed;
+            source = "local";
+
+          } else if (
+            parsed?.title
+          ) {
+            console.warn(
+              "Cached sermon has no database ID and cannot be reopened:",
+              parsed
+            );
+          }
+
+        } catch (err) {
+          console.warn(
+            "Could not parse latest sermon:",
+            err
+          );
+        }
+      }
+    }
+
+   // =====================================
+// 3. RECOMMENDATION FALLBACK
+// =====================================
+if (!sermon) {
+
+  try {
+
+    const res =
+      await apiFetch(
+        "/api/v1/dashboard/top-sermons"
+      );
+
+
+    const data =
+      await res
+        .json()
+        .catch(() => ({}));
+
+
+    const sermons =
+      Array.isArray(data)
+        ? data
+        : (
+            data.sermons ||
+            data.items ||
+            []
+          );
+
+
+    if (
+      res.ok &&
+      sermons.length > 0
+    ) {
+
+      sermon =
+        sermons[0];
+
+      sermon.recommended =
+        true;
+
+      source =
+        "recommended-sermon";
+
+
+    } else {
+
+      console.warn(
+        "No recommended sermons found"
+      );
+
+    }
+
+
+  } catch (
+    recommendationErr
+  ) {
+
+    console.warn(
+      "Recommended sermon load failed:",
+      recommendationErr
+    );
+
+  }
+}
+
+    // =====================================
+    // EMPTY STATE
+    // =====================================
+    if (!sermon) {
+      container.innerHTML = `
+        <div class="feature-card empty-state">
+
+          <h3>
+            No sermons to continue yet
+          </h3>
+
+          <p>
+            Open a saved sermon to begin your reading journey.
+          </p>
+
+          <button
+            id="continueReadingEmptyBtn"
+            type="button"
+            class="btn-primary"
+          >
+            Explore Sermons
+          </button>
+
+        </div>
+      `;
+
+      const emptyButton =
+        $("continueReadingEmptyBtn");
+
+      if (emptyButton) {
+        emptyButton.addEventListener(
+          "click",
+          () =>
+            navigate(
+              "mysermons"
+            )
+        );
+      }
+
+      return;
+    }
+
+    // =====================================
+    // NORMALIZE SERMON DATA
+    // =====================================
+    const title =
+      sermon.title ||
+      sermon.sermon?.title ||
+      "Untitled Sermon";
+
+    const scripture =
+      sermon.scripture ||
+      sermon.sermon?.scripture ||
+      "";
+
+    const pastorName =
+      sermon.author_name ||
+      sermon.pastor_name ||
+      sermon.sermon
+        ?.author_name ||
+      "";
+
+    const sermonId =
+      Number(
+        sermon.id ||
+        sermon.sermon_id ||
+        sermon.sermon?.id ||
+        0
+      );
+
+    const pastorId =
+      Number(
+        sermon.pastor_id ||
+        sermon.author_id ||
+        0
+      );
+
+    console.log(
+      "📖 Continue Reading source:",
+      source
+    );
+
+    console.log(
+      "📖 Continue Reading sermon:",
+      sermon
+    );
+
+    console.log(
+      "📖 Continue Reading sermon ID:",
+      sermonId
+    );
+
+    // =====================================
+    // RENDER CARD
+    // =====================================
+    container.innerHTML = `
+      <article
+        class="
+          feature-card
+          continue-reading-card
+        "
+      >
+
+        <div
+          class="
+            continue-reading-icon
+          "
+        >
+          📖
+        </div>
+
+        <div
+          class="
+            continue-reading-content
+          "
+        >
+
+          <span class="eyebrow">
+            ${
+              sermon.recommended
+                ? "Recommended Sermon"
+                : "Continue Reading"
+            }
+          </span>
+
+          <h3>
+            ${escapeHTML(title)}
+          </h3>
+
+          ${
+            scripture
+              ? `
+                <p
+                  class="
+                    continue-reading-scripture
+                  "
+                >
+                  ${escapeHTML(
+                    scripture
+                  )}
+                </p>
+              `
+              : ""
+          }
+
+          ${
+            pastorName
+              ? `
+                <small>
+                  ${escapeHTML(
+                    pastorName
+                  )}
+                </small>
+              `
+              : ""
+          }
+
+        </div>
+
+        <button
+          id="continueReadingBtn"
+          type="button"
+          class="btn-primary"
+        >
+          ${
+            sermon.recommended
+              ? "Discover Sermon"
+              : "Continue Reading"
+          }
+        </button>
+
+      </article>
+    `;
+
+    // =====================================
+    // ATTACH CLICK HANDLER
+    // =====================================
+    const continueButton =
+      $("continueReadingBtn");
+
+    if (!continueButton) {
+      return;
+    }
+
+    continueButton
+      .addEventListener(
+        "click",
+        async () => {
+          try {
+            continueButton.disabled =
+              true;
+
+            continueButton.textContent =
+              sermon.recommended
+                ? "Opening..."
+                : "Loading Sermon...";
+
+            // =================================
+            // OPEN A REAL SAVED SERMON
+            // =================================
+            if (sermonId) {
+              const opener =
+                window.openSavedSermon;
+
+              if (
+                typeof opener !==
+                "function"
+              ) {
+                throw new Error(
+                  "Saved sermon opener is unavailable"
+                );
+              }
+
+              await opener(
+                sermonId
+              );
+
+              return;
+            }
+
+            // =================================
+            // OPEN RECOMMENDED PASTOR
+            // =================================
+            if (
+              sermon.recommended &&
+              pastorId
+            ) {
+              if (
+                typeof window
+                  .openPastorProfile ===
+                "function"
+              ) {
+                await window
+                  .openPastorProfile(
+                    pastorId
+                  );
+
+              } else {
+                localStorage.setItem(
+                  "selected_pastor_id",
+                  String(
+                    pastorId
+                  )
+                );
+
+                await navigate(
+                  "pastor-profile"
+                );
+              }
+
+              return;
+            }
+
+            // =================================
+            // NEVER OPEN BLANK SERMON STUDIO
+            // =================================
+            throw new Error(
+              "This sermon was not saved and cannot be reopened. Open a saved public sermon first."
+            );
+
+          } catch (clickErr) {
+            console.error(
+              "Continue Reading click failed:",
+              clickErr
+            );
+
+            showToast?.(
+              clickErr.message ||
+              "Could not open sermon",
+              "error"
+            );
+
+            continueButton.disabled =
+              false;
+
+            continueButton.textContent =
+              sermon.recommended
+                ? "Discover Sermon"
+                : "Continue Reading";
+          }
+        }
+      );
+
+  } catch (err) {
+    console.error(
+      "Continue reading load failed:",
+      err
+    );
+
+    container.innerHTML = `
+      <div
+        class="
+          feature-card
+          empty-state
+          error
+        "
+      >
+
+        <h3>
+          Could not load sermon
+        </h3>
+
+        <p>
+          Please try again later.
+        </p>
+
+      </div>
+    `;
+  }
+}
+
+window.loadContinueReading =
+  loadContinueReading;
+
+
 
   // =====================================
   // AI INSIGHTS

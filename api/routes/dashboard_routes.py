@@ -15,6 +15,7 @@ from api.models.shared_sermon import SharedSermon
 from api.models.user import User
 from api.models.pastor_member import PastorMember
 from api.models.prayer import Prayer  # 🔥 NEW Prayer Wall model
+from api.models.follow import PastorFollower
 
 # =========================
 # AUTH
@@ -90,6 +91,53 @@ def get_dashboard_summary(
     }
 
 # ================================
+# MEMBER DASHBOARD SUMMARY
+# ================================
+@router.get("/dashboard/member-summary")
+def get_member_dashboard_summary(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    if user.role != "member":
+        return {
+            "following_pastors": 0,
+            "saved_sermons": 0,
+            "prayer_requests": 0,
+            "answered_prayers": 0
+        }
+
+    following_pastors = db.query(
+        func.count(PastorFollower.id)
+    ).filter(
+        PastorFollower.member_id == user.id
+    ).scalar() or 0
+
+    prayer_requests = db.query(
+        func.count(Prayer.id)
+    ).filter(
+        Prayer.user_id == user.id,
+        Prayer.is_hidden == False
+    ).scalar() or 0
+
+    answered_prayers = db.query(
+        func.count(Prayer.id)
+    ).filter(
+        Prayer.user_id == user.id,
+        Prayer.is_hidden == False,
+        Prayer.status == "answered"
+    ).scalar() or 0
+
+    # Saved-sermon bookmarking has not been implemented yet.
+    saved_sermons = 0
+
+    return {
+        "following_pastors": following_pastors,
+        "saved_sermons": saved_sermons,
+        "prayer_requests": prayer_requests,
+        "answered_prayers": answered_prayers
+    }
+
+# ================================
 # RECENT SERMONS
 # ================================
 @router.get("/dashboard/recent-sermons")
@@ -104,15 +152,89 @@ def get_recent_sermons(db: Session = Depends(get_db), user=Depends(get_current_u
 # TOP SERMONS
 # ================================
 @router.get("/dashboard/top-sermons")
-def get_top_sermons(db: Session = Depends(get_db), user=Depends(get_current_user)):
-    top_sermons = db.query(Sermon.id, Sermon.title, func.count(SharedSermon.id).label("shares"))\
-        .outerjoin(SharedSermon, SharedSermon.sermon_id == Sermon.id)\
-        .filter(Sermon.author_id == user.id)\
-        .group_by(Sermon.id)\
-        .order_by(func.count(SharedSermon.id).desc())\
-        .limit(5).all()
+def get_top_sermons(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    query = (
+        db.query(
+            Sermon.id,
+            Sermon.title,
+            Sermon.scripture,
+            Sermon.author_id,
+            User.name.label("author_name"),
+            Sermon.views,
+            func.count(
+                SharedSermon.id
+            ).label("shares")
+        )
+        .join(
+            User,
+            User.id == Sermon.author_id
+        )
+        .outerjoin(
+            SharedSermon,
+            SharedSermon.sermon_id == Sermon.id
+        )
+    )
 
-    return [{"id": s.id, "title": s.title, "shares": s.shares} for s in top_sermons]
+    # =====================================
+    # MEMBER EXPERIENCE
+    # Members discover public sermons from
+    # pastors across the platform.
+    # =====================================
+    if user.role == "member":
+        query = query.filter(
+            Sermon.is_public == 1,
+            User.role.in_([
+                "pastor",
+                "admin"
+            ])
+        )
+
+    # =====================================
+    # PASTOR / ADMIN DASHBOARD
+    # Keep the existing behavior by showing
+    # sermons authored by the current user.
+    # =====================================
+    else:
+        query = query.filter(
+            Sermon.author_id == user.id
+        )
+
+    top_sermons = (
+        query
+        .group_by(
+            Sermon.id,
+            Sermon.title,
+            Sermon.scripture,
+            Sermon.author_id,
+            User.name,
+            Sermon.views
+        )
+        .order_by(
+            func.count(
+                SharedSermon.id
+            ).desc(),
+            Sermon.views.desc(),
+            Sermon.created_at.desc()
+        )
+        .limit(5)
+        .all()
+    )
+
+    return [
+        {
+            "id": sermon.id,
+            "title": sermon.title,
+            "scripture": sermon.scripture or "",
+            "author_id": sermon.author_id,
+            "author_name": sermon.author_name or "Pastor",
+            "views": sermon.views or 0,
+            "shares": sermon.shares or 0
+        }
+        for sermon in top_sermons
+    ]
 
 # ================================
 # AI INSIGHTS
@@ -140,12 +262,39 @@ def get_dashboard_insights(db: Session = Depends(get_db), user=Depends(get_curre
     return {"insights": insights}
 
 # ================================
-# 🔥 PRAYER WALL (NEW)
+# MEMBER DASHBOARD PRAYER WALL
 # ================================
 @router.get("/dashboard/prayer-wall")
-def get_prayer_wall(db: Session = Depends(get_db), user=Depends(get_current_user)):
-    prayers = db.query(Prayer).filter(Prayer.user_id == user.id).order_by(Prayer.created_at.desc()).limit(10).all()
+def get_prayer_wall(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    prayers = (
+        db.query(Prayer)
+        .filter(
+            Prayer.user_id == user.id,
+            Prayer.is_hidden == False
+        )
+        .order_by(
+            Prayer.created_at.desc()
+        )
+        .limit(10)
+        .all()
+    )
+
     return [
-        {"id": p.id, "title": p.title, "content": p.content, "created_at": p.created_at}
-        for p in prayers
+        {
+            "id": prayer.id,
+            "message": prayer.message,
+            "category": prayer.category,
+            "status": prayer.status,
+            "visibility": prayer.visibility,
+            "prayer_count": prayer.prayer_count or 0,
+            "support_count": prayer.support_count or 0,
+            "comment_count": prayer.comment_count or 0,
+            "answered_at": prayer.answered_at,
+            "answer_testimony": prayer.answer_testimony,
+            "created_at": prayer.created_at
+        }
+        for prayer in prayers
     ]

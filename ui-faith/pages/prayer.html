@@ -231,3 +231,54 @@
   </div>
 
 </div>
+
+<!-- ==========================================
+     ANSWERED PRAYER TESTIMONY MODAL
+========================================== -->
+<div id="testimonyModal" class="modal-overlay hidden">
+
+  <div class="modal-card testimony-modal">
+
+    <div class="modal-header">
+
+      <h2>🎉 Share Your Testimony</h2>
+
+      <button
+        class="modal-close"
+        onclick="closeTestimonyModal()">
+        ×
+      </button>
+
+    </div>
+
+    <p>
+      God answered your prayer! Encourage others by sharing how He worked in your situation.
+    </p>
+
+    <textarea
+      id="testimonyText"
+      class="input textarea"
+      rows="6"
+      maxlength="3000"
+      placeholder="Tell your story..."
+    ></textarea>
+
+    <div class="modal-actions">
+
+      <button
+        class="btn-secondary"
+        onclick="closeTestimonyModal()">
+        Cancel
+      </button>
+
+      <button
+        class="btn-primary"
+        onclick="savePrayerTestimony()">
+        🎉 Share Testimony
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

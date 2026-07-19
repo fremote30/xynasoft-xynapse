@@ -588,7 +588,11 @@ def update_prayer_status(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user)
 ):
-    if payload.status not in ["still_praying", "partially_answered", "answered"]:
+    if payload.status not in [
+        "still_praying",
+        "partially_answered",
+        "answered"
+    ]:
         raise HTTPException(
             status_code=400,
             detail="Invalid prayer status"
@@ -611,11 +615,24 @@ def update_prayer_status(
         )
 
     prayer.status = payload.status
-    prayer.answered_at = (
-        datetime.utcnow()
-        if payload.status == "answered"
-        else None
-    )
+
+    if payload.status == "answered":
+        prayer.answered_at = prayer.answered_at or datetime.utcnow()
+
+        testimony = (
+            payload.answer_testimony.strip()
+            if payload.answer_testimony
+            else ""
+        )
+
+        if testimony:
+            prayer.answer_testimony = testimony
+            prayer.testimony_shared_at = datetime.utcnow()
+
+    else:
+        prayer.answered_at = None
+        prayer.answer_testimony = None
+        prayer.testimony_shared_at = None
 
     db.commit()
     db.refresh(prayer)

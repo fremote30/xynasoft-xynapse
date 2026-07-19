@@ -20,6 +20,7 @@ from api.models.pastor_member import PastorMember
 from api.models.sermon_collaborator import SermonCollaborator
 from api.models.refresh_token import RefreshToken
 from api.models.church import Church
+from api.models.member_profile import MemberProfile
 
 target_metadata = Base.metadata
 # -------------------------------------------------

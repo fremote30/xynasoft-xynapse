@@ -30,6 +30,9 @@ class Prayer(Base):
     share_count = Column(Integer, default=0)
 
     answered_at = Column(DateTime, nullable=True)
+
+    answer_testimony = Column(Text, nullable=True)
+    testimony_shared_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

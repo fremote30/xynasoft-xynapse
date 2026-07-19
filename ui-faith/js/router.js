@@ -43,6 +43,9 @@
     "edit-profile":
       "/faith/pages/edit-profile.html",
 
+    "edit-member-profile": 
+      "/faith/pages/edit-member-profile.html",
+
     "admin-approvals":
       "/faith/pages/admin-approvals.html",
 
@@ -50,13 +53,16 @@
       "/faith/pages/prayer.html",
 
     "pastor-profile":
-      "/faith/pages/pastor-profile.html"
+      "/faith/pages/pastor-profile.html",
+
+    search:
+      "/faith/pages/search.html"
   };
 
   // =====================================
   // PROTECTED ROUTES
   // =====================================
-  window.protectedRoutes = [
+window.protectedRoutes = [
 
     "dashboard",
 
@@ -66,10 +72,14 @@
 
     "member-dashboard",
 
+    "edit-member-profile",
+
     "prayer",
 
-    "mysermons"
-  ];
+    "mysermons",
+
+    "search"
+];
 
   // =====================================
   // CLEANUP TASKS
@@ -409,6 +419,11 @@ try {
       await loadNetworkPage();
     }
 
+    if (page === "edit-member-profile") {
+        await loadUserInfo();
+        await loadMemberProfilePage();
+    }
+
     if (page === "admin-approvals") {
       await loadUserInfo();
       await loadPastorApplications();
@@ -416,9 +431,15 @@ try {
 
     if (page === "sermon") {
       await loadUserInfo();
-      loadSelectedSermon();
-    }
 
+      if (
+        !window.__openingSavedSermon &&
+        typeof window.loadSelectedSermon ===
+          "function"
+      ) {
+        await window.loadSelectedSermon();
+      }
+    }
     // =====================================
     // MY SERMONS (FIXED SAFETY)
     // =====================================
@@ -513,6 +534,62 @@ try {
       if (typeof loadPrayerWall === "function") {
         await loadPrayerWall();
       }
+    }
+
+    // =====================================
+    // SEARCH
+    // PREMIUM SPA SAFE LOADER
+    // =====================================
+    if (page === "search") {
+
+        await loadUserInfo();
+
+        // Wait for search.js initialization
+        let attempts = 0;
+
+        while (
+            typeof window.loadSearchPage !== "function" &&
+            attempts < 50
+        ) {
+
+            await new Promise(resolve =>
+                setTimeout(resolve,100)
+            );
+
+            attempts++;
+        }
+
+
+        if (
+            typeof window.loadSearchPage === "function"
+        ) {
+
+            const query =
+              window.currentSearchQuery ||
+              localStorage.getItem(
+                  "xynafaith_search_query"
+              ) ||
+              "";
+
+
+            console.log(
+                "🔎 Loading search:",
+                query
+            );
+
+
+            await window.loadSearchPage(
+                query
+            );
+
+
+        } else {
+
+            console.error(
+                "❌ Search module unavailable"
+            );
+
+        }
     }
 
     console.log(`✅ Loaded page: ${page}`);

@@ -1,0 +1,352 @@
+[
+  {
+    "name": "Sarah Owusu",
+    "email": "sarah.owusu1@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Life Chapel",
+    "role": "member"
+  },
+  {
+    "name": "James Johnson",
+    "email": "james.johnson2@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "New Hope Community Church",
+    "role": "member"
+  },
+  {
+    "name": "Mary Adeyemi",
+    "email": "mary.adeyemi3@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Life Ministries",
+    "role": "member"
+  },
+  {
+    "name": "John Kamau",
+    "email": "john.kamau4@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Living Waters Fellowship",
+    "role": "member"
+  },
+  {
+    "name": "Grace Brown",
+    "email": "grace.brown5@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Hope Church",
+    "role": "member"
+  },
+  {
+    "name": "Daniel Reyes",
+    "email": "daniel.reyes6@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Hope Fellowship Center",
+    "role": "member"
+  },
+  {
+    "name": "Esther Mokoena",
+    "email": "esther.mokoena7@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Restoration Church",
+    "role": "member"
+  },
+  {
+    "name": "Peter Silva",
+    "email": "peter.silva8@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Igreja Vida Nova",
+    "role": "member"
+  },
+  {
+    "name": "Ruth Patel",
+    "email": "ruth.patel9@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Fellowship India",
+    "role": "member"
+  },
+  {
+    "name": "Michael Williams",
+    "email": "michael.williams10@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Caribbean Hope Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Abigail Owusu",
+    "email": "abigail.owusu11@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Life Chapel",
+    "role": "member"
+  },
+  {
+    "name": "Joseph Johnson",
+    "email": "joseph.johnson12@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "New Hope Community Church",
+    "role": "member"
+  },
+  {
+    "name": "Naomi Adeyemi",
+    "email": "naomi.adeyemi13@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Life Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Samuel Kamau",
+    "email": "samuel.kamau14@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Living Waters Fellowship",
+    "role": "member"
+  },
+  {
+    "name": "Rebecca Brown",
+    "email": "rebecca.brown15@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Hope Church",
+    "role": "member"
+  },
+  {
+    "name": "David Reyes",
+    "email": "david.reyes16@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Hope Fellowship Center",
+    "role": "member"
+  },
+  {
+    "name": "Martha Mokoena",
+    "email": "martha.mokoena17@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Restoration Church",
+    "role": "member"
+  },
+  {
+    "name": "Andrew Silva",
+    "email": "andrew.silva18@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Igreja Vida Nova",
+    "role": "member"
+  },
+  {
+    "name": "Lydia Patel",
+    "email": "lydia.patel19@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Fellowship India",
+    "role": "member"
+  },
+  {
+    "name": "Paul Williams",
+    "email": "paul.williams20@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Caribbean Hope Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Angela Owusu",
+    "email": "angela.owusu21@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Life Chapel",
+    "role": "member"
+  },
+  {
+    "name": "Caleb Johnson",
+    "email": "caleb.johnson22@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "New Hope Community Church",
+    "role": "member"
+  },
+  {
+    "name": "Priscilla Adeyemi",
+    "email": "priscilla.adeyemi23@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Life Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Nathan Kamau",
+    "email": "nathan.kamau24@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Living Waters Fellowship",
+    "role": "member"
+  },
+  {
+    "name": "Joy Brown",
+    "email": "joy.brown25@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Hope Church",
+    "role": "member"
+  },
+  {
+    "name": "Isaac Reyes",
+    "email": "isaac.reyes26@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Hope Fellowship Center",
+    "role": "member"
+  },
+  {
+    "name": "Deborah Mokoena",
+    "email": "deborah.mokoena27@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Restoration Church",
+    "role": "member"
+  },
+  {
+    "name": "Mark Silva",
+    "email": "mark.silva28@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Igreja Vida Nova",
+    "role": "member"
+  },
+  {
+    "name": "Hannah Patel",
+    "email": "hannah.patel29@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Fellowship India",
+    "role": "member"
+  },
+  {
+    "name": "Philip Williams",
+    "email": "philip.williams30@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Caribbean Hope Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Faith Owusu",
+    "email": "faith.owusu31@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Life Chapel",
+    "role": "member"
+  },
+  {
+    "name": "Joshua Johnson",
+    "email": "joshua.johnson32@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "New Hope Community Church",
+    "role": "member"
+  },
+  {
+    "name": "Elizabeth Adeyemi",
+    "email": "elizabeth.adeyemi33@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Life Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Stephen Kamau",
+    "email": "stephen.kamau34@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Living Waters Fellowship",
+    "role": "member"
+  },
+  {
+    "name": "Mercy Brown",
+    "email": "mercy.brown35@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Hope Church",
+    "role": "member"
+  },
+  {
+    "name": "Timothy Reyes",
+    "email": "timothy.reyes36@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Hope Fellowship Center",
+    "role": "member"
+  },
+  {
+    "name": "Rachel Mokoena",
+    "email": "rachel.mokoena37@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Restoration Church",
+    "role": "member"
+  },
+  {
+    "name": "Benjamin Silva",
+    "email": "benjamin.silva38@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Igreja Vida Nova",
+    "role": "member"
+  },
+  {
+    "name": "Patience Patel",
+    "email": "patience.patel39@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Fellowship India",
+    "role": "member"
+  },
+  {
+    "name": "Luke Williams",
+    "email": "luke.williams40@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Caribbean Hope Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Charity Owusu",
+    "email": "charity.owusu41@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Life Chapel",
+    "role": "member"
+  },
+  {
+    "name": "Jonathan Johnson",
+    "email": "jonathan.johnson42@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "New Hope Community Church",
+    "role": "member"
+  },
+  {
+    "name": "Victoria Adeyemi",
+    "email": "victoria.adeyemi43@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Life Ministries",
+    "role": "member"
+  },
+  {
+    "name": "Matthew Kamau",
+    "email": "matthew.kamau44@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Living Waters Fellowship",
+    "role": "member"
+  },
+  {
+    "name": "Hope Brown",
+    "email": "hope.brown45@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Hope Church",
+    "role": "member"
+  },
+  {
+    "name": "Emmanuel Reyes",
+    "email": "emmanuel.reyes46@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Hope Fellowship Center",
+    "role": "member"
+  },
+  {
+    "name": "Dorcas Mokoena",
+    "email": "dorcas.mokoena47@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Restoration Church",
+    "role": "member"
+  },
+  {
+    "name": "Simon Silva",
+    "email": "simon.silva48@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Igreja Vida Nova",
+    "role": "member"
+  },
+  {
+    "name": "Gloria Patel",
+    "email": "gloria.patel49@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Fellowship India",
+    "role": "member"
+  },
+  {
+    "name": "Thomas Williams",
+    "email": "thomas.williams50@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Caribbean Hope Ministries",
+    "role": "member"
+  }
+]

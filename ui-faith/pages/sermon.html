@@ -1139,17 +1139,17 @@ textarea{
         ⚡ Actions
       </h3>
 
-      <button
+      <button  id="saveSermonBtn" class="action-btn owner-only"
         onclick="saveCurrentSermon()"
       >
         💾 Save Sermon
       </button>
-      <button
+      <button  id="updateSermonBtn" class="action-btn owner-only"
         onclick="updateCurrentSermon()"
       >
         📝 Update Sermon
       </button>
-      <button
+      <button class="action-btn owner-only"
         onclick="clearCurrentSermon()"
       >
         🗑️ Clear Sermon
@@ -1224,28 +1224,39 @@ textarea{
 
 </div>
 
-<!-- ===================================== -->
-<!-- MOBILE ACTION BAR -->
-<!-- ===================================== -->
-<div class="mobile-action-bar">
+      <!-- ===================================== -->
+      <!-- MOBILE SERMON WORKSPACE TABS -->
+      <!-- ===================================== -->
 
-  <button onclick="showMobileTab('inputs')">
-    📝
-    <span>Inputs</span>
-  </button>
+      <div class="mobile-sermon-tabs">
 
-  <button onclick="showMobileTab('output')">
-    📖
-    <span>Output</span>
-  </button>
+        <button
+          class="mobile-sermon-tab active"
+          onclick="showMobileTab('inputs')"
+        >
+          ✍️
+          <span>Create</span>
+        </button>
 
-  <button onclick="showMobileTab('actions')">
-    ⚡
-    <span>Actions</span>
-  </button>
 
-</div>
+        <button
+          class="mobile-sermon-tab"
+          onclick="showMobileTab('output')"
+        >
+          📖
+          <span>Sermon</span>
+        </button>
 
+
+        <button
+          class="mobile-sermon-tab"
+          onclick="showMobileTab('actions')"
+        >
+          ⚡
+          <span>Tools</span>
+        </button>
+
+      </div>
 <script>
 
 function scrollToTop(){
