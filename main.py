@@ -93,6 +93,11 @@ from api.routes.prayer_routes import (
 # =========================================
 from api.routes import search
 
+# =========================================
+# Network
+# =========================================
+from api.routes.network import router as network_router
+
 # ================================
 # 🚀 INIT APP
 # ================================
@@ -246,6 +251,16 @@ app.include_router(
 )
 
 print("✅ Member profile routes loaded")
+
+# =====================================
+#NETWORK
+# =====================================
+app.include_router(
+    network_router,
+    prefix="/api/v1"
+)
+
+print("✅ Community network routes loaded")
 
 # =====================================
 # SEARCH 

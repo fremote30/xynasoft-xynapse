@@ -27,6 +27,8 @@ from api.core.dependencies import get_current_user
 # =========================
 from api.services.ai_insights import generate_dashboard_insights
 
+from api.services.platform_service import PlatformService
+
 router = APIRouter()
 
 # ================================
@@ -82,12 +84,15 @@ def get_dashboard_summary(
         .filter(Sermon.author_id == user.id).scalar() or 0
     total_members = db.query(func.count(PastorMember.member_id)).scalar() or 0
     engagement = round((total_shares / total_views) * 100, 2) if total_views > 0 else 0
+    platform_stats = PlatformService.get_platform_stats(db)
 
     return {
         "total_sermons": total_sermons,
         "total_members": total_members,
         "total_shares": total_shares,
-        "engagement": engagement
+        "engagement": engagement,
+        # Platform-wide community statistics
+        "platform": platform_stats
     }
 
 # ================================

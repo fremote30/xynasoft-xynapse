@@ -12,17 +12,26 @@
 
       <div class="hero-content">
 
+        <span class="eyebrow">
+          XynaFaith Global Network
+        </span>
+
         <h1 class="hero-title">
-          Explore the <span class="highlight">XynaFaith Network</span>
+          Explore the
+          <span class="highlight">
+            XynaFaith Network
+          </span>
         </h1>
 
         <p class="hero-sub">
-          Discover pastors, trending sermons, growing ministries, and faith communities around the world.
+          Discover pastors, trending sermons, growing ministries,
+          prayer communities, and faith connections around the world.
         </p>
 
         <div class="hero-buttons">
 
           <button
+            type="button"
             class="btn-primary"
             onclick="navigate('sermon')"
           >
@@ -30,6 +39,7 @@
           </button>
 
           <button
+            type="button"
             class="btn-secondary"
             onclick="navigate('dashboard')"
           >
@@ -43,45 +53,134 @@
     </section>
 
     <!-- =========================
-         TRENDING SERMONS
+         PLATFORM OVERVIEW
     ========================== -->
-    <section class="features">
+    <section class="features network-overview-section">
 
       <div class="features-header">
-        <h2>🔥 Trending Sermons</h2>
-        <p>Discover the most engaging sermons across the platform</p>
+
+        <span class="eyebrow">
+          Platform Overview
+        </span>
+
+        <h2>
+          XynaFaith at a Glance
+        </h2>
+
+        <p>
+          See how pastors, believers, churches, sermons, and prayer
+          communities are growing across the platform.
+        </p>
+
       </div>
 
-      <div class="feature-grid">
+      <div class="network-quick-stats">
 
-        <div class="feature-card">
-          <div class="icon">🔥</div>
+        <div class="network-stat-item">
 
-          <h3>Most Shared</h3>
+          <strong id="networkPastorCount">
+            0
+          </strong>
 
-          <div id="topSermons">
-            <p>Loading sermons...</p>
-          </div>
+          <span>
+            Pastors
+          </span>
+
         </div>
 
-        <div class="feature-card">
-          <div class="icon">💡</div>
+        <div class="network-stat-item">
 
-          <h3>AI Trending Insights</h3>
+          <strong id="networkMemberCount">
+            0
+          </strong>
 
-          <div id="aiInsights">
-            <p>Analyzing trends...</p>
-          </div>
+          <span>
+            Members
+          </span>
+
         </div>
 
-        <div class="feature-card">
-          <div class="icon">🌎</div>
+        <div class="network-stat-item">
 
-          <h3>Global Reach</h3>
+          <strong id="networkChurchCount">
+            0
+          </strong>
+
+          <span>
+            Churches
+          </span>
+
+        </div>
+
+        <div class="network-stat-item">
+
+          <strong id="networkSermonCount">
+            0
+          </strong>
+
+          <span>
+            Sermons
+          </span>
+
+        </div>
+
+        <div class="network-stat-item">
+
+          <strong id="networkPrayerCount">
+            0
+          </strong>
+
+          <span>
+            Prayers
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         FEATURED PASTOR
+    ========================== -->
+    <section class="features featured-pastor-section">
+
+      <div class="features-header">
+
+        <span class="eyebrow">
+          Featured Ministry Leader
+        </span>
+
+        <h2>
+          ⭐ Featured Pastor
+        </h2>
+
+        <p>
+          Meet a pastor making an impact across the XynaFaith community.
+        </p>
+
+      </div>
+
+      <div
+        id="featuredPastor"
+        class="featured-pastor-wrap"
+        aria-live="polite"
+      >
+
+        <div class="feature-card">
+
+          <div class="icon">
+            ⛪
+          </div>
+
+          <h3>
+            Loading featured pastor...
+          </h3>
 
           <p>
-            Explore sermons and ministries impacting believers worldwide.
+            Please wait while we load the featured ministry leader.
           </p>
+
         </div>
 
       </div>
@@ -91,148 +190,135 @@
     <!-- =========================
          DISCOVER PASTORS
     ========================== -->
-      <section class="features network-directory-section">
-
-        <div class="features-header">
-          <span class="eyebrow">XynaFaith Global Directory</span>
-          <h2>🌐 Discover Pastors</h2>
-          <p>Search pastors, ministries, denominations, and locations across the XynaFaith network.</p>
-        </div>
-
-        <div class="network-quick-stats">
-          <div>
-            <strong id="networkPastorCount">0</strong>
-            <span>Pastors</span>
-          </div>
-
-          <div>
-            <strong id="networkMemberCount">0</strong>
-            <span>Members</span>
-          </div>
-
-          <div>
-            <strong id="networkSermonCount">0</strong>
-            <span>Sermons</span>
-          </div>
-
-          <div>
-            <strong id="networkPrayerCount">0</strong>
-            <span>Prayers</span>
-          </div>
-        </div>
-
-        <div id="featuredPastor" class="featured-pastor-wrap">
-          <div class="feature-card">
-            <h3>Loading featured pastor...</h3>
-          </div>
-        </div>
-
-                  <!-- ========================= -->
-          <!-- SEARCH + FILTERS -->
-          <!-- ========================= -->
-
-          <div class="network-search-section">
-
-            <input
-              id="pastorSearchInput"
-              class="network-search-input"
-              type="search"
-              placeholder="Search pastors, churches, cities, countries..."
-              autocomplete="off"
-              oninput="filterPastorDirectory()"
-            />
-
-            <div class="network-filter-row">
-
-              <button
-                class="filter-chip active"
-                data-filter="all"
-                onclick="setPastorDirectoryFilter('all')">
-                All
-              </button>
-
-              <button
-                class="filter-chip"
-                data-filter="Pentecostal"
-                onclick="setPastorDirectoryFilter('Pentecostal')">
-                Pentecostal
-              </button>
-
-              <button
-                class="filter-chip"
-                data-filter="Prayer"
-                onclick="setPastorDirectoryFilter('Prayer')">
-                Prayer
-              </button>
-
-              <button
-                class="filter-chip"
-                data-filter="Teaching"
-                onclick="setPastorDirectoryFilter('Teaching')">
-                Teaching
-              </button>
-
-              <button
-                class="filter-chip"
-                data-filter="United States"
-                onclick="setPastorDirectoryFilter('United States')">
-                United States
-              </button>
-
-              <button
-                class="filter-chip"
-                data-filter="Ghana"
-                onclick="setPastorDirectoryFilter('Ghana')">
-                Ghana
-              </button>
-
-            </div>
-
-          </div>
-
-        <div id="pastorGrid" class="pastor-grid-v2">
-          <div class="feature-card">
-            <div class="icon">⛪</div>
-            <h3>Loading pastors...</h3>
-            <p>Please wait...</p>
-          </div>
-        </div>
-
-      </section>
-    <!-- =========================
-         TRENDING CATEGORIES
-    ========================== -->
-    <section class="features">
+    <section class="features network-directory-section">
 
       <div class="features-header">
-        <h2>📚 Explore Categories</h2>
-        <p>Find sermons and ministries by topic</p>
+
+        <span class="eyebrow">
+          XynaFaith Global Directory
+        </span>
+
+        <h2>
+          🌐 Discover Pastors
+        </h2>
+
+        <p>
+          Search pastors, ministries, denominations, teaching interests,
+          cities, and countries across the XynaFaith network.
+        </p>
+
       </div>
 
-      <div class="feature-grid">
+      <!-- =========================
+           SEARCH
+      ========================== -->
+      <div class="network-search-section">
 
-        <div class="feature-card">
-          <div class="icon">🙏</div>
-          <h3>Prayer</h3>
-          <p>Messages focused on prayer and spiritual growth.</p>
+        <label
+          class="sr-only"
+          for="pastorSearchInput"
+        >
+          Search pastors
+        </label>
+
+        <input
+          id="pastorSearchInput"
+          class="network-search-input"
+          type="search"
+          placeholder="Search pastors, churches, cities, countries..."
+          autocomplete="off"
+          aria-label="Search pastors, churches, cities, or countries"
+        />
+
+        <!-- =========================
+             FILTERS
+        ========================== -->
+        <div
+          class="network-filter-row"
+          aria-label="Pastor directory filters"
+        >
+
+          <button
+            type="button"
+            class="filter-chip active"
+            data-filter="all"
+            onclick="setPastorDirectoryFilter('all')"
+          >
+            All
+          </button>
+
+          <button
+            type="button"
+            class="filter-chip"
+            data-filter="Pentecostal"
+            onclick="setPastorDirectoryFilter('Pentecostal')"
+          >
+            Pentecostal
+          </button>
+
+          <button
+            type="button"
+            class="filter-chip"
+            data-filter="Prayer"
+            onclick="setPastorDirectoryFilter('Prayer')"
+          >
+            Prayer
+          </button>
+
+          <button
+            type="button"
+            class="filter-chip"
+            data-filter="Teaching"
+            onclick="setPastorDirectoryFilter('Teaching')"
+          >
+            Teaching
+          </button>
+
+          <button
+            type="button"
+            class="filter-chip"
+            data-filter="United States"
+            onclick="setPastorDirectoryFilter('United States')"
+          >
+            United States
+          </button>
+
+          <button
+            type="button"
+            class="filter-chip"
+            data-filter="Ghana"
+            onclick="setPastorDirectoryFilter('Ghana')"
+          >
+            Ghana
+          </button>
+
         </div>
 
-        <div class="feature-card">
-          <div class="icon">❤️</div>
-          <h3>Marriage & Family</h3>
-          <p>Teaching for relationships, parenting, and family life.</p>
-        </div>
+      </div>
+
+      <!-- =========================
+           PASTOR DIRECTORY
+      ========================== -->
+      <div
+        id="pastorGrid"
+        class="pastor-grid-v2"
+        aria-live="polite"
+      >
 
         <div class="feature-card">
-          <div class="icon">🛡</div>
-          <h3>Spiritual Warfare</h3>
-          <p>Faith-based teachings on overcoming spiritual battles.</p>
-        </div>
 
-        <div class="feature-card">
-          <div class="icon">🌱</div>
-          <h3>Growth & Leadership</h3>
-          <p>Leadership, purpose, and personal development teachings.</p>
+          <div class="icon">
+            ⛪
+          </div>
+
+          <h3>
+            Loading pastors...
+          </h3>
+
+          <p>
+            Please wait while we load the pastor directory.
+          </p>
+
         </div>
 
       </div>
@@ -240,34 +326,290 @@
     </section>
 
     <!-- =========================
-         LIVE COMMUNITY
+         TRENDING SERMONS
     ========================== -->
-    <section class="features">
+    <section class="features trending-sermons-section">
 
       <div class="features-header">
-        <h2>💬 Community Activity</h2>
-        <p>See what believers are engaging with across the platform</p>
+
+        <span class="eyebrow">
+          Sermon Discovery
+        </span>
+
+        <h2>
+          🔥 Trending Sermons
+        </h2>
+
+        <p>
+          Discover sermons and teaching themes engaging believers
+          across the platform.
+        </p>
+
       </div>
 
-      <div class="feature-grid stats-grid">
+      <div class="feature-grid">
 
+        <!-- MOST SHARED -->
         <div class="feature-card">
-          <h3>Platform Sermons</h3>
-          <p id="sermonCount">0</p>
+
+          <div class="icon">
+            🔥
+          </div>
+
+          <h3>
+            Most Shared
+          </h3>
+
+          <div
+            id="topSermons"
+            aria-live="polite"
+          >
+            <p>
+              Loading sermons...
+            </p>
+          </div>
+
         </div>
 
+        <!-- AI INSIGHTS -->
         <div class="feature-card">
-          <h3>Connected Members</h3>
-          <p id="memberCount">0</p>
+
+          <div class="icon">
+            💡
+          </div>
+
+          <h3>
+            AI Trending Insights
+          </h3>
+
+          <div
+            id="aiInsights"
+            aria-live="polite"
+          >
+            <p>
+              Analyzing sermon trends...
+            </p>
+          </div>
+
         </div>
 
+        <!-- GLOBAL REACH -->
+        <div class="feature-card">
+
+          <div class="icon">
+            🌎
+          </div>
+
+          <h3>
+            Global Reach
+          </h3>
+
+          <p>
+            Explore sermons and ministries impacting believers
+            across countries, cultures, and denominations.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         COMMUNITY OVERVIEW
+    ========================== -->
+    <section class="features community-overview-section">
+
+      <div class="features-header">
+
+        <span class="eyebrow">
+          Live Platform Activity
+        </span>
+
+        <h2>
+          💬 Community Activity
+        </h2>
+
+        <p>
+          See what pastors and believers are sharing, praying about,
+          and engaging with across XynaFaith.
+        </p>
+
+      </div>
+
+      <div class="feature-grid network-community-grid">
+
+        <!-- COMMUNITY ACTIVITY -->
+        <div class="feature-card community-activity-card">
+
+          <div class="icon">
+            🌐
+          </div>
+
+          <h3>
+            Community Activity
+          </h3>
+
+          <div
+            id="communityActivity"
+            aria-live="polite"
+          >
+            <p>
+              Loading community activity...
+            </p>
+          </div>
+
+        </div>
+
+        <!-- RECENT PRAYERS -->
         <div class="feature-card prayer-wall-card">
 
-          <h3>🙏 Live Prayer Wall</h3>
-
-          <div id="prayerWall">
-            <p>Loading prayer activity...</p>
+          <div class="icon">
+            🙏
           </div>
+
+          <h3>
+            Recent Prayers
+          </h3>
+
+          <div
+            id="recentPrayers"
+            aria-live="polite"
+          >
+            <p>
+              Loading recent prayers...
+            </p>
+          </div>
+
+          <div class="feature-card-actions">
+
+            <button
+              type="button"
+              class="btn-secondary"
+              onclick="navigate('prayer-wall')"
+            >
+              Visit Prayer Wall
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- TRENDING SERMONS OVERVIEW -->
+        <div class="feature-card trending-network-sermons-card">
+
+          <div class="icon">
+            📖
+          </div>
+
+          <h3>
+            Trending Across the Network
+          </h3>
+
+          <div
+            id="trendingSermons"
+            aria-live="polite"
+          >
+            <p>
+              Loading trending sermons...
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- =========================
+         EXPLORE CATEGORIES
+    ========================== -->
+    <section class="features network-categories-section">
+
+      <div class="features-header">
+
+        <span class="eyebrow">
+          Explore by Topic
+        </span>
+
+        <h2>
+          📚 Sermon Categories
+        </h2>
+
+        <p>
+          Find sermons and ministries based on the topics that matter
+          most to you.
+        </p>
+
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+
+          <div class="icon">
+            🙏
+          </div>
+
+          <h3>
+            Prayer
+          </h3>
+
+          <p>
+            Messages focused on prayer, intercession, spiritual growth,
+            and drawing closer to God.
+          </p>
+
+        </div>
+
+        <div class="feature-card">
+
+          <div class="icon">
+            ❤️
+          </div>
+
+          <h3>
+            Marriage &amp; Family
+          </h3>
+
+          <p>
+            Biblical teaching for relationships, parenting,
+            marriage, and healthy family life.
+          </p>
+
+        </div>
+
+        <div class="feature-card">
+
+          <div class="icon">
+            🛡
+          </div>
+
+          <h3>
+            Spiritual Warfare
+          </h3>
+
+          <p>
+            Faith-based teachings on perseverance, spiritual battles,
+            discernment, and victory.
+          </p>
+
+        </div>
+
+        <div class="feature-card">
+
+          <div class="icon">
+            🌱
+          </div>
+
+          <h3>
+            Growth &amp; Leadership
+          </h3>
+
+          <p>
+            Teaching on leadership, purpose, ministry development,
+            discipleship, and personal growth.
+          </p>
 
         </div>
 

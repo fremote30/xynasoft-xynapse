@@ -14,6 +14,7 @@
   let allPastors = [];
   let activePastorFilter = "all"; 
   let pastorDisplayLimit = 3;
+  let networkOverview = null;
   // =====================================
   // HELPER FUNCTION
   // =====================================
@@ -196,141 +197,174 @@ function setChecked(id, value) {
     }
   }
 
-  // =====================================
-  // NETWORK PAGE
-  // =====================================
-  async function loadNetworkPage() {
+// =====================================
+// NETWORK PAGE
+// =====================================
+async function loadNetworkPage() {
 
-    try {
-
-      await loadTopSermons();
-
-      await loadAIInsights();
-
-      await loadPastors();
-
-      // =====================================
-      // SUMMARY
-      // =====================================
-      const summaryRes =
-        await apiFetch(
-          "/api/v1/dashboard/summary"
-        );
-
-      if (summaryRes.ok) {
-
-        const summary =
-          await summaryRes.json();
-
-        if ($("sermonCount")) {
-
-          $("sermonCount").innerText =
-            summary.total_sermons ?? 0;
-        }
-
-        if ($("memberCount")) {
-
-          $("memberCount").innerText =
-            summary.total_members ?? 0;
-        }
-      }
-
-      // =====================================
-      // PRAYER WALL
-      // =====================================
-      const prayerRes =
-        await apiFetch(
-          "/api/v1/dashboard/recent-prayers"
-        );
-
-      if (prayerRes.ok) {
-
-        const prayers =
-          await prayerRes.json();
-
-        if ($("prayerWall")) {
-
-          $("prayerWall").innerHTML =
-
-            prayers.length
-
-              ? prayers.map(p => `
-
-                <div class="prayer-item">
-
-                  <strong>
-                    ${p.user_name}
-                  </strong>
-
-                  <small>
-                    ${formatDate(
-                      p.created_at
-                    )}
-                  </small>
-
-                  <p>
-                    ${p.message}
-                  </p>
-
-                </div>
-
-              `).join("")
-
-              : `
-                <p>
-                  No prayer activity yet
-                </p>
-              `;
-        }
-      }
-
-    } catch (err) {
-
-      console.error(
-        "Network page error:",
-        err
-      );
-
-      showToast?.(
-        "Failed to load network page",
-        "error"
-      );
-    }
+    // Prevent duplicate loads
+  if (window.__loadingNetwork) {
+    return;
   }
 
-  // =====================================
-  // LOAD PASTORS
-  // =====================================
-async function loadPastors() {
+window.__loadingNetwork = true;
   try {
-    
-    const res = await apiFetch("/api/v1/pastors/?limit=20&offset=0");
-    if (!res.ok) {
-      throw new Error("Failed to load pastors");
-    }
 
-    const data = await res.json();
+    // Reset directory pagination whenever
+    // the Network page is opened.
+    window.currentPastorSearch = "";
+    window.pastorOffset = 0;
+    window.pastorHasMore = false;
+    initializeNetworkSearch();
 
-    allPastors = data.items || [];
+    // Load independent Network sections in parallel.
+    // One failed request will not prevent the others
+    // from attempting to render.
+    const results = await Promise.allSettled([
+      loadNetworkOverview(),
+      loadPastors(),
+      typeof loadTopSermons === "function"
+        ? loadTopSermons()
+        : Promise.resolve(),
+      typeof loadAIInsights === "function"
+        ? loadAIInsights()
+        : Promise.resolve()
+    ]);
 
-    window.pastorHasMore = data.has_more;
-    window.pastorOffset = data.offset + data.count;
-    window.pastorLimit = data.limit;
+    results.forEach((result, index) => {
 
-    updateNetworkQuickStats(allPastors);
-    renderFeaturedPastor(allPastors);
-    renderPastorDirectory(allPastors);
+      if (result.status === "rejected") {
+
+        const sections = [
+          "community overview",
+          "pastor directory",
+          "top sermons",
+          "AI insights"
+        ];
+
+        console.error(
+          `Failed to load ${sections[index]}:`,
+          result.reason
+        );
+      }
+    });
 
   } catch (err) {
-    console.error("Pastor load error:", err);
 
-    const container = $("pastorGrid");
+    console.error(
+      "Network page error:",
+      err
+    );
+
+    showToast?.(
+      "Some Network content could not be loaded.",
+      "error"
+    );
+  }finally {
+
+   window.__loadingNetwork = false;
+
+  }
+}
+
+// =====================================
+// LOAD PASTORS
+// =====================================
+async function loadPastors() {
+
+  try {
+
+    const params = new URLSearchParams({
+      limit: "20",
+      offset: "0"
+    });
+
+    const res = await apiFetch(
+      `/api/v1/pastors/?${params.toString()}`
+    );
+
+    if (!res.ok) {
+
+      let message =
+        "Failed to load pastors";
+
+      try {
+
+        const errorData =
+          await res.json();
+
+        message =
+          errorData.detail ||
+          message;
+
+      } catch (_) {
+        // Keep default message when
+        // response is not JSON.
+      }
+
+      throw new Error(message);
+    }
+
+    const data =
+      await res.json();
+
+    allPastors =
+      Array.isArray(data.items)
+        ? data.items
+        : [];
+
+    window.pastorHasMore =
+      Boolean(data.has_more);
+
+    window.pastorOffset =
+      Number(data.offset || 0) +
+      Number(data.count || allPastors.length);
+
+    window.pastorLimit =
+      Number(data.limit || 20);
+
+    window.currentPastorSearch = "";
+
+    // The pastor endpoint now controls
+    // only the searchable directory.
+    renderPastorDirectory(
+      allPastors
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Pastor load error:",
+      err
+    );
+
+    const container =
+      $("pastorGrid");
 
     if (container) {
+
       container.innerHTML = `
         <div class="feature-card">
-          <h3>Unable to load pastors</h3>
-          <p>Please try again later.</p>
+
+          <h3>
+            Unable to load pastors
+          </h3>
+
+          <p>
+            ${
+              err.message ||
+              "Please try again later."
+            }
+          </p>
+
+          <button
+            type="button"
+            class="btn-secondary"
+            onclick="window.loadPastors()"
+          >
+            Try Again
+          </button>
+
         </div>
       `;
     }
@@ -341,100 +375,214 @@ async function loadPastors() {
   // HELPER FUNCTIONS
   // =====================================
 
-function updateNetworkQuickStats(pastors) {
-  setTextSafe("networkPastorCount", pastors.length);
-
-  setTextSafe(
-    "networkSermonCount",
-    pastors.reduce(
-      (sum, p) => sum + Number(p.sermon_count || 0),
-      0
-    )
-  );
-
-  const memberCount =
-    $("memberCount")?.textContent ||
-    window.lastMemberCount ||
-    "0";
-
-  setTextSafe("networkMemberCount", memberCount);
-
-  const prayerItems =
-    document.querySelectorAll(".prayer-item").length;
-
-  setTextSafe("networkPrayerCount", prayerItems || 0);
-}
-
 function setTextSafe(id, value) {
   const el = $(id);
-  if (el) el.textContent = value ?? 0;
+
+  if (!el) return;
+
+  el.textContent =
+    Number(value || 0).toLocaleString();
 }
 
-function renderFeaturedPastor(pastors) {
-  const container = $("featuredPastor");
+// =====================================
+// FEATURED PASTOR
+// =====================================
+function renderFeaturedPastor() {
+
+  const container =
+    $("featuredPastor");
 
   if (!container) return;
 
-  if (!pastors.length) {
-    container.innerHTML = "";
+  const featured =
+    networkOverview?.featured_pastor;
+
+  if (!featured) {
+
+    container.innerHTML = `
+      <div class="feature-card">
+
+        <h3>
+          Featured pastor coming soon
+        </h3>
+
+        <p>
+          A featured ministry leader will
+          appear here as the XynaFaith
+          community grows.
+        </p>
+
+      </div>
+    `;
+
     return;
   }
 
-  const featured = [...pastors].sort((a, b) =>
-    Number(b.followers || 0) - Number(a.followers || 0)
-  )[0];
-
   const location =
     featured.location ||
-    [featured.city, featured.state, featured.country].filter(Boolean).join(", ") ||
+    [
+      featured.city,
+      featured.state,
+      featured.country
+    ]
+      .filter(Boolean)
+      .join(", ") ||
     "Global Ministry";
 
-  const coverStyle = featured.cover_image
-    ? `style="background-image: linear-gradient(rgba(15,23,42,.35), rgba(15,23,42,.35)), url('${featured.cover_image}')"`
-    : "";
+  const coverStyle =
+    featured.cover_image
+      ? `
+        style="
+          background-image:
+            linear-gradient(
+              rgba(15,23,42,.35),
+              rgba(15,23,42,.35)
+            ),
+            url('${featured.cover_image}')
+        "
+      `
+      : "";
 
-  const avatarStyle = featured.profile_image
-    ? `style="background-image: url('${featured.profile_image}')"`
-    : "";
+  const avatarStyle =
+    featured.profile_image
+      ? `
+        style="
+          background-image:
+            url('${featured.profile_image}')
+        "
+      `
+      : "";
+
+  const initial =
+    String(
+      featured.name ||
+      "Pastor"
+    )
+      .charAt(0)
+      .toUpperCase();
 
   container.innerHTML = `
     <article class="featured-pastor-card">
 
-      <div class="featured-pastor-cover" ${coverStyle}></div>
+      <div
+        class="featured-pastor-cover"
+        ${coverStyle}
+      ></div>
 
       <div class="featured-pastor-content">
 
-        <div class="featured-pastor-avatar" ${avatarStyle}>
-          ${featured.profile_image ? "" : (featured.name || "P").charAt(0).toUpperCase()}
+        <div
+          class="featured-pastor-avatar"
+          ${avatarStyle}
+        >
+          ${
+            featured.profile_image
+              ? ""
+              : initial
+          }
         </div>
 
         <div class="featured-pastor-info">
-          <span class="eyebrow">⭐ Featured Pastor</span>
-          <h3>${featured.name || "Pastor"}</h3>
-          <p>${featured.church_name || "XynaFaith Ministry"}</p>
+
+          <span class="eyebrow">
+            ⭐ Featured Pastor
+          </span>
+
+          <h3>
+            ${featured.name || "Pastor"}
+          </h3>
+
+          <p>
+            ${
+              featured.church_name ||
+              "XynaFaith Ministry"
+            }
+          </p>
 
           <div class="featured-pastor-meta">
-            <span>📍 ${location}</span>
-            ${featured.denomination ? `<span>✝ ${featured.denomination}</span>` : ""}
-            ${featured.ministry_focus ? `<span>🙏 ${featured.ministry_focus}</span>` : ""}
+
+            <span>
+              📍 ${location}
+            </span>
+
+            ${
+              featured.denomination
+                ? `
+                  <span>
+                    ✝ ${featured.denomination}
+                  </span>
+                `
+                : ""
+            }
+
+            ${
+              featured.ministry_focus
+                ? `
+                  <span>
+                    🙏 ${featured.ministry_focus}
+                  </span>
+                `
+                : ""
+            }
+
           </div>
+
+          <div class="featured-pastor-meta">
+
+            <span>
+              👥 ${Number(
+                featured.followers || 0
+              ).toLocaleString()}
+              followers
+            </span>
+
+            <span>
+              📖 ${Number(
+                featured.sermon_count || 0
+              ).toLocaleString()}
+              sermons
+            </span>
+
+          </div>
+
         </div>
 
         <div class="featured-pastor-actions">
-          <button class="btn-primary" onclick="openPastorProfile(${featured.id})">
+
+          <button
+            type="button"
+            class="btn-primary"
+            onclick="
+              openPastorProfile(
+                ${featured.id}
+              )
+            "
+          >
             View Profile
           </button>
 
           <button
-            class="${featured.is_following ? "btn-secondary" : "btn-primary"}"
-            onclick="${
+            type="button"
+            class="${
               featured.is_following
-                ? `unfollowPastor(${featured.id})`
-                : `followPastor(${featured.id})`
+                ? "btn-secondary"
+                : "btn-primary"
             }"
+            onclick="
+              ${
+                    featured.is_following
+                  ? `unfollowPastor(${featured.id}, this)`
+                  : `followPastor(${featured.id}, this)`
+              }
+            "
           >
-            ${featured.is_following ? "Following" : "Follow"}
+            ${
+              featured.is_following
+                ? "Following"
+                : "Follow"
+            }
           </button>
+
         </div>
 
       </div>
@@ -448,15 +596,58 @@ function renderPastorDirectory(pastors) {
 
   if (!container) return;
 
-  if (!pastors.length) {
-    container.innerHTML = `
-      <div class="feature-card">
-        <h3>No pastors found</h3>
-        <p>Try changing your search or filter.</p>
-      </div>
-    `;
-    return;
-  }
+      if (!pastors.length) {
+
+      const hasActiveSearch =
+        Boolean(
+          window.currentPastorSearch ||
+          activePastorFilter !== "all"
+        );
+
+      container.innerHTML = `
+        <div class="feature-card">
+
+          <h3>
+            ${
+              hasActiveSearch
+                ? "No pastors matched your search"
+                : "No pastors are available yet"
+            }
+          </h3>
+
+          <p>
+            ${
+              hasActiveSearch
+                ? `
+                  Try another name, denomination,
+                  country, church, or ministry focus.
+                `
+                : `
+                  Pastor profiles will appear here
+                  as ministry leaders join XynaFaith.
+                `
+            }
+          </p>
+
+          ${
+            hasActiveSearch
+              ? `
+                <button
+                  type="button"
+                  class="btn-secondary"
+                  onclick="clearPastorDirectorySearch()"
+                >
+                  Clear Search
+                </button>
+              `
+              : ""
+          }
+
+        </div>
+      `;
+
+      return;
+    }
 
   container.innerHTML = `
   ${pastors.map(pastorCardHTML).join("")}
@@ -575,9 +766,10 @@ function pastorCardHTML(pastor) {
           <button
             class="${pastor.is_following ? "btn-secondary" : "btn-primary"}"
             onclick="event.stopPropagation(); ${
-              pastor.is_following
-                ? `unfollowPastor(${pastor.id})`
-                : `followPastor(${pastor.id})`
+                    pastor.is_following
+                      ? `unfollowPastor(${pastor.id}, this)`
+                      : `followPastor(${pastor.id}, this)`
+                  }"
             }"
           >
             ${pastor.is_following ? "Following" : "Follow"}
@@ -1205,7 +1397,6 @@ window.filterPastorDirectory = async function () {
     window.pastorLimit = data.limit;
     window.currentPastorSearch = q;
 
-    renderFeaturedPastor(allPastors);
     renderPastorDirectory(allPastors);
 
   } catch (err) {
@@ -1248,10 +1439,22 @@ window.loadMorePastors = async function () {
 
     const data = await res.json();
 
-    allPastors = [
-      ...allPastors,
-      ...(data.items || [])
-    ];
+  // =====================================
+  // Merge without duplicates
+  // =====================================
+  const existingIds = new Set(
+    allPastors.map(p => p.id)
+  );
+
+  const newPastors =
+    (data.items || []).filter(
+      pastor => !existingIds.has(pastor.id)
+    );
+
+  allPastors = [
+    ...allPastors,
+    ...newPastors
+  ];
 
     window.pastorHasMore = data.has_more;
     window.pastorOffset = data.offset + data.count;
@@ -1265,6 +1468,464 @@ window.loadMorePastors = async function () {
   }
 };
 
+
+// =====================================
+// LOAD NETWORK OVERVIEW
+// =====================================
+async function loadNetworkOverview() {
+
+  try {
+
+    const response =
+      await apiFetch(
+        "/api/v1/network/overview"
+      );
+
+    if (!response.ok) {
+
+      let message =
+        "Unable to load community overview.";
+
+      try {
+
+        const errorData =
+          await response.json();
+
+        message =
+          errorData.detail ||
+          message;
+
+      } catch (_) {
+        // Preserve the default message.
+      }
+
+      throw new Error(message);
+    }
+
+    const data =
+      await response.json();
+
+    networkOverview =
+      data && typeof data === "object"
+        ? data
+        : {};
+
+    const renderers = [
+      {
+        name: "platform stats",
+        run: renderPlatformStats
+      },
+      {
+        name: "featured pastor",
+        run: renderFeaturedPastor
+      },
+      {
+        name: "community activity",
+        run: renderCommunityActivity
+      },
+      {
+        name: "recent prayers",
+        run: renderRecentPrayers
+      },
+      {
+        name: "trending sermons",
+        run: renderTrendingSermons
+      }
+    ];
+
+    renderers.forEach(({ name, run }) => {
+      try {
+        run();
+      } catch (error) {
+        console.error(
+          `Failed to render ${name}:`,
+          error
+        );
+      }
+    });
+
+    return networkOverview;
+
+  } catch (err) {
+
+    console.error(
+      "Network overview error:",
+      err
+    );
+
+    networkOverview = null;
+
+    renderNetworkOverviewError();
+
+    throw err;
+  }
+}
+
+// =====================================
+// PLATFORM STATISTICS
+// =====================================
+function renderPlatformStats() {
+
+  const stats =
+    networkOverview?.platform || {};
+
+  setTextSafe(
+    "networkPastorCount",
+    stats.pastors
+  );
+
+  setTextSafe(
+    "networkMemberCount",
+    stats.members
+  );
+
+  setTextSafe(
+    "networkChurchCount",
+    stats.churches
+  );
+
+  setTextSafe(
+    "networkSermonCount",
+    stats.sermons
+  );
+
+  setTextSafe(
+    "networkPrayerCount",
+    stats.prayers
+  );
+
+  setTextSafe(
+    "networkConnectionCount",
+    stats.connections
+  );
+}
+
+// =====================================
+// COMMUNITY ACTIVITY
+// =====================================
+function renderCommunityActivity() {
+
+  const container =
+    $("communityActivity");
+
+  if (!container) return;
+
+  const activity =
+    Array.isArray(
+      networkOverview?.activity
+    )
+      ? networkOverview.activity
+      : [];
+
+  if (!activity.length) {
+
+    container.innerHTML = `
+      <div class="feature-card">
+
+        <h3>
+          Community activity
+        </h3>
+
+        <p>
+          New community activity will
+          appear here.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    activity.map(item => `
+
+      <div class="activity-card">
+
+        <div class="activity-icon">
+          ${item.icon || "✨"}
+        </div>
+
+        <div class="activity-content">
+
+          <strong>
+            ${
+              item.title ||
+              "Community update"
+            }
+          </strong>
+
+          <p>
+            ${item.description || ""}
+          </p>
+
+          ${
+            item.created_at
+              ? `
+                <small>
+                  ${formatDate(
+                    item.created_at
+                  )}
+                </small>
+              `
+              : ""
+          }
+
+        </div>
+
+      </div>
+
+    `).join("");
+}
+
+// =====================================
+// RECENT PRAYERS
+// =====================================
+function renderRecentPrayers() {
+
+  const container =
+    $("prayerWall");
+
+  if (!container) return;
+
+  const prayers =
+    Array.isArray(
+      networkOverview?.recent_prayers
+    )
+      ? networkOverview.recent_prayers
+      : [];
+
+  if (!prayers.length) {
+
+    container.innerHTML = `
+      <p>
+        No prayer activity yet.
+      </p>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    prayers.map(prayer => `
+
+      <div class="prayer-item">
+
+        <strong>
+          ${
+            prayer.user_name ||
+            "XynaFaith Member"
+          }
+        </strong>
+
+        ${
+          prayer.created_at
+            ? `
+              <small>
+                ${formatDate(
+                  prayer.created_at
+                )}
+              </small>
+            `
+            : ""
+        }
+
+        <p>
+          ${prayer.message || ""}
+        </p>
+
+      </div>
+
+    `).join("");
+}
+
+// =====================================
+// TRENDING SERMONS
+// =====================================
+function renderTrendingSermons() {
+
+  const container =
+    $("trendingSermons");
+
+  // Some versions of the Network page may
+  // still use loadTopSermons() and therefore
+  // may not yet contain this container.
+  if (!container) return;
+
+  const sermons =
+    Array.isArray(
+      networkOverview?.trending_sermons
+    )
+      ? networkOverview.trending_sermons
+      : [];
+
+  if (!sermons.length) {
+
+    container.innerHTML = `
+      <div class="feature-card">
+
+        <h3>
+          No trending sermons yet
+        </h3>
+
+        <p>
+          Popular sermons will appear
+          here as the community engages.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    sermons.map(sermon => `
+
+      <article class="feature-card sermon-feed-card">
+
+        <h3>
+          ${
+            sermon.title ||
+            "Untitled Sermon"
+          }
+        </h3>
+
+        <small>
+          By ${
+            sermon.author_name ||
+            sermon.pastor_name ||
+            "XynaFaith Pastor"
+          }
+        </small>
+
+        ${
+          sermon.scripture
+            ? `
+              <p>
+                ${sermon.scripture}
+              </p>
+            `
+            : ""
+        }
+
+        ${
+          sermon.id
+            ? `
+              <button
+                type="button"
+                class="btn-secondary"
+                onclick="
+                  window.openSermon(
+                    ${sermon.id}
+                  )
+                "
+              >
+                Read Sermon
+              </button>
+            `
+            : ""
+        }
+
+      </article>
+
+    `).join("");
+}
+
+
+// =====================================
+// OVERVIEW ERROR STATE
+// =====================================
+function renderNetworkOverviewError() {
+
+  [
+    "networkPastorCount",
+    "networkMemberCount",
+    "networkChurchCount",
+    "networkSermonCount",
+    "networkPrayerCount",
+    "networkConnectionCount"
+  ].forEach(id => {
+
+    const el = $(id);
+
+    if (el) {
+      el.textContent = "—";
+    }
+  });
+
+  const featured =
+    $("featuredPastor");
+
+  if (featured) {
+
+    featured.innerHTML = `
+      <div class="feature-card">
+
+        <h3>
+          Community overview unavailable
+        </h3>
+
+        <p>
+          The pastor directory may still
+          be available below.
+        </p>
+
+        <button
+          type="button"
+          class="btn-secondary"
+          onclick="window.loadNetworkPage()"
+        >
+          Try Again
+        </button>
+
+      </div>
+    `;
+  }
+
+  const activity =
+    $("communityActivity");
+
+  if (activity) {
+
+    activity.innerHTML = `
+      <p>
+        Community activity could not
+        be loaded.
+      </p>
+    `;
+  }
+}
+
+
+window.clearPastorDirectorySearch =
+  function () {
+
+    const searchInput =
+      $("pastorSearchInput");
+
+    if (searchInput) {
+      searchInput.value = "";
+    }
+
+    activePastorFilter = "all";
+
+    window.currentPastorSearch = "";
+
+    document
+      .querySelectorAll(
+        ".network-filter-row .filter-chip"
+      )
+      .forEach(button => {
+
+        button.classList.toggle(
+          "active",
+          button.dataset.filter === "all"
+        );
+      });
+
+    window.filterPastorDirectory();
+  };
 
 function updatePublicProfileLinkPreview() {
   const slug = ($("profileSlug")?.value || "")
@@ -1303,6 +1964,8 @@ window.copyPublicProfileLink = function () {
   // =====================================
   // GLOBAL EXPORTS
   // =====================================
+  window.loadNetworkOverview =
+    loadNetworkOverview;
 
   window.loadUserInfo =
     loadUserInfo;
@@ -1324,5 +1987,46 @@ window.copyPublicProfileLink = function () {
 
   window.loadPastorProfilePage =
     loadPastorProfilePage;
+
+
+    // =====================================
+// INITIALIZE NETWORK SEARCH
+// =====================================
+function initializeNetworkSearch() {
+
+  const searchInput =
+    $("pastorSearchInput");
+
+  if (!searchInput)
+    return;
+
+  // Prevent duplicate listeners if the page
+  // is initialized more than once.
+  if (searchInput.dataset.initialized)
+    return;
+
+  searchInput.dataset.initialized = "true";
+
+  let debounceTimer;
+
+  searchInput.addEventListener(
+    "input",
+    () => {
+
+      clearTimeout(
+        debounceTimer
+      );
+
+      debounceTimer =
+        setTimeout(() => {
+
+          filterPastorDirectory();
+
+        }, 350);
+
+    }
+  );
+
+}
 
 })();

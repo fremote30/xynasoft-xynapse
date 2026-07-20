@@ -1694,99 +1694,222 @@ async function openSavedSermon(
     }
   }
 
+
   // =====================================
-  // FOLLOW PASTOR
-  // =====================================
-  async function followPastor(
-    pastorId
-  ){
+// FOLLOW PASTOR
+// =====================================
+async function followPastor(
+  pastorId,
+  button = null
+){
 
-    try {
+  let originalText = "";
 
-      const res =
-        await apiFetch(
+  try {
 
-          `/api/v1/pastors/${pastorId}/follow`,
+    // ============================
+    // LOADING STATE
+    // ============================
+    if (button) {
 
-          {
-            method: "POST"
-          }
-        );
+      originalText = button.textContent;
 
-      if(!res.ok){
+      button.disabled = true;
 
-        throw new Error(
-          "Failed to follow pastor"
-        );
-      }
+      button.textContent = "Following...";
 
-      showToast(
-        "Pastor followed",
-        "success"
-      );
-
-      await loadPastors?.();
-
-    } catch(err){
-
-      console.error(
-        "Follow error:",
-        err
-      );
-
-      showToast(
-        "Follow failed",
-        "error"
-      );
     }
+
+    const res =
+      await apiFetch(
+
+        `/api/v1/pastors/${pastorId}/follow`,
+
+        {
+          method: "POST"
+        }
+
+      );
+
+    if (!res.ok) {
+
+      throw new Error(
+        "Failed to follow pastor"
+      );
+
+    }
+
+    showToast(
+      "Pastor followed",
+      "success"
+    );
+
+    // Refresh platform widgets
+    await loadNetworkOverview();
+
+    // ============================
+    // SUCCESS STATE
+    // ============================
+    if (button) {
+
+      button.disabled = false;
+
+      button.textContent = "Following";
+
+      button.classList.remove(
+        "btn-primary"
+      );
+
+      button.classList.add(
+        "btn-secondary"
+      );
+
+      button.onclick = function(event){
+
+        event.stopPropagation();
+
+        unfollowPastor(
+          pastorId,
+          this
+        );
+
+      };
+
+    }
+
+  } catch (err) {
+
+    console.error(
+      "Follow error:",
+      err
+    );
+
+    showToast(
+      "Follow failed",
+      "error"
+    );
+
+    // Restore button
+    if (button) {
+
+      button.disabled = false;
+
+      button.textContent =
+        originalText || "Follow";
+
+    }
+
   }
 
-  // =====================================
-  // UNFOLLOW PASTOR
-  // =====================================
-  async function unfollowPastor(
-    pastorId
-  ){
+}
 
-    try {
+// =====================================
+// UNFOLLOW PASTOR
+// =====================================
+async function unfollowPastor(
+  pastorId,
+  button = null
+){
 
-      const res =
-        await apiFetch(
+  let originalText = "";
 
-          `/api/v1/pastors/${pastorId}/unfollow`,
+  try {
 
-          {
-            method: "DELETE"
-          }
-        );
+    // ============================
+    // LOADING STATE
+    // ============================
+    if (button) {
 
-      if(!res.ok){
+      originalText = button.textContent;
 
-        throw new Error(
-          "Failed to unfollow"
-        );
-      }
+      button.disabled = true;
 
-      showToast(
-        "Pastor unfollowed",
-        "success"
-      );
+      button.textContent = "Unfollowing...";
 
-      await loadPastors?.();
-
-    } catch(err){
-
-      console.error(
-        "Unfollow error:",
-        err
-      );
-
-      showToast(
-        "Unfollow failed",
-        "error"
-      );
     }
+
+    const res =
+      await apiFetch(
+
+        `/api/v1/pastors/${pastorId}/unfollow`,
+
+        {
+          method: "DELETE"
+        }
+
+      );
+
+    if (!res.ok) {
+
+      throw new Error(
+        "Failed to unfollow pastor"
+      );
+
+    }
+
+    showToast(
+      "Pastor unfollowed",
+      "success"
+    );
+
+    // Refresh platform widgets
+    await loadNetworkOverview();
+
+    // ============================
+    // SUCCESS STATE
+    // ============================
+    if (button) {
+
+      button.disabled = false;
+
+      button.textContent = "Follow";
+
+      button.classList.remove(
+        "btn-secondary"
+      );
+
+      button.classList.add(
+        "btn-primary"
+      );
+
+      button.onclick = function(event){
+
+        event.stopPropagation();
+
+        followPastor(
+          pastorId,
+          this
+        );
+
+      };
+
+    }
+
+  } catch (err) {
+
+    console.error(
+      "Unfollow error:",
+      err
+    );
+
+    showToast(
+      "Unfollow failed",
+      "error"
+    );
+
+    // Restore button
+    if (button) {
+
+      button.disabled = false;
+
+      button.textContent =
+        originalText || "Following";
+
+    }
+
   }
+
+}
 
   // =====================================
 // SERMON TABS
