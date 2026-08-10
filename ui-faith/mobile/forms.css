@@ -1,0 +1,114 @@
+/* ==========================================================================
+   XynaFaith Mobile Design System
+   ==========================================================================
+   File:
+       forms.css
+
+   Purpose:
+       Defines reusable form controls used throughout the
+       XynaFaith Mobile application.
+
+   Responsibilities:
+       - Text inputs
+       - Password inputs
+       - Textareas
+       - Labels
+       - Validation messages
+
+   Notes:
+       All forms should use these shared styles.
+   ========================================================================== */
+
+
+/* ==========================================================
+   Form Group
+   ========================================================== */
+
+.xf-form-group {
+
+    margin-bottom: var(--xf-space-lg);
+
+}
+
+
+/* ==========================================================
+   Label
+   ========================================================== */
+
+.xf-label {
+
+    display: block;
+
+    margin-bottom: var(--xf-space-sm);
+
+    font-size: var(--xf-font-size-sm);
+
+    font-weight: var(--xf-font-medium);
+
+    color: var(--xf-text-primary);
+
+}
+
+
+/* ==========================================================
+   Input
+   ========================================================== */
+
+.xf-input {
+
+    width: 100%;
+
+    padding: 14px;
+
+    border: 1px solid var(--xf-border);
+
+    border-radius: var(--xf-radius-md);
+
+    font-size: var(--xf-font-size-md);
+
+    background: var(--xf-white);
+
+    transition: border-color .25s ease;
+
+}
+
+
+/* ==========================================================
+   Input Focus
+   ========================================================== */
+
+.xf-input:focus {
+
+    outline: none;
+
+    border-color: var(--xf-primary);
+
+}
+
+
+/* ==========================================================
+   Textarea
+   ========================================================== */
+
+.xf-textarea {
+
+    min-height: 140px;
+
+    resize: vertical;
+
+}
+
+
+/* ==========================================================
+   Validation Message
+   ========================================================== */
+
+.xf-error {
+
+    margin-top: var(--xf-space-xs);
+
+    color: var(--xf-danger);
+
+    font-size: var(--xf-font-size-xs);
+
+}

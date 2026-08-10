@@ -1,0 +1,745 @@
+.
+├── .dockerignore
+├── .env
+├── .env.example
+├── .gitignore
+├── Dockerfile
+├── PROJECT_TREE_BEFORE_CLEANUP.txt
+├── README.md
+├── ai
+│   ├── __init__.py
+│   ├── embeddings.py
+│   ├── faith
+│   │   ├── __init__.py
+│   │   ├── orchestrator.py
+│   │   └── prompt_templates.py
+│   ├── llm.py
+│   ├── prompts.py
+│   └── retrieval.py
+├── alembic
+│   ├── README
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions
+│       ├── 0003_blobs_store_raw_document_bytes.py
+│       ├── 0004_merge_heads_merge_0003_heads.py
+│       ├── 0005_store_file_blobs_store_raw_file_bytes.py
+│       ├── 0006_create_jobs.py
+│       ├── 0007__add_pgvector_embeddings_to_chunks.py
+│       ├── 036e1d88031b_add_indexes_for_explorer_and_search.py
+│       ├── 1f984ada7955_prayer_network.py
+│       ├── 27cf1b151ccf_add_public_pastor_profile_setting.py
+│       ├── 283725dde09f_add_pastor_profile_visibility.py
+│       ├── 30dec66b204d_add_prayer_wall_engagement_tables.py
+│       ├── 42d472797760_create_jobs_table.py
+│       ├── 510c2647a34e_add_church_metadata_fields.py
+│       ├── 5cc0f473543e_baseline_schema.py
+│       ├── 6c5e27d56ded_store_raw_document_bytes.py
+│       ├── 7cb871b1985e_add_prayer_answer_testimony.py
+│       ├── 7fd1bc5adbd2_xynafaith_launch_readiness.py
+│       ├── aec7c283bd1f_add_scripture_column_to_sermons.py
+│       ├── b470eea6ec7f_upgrade_pastor_profiles.py
+│       ├── b4eff2c1fec7_add_user_name_to_prayers.py
+│       ├── c32676206d78_merge_heads_0006_and_42d.py
+│       ├── c3c8333e8634_add_member_recent_sermons.py
+│       ├── e3d7e3f9897a_add_faith_sermons_and_questions.py
+│       ├── e5a42c69e939_add_member_profiles.py
+│       └── f0f6db5f03db_add_sermon_updated_at.py
+├── alembic.ini
+├── api
+│   ├── __init__.py
+│   ├── core
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── dependencies.py
+│   │   └── security.py
+│   ├── db
+│   │   ├── __init__.py
+│   │   ├── database.py
+│   │   ├── deps.py
+│   │   └── session.py
+│   ├── db.py
+│   ├── ingestion
+│   │   └── __init__.py
+│   ├── middleware
+│   │   ├── __init__.py
+│   │   └── auth_middleware.py
+│   ├── models
+│   │   ├── __init__.py
+│   │   ├── church.py
+│   │   ├── follow.py
+│   │   ├── member_profile.py
+│   │   ├── member_recent_sermon.py
+│   │   ├── pastor.py
+│   │   ├── pastor_follow.py
+│   │   ├── pastor_member.py
+│   │   ├── pastor_profile.py
+│   │   ├── prayer.py
+│   │   ├── refresh_token.py
+│   │   ├── sermon.py
+│   │   ├── sermon_collaborator.py
+│   │   ├── sermon_comment.py
+│   │   ├── shared_sermon.py
+│   │   └── user.py
+│   ├── routes
+│   │   ├── auth.py
+│   │   ├── collaboration_routes.py
+│   │   ├── comment_routes.py
+│   │   ├── dashboard_routes.py
+│   │   ├── faith.py
+│   │   ├── follow_routes.py
+│   │   ├── member_profile.py
+│   │   ├── network.py
+│   │   ├── pastor_profile.py
+│   │   ├── pastors.py
+│   │   ├── prayer_routes.py
+│   │   ├── search.py
+│   │   ├── sermon_routes.py
+│   │   ├── upload.py
+│   │   └── users.py
+│   ├── schemas
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── faith.py
+│   │   └── prayer.py
+│   ├── services
+│   │   ├── __init__.py
+│   │   ├── ai_insights.py
+│   │   ├── ai_service.py
+│   │   ├── auth_service.py
+│   │   ├── dashboard_service.py
+│   │   ├── platform_service.py
+│   │   └── prayer_service.py
+│   ├── utils
+│   │   └── security.py
+│   └── v1
+│       ├── __init__.py
+│       ├── churches
+│       │   └── router.py
+│       ├── discovery
+│       │   └── router.py
+│       ├── faith
+│       │   ├── __init__.py
+│       │   ├── auth
+│       │   │   └── router.py
+│       │   ├── collab
+│       │   │   └── router.py
+│       │   ├── errors.py
+│       │   ├── routes.py
+│       │   ├── schemas.py
+│       │   ├── security.py
+│       │   └── sermon.py
+│       ├── members
+│       │   └── router.py
+│       ├── pastors
+│       │   └── router.py
+│       ├── router.py
+│       └── sermons
+│           └── router.py
+├── audit
+│   └── logger.py
+├── auth
+│   ├── __init__.py
+│   ├── api_key.py
+│   ├── deps.py
+│   └── utils.py
+├── config
+│   └── settings.py
+├── core
+│   ├── config.py
+│   ├── dependencies.py
+│   └── roles.py
+├── docker-compose.yml
+├── docs
+│   └── mobile
+│       ├── ARCHITECTURE.md
+│       ├── CODING_STANDARDS.md
+│       ├── DECISIONS.md
+│       ├── DEVELOPMENT.md
+│       ├── README.md
+│       ├── RELEASE_CHECKLIST.md
+│       ├── ROADMAP.md
+│       ├── STANDARDS.md
+│       └── UI_GUIDELINES.md
+├── extractors
+│   ├── __init__.py
+│   ├── docx.py
+│   ├── eml.py
+│   ├── html.py
+│   ├── ocr.py
+│   ├── pdf.py
+│   ├── registry.py
+│   ├── text.py
+│   └── xlsx.py
+├── faith_input.json
+├── faith_out.json
+├── ingestion
+│   ├── ocr.py
+│   └── pdf_text.py
+├── main.py
+├── mobile
+│   ├── android
+│   │   ├── .gitignore
+│   │   ├── .gradle
+│   │   │   ├── 8.14.3
+│   │   │   │   ├── checksums
+│   │   │   │   │   ├── checksums.lock
+│   │   │   │   │   ├── md5-checksums.bin
+│   │   │   │   │   └── sha1-checksums.bin
+│   │   │   │   ├── expanded
+│   │   │   │   ├── fileChanges
+│   │   │   │   │   └── last-build.bin
+│   │   │   │   ├── fileHashes
+│   │   │   │   │   └── fileHashes.lock
+│   │   │   │   ├── gc.properties
+│   │   │   │   └── vcsMetadata
+│   │   │   ├── buildOutputCleanup
+│   │   │   │   ├── buildOutputCleanup.lock
+│   │   │   │   └── cache.properties
+│   │   │   └── vcs-1
+│   │   │       └── gc.properties
+│   │   ├── app
+│   │   │   ├── .gitignore
+│   │   │   ├── build.gradle
+│   │   │   ├── capacitor.build.gradle
+│   │   │   ├── proguard-rules.pro
+│   │   │   └── src
+│   │   │       ├── androidTest
+│   │   │       │   └── java
+│   │   │       │       └── com
+│   │   │       │           └── getcapacitor
+│   │   │       │               └── myapp
+│   │   │       │                   └── ExampleInstrumentedTest.java
+│   │   │       ├── main
+│   │   │       │   ├── AndroidManifest.xml
+│   │   │       │   ├── assets
+│   │   │       │   │   ├── capacitor.config.json
+│   │   │       │   │   ├── capacitor.plugins.json
+│   │   │       │   │   └── public
+│   │   │       │   │       ├── assets
+│   │   │       │   │       │   ├── favicon.webp
+│   │   │       │   │       │   ├── hero.png
+│   │   │       │   │       │   ├── hero.webp
+│   │   │       │   │       │   ├── logo.jpg
+│   │   │       │   │       │   ├── logo.png
+│   │   │       │   │       │   ├── logo.webp
+│   │   │       │   │       │   ├── mobile.webp
+│   │   │       │   │       │   ├── xynafaith.png
+│   │   │       │   │       │   └── xynasoft-logo.png
+│   │   │       │   │       ├── church.html
+│   │   │       │   │       ├── cordova.js
+│   │   │       │   │       ├── cordova_plugins.js
+│   │   │       │   │       ├── css
+│   │   │       │   │       │   ├── animations.css
+│   │   │       │   │       │   ├── base.css
+│   │   │       │   │       │   ├── cards.css
+│   │   │       │   │       │   ├── dashboard.css
+│   │   │       │   │       │   ├── forms.css
+│   │   │       │   │       │   ├── layout.css
+│   │   │       │   │       │   ├── mobile.css
+│   │   │       │   │       │   ├── navbar.css
+│   │   │       │   │       │   ├── network.css
+│   │   │       │   │       │   ├── prayer.css
+│   │   │       │   │       │   ├── profile.css
+│   │   │       │   │       │   ├── search.css
+│   │   │       │   │       │   ├── sermon.css
+│   │   │       │   │       │   ├── styles.css
+│   │   │       │   │       │   └── variables.css
+│   │   │       │   │       ├── dashboard.js
+│   │   │       │   │       ├── index.html
+│   │   │       │   │       ├── js
+│   │   │       │   │       │   ├── admin.js
+│   │   │       │   │       │   ├── app.js
+│   │   │       │   │       │   ├── collaboration.js
+│   │   │       │   │       │   ├── core.js
+│   │   │       │   │       │   ├── dashboard.js
+│   │   │       │   │       │   ├── error-handler.js
+│   │   │       │   │       │   ├── member-profile.js
+│   │   │       │   │       │   ├── mobile
+│   │   │       │   │       │   │   ├── README.md
+│   │   │       │   │       │   │   ├── app.js
+│   │   │       │   │       │   │   ├── auth.js
+│   │   │       │   │       │   │   ├── biometrics.js
+│   │   │       │   │       │   │   ├── camera.js
+│   │   │       │   │       │   │   ├── config.js
+│   │   │       │   │       │   │   ├── device.js
+│   │   │       │   │       │   │   ├── index.js
+│   │   │       │   │       │   │   ├── logger.js
+│   │   │       │   │       │   │   ├── network.js
+│   │   │       │   │       │   │   ├── notifications.js
+│   │   │       │   │       │   │   ├── platform.js
+│   │   │       │   │       │   │   ├── session.js
+│   │   │       │   │       │   │   ├── share.js
+│   │   │       │   │       │   │   └── storage.js
+│   │   │       │   │       │   ├── network.js
+│   │   │       │   │       │   ├── platform.js
+│   │   │       │   │       │   ├── prayer.js
+│   │   │       │   │       │   ├── recovery.js
+│   │   │       │   │       │   ├── router.js
+│   │   │       │   │       │   ├── search.js
+│   │   │       │   │       │   ├── sermon.js
+│   │   │       │   │       │   └── utils
+│   │   │       │   │       │       ├── auth.js
+│   │   │       │   │       │       ├── loader.js
+│   │   │       │   │       │       ├── modal.js
+│   │   │       │   │       │       ├── storage.js
+│   │   │       │   │       │       └── toast.js
+│   │   │       │   │       ├── layout.html
+│   │   │       │   │       ├── manifest.webmanifest
+│   │   │       │   │       ├── mobile
+│   │   │       │   │       │   ├── README.md
+│   │   │       │   │       │   ├── animations.css
+│   │   │       │   │       │   ├── components.css
+│   │   │       │   │       │   ├── forms.css
+│   │   │       │   │       │   ├── navigation.css
+│   │   │       │   │       │   ├── responsive.css
+│   │   │       │   │       │   └── theme.css
+│   │   │       │   │       ├── pages
+│   │   │       │   │       │   ├── admin-approvals.html
+│   │   │       │   │       │   ├── collab.html
+│   │   │       │   │       │   ├── dashboard.html
+│   │   │       │   │       │   ├── dashboard1.html
+│   │   │       │   │       │   ├── dashboard2.html
+│   │   │       │   │       │   ├── dashboard3.html
+│   │   │       │   │       │   ├── dashboardold.html
+│   │   │       │   │       │   ├── dashboardoriginal.html
+│   │   │       │   │       │   ├── edit-member-profile.html
+│   │   │       │   │       │   ├── edit-profile.html
+│   │   │       │   │       │   ├── edit-sermon.html
+│   │   │       │   │       │   ├── home.html
+│   │   │       │   │       │   ├── home1.html
+│   │   │       │   │       │   ├── login.html
+│   │   │       │   │       │   ├── member-dashboard.html
+│   │   │       │   │       │   ├── my-sermons.html
+│   │   │       │   │       │   ├── my-sermons1.html
+│   │   │       │   │       │   ├── network.html
+│   │   │       │   │       │   ├── olddashboard.html
+│   │   │       │   │       │   ├── oldloginpage.html
+│   │   │       │   │       │   ├── pastor-create.html
+│   │   │       │   │       │   ├── pastor-edit.html
+│   │   │       │   │       │   ├── pastor-profile.html
+│   │   │       │   │       │   ├── pastor.html
+│   │   │       │   │       │   ├── prayer.html
+│   │   │       │   │       │   ├── register.html
+│   │   │       │   │       │   ├── register1.html
+│   │   │       │   │       │   ├── search.html
+│   │   │       │   │       │   ├── sermon-view.html
+│   │   │       │   │       │   ├── sermon-view.js
+│   │   │       │   │       │   ├── sermon.html
+│   │   │       │   │       │   ├── sermon1.html
+│   │   │       │   │       │   └── sermons.js
+│   │   │       │   │       ├── styles.backup.css
+│   │   │       │   │       ├── styles.css
+│   │   │       │   │       ├── styles1.css
+│   │   │       │   │       └── sw.js
+│   │   │       │   ├── java
+│   │   │       │   │   └── com
+│   │   │       │   │       └── xynasoft
+│   │   │       │   │           └── xynafaith
+│   │   │       │   │               └── MainActivity.java
+│   │   │       │   └── res
+│   │   │       │       ├── drawable
+│   │   │       │       │   ├── ic_launcher_background.xml
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-land-hdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-land-mdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-land-xhdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-land-xxhdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-land-xxxhdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-port-hdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-port-mdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-port-xhdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-port-xxhdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-port-xxxhdpi
+│   │   │       │       │   └── splash.png
+│   │   │       │       ├── drawable-v24
+│   │   │       │       │   └── ic_launcher_foreground.xml
+│   │   │       │       ├── layout
+│   │   │       │       │   └── activity_main.xml
+│   │   │       │       ├── mipmap-anydpi-v26
+│   │   │       │       │   ├── ic_launcher.xml
+│   │   │       │       │   └── ic_launcher_round.xml
+│   │   │       │       ├── mipmap-hdpi
+│   │   │       │       │   ├── ic_launcher.png
+│   │   │       │       │   ├── ic_launcher_foreground.png
+│   │   │       │       │   └── ic_launcher_round.png
+│   │   │       │       ├── mipmap-mdpi
+│   │   │       │       │   ├── ic_launcher.png
+│   │   │       │       │   ├── ic_launcher_foreground.png
+│   │   │       │       │   └── ic_launcher_round.png
+│   │   │       │       ├── mipmap-xhdpi
+│   │   │       │       │   ├── ic_launcher.png
+│   │   │       │       │   ├── ic_launcher_foreground.png
+│   │   │       │       │   └── ic_launcher_round.png
+│   │   │       │       ├── mipmap-xxhdpi
+│   │   │       │       │   ├── ic_launcher.png
+│   │   │       │       │   ├── ic_launcher_foreground.png
+│   │   │       │       │   └── ic_launcher_round.png
+│   │   │       │       ├── mipmap-xxxhdpi
+│   │   │       │       │   ├── ic_launcher.png
+│   │   │       │       │   ├── ic_launcher_foreground.png
+│   │   │       │       │   └── ic_launcher_round.png
+│   │   │       │       ├── values
+│   │   │       │       │   ├── ic_launcher_background.xml
+│   │   │       │       │   ├── strings.xml
+│   │   │       │       │   └── styles.xml
+│   │   │       │       └── xml
+│   │   │       │           ├── config.xml
+│   │   │       │           └── file_paths.xml
+│   │   │       └── test
+│   │   │           └── java
+│   │   │               └── com
+│   │   │                   └── getcapacitor
+│   │   │                       └── myapp
+│   │   │                           └── ExampleUnitTest.java
+│   │   ├── build.gradle
+│   │   ├── capacitor-cordova-android-plugins
+│   │   │   ├── build.gradle
+│   │   │   ├── cordova.variables.gradle
+│   │   │   └── src
+│   │   │       └── main
+│   │   │           ├── AndroidManifest.xml
+│   │   │           ├── java
+│   │   │           │   └── .gitkeep
+│   │   │           └── res
+│   │   │               └── .gitkeep
+│   │   ├── capacitor.settings.gradle
+│   │   ├── docs
+│   │   │   └── mobile
+│   │   │       ├── ARCHITECTURE.md
+│   │   │       ├── CODING_STANDARDS.md
+│   │   │       ├── DEVELOPMENT.md
+│   │   │       ├── README.md
+│   │   │       ├── RELEASE_CHECKLIST.md
+│   │   │       ├── ROADMAP.md
+│   │   │       └── UI_GUIDELINES.md
+│   │   ├── gradle
+│   │   │   └── wrapper
+│   │   │       ├── gradle-wrapper.jar
+│   │   │       └── gradle-wrapper.properties
+│   │   ├── gradle.properties
+│   │   ├── gradlew
+│   │   ├── gradlew.bat
+│   │   ├── settings.gradle
+│   │   └── variables.gradle
+│   ├── assets
+│   │   ├── fonts
+│   │   ├── icons
+│   │   ├── images
+│   │   ├── logos
+│   │   └── splash
+│   ├── capacitor.config.json
+│   ├── docs
+│   │   ├── CHANGELOG.md
+│   │   ├── DECISIONS.md
+│   │   ├── ROADMAP.md
+│   │   └── STANDARDS.md
+│   ├── ios
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── src
+│   │   ├── api
+│   │   │   ├── api.js
+│   │   │   ├── client.js
+│   │   │   ├── endpoints.js
+│   │   │   └── interceptors.js
+│   │   ├── app
+│   │   │   ├── app.js
+│   │   │   ├── bootstrap.js
+│   │   │   ├── config.js
+│   │   │   └── constants.js
+│   │   ├── auth
+│   │   │   ├── auth.js
+│   │   │   ├── biometrics.js
+│   │   │   ├── forgot-password
+│   │   │   ├── login
+│   │   │   │   ├── index.html
+│   │   │   │   ├── login.js
+│   │   │   │   └── styles.css
+│   │   │   ├── register
+│   │   │   │   ├── index.html
+│   │   │   │   ├── register.js
+│   │   │   │   └── styles.css
+│   │   │   ├── session.js
+│   │   │   ├── storage.js
+│   │   │   ├── validators.js
+│   │   │   └── verify-email
+│   │   ├── index.html
+│   │   ├── navigation
+│   │   │   ├── bottom-nav.js
+│   │   │   ├── drawer.js
+│   │   │   ├── navigation.js
+│   │   │   └── router.js
+│   │   ├── pages
+│   │   │   ├── dashboard
+│   │   │   │   ├── dashboard.js
+│   │   │   │   ├── index.html
+│   │   │   │   └── styles.css
+│   │   │   ├── home
+│   │   │   │   ├── home.js
+│   │   │   │   ├── index.html
+│   │   │   │   └── styles.css
+│   │   │   ├── network
+│   │   │   │   ├── index.html
+│   │   │   │   ├── network.js
+│   │   │   │   └── styles.css
+│   │   │   ├── prayer
+│   │   │   │   ├── index.html
+│   │   │   │   ├── prayer.js
+│   │   │   │   └── styles.css
+│   │   │   ├── profile
+│   │   │   │   ├── index.html
+│   │   │   │   ├── profile.js
+│   │   │   │   └── styles.css
+│   │   │   ├── sermon
+│   │   │   │   ├── index.html
+│   │   │   │   ├── sermon.js
+│   │   │   │   └── styles.css
+│   │   │   ├── settings
+│   │   │   │   ├── index.html
+│   │   │   │   ├── settings.js
+│   │   │   │   └── styles.css
+│   │   │   └── splash
+│   │   │       ├── index.html
+│   │   │       ├── splash.js
+│   │   │       └── styles.css
+│   │   ├── services
+│   │   │   ├── camera.js
+│   │   │   ├── device.js
+│   │   │   ├── network.js
+│   │   │   ├── notifications.js
+│   │   │   ├── share.js
+│   │   │   └── upload.js
+│   │   ├── state
+│   │   │   ├── app-state.js
+│   │   │   ├── auth-state.js
+│   │   │   └── ui-state.js
+│   │   ├── ui
+│   │   │   ├── components
+│   │   │   ├── dialog.js
+│   │   │   ├── loading.js
+│   │   │   ├── modal.js
+│   │   │   └── toast.js
+│   │   └── utils
+│   │       ├── formatters.js
+│   │       ├── helpers.js
+│   │       ├── logger.js
+│   │       └── validators.js
+│   ├── tests
+│   └── www
+├── pytest.ini
+├── requirements.txt
+├── rules
+├── sample_files
+│   ├── sample.eml
+│   ├── sample.html
+│   ├── sample.xlsx
+│   ├── scanned.pdf
+│   └── scanned.png
+├── schemas
+├── scripts
+│   ├── __init__.py
+│   ├── generate_sample_files.py
+│   ├── genesis
+│   │   ├── __init__.py
+│   │   ├── data
+│   │   │   ├── churches.json
+│   │   │   ├── members.json
+│   │   │   └── pastors.json
+│   │   ├── seed_wave1.py
+│   │   ├── seeders
+│   │   │   ├── __init__.py
+│   │   │   ├── church_seeder.py
+│   │   │   ├── content_seeder.py
+│   │   │   ├── follow_seeder.py
+│   │   │   └── user_seeder.py
+│   │   └── utils.py
+│   ├── genesis_manual_backup
+│   │   ├── __init__.py
+│   │   ├── data
+│   │   │   ├── churches.json
+│   │   │   └── pastors.json
+│   │   ├── seed_wave1.py
+│   │   ├── seeders
+│   │   └── utils.py
+│   ├── sample_files
+│   │   ├── sample.eml
+│   │   ├── sample.html
+│   │   └── sample.xlsx
+│   ├── wait_for_db.py
+│   ├── worker.py
+│   └── xynafaith_genesis_engine.zip
+├── storage
+│   ├── __init__.py
+│   ├── db.py
+│   ├── documents.py
+│   ├── documents_update.py
+│   ├── embeddings.py
+│   ├── faith_questions.py
+│   ├── faith_sermons.py
+│   ├── files.py
+│   ├── init_db.py
+│   ├── jobs.py
+│   ├── queries.py
+│   ├── vector_search.py
+│   └── xynapse.db
+├── test_claude.py
+├── tests
+│   ├── conftest.py
+│   ├── test_health_and_auth.py
+│   └── test_ingest_and_explorer.py
+├── ui
+│   ├── app.js
+│   ├── faith
+│   │   ├── components
+│   │   └── pages
+│   └── index.html
+├── ui-faith
+│   ├── assets
+│   │   ├── favicon.webp
+│   │   ├── hero.png
+│   │   ├── hero.webp
+│   │   ├── logo.jpg
+│   │   ├── logo.png
+│   │   ├── logo.webp
+│   │   ├── mobile.webp
+│   │   ├── xynafaith.png
+│   │   └── xynasoft-logo.png
+│   ├── church.html
+│   ├── css
+│   │   ├── animations.css
+│   │   ├── base.css
+│   │   ├── cards.css
+│   │   ├── dashboard.css
+│   │   ├── forms.css
+│   │   ├── layout.css
+│   │   ├── mobile.css
+│   │   ├── navbar.css
+│   │   ├── network.css
+│   │   ├── prayer.css
+│   │   ├── profile.css
+│   │   ├── search.css
+│   │   ├── sermon.css
+│   │   ├── styles.css
+│   │   └── variables.css
+│   ├── dashboard.js
+│   ├── index.html
+│   ├── js
+│   │   ├── admin.js
+│   │   ├── app.js
+│   │   ├── collaboration.js
+│   │   ├── core.js
+│   │   ├── dashboard.js
+│   │   ├── error-handler.js
+│   │   ├── member-profile.js
+│   │   ├── mobile
+│   │   │   ├── README.md
+│   │   │   ├── app.js
+│   │   │   ├── auth.js
+│   │   │   ├── biometrics.js
+│   │   │   ├── camera.js
+│   │   │   ├── config.js
+│   │   │   ├── device.js
+│   │   │   ├── index.js
+│   │   │   ├── logger.js
+│   │   │   ├── network.js
+│   │   │   ├── notifications.js
+│   │   │   ├── platform.js
+│   │   │   ├── session.js
+│   │   │   ├── share.js
+│   │   │   └── storage.js
+│   │   ├── network.js
+│   │   ├── platform.js
+│   │   ├── prayer.js
+│   │   ├── recovery.js
+│   │   ├── router.js
+│   │   ├── search.js
+│   │   ├── sermon.js
+│   │   └── utils
+│   │       ├── auth.js
+│   │       ├── loader.js
+│   │       ├── modal.js
+│   │       ├── storage.js
+│   │       └── toast.js
+│   ├── layout.html
+│   ├── manifest.webmanifest
+│   ├── mobile
+│   │   ├── README.md
+│   │   ├── animations.css
+│   │   ├── components.css
+│   │   ├── forms.css
+│   │   ├── navigation.css
+│   │   ├── responsive.css
+│   │   └── theme.css
+│   ├── pages
+│   │   ├── admin-approvals.html
+│   │   ├── collab.html
+│   │   ├── dashboard.html
+│   │   ├── dashboard1.html
+│   │   ├── dashboard2.html
+│   │   ├── dashboard3.html
+│   │   ├── dashboardold.html
+│   │   ├── dashboardoriginal.html
+│   │   ├── edit-member-profile.html
+│   │   ├── edit-profile.html
+│   │   ├── edit-sermon.html
+│   │   ├── home.html
+│   │   ├── home1.html
+│   │   ├── login.html
+│   │   ├── member-dashboard.html
+│   │   ├── my-sermons.html
+│   │   ├── my-sermons1.html
+│   │   ├── network.html
+│   │   ├── olddashboard.html
+│   │   ├── oldloginpage.html
+│   │   ├── pastor-create.html
+│   │   ├── pastor-edit.html
+│   │   ├── pastor-profile.html
+│   │   ├── pastor.html
+│   │   ├── prayer.html
+│   │   ├── register.html
+│   │   ├── register1.html
+│   │   ├── search.html
+│   │   ├── sermon-view.html
+│   │   ├── sermon-view.js
+│   │   ├── sermon.html
+│   │   ├── sermon1.html
+│   │   └── sermons.js
+│   ├── styles.backup.css
+│   ├── styles.css
+│   ├── styles1.css
+│   └── sw.js
+├── utils
+│   ├── __init__.py
+│   ├── auth.js
+│   └── chunking.py
+└── verticals
+    └── faith
+        ├── README.md
+        ├── __init__.py
+        ├── prompts
+        │   ├── manuscript_prompt.py
+        │   └── sermon_prompt.py
+        ├── rules
+        │   └── guardrails.py
+        ├── schemas
+        │   ├── public_share.py
+        │   ├── sermon_input.py
+        │   ├── sermon_manuscript.py
+        │   └── sermon_output.py
+        ├── services
+        │   ├── sermon_service.py
+        │   └── share_service.py
+        └── storage
+            └── public_store.py
+
+166 directories, 577 files

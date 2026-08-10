@@ -1,0 +1,151 @@
+/* ==========================================================================
+   XynaFaith Mobile Design System
+   ==========================================================================
+   File:
+       components.css
+
+   Purpose:
+       Defines reusable UI components used throughout the
+       XynaFaith Mobile application.
+
+   Components:
+       - Buttons
+       - Cards
+       - Badges
+       - Avatars
+       - Section Headers
+       - Containers
+
+   Notes:
+       All components should reference variables defined in
+       theme.css.
+
+   ========================================================================== */
+
+
+/* ==========================================================
+   Page Container
+   ========================================================== */
+
+.xf-container {
+    padding: var(--xf-space-md);
+}
+
+
+/* ==========================================================
+   Card
+   ========================================================== */
+
+.xf-card {
+    background: var(--xf-white);
+    border-radius: var(--xf-radius-md);
+    box-shadow: var(--xf-shadow-card);
+    padding: var(--xf-space-md);
+    margin-bottom: var(--xf-space-md);
+}
+
+
+/* ==========================================================
+   Section Title
+   ========================================================== */
+
+.xf-section-title {
+
+    font-size: var(--xf-font-size-lg);
+
+    font-weight: var(--xf-font-bold);
+
+    color: var(--xf-text-primary);
+
+    margin-bottom: var(--xf-space-md);
+}
+
+
+/* ==========================================================
+   Primary Button
+   ========================================================== */
+
+.xf-btn-primary {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: var(--xf-primary);
+
+    color: var(--xf-white);
+
+    border: none;
+
+    border-radius: var(--xf-radius-md);
+
+    padding: 12px 20px;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+
+.xf-btn-primary:hover {
+
+    background: var(--xf-primary-dark);
+}
+
+
+/* ==========================================================
+   Secondary Button
+   ========================================================== */
+
+.xf-btn-secondary {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: transparent;
+
+    color: var(--xf-primary);
+
+    border: 2px solid var(--xf-primary);
+
+    border-radius: var(--xf-radius-md);
+
+    padding: 12px 20px;
+
+    cursor: pointer;
+
+    transition: .25s;
+}
+
+
+.xf-btn-secondary:hover {
+
+    background: var(--xf-primary-light);
+}
+
+
+/* ==========================================================
+   Badge
+   ========================================================== */
+
+.xf-badge {
+
+    display: inline-block;
+
+    padding: 4px 10px;
+
+    border-radius: 999px;
+
+    background: var(--xf-primary-light);
+
+    color: var(--xf-primary);
+
+    font-size: var(--xf-font-size-xs);
+
+    font-weight: var(--xf-font-bold);
+}

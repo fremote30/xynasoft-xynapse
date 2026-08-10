@@ -1,0 +1,101 @@
+/* ==========================================================================
+   XynaFaith Mobile Design System
+   ==========================================================================
+   File:
+       theme.css
+
+   Purpose:
+       Defines the global design tokens used throughout the XynaFaith
+       mobile application.
+
+   Responsibilities:
+       - Brand colors
+       - Typography
+       - Spacing
+       - Border radius
+       - Shadows
+       - Animation timing
+       - Z-index layers
+
+   Notes:
+       All mobile styles should reference these variables instead of
+       hardcoding values.
+
+   ========================================================================== */
+
+:root {
+
+    /* ==========================================================
+       Brand Colors
+       ========================================================== */
+
+    --xf-primary: #2563eb;
+    --xf-primary-dark: #1d4ed8;
+    --xf-primary-light: #dbeafe;
+
+    --xf-white: #ffffff;
+    --xf-background: #f8fafc;
+
+    --xf-text-primary: #1e293b;
+    --xf-text-secondary: #64748b;
+
+    --xf-border: #e2e8f0;
+
+    --xf-success: #16a34a;
+    --xf-warning: #d97706;
+    --xf-danger: #dc2626;
+
+    /* ==========================================================
+       Typography
+       ========================================================== */
+
+    --xf-font-family:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    --xf-font-size-xs: 12px;
+    --xf-font-size-sm: 14px;
+    --xf-font-size-md: 16px;
+    --xf-font-size-lg: 20px;
+    --xf-font-size-xl: 28px;
+
+    /* ==========================================================
+       Font Weights
+       ========================================================== */
+
+    --xf-font-light: 300;
+    --xf-font-normal: 400;
+    --xf-font-medium: 500;
+    --xf-font-bold: 700;
+
+    /* ==========================================================
+       Spacing
+       ========================================================== */
+
+    --xf-space-xs: 4px;
+    --xf-space-sm: 8px;
+    --xf-space-md: 16px;
+    --xf-space-lg: 24px;
+    --xf-space-xl: 32px;
+
+    /* ==========================================================
+       Border Radius
+       ========================================================== */
+
+    --xf-radius-sm: 8px;
+    --xf-radius-md: 12px;
+    --xf-radius-lg: 18px;
+
+    /* ==========================================================
+       Shadows
+       ========================================================== */
+
+    --xf-shadow-card:
+        0 2px 10px rgba(0,0,0,.08);
+
+    --xf-shadow-modal:
+        0 12px 30px rgba(0,0,0,.15);
+
+}
