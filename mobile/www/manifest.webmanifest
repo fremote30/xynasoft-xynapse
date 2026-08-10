@@ -1,0 +1,21 @@
+{
+  "name": "XynaFaith",
+  "short_name": "XynaFaith",
+  "start_url": "/faith/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "description": "Global platform for pastors to collaborate, prepare sermons, and share ministry resources.",
+  "icons": [
+    {
+      "src": "/faith/assets/xynasoft-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/faith/assets/xynasoft-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,431 @@
+<div class="app clean-app">
+  <div class="clean-main">
+
+    <!-- HERO -->
+    <section class="simple-hero member-dashboard-hero">
+      <div class="hero-content">
+
+        <div class="hero-top-row">
+
+              <div class="member-hero-info">
+
+                <div class="member-hero-top">
+
+                  <div
+                    id="memberDashboardAvatar"
+                    class="member-dashboard-avatar"
+                  >
+                    M
+                  </div>
+
+                  <div>
+
+                    <span class="eyebrow">
+                      Your Faith Journey
+                    </span>
+
+                    <h1 class="hero-title">
+                      Welcome back,
+                      <span
+                        class="highlight"
+                        id="userName"
+                      >
+                        User
+                      </span>
+                    </h1>
+
+                    <p
+                      id="memberDashboardLocation"
+                      class="hero-sub"
+                    >
+                      🌎 Growing in faith every day.
+                    </p>
+
+                    <div
+                      id="memberFavoriteVerse"
+                      class="member-favorite-scripture"
+                    >
+                      📖 Favorite Scripture will appear here.
+                    </div>
+
+                    <div class="pastor-status-wrapper">
+                      <span
+                        id="pastorStatusBadge"
+                        class="status-badge"
+                      >
+                        Member
+                      </span>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div id="pastorUpgradeContainer">
+
+                <div
+                  id="pastorUpgradeCard"
+                  class="member-upgrade-card"
+                >
+
+                  <h3 id="pastorCardTitle">
+                    Become a Pastor
+                  </h3>
+
+                  <p id="pastorUpgradeMessage">
+                    Apply for pastor verification to access advanced sermon tools,
+                    ministry collaboration, and verified pastor features.
+                  </p>
+
+                  <button
+                    class="btn-primary pastor-upgrade-btn"
+                    id="upgradePastorBtn"
+                  >
+                    ✨ Apply for Pastor Access
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="navigate('network')">
+            🌐 Explore Pastors
+          </button>
+
+          <button class="btn-secondary" onclick="navigate('prayer')">
+            🙏 Prayer Wall
+          </button>
+
+          <button class="btn-secondary" onclick="navigate('sermon')">
+            ✍️ Try Sermon Studio
+          </button>
+
+          <button
+            class="btn-secondary"
+            onclick="navigate('edit-member-profile')"
+          >
+            👤 Edit Profile
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MEMBER CONTENT -->
+    <section class="features member-dashboard-section">
+
+      <!-- =========================================
+     CONTINUE YOUR JOURNEY
+========================================= -->
+
+<div class="features-header">
+
+  <h2>Continue Your Journey</h2>
+
+  <p>
+    Pick up where you left off and continue growing in faith.
+  </p>
+
+</div>
+
+              <div class="journey-grid">
+
+                <!-- Continue Praying -->
+                <div class="journey-card">
+
+                  <div class="journey-icon">
+                    🙏
+                  </div>
+
+                  <h3>Continue Praying</h3>
+
+                  <p>
+                    Resume your active prayer requests and celebrate answered prayers.
+                  </p>
+
+                  <button
+                    class="btn-secondary"
+                    onclick="navigate('prayer')"
+                  >
+                    Open Prayer Wall
+                  </button>
+
+                </div>
+
+                <!-- Saved Sermons -->
+                <div class="journey-card">
+
+                  <div class="journey-icon">
+                    📖
+                  </div>
+
+                  <h3>Saved Sermons</h3>
+
+                  <p>
+                    Continue reading messages you've saved for later.
+                  </p>
+
+                  <button
+                    class="btn-secondary"
+                    onclick="navigate('mysermons')"
+                  >
+                    View Saved
+                  </button>
+
+                </div>
+
+                <!-- Latest From Pastors -->
+                <div class="journey-card">
+
+                  <div class="journey-icon">
+                    ⛪
+                  </div>
+
+                  <h3>Your Pastors</h3>
+
+                  <p>
+                    Discover the newest sermons and ministry updates.
+                  </p>
+
+                  <button
+                    class="btn-secondary"
+                    onclick="navigate('network')"
+                  >
+                    View Pastors
+                  </button>
+
+                </div>
+
+                <!-- Daily Scripture -->
+                <div class="journey-card">
+
+                  <div class="journey-icon">
+                    ✨
+                  </div>
+
+                  <h3>Daily Scripture</h3>
+
+                  <p id="dailyVersePreview">
+
+                    Start each day encouraged by God's Word.
+
+                  </p>
+
+                  <button
+                    class="btn-secondary"
+                    onclick="navigate('sermon')"
+                  >
+                    Open Sermon Studio
+                  </button>
+
+                </div>
+
+              </div>
+              <!-- =========================================
+                  LATEST FROM YOUR PASTORS
+              ========================================= -->
+
+              <div class="features-header">
+                <h2>Latest From Your Pastors</h2>
+
+                <p>
+                  New sermons and ministry updates from pastors you follow.
+                </p>
+              </div>
+
+              <div
+                id="memberFeed"
+                class="feed-grid member-feed-panel"
+              >
+                <p>Loading feed...</p>
+              </div>
+
+
+        <!-- =========================================
+            GROW YOUR FAITH
+        ========================================= -->
+        <div class="features-header">
+          <h2>Grow Your Faith</h2>
+
+          <p>
+            Discover pastors, sermons, insights, and community experiences
+            that support your spiritual growth.
+          </p>
+        </div>
+
+      <div class="feature-grid member-discover-grid">
+
+        <div class="feature-card member-action-card" onclick="navigate('network')">
+          <div class="icon">🌐</div>
+          <h3>Find Pastors</h3>
+          <p>Discover and follow pastors across the XynaFaith community.</p>
+          <button class="btn-secondary">Explore Network</button>
+        </div>
+
+        <div class="feature-card member-action-card">
+          <div class="icon">🔥</div>
+          <h3>Trending Sermons</h3>
+          <div id="topSermons">
+            <p>Loading...</p>
+          </div>
+        </div>
+
+        <div class="feature-card member-action-card">
+          <div class="icon">💡</div>
+          <h3>Faith Insights</h3>
+          <div id="aiInsights">
+            <p>Analyzing...</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ACTIVITY -->
+      <!-- =========================================
+          YOUR ACTIVITY
+      ========================================= -->
+      <div class="features-header">
+        <h2>Your Activity</h2>
+
+        <p>
+          See how you are engaging with pastors, sermons, and prayer.
+        </p>
+      </div>
+
+      <div class="member-activity-grid">
+
+        <div class="feature-card dashboard-stats-card">
+          <h3>👥 Pastors Following</h3>
+          <p id="followingPastorsCount">0</p>
+          <span>Your ministry network</span>
+        </div>
+
+        <div class="feature-card dashboard-stats-card">
+          <h3>🔖 Saved Sermons</h3>
+          <p id="savedSermonsCount">0</p>
+          <span>Messages saved for later</span>
+        </div>
+
+        <div class="feature-card dashboard-stats-card">
+          <h3>🙏 Prayer Requests</h3>
+          <p id="memberPrayerCount">0</p>
+          <span>Prayers you have submitted</span>
+        </div>
+
+        <div class="feature-card dashboard-stats-card">
+          <h3>🎉 Answered Prayers</h3>
+          <p id="memberAnsweredPrayerCount">0</p>
+          <span>Testimonies in your prayer journey</span>
+        </div>
+
+      </div>
+
+      <!-- =========================================
+          SUGGESTED PASTORS
+      ========================================= -->
+      <div class="features-header">
+        <h2>Suggested Pastors</h2>
+
+        <p>
+          Discover pastors whose ministries may support your faith journey.
+        </p>
+      </div>
+
+      <div
+        id="suggestedPastors"
+        class="feature-grid suggested-pastors-grid"
+      >
+        <div class="feature-card">
+          <p>Loading pastor suggestions...</p>
+        </div>
+      </div>
+
+        <!-- =========================================
+            CONTINUE READING
+        ========================================= -->
+        <div class="features-header">
+          <h2>Continue Reading</h2>
+
+          <p>
+            Pick up a sermon you recently opened or discover a recommended message.
+          </p>
+        </div>
+
+        <div
+          id="continueReadingSection"
+          class="continue-reading-section"
+        >
+          <div class="feature-card">
+            <p>Loading sermon...</p>
+          </div>
+        </div>
+
+      <!-- PRAYER WALL FLAGSHIP -->
+      <div class="dashboard-prayer-section member-prayer-section">
+
+        <div class="dashboard-prayer-copy">
+          <span class="eyebrow">Community Prayer</span>
+
+          <h2>Pray, support, and celebrate answered prayers.</h2>
+
+          <p>
+            Share prayer requests, encourage others, and stay connected with the faith community throughout the week.
+          </p>
+        </div>
+
+        <div class="feature-card prayer-wall-card dashboard-prayer-widget dashboard-prayer-wide">
+
+          <div class="dashboard-prayer-header">
+            <div>
+              <div class="icon">🙏</div>
+              <h3>Prayer Wall</h3>
+              <p>Pray with the XynaFaith community today.</p>
+            </div>
+          </div>
+
+          <div class="dashboard-prayer-stats">
+            <div>
+      
+      
+              <strong id="dashboardPrayerTotal">0</strong>
+              <span>Total</span>
+            </div>
+
+            <div>
+              <strong id="dashboardPrayerAnswered">0</strong>
+              <span>Answered</span>
+            </div>
+
+            <div>
+              <strong id="dashboardPrayerToday">0</strong>
+              <span>Praying Today</span>
+            </div>
+          </div>
+
+          <div id="prayerWall" class="dashboard-prayer-list">
+            <p>Loading prayers...</p>
+          </div>
+
+          <div class="dashboard-prayer-actions">
+            <button class="btn-primary" onclick="navigate('prayer')">
+              Open Prayer Wall
+            </button>
+
+            <button class="btn-secondary" onclick="navigate('prayer')">
+              Submit Prayer
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+</div>
