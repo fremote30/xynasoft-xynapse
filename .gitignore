@@ -10,3 +10,8 @@ storage/*.db
 scripts/genesis_manual_backup/
 scripts/*.zip
 ui-faith/*.backup.css
+# ============================================================================
+# Mobile
+# ============================================================================
+
+mobile/node_modules/
