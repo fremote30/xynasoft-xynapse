@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">XynaFaith</string>
-    <string name="title_activity_main">XynaFaith</string>
-    <string name="package_name">com.xynasoft.xynafaith</string>
-    <string name="custom_url_scheme">com.xynasoft.xynafaith</string>
-</resources>
