@@ -14,4 +14,12 @@ ui-faith/*.backup.css
 # Mobile
 # ============================================================================
 
-mobile/node_modules/
+# Mobile
+mobile/node_modules
+mobile/android/.gradle
+mobile/android/build
+mobile/ios/DerivedData
+mobile/ios/App/build
+
+# Capacitor
+mobile/android/app/build
