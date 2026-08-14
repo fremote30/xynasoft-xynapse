@@ -1215,3 +1215,25 @@
   }
 
 }
+
+@media (max-width:768px){
+
+    .simple-hero{
+
+        padding:80px 20px 60px;
+
+    }
+
+    .hero-title{
+
+        font-size:36px;
+
+    }
+
+    .hero-sub{
+
+        font-size:17px;
+
+    }
+
+}

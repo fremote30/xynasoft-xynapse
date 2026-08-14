@@ -293,9 +293,22 @@ try {
 
     // =====================================
     // FIND ROUTE
+    // MOBILE SAFE
     // =====================================
-    const route = routes[page];
 
+    let route = routes[page];
+
+    if (window.Assets && route) {
+
+        if (route.startsWith("/faith/pages/")) {
+
+            route = Assets.page(
+                route.replace("/faith/pages/", "")
+            );
+
+        }
+
+    }
     if (!route) {
       const app = $("app");
 

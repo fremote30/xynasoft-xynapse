@@ -1237,3 +1237,15 @@
     }
 
 }
+
+/* ==========================================
+   Keyboard
+========================================== */
+
+body.keyboard-open {
+
+    padding-bottom: 300px;
+
+    transition: padding .25s ease;
+
+}

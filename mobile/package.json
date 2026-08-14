@@ -1,15 +1,15 @@
 {
-  "name": "mobile",
+  "name": "xynafaith-mobile",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "XynaFaith Mobile",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "copy": "node scripts/copy-ui.js",
+    "sync": "npm run copy && npx cap sync",
+    "android": "npm run sync && npx cap open android",
+    "ios": "npm run sync && npx cap open ios",
+    "clean": "rm -rf www && mkdir www"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "@capacitor/android": "^8.5.0",
     "@capacitor/app": "^8.1.1",
@@ -19,6 +19,7 @@
     "@capacitor/device": "^8.0.3",
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/ios": "^8.5.0",
+    "@capacitor/keyboard": "^8.0.5",
     "@capacitor/network": "^8.0.1",
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/push-notifications": "^8.1.2",
