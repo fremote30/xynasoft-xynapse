@@ -5,13 +5,21 @@
 window.getToken =
   function () {
 
+    if (window.MobileAuthService) {
+      return MobileAuthService.getToken();
+    }
+
     return localStorage.getItem(
       "access_token"
     );
   };
 
 window.setToken =
-  function (token) {
+  async function (token) {
+
+    if (window.MobileAuthService) {
+      return await MobileAuthService.saveToken(token);
+    }
 
     localStorage.setItem(
       "access_token",
@@ -20,7 +28,11 @@ window.setToken =
   };
 
 window.removeToken =
-  function () {
+  async function () {
+
+    if (window.MobileAuthService) {
+      return await MobileAuthService.removeToken();
+    }
 
     localStorage.removeItem(
       "access_token"
@@ -75,6 +87,55 @@ window.apiFetch =
     options = {}
   ) {
 
+    // =================================
+    // MOBILE SDK
+    // =================================
+
+    if (window.MobileApi) {
+
+      const method =
+        (options.method || "GET").toUpperCase();
+
+      switch (method) {
+
+        case "POST":
+
+          return MobileApi.post(
+            url,
+            options.body
+              ? JSON.parse(options.body)
+              : {}
+          );
+
+        case "PUT":
+
+          return MobileApi.put(
+            url,
+            options.body
+              ? JSON.parse(options.body)
+              : {}
+          );
+
+        case "DELETE":
+
+          return MobileApi.delete(
+            url
+          );
+
+        default:
+
+          return MobileApi.get(
+            url
+          );
+
+      }
+
+    }
+
+    // =================================
+    // WEB FALLBACK
+    // =================================
+
     const headers = {
 
       "Content-Type":
@@ -83,14 +144,20 @@ window.apiFetch =
       ...getAuthHeaders(),
 
       ...(options.headers || {})
+
     };
 
-    return fetch(url, {
+    return fetch(
+      url,
+      {
 
-      ...options,
+        ...options,
 
-      headers
-    });
+        headers
+
+      }
+    );
+
   };
 
 
@@ -119,10 +186,9 @@ window.handleAuthSuccess =
     // =========================
     // SAVE TOKEN
     // =========================
-    setToken(
+    await setToken(
       data.access_token
     );
-
     // =========================
     // FETCH USER
     // =========================
@@ -204,8 +270,7 @@ window.logout =
       // =========================
       // CLEAR AUTH
       // =========================
-      removeToken();
-
+      await removeToken();
       localStorage.removeItem(
         "user"
       );

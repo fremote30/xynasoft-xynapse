@@ -103,7 +103,7 @@
 
         await initializeService(
             "Keyboard Service",
-            window.XynaKeyboard
+            window.KeyboardService
         );
 
         await initializeService(
