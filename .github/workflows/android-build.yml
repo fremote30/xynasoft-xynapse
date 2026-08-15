@@ -1,0 +1,55 @@
+name: XynaFaith Android Build
+
+on:
+  push:
+    branches:
+      - feature/mobile-app
+
+  workflow_dispatch:
+
+jobs:
+
+  android-build:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: mobile
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build Mobile Assets
+        run: npm run copy
+
+      - name: Capacitor Sync
+        run: npx cap sync android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: xynafaith-debug-apk
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
