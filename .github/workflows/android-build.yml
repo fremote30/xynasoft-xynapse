@@ -31,11 +31,11 @@ jobs:
         run: npm install
 
       - name: Create Firebase Configuration
-      shell: bash
-      run: |
-        cat > android/app/google-services.json <<'EOF'
-        ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
-        EOF
+        shell: bash
+        run: |
+          cat > android/app/google-services.json <<EOF
+          ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
+          EOF
 
       - name: Setup Java
         uses: actions/setup-java@v4
