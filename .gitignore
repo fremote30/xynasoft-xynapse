@@ -23,3 +23,9 @@ mobile/ios/App/build
 
 # Capacitor
 mobile/android/app/build
+
+# Firebase
+mobile/android/app/google-services.json
+
+# Apple Firebase (future)
+mobile/ios/App/App/GoogleService-Info.plist
