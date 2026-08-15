@@ -135,10 +135,18 @@
             window.ShareService
         );
 
-        await initializeService(
-            "Notification Service",
-            window.NotificationService
-        );
+        // -------------------------------------------------
+        // Notifications
+        //
+        // Temporarily disabled during startup.
+        //
+        // Will initialize after user login/dashboard.
+        // -------------------------------------------------
+
+        // await initializeService(
+        //     "Notification Service",
+        //     window.NotificationService
+        // );
 
         await initializeService(
             "Authentication Service",
