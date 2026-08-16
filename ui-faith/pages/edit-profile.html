@@ -41,9 +41,14 @@
             </div>
 
             <div class="media-upload-row">
-              <div class="avatar-upload-card" onclick="document.getElementById('profileImageFile').click()">
+              <div class="avatar-upload-card" onclick="choosePastorProfilePhoto()">
                 <div id="avatarUploadPreview" class="avatar-upload-preview">P</div>
-                <button type="button" class="camera-pill">📷</button>
+                <button
+                  type="button"
+                  class="camera-pill"
+                  aria-label="Take profile photo"
+                  onclick="event.stopPropagation(); takePastorProfilePhoto()"
+                >📷</button>
                 <strong>Pastor Photo</strong>
                 <small>Recommended 400×400</small>
               </div>

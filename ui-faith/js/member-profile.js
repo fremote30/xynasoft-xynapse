@@ -405,12 +405,13 @@
   // MEMBER IMAGE UPLOAD
   // =====================================
   window.uploadMemberProfileImage =
-    async function () {
+    async function (providedFile = null) {
 
     const fileInput =
       $("memberProfileImageFile");
 
     const file =
+      providedFile ||
       fileInput?.files?.[0];
 
     if (!file) return;
