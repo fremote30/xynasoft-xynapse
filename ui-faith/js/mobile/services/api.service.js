@@ -28,7 +28,10 @@
 
             this.timeout = 30000;
 
-            this.baseUrl = "";
+            this.baseUrl =
+                window.XynaPlatform?.isMobile
+                    ? "https://xynafaith.com"
+                    : "";
 
         }
 

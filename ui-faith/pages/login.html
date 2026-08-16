@@ -5,7 +5,7 @@
     <div class="auth-card">
 
       <img
-        src="/faith/assets/xynafaith.png"
+        src="assets/xynafaith.png"
         class="auth-logo"
         alt="XynaFaith Logo"
       >
@@ -135,40 +135,3 @@
 <!-- =========================
      LOGIN LOGIC (SAFE)
 ========================= -->
-<script>
-document.getElementById("loginForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-
-  const errorEl = document.getElementById("loginError");
-  errorEl.style.display = "none";
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  try {
-    const res = await fetch("/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.detail || "Login failed");
-    }
-
-    // ✅ STORE TOKEN
-    localStorage.setItem("access_token", data.access_token);
-
-    // ✅ REDIRECT
-    navigate("dashboard");
-
-  } catch (err) {
-    errorEl.innerText = err.message;
-    errorEl.style.display = "block";
-  }
-});
-</script>
