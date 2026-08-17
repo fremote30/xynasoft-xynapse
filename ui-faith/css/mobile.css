@@ -1243,11 +1243,15 @@
 ========================================== */
 
 body.keyboard-open {
+    padding-bottom: 0 !important;
+}
 
-    padding-bottom: 300px;
+body.keyboard-open .mobile-bottom-nav {
+    display: none !important;
+}
 
-    transition: padding .25s ease;
-
+body.keyboard-open #app {
+    padding-bottom: 16px;
 }
 
 /* =========================================================
