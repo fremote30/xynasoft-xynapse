@@ -92,6 +92,11 @@ window.protectedRoutes = [
   // =====================================
   window.isNavigating = false;
 
+  window.__navigationStack =
+    window.__navigationStack || [];
+
+  window.__isBackNavigation = false;
+
   let __navRequestId = 0;
 
   // =====================================
@@ -198,6 +203,9 @@ window.protectedRoutes = [
 async function navigate(page) {
 
   const requestId = ++__navRequestId;
+
+  const previousPage =
+    window.currentPage || null;
 
   // =====================================
   // PREVENT DOUBLE NAVIGATION
@@ -388,6 +396,29 @@ try {
     }
 
     window.currentPage = page;
+
+    // =====================================
+    // SPA NAVIGATION HISTORY
+    // =====================================
+    if (
+      !window.__isBackNavigation &&
+      previousPage &&
+      previousPage !== page
+    ) {
+      window.__navigationStack.push(
+        previousPage
+      );
+
+      // Keep history bounded.
+      if (
+        window.__navigationStack.length >
+        30
+      ) {
+        window.__navigationStack.shift();
+      }
+    }
+
+    window.__isBackNavigation = false;
 
     // =====================================
     // NAVBAR
