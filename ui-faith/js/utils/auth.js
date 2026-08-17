@@ -119,7 +119,10 @@ window.apiFetch =
         case "DELETE":
 
           return MobileApi.delete(
-            url
+            url,
+            options.body
+              ? JSON.parse(options.body)
+              : null
           );
 
         default:
@@ -238,6 +241,16 @@ window.handleAuthSuccess =
     );
 
     // =========================
+    // SYNC MOBILE PUSH DEVICE
+    // =========================
+    if (
+      window.NotificationService &&
+      typeof NotificationService.syncToken === "function"
+    ) {
+      await NotificationService.syncToken();
+    }
+
+    // =========================
     // ROUTE
     // =========================
     if (
@@ -266,6 +279,17 @@ window.logout =
   async function () {
 
     try {
+
+      // =========================
+      // DEACTIVATE PUSH DEVICE
+      // Must happen before access token removal.
+      // =========================
+      if (
+        window.NotificationService &&
+        typeof NotificationService.unregisterToken === "function"
+      ) {
+        await NotificationService.unregisterToken();
+      }
 
       // =========================
       // CLEAR AUTH

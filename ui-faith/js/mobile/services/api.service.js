@@ -177,19 +177,26 @@
         // DELETE
         // =====================================================
 
-        async delete(url) {
+        async delete(url, body = null) {
+
+            const options = {
+
+                method: "DELETE",
+
+                headers: this.headers()
+
+            };
+
+            if (body !== null) {
+                options.body =
+                    JSON.stringify(body);
+            }
 
             const response = await fetch(
 
                 this.baseUrl + url,
 
-                {
-
-                    method: "DELETE",
-
-                    headers: this.headers()
-
-                }
+                options
 
             );
 

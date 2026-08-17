@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from api.routes.push_devices import router as push_devices_router
 
 # ================================
 # 🔥 IMPORT ALL MODELS (CRITICAL)
@@ -214,6 +215,17 @@ app.include_router(
 )
 
 print("✅ User routes loaded")
+
+
+# =====================================
+# PUSH DEVICE TOKENS
+# =====================================
+app.include_router(
+    push_devices_router,
+    prefix="/api/v1"
+)
+print("✅ Push device routes loaded")
+
 
 # =====================================
 # PASTORS

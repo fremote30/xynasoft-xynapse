@@ -8,3 +8,4 @@ from .prayer import Prayer
 from .pastor_member import PastorMember
 from .follow import PastorFollower
 from .pastor_profile import PastorProfile
+from .push_device_token import PushDeviceToken
