@@ -29,3 +29,10 @@ mobile/android/app/google-services.json
 
 # Apple Firebase (future)
 mobile/ios/App/App/GoogleService-Info.plist
+# ============================================================================
+# Android Release Signing
+# ============================================================================
+*.jks
+*.keystore
+keystore.properties
+mobile/android/keystore.properties
