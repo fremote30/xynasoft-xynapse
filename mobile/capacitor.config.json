@@ -2,5 +2,12 @@
   "appId": "com.xynasoft.xynafaith",
   "appName": "XynaFaith",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "launchFadeOutDuration": 250,
+      "showSpinner": false
+    }
+  }
 }
