@@ -8,6 +8,13 @@ from api.db.database import SessionLocal
 from api.models.user import User
 from api.models.refresh_token import RefreshToken  # 🔥 NEW
 
+from api.services.firebase_auth_service import (
+    FirebaseConfigurationError,
+    FirebasePhoneMissingError,
+    FirebaseTokenError,
+    verify_firebase_phone_token,
+)
+
 from api.core.security import (
     hash_password,
     verify_password,
@@ -32,6 +39,10 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+
+class PhoneLoginRequest(BaseModel):
+    id_token: str
 
 
 # =========================
@@ -136,6 +147,108 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+# =========================
+# PHONE LOGIN
+# =========================
+@router.post("/phone")
+def phone_login(
+    data: PhoneLoginRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Exchange a Firebase-verified phone identity for a
+    XynaFaith access/refresh-token session.
+
+    This endpoint does not create new users yet. The verified
+    phone number must already be linked to a XynaFaith account.
+    """
+
+    try:
+        identity = verify_firebase_phone_token(
+            data.id_token
+        )
+
+        phone = identity["phone"]
+
+        user = (
+            db.query(User)
+            .filter(User.phone == phone)
+            .first()
+        )
+
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    "No XynaFaith account is linked "
+                    "to this phone number"
+                ),
+            )
+
+        # Firebase has just verified ownership of this number.
+        if not user.phone_verified:
+            user.phone_verified = True
+
+        if user.auth_method == "email":
+            user.auth_method = "email_phone"
+
+        access_token = create_access_token(user.id)
+        refresh_token = create_refresh_token(user.id)
+
+        db_token = RefreshToken(
+            user_id=user.id,
+            token=refresh_token,
+        )
+
+        db.add(db_token)
+        db.commit()
+
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "phone": user.phone,
+                "role": user.role,
+                "pastor_status": user.pastor_status,
+                "pastor_application_date": (
+                    user.pastor_application_date.isoformat()
+                    if user.pastor_application_date
+                    else None
+                ),
+            },
+        }
+
+    except HTTPException:
+        raise
+
+    except FirebaseConfigurationError:
+        raise HTTPException(
+            status_code=503,
+            detail="Phone authentication is unavailable",
+        )
+
+    except (
+        FirebaseTokenError,
+        FirebasePhoneMissingError,
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid phone authentication",
+        )
+
+    except Exception:
+        db.rollback()
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error",
+        )
 
 
 # =========================
