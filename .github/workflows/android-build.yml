@@ -27,6 +27,12 @@ jobs:
         with:
           node-version: 22
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
       - name: Install Dependencies
         run: npm install
 
@@ -37,11 +43,22 @@ jobs:
           ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
           EOF
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
+      - name: Restore Android Upload Keystore
+        shell: bash
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" \
+            | base64 --decode \
+            > android/xynafaith-upload.jks
+
+      - name: Create Android Signing Properties
+        shell: bash
+        run: |
+          cat > android/keystore.properties <<EOF
+          storeFile=xynafaith-upload.jks
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          keyPassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          EOF
 
       - name: Build Mobile Assets
         run: npm run copy
@@ -49,14 +66,25 @@ jobs:
       - name: Capacitor Sync
         run: npx cap sync android
 
-      - name: Build APK
+      - name: Build Debug APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK
+      - name: Build Signed Release AAB
+        run: |
+          cd android
+          ./gradlew bundleRelease
+
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: xynafaith-debug-apk
           path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Signed Release AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: xynafaith-release-aab
+          path: mobile/android/app/build/outputs/bundle/release/app-release.aab
