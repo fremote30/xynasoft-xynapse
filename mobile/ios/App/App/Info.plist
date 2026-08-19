@@ -24,7 +24,16 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UIApplicationSceneManifest</key>
+	<key>NSCameraUsageDescription</key>
+        <string>XynaFaith uses the camera so you can take profile photos and upload ministry images.</string>
+
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>XynaFaith uses your photo library so you can choose profile photos and ministry images.</string>
+
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>XynaFaith may save images to your photo library when you choose to export or save media.</string>
+
+        <key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
     <false/>
