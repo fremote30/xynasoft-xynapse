@@ -21,6 +21,29 @@ class User(Base):
 
     email = Column(String, unique=True, index=True, nullable=False)
 
+    # =====================================
+    # AUTHENTICATION IDENTITY
+    # =====================================
+
+    phone = Column(
+        String(32),
+        unique=True,
+        index=True,
+        nullable=True
+    )
+
+    phone_verified = Column(
+        Boolean,
+        default=False,
+        nullable=False
+    )
+
+    auth_method = Column(
+        String(20),
+        default="email",
+        nullable=False
+    )
+
     password = Column(String, nullable=False)
 
     role = Column(String, default="member")
