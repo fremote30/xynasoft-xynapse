@@ -19,7 +19,7 @@ class User(Base):
 
     name = Column(String, nullable=False)
 
-    email = Column(String, unique=True, index=True, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=True)
 
     # =====================================
     # AUTHENTICATION IDENTITY
@@ -44,7 +44,7 @@ class User(Base):
         nullable=False
     )
 
-    password = Column(String, nullable=False)
+    password = Column(String, nullable=True)
 
     role = Column(String, default="member")
 
