@@ -45,6 +45,12 @@ class PhoneLoginRequest(BaseModel):
     id_token: str
 
 
+class PhoneRegisterRequest(BaseModel):
+    id_token: str
+    name: str
+    email: EmailStr | None = None
+
+
 # =========================
 # DB
 # =========================
@@ -147,6 +153,152 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+# =========================
+# PHONE REGISTRATION
+# =========================
+@router.post("/phone/register")
+def phone_register(
+    data: PhoneRegisterRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Create a XynaFaith member account from a Firebase-verified
+    phone identity.
+
+    Email is optional during phone onboarding and may be added
+    or updated later from account settings.
+    """
+
+    try:
+        name = data.name.strip()
+
+        if len(name) < 2:
+            raise HTTPException(
+                status_code=400,
+                detail="Please enter your name",
+            )
+
+        identity = verify_firebase_phone_token(
+            data.id_token
+        )
+
+        phone = identity["phone"]
+
+        existing_phone = (
+            db.query(User)
+            .filter(User.phone == phone)
+            .first()
+        )
+
+        if existing_phone:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "An account already exists "
+                    "for this phone number"
+                ),
+            )
+
+        email = None
+
+        if data.email:
+            email = str(data.email).strip().lower()
+
+            existing_email = (
+                db.query(User)
+                .filter(User.email == email)
+                .first()
+            )
+
+            if existing_email:
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "An account already exists "
+                        "for this email address"
+                    ),
+                )
+
+        user = User(
+            name=name,
+            email=email,
+            password=None,
+            phone=phone,
+            phone_verified=True,
+            auth_method="phone",
+            role="member",
+            is_verified=True,
+        )
+
+        db.add(user)
+        db.flush()
+
+        access_token = create_access_token(user.id)
+        refresh_token = create_refresh_token(user.id)
+
+        db_token = RefreshToken(
+            user_id=user.id,
+            token=refresh_token,
+        )
+
+        db.add(db_token)
+        db.commit()
+        db.refresh(user)
+
+        return {
+            "message": "Account created successfully",
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "phone": user.phone,
+                "phone_verified": user.phone_verified,
+                "auth_method": user.auth_method,
+                "role": user.role,
+                "pastor_status": user.pastor_status,
+                "pastor_application_date": (
+                    user.pastor_application_date.isoformat()
+                    if user.pastor_application_date
+                    else None
+                ),
+            },
+        }
+
+    except HTTPException:
+        db.rollback()
+        raise
+
+    except FirebaseConfigurationError:
+        db.rollback()
+
+        raise HTTPException(
+            status_code=503,
+            detail="Phone authentication is unavailable",
+        )
+
+    except (
+        FirebaseTokenError,
+        FirebasePhoneMissingError,
+    ):
+        db.rollback()
+
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid phone authentication",
+        )
+
+    except Exception:
+        db.rollback()
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error",
+        )
 
 
 # =========================
