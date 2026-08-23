@@ -435,6 +435,8 @@ try {
     // =====================================
     safeRun(() => bindAuthForms(), "auth");
     safeRun(() => bindPasswordToggle(), "password");
+    safeRun(() => bindLoginIdentityFlow(), "login-identity");
+    safeRun(() => bindPhoneLoginFlow(), "phone-login");
 
     if (typeof bindSermonStudio === "function") {
       safeRun(() => bindSermonStudio(), "sermon");

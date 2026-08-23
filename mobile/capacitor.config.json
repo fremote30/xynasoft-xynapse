@@ -8,6 +8,12 @@
       "launchAutoHide": false,
       "launchFadeOutDuration": 250,
       "showSpinner": false
+    },
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": [
+        "phone"
+      ]
     }
   }
 }

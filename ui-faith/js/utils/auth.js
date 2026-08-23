@@ -632,3 +632,543 @@ window.bindAuthForms =
         };
     }
   };
+
+// =====================================
+// LOGIN IDENTITY FLOW
+// Email or phone -> appropriate step
+// =====================================
+
+window.bindLoginIdentityFlow =
+  function () {
+
+    const identityForm =
+      document.getElementById(
+        "loginIdentityForm"
+      );
+
+    if (!identityForm) {
+      return;
+    }
+
+    if (
+      identityForm.dataset.bound ===
+      "true"
+    ) {
+      return;
+    }
+
+    identityForm.dataset.bound =
+      "true";
+
+    const identityInput =
+      document.getElementById(
+        "loginIdentity"
+      );
+
+    const identityStep =
+      document.getElementById(
+        "loginIdentityStep"
+      );
+
+    const emailStep =
+      document.getElementById(
+        "loginEmailStep"
+      );
+
+    const phoneStep =
+      document.getElementById(
+        "loginPhoneStep"
+      );
+
+    const emailInput =
+      document.getElementById(
+        "email"
+      );
+
+    const emailDisplay =
+      document.getElementById(
+        "loginEmailDisplay"
+      );
+
+    const phoneDisplay =
+      document.getElementById(
+        "loginPhoneDisplay"
+      );
+
+    const identityError =
+      document.getElementById(
+        "loginIdentityError"
+      );
+
+    const emailBack =
+      document.getElementById(
+        "loginEmailBack"
+      );
+
+    const phoneBack =
+      document.getElementById(
+        "loginPhoneBack"
+      );
+
+    function showIdentityError(
+      message
+    ) {
+
+      if (!identityError) {
+        return;
+      }
+
+      identityError.textContent =
+        message;
+
+      identityError.style.display =
+        message
+          ? "block"
+          : "none";
+    }
+
+    function returnToIdentity() {
+
+      if (emailStep) {
+        emailStep.hidden = true;
+      }
+
+      if (phoneStep) {
+        phoneStep.hidden = true;
+      }
+
+      if (identityStep) {
+        identityStep.hidden = false;
+      }
+
+      showIdentityError("");
+
+      if (identityInput) {
+        identityInput.focus();
+      }
+    }
+
+    identityForm.addEventListener(
+      "submit",
+      function (event) {
+
+        event.preventDefault();
+
+        const identity =
+          identityInput?.value
+            ?.trim();
+
+        if (!identity) {
+
+          showIdentityError(
+            "Enter your email address or phone number."
+          );
+
+          return;
+        }
+
+        showIdentityError("");
+
+        // -----------------------------
+        // EMAIL
+        // -----------------------------
+
+        if (identity.includes("@")) {
+
+          if (emailInput) {
+            emailInput.value =
+              identity.toLowerCase();
+          }
+
+          if (emailDisplay) {
+            emailDisplay.textContent =
+              identity;
+          }
+
+          if (identityStep) {
+            identityStep.hidden = true;
+          }
+
+          if (emailStep) {
+            emailStep.hidden = false;
+          }
+
+          const password =
+            document.getElementById(
+              "password"
+            );
+
+          if (password) {
+            password.focus();
+          }
+
+          return;
+        }
+
+        // -----------------------------
+        // PHONE
+        // -----------------------------
+
+        const phoneCandidate =
+          identity.replace(
+            /[\s().-]/g,
+            ""
+          );
+
+        if (
+          /^\+?[0-9]{7,15}$/.test(
+            phoneCandidate
+          )
+        ) {
+
+          if (phoneDisplay) {
+            phoneDisplay.textContent =
+              identity;
+          }
+
+          if (identityStep) {
+            identityStep.hidden = true;
+          }
+
+          if (phoneStep) {
+            phoneStep.hidden = false;
+          }
+
+          return;
+        }
+
+        showIdentityError(
+          "Enter a valid email address or phone number."
+        );
+      }
+    );
+
+    if (emailBack) {
+      emailBack.addEventListener(
+        "click",
+        returnToIdentity
+      );
+    }
+
+    if (phoneBack) {
+      phoneBack.addEventListener(
+        "click",
+        returnToIdentity
+      );
+    }
+  };
+
+
+// =====================================
+// PHONE LOGIN OTP FLOW
+// =====================================
+
+window.bindPhoneLoginFlow =
+  function () {
+
+    const sendButton =
+      document.getElementById(
+        "sendPhoneCodeButton"
+      );
+
+    if (!sendButton) {
+      return;
+    }
+
+    if (
+      sendButton.dataset.bound ===
+      "true"
+    ) {
+      return;
+    }
+
+    sendButton.dataset.bound =
+      "true";
+
+    const verifyButton =
+      document.getElementById(
+        "verifyPhoneCodeButton"
+      );
+
+    const resendButton =
+      document.getElementById(
+        "resendPhoneCodeButton"
+      );
+
+    const phoneInput =
+      document.getElementById(
+        "loginIdentity"
+      );
+
+    const requestStep =
+      document.getElementById(
+        "phoneRequestStep"
+      );
+
+    const codeStep =
+      document.getElementById(
+        "phoneCodeStep"
+      );
+
+    const phoneDisplay =
+      document.getElementById(
+        "loginPhoneCodeDisplay"
+      );
+
+    const codeInput =
+      document.getElementById(
+        "phoneVerificationCode"
+      );
+
+    const errorElement =
+      document.getElementById(
+        "phoneLoginError"
+      );
+
+
+    function showError(message) {
+
+      if (!errorElement) {
+        return;
+      }
+
+      errorElement.textContent =
+        message || "";
+
+      errorElement.style.display =
+        message
+          ? "block"
+          : "none";
+    }
+
+
+    function getPhone() {
+
+      return String(
+        phoneInput?.value || ""
+      )
+        .trim()
+        .replace(
+          /[\s().-]/g,
+          ""
+        );
+    }
+
+
+    async function sendCode() {
+
+      showError("");
+
+      const phone =
+        getPhone();
+
+      if (!phone.startsWith("+")) {
+
+        showError(
+          "Enter your phone number with country code, for example +1..."
+        );
+
+        return;
+      }
+
+      if (
+        !window.XynaPhoneAuth
+      ) {
+
+        showError(
+          "Phone authentication is unavailable."
+        );
+
+        return;
+      }
+
+      if (
+        !window.XynaPhoneAuth
+          .isAvailable()
+      ) {
+
+        showError(
+          "Phone verification is available in the XynaFaith mobile app."
+        );
+
+        return;
+      }
+
+      sendButton.disabled =
+        true;
+
+      sendButton.textContent =
+        "Sending Code...";
+
+      try {
+
+        await window.XynaPhoneAuth
+          .sendCode(phone);
+
+        if (requestStep) {
+          requestStep.hidden =
+            true;
+        }
+
+        if (codeStep) {
+          codeStep.hidden =
+            false;
+        }
+
+        if (phoneDisplay) {
+          phoneDisplay.textContent =
+            phone;
+        }
+
+        if (codeInput) {
+          codeInput.value = "";
+          codeInput.focus();
+        }
+
+      } catch (err) {
+
+        console.error(
+          "Phone code error:",
+          err
+        );
+
+        showError(
+          err?.message ||
+          "Unable to send verification code."
+        );
+
+      } finally {
+
+        sendButton.disabled =
+          false;
+
+        sendButton.textContent =
+          "Send Verification Code";
+      }
+    }
+
+
+    sendButton.addEventListener(
+      "click",
+      sendCode
+    );
+
+
+    if (resendButton) {
+
+      resendButton.addEventListener(
+        "click",
+        async function () {
+
+          resendButton.disabled =
+            true;
+
+          resendButton.textContent =
+            "Sending...";
+
+          try {
+
+            showError("");
+
+            await window.XynaPhoneAuth
+              .sendCode(
+                getPhone()
+              );
+
+          } catch (err) {
+
+            showError(
+              err?.message ||
+              "Unable to resend verification code."
+            );
+
+          } finally {
+
+            resendButton.disabled =
+              false;
+
+            resendButton.textContent =
+              "Resend Code";
+          }
+        }
+      );
+    }
+
+
+    if (verifyButton) {
+
+      verifyButton.addEventListener(
+        "click",
+        async function () {
+
+          const code =
+            String(
+              codeInput?.value || ""
+            )
+              .trim();
+
+          if (
+            !/^[0-9]{6}$/.test(
+              code
+            )
+          ) {
+
+            showError(
+              "Enter the 6-digit verification code."
+            );
+
+            return;
+          }
+
+          verifyButton.disabled =
+            true;
+
+          verifyButton.textContent =
+            "Verifying...";
+
+          try {
+
+            showError("");
+
+            await window.XynaPhoneAuth
+              .verifyCode(code);
+
+            await window.XynaPhoneAuth
+              .login();
+
+          } catch (err) {
+
+            console.error(
+              "Phone login error:",
+              err
+            );
+
+            if (
+              err?.status === 404
+            ) {
+
+              showError(
+                "No account is linked to this phone number. Create an account first."
+              );
+
+            } else {
+
+              showError(
+                err?.message ||
+                "Phone verification failed."
+              );
+            }
+
+          } finally {
+
+            verifyButton.disabled =
+              false;
+
+            verifyButton.textContent =
+              "Verify & Log In";
+          }
+        }
+      );
+    }
+
+  };

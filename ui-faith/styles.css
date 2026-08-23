@@ -9121,3 +9121,122 @@ select {
     flex-wrap:wrap;
 
 }
+
+/* =========================================================
+   XYNAFAITH AUTH — EMAIL / PHONE MULTI-STEP FLOW
+   ---------------------------------------------------------
+   Extends the existing auth design without replacing it.
+========================================================= */
+
+.auth-card [hidden] {
+  display: none !important;
+}
+
+.auth-step-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin: 0 0 18px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.auth-step-back:hover {
+  text-decoration: underline;
+}
+
+.auth-identity-display {
+  margin: -5px 0 20px;
+  padding: 11px 14px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+
+  overflow-wrap: anywhere;
+}
+
+#loginIdentityError,
+#phoneLoginError {
+  display: none;
+
+  margin: -8px 0 12px;
+
+  color: #dc2626;
+  font-size: 13px;
+}
+
+#loginIdentityForm .btn-primary,
+#loginPhoneStep .btn-primary {
+  min-height: 46px;
+}
+
+#loginPhoneStep {
+  text-align: left;
+}
+
+
+/* =========================================================
+   MOBILE AUTH REFINEMENTS
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .auth-page {
+    min-height: 100dvh;
+    height: auto;
+
+    padding:
+      calc(24px + env(safe-area-inset-top))
+      16px
+      calc(24px + env(safe-area-inset-bottom));
+
+    overflow-y: auto;
+  }
+
+  .auth-wrapper {
+    min-height: 100%;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 440px;
+
+    padding: 30px 22px;
+  }
+
+  .auth-step-back {
+    min-height: 36px;
+  }
+
+  #loginIdentity,
+  #password {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  #loginIdentityForm .btn-primary,
+  #loginForm .btn-primary,
+  #loginPhoneStep .btn-primary {
+    min-height: 48px;
+  }
+
+  .login-options {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
