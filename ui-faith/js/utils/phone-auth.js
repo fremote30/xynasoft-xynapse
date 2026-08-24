@@ -92,53 +92,112 @@
       this.phone = normalized;
       this.verificationId = null;
 
-      // Firebase phone authentication delivers the
-      // verificationId through the phoneCodeSent event.
-      const codeSentListener =
-        await firebase.addListener(
-          "phoneCodeSent",
-          (event) => {
-
-            if (event?.verificationId) {
-
-              this.verificationId =
-                event.verificationId;
-            }
-          }
-        );
+      let codeSentListener = null;
+      let failedListener = null;
 
       try {
 
-        await firebase.signInWithPhoneNumber({
-          phoneNumber: normalized
-        });
+        const verificationResult =
+          new Promise(
+            async (resolve, reject) => {
 
-        // Wait briefly for phoneCodeSent.
-        const timeoutAt =
-          Date.now() + 15000;
+              codeSentListener =
+                await firebase.addListener(
+                  "phoneCodeSent",
+                  (event) => {
 
-        while (
-          !this.verificationId &&
-          Date.now() < timeoutAt
-        ) {
+                    console.log(
+                      "Firebase phoneCodeSent:",
+                      event
+                    );
 
-          await new Promise(
-            resolve =>
-              setTimeout(resolve, 100)
+                    if (
+                      event?.verificationId
+                    ) {
+
+                      this.verificationId =
+                        event.verificationId;
+
+                      resolve({
+                        type: "codeSent",
+                        verificationId:
+                          event.verificationId
+                      });
+                    }
+                  }
+                );
+
+              failedListener =
+                await firebase.addListener(
+                  "phoneVerificationFailed",
+                  (event) => {
+
+                    console.error(
+                      "Firebase phoneVerificationFailed:",
+                      event
+                    );
+
+                    const message =
+                      event?.message ||
+                      event?.error?.message ||
+                      event?.error ||
+                      "Firebase phone verification failed.";
+
+                    reject(
+                      new Error(
+                        String(message)
+                      )
+                    );
+                  }
+                );
+
+              try {
+
+                await firebase
+                  .signInWithPhoneNumber({
+                    phoneNumber:
+                      normalized
+                  });
+
+              } catch (err) {
+
+                console.error(
+                  "Firebase signInWithPhoneNumber failed:",
+                  err
+                );
+
+                reject(err);
+              }
+            }
           );
-        }
 
-        if (!this.verificationId) {
+        const timeout =
+          new Promise(
+            (_, reject) => {
 
-          throw new Error(
-            "Verification code could not be started. Please try again."
+              setTimeout(
+                () => {
+                  reject(
+                    new Error(
+                      "Firebase did not send a verification response within 30 seconds."
+                    )
+                  );
+                },
+                30000
+              );
+            }
           );
-        }
+
+        const result =
+          await Promise.race([
+            verificationResult,
+            timeout
+          ]);
 
         return {
           phoneNumber: normalized,
           verificationId:
-            this.verificationId
+            result.verificationId
         };
 
       } finally {
@@ -148,8 +207,15 @@
           typeof codeSentListener.remove ===
             "function"
         ) {
-
           await codeSentListener.remove();
+        }
+
+        if (
+          failedListener &&
+          typeof failedListener.remove ===
+            "function"
+        ) {
+          await failedListener.remove();
         }
       }
     },
