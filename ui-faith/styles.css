@@ -9240,3 +9240,44 @@ select {
     flex-wrap: wrap;
   }
 }
+
+
+/* =========================================================
+   PHONE AUTH ERROR ALERT
+========================================================= */
+
+#phoneLoginError {
+  display: none;
+
+  margin: 16px 0 0;
+  padding: 12px 14px;
+
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+#phoneLoginError:not(:empty) {
+  display: block;
+}
+
+@media (max-width: 600px) {
+
+  #phoneLoginError {
+    margin-top: 14px;
+    padding: 12px;
+
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
