@@ -1172,3 +1172,631 @@ window.bindPhoneLoginFlow =
     }
 
   };
+
+
+// =====================================
+// REGISTER IDENTITY FLOW
+// Email or phone onboarding
+// =====================================
+
+window.bindRegisterIdentityFlow =
+  function () {
+
+    const identityForm =
+      document.getElementById(
+        "registerIdentityForm"
+      );
+
+    if (!identityForm) {
+      return;
+    }
+
+    if (
+      identityForm.dataset.bound ===
+      "true"
+    ) {
+      return;
+    }
+
+    identityForm.dataset.bound =
+      "true";
+
+    const identityInput =
+      document.getElementById(
+        "registerIdentity"
+      );
+
+    const identityStep =
+      document.getElementById(
+        "registerIdentityStep"
+      );
+
+    const emailStep =
+      document.getElementById(
+        "registerEmailStep"
+      );
+
+    const phoneStep =
+      document.getElementById(
+        "registerPhoneStep"
+      );
+
+    const profileStep =
+      document.getElementById(
+        "registerPhoneProfileStep"
+      );
+
+    const emailInput =
+      document.getElementById(
+        "email"
+      );
+
+    const emailDisplay =
+      document.getElementById(
+        "registerEmailDisplay"
+      );
+
+    const phoneDisplay =
+      document.getElementById(
+        "registerPhoneDisplay"
+      );
+
+    const identityError =
+      document.getElementById(
+        "registerIdentityError"
+      );
+
+    const emailBack =
+      document.getElementById(
+        "registerEmailBack"
+      );
+
+    const phoneBack =
+      document.getElementById(
+        "registerPhoneBack"
+      );
+
+
+    function showIdentityError(
+      message
+    ) {
+
+      if (!identityError) {
+        return;
+      }
+
+      identityError.textContent =
+        message || "";
+
+      identityError.style.display =
+        message
+          ? "block"
+          : "none";
+    }
+
+
+    function resetSteps() {
+
+      if (emailStep) {
+        emailStep.hidden = true;
+      }
+
+      if (phoneStep) {
+        phoneStep.hidden = true;
+      }
+
+      if (profileStep) {
+        profileStep.hidden = true;
+      }
+
+      if (identityStep) {
+        identityStep.hidden = false;
+      }
+
+      showIdentityError("");
+
+      if (
+        window.XynaPhoneAuth
+      ) {
+        window.XynaPhoneAuth.reset();
+      }
+
+      identityInput?.focus();
+    }
+
+
+    identityForm.addEventListener(
+      "submit",
+      function (event) {
+
+        event.preventDefault();
+
+        const identity =
+          String(
+            identityInput?.value || ""
+          ).trim();
+
+        if (!identity) {
+
+          showIdentityError(
+            "Enter your email address or phone number."
+          );
+
+          return;
+        }
+
+        showIdentityError("");
+
+
+        // -----------------------------
+        // EMAIL REGISTRATION
+        // -----------------------------
+
+        if (identity.includes("@")) {
+
+          const email =
+            identity.toLowerCase();
+
+          if (emailInput) {
+            emailInput.value =
+              email;
+          }
+
+          if (emailDisplay) {
+            emailDisplay.textContent =
+              email;
+          }
+
+          identityStep.hidden =
+            true;
+
+          emailStep.hidden =
+            false;
+
+          document
+            .getElementById("name")
+            ?.focus();
+
+          return;
+        }
+
+
+        // -----------------------------
+        // PHONE REGISTRATION
+        // -----------------------------
+
+        const phone =
+          identity.replace(
+            /[\s().-]/g,
+            ""
+          );
+
+        if (
+          !/^\+[0-9]{7,15}$/.test(
+            phone
+          )
+        ) {
+
+          showIdentityError(
+            "Enter a valid phone number with country code, for example +12025550123."
+          );
+
+          return;
+        }
+
+        if (phoneDisplay) {
+          phoneDisplay.textContent =
+            phone;
+        }
+
+        identityInput.value =
+          phone;
+
+        identityStep.hidden =
+          true;
+
+        phoneStep.hidden =
+          false;
+      }
+    );
+
+
+    if (emailBack) {
+      emailBack.addEventListener(
+        "click",
+        resetSteps
+      );
+    }
+
+    if (phoneBack) {
+      phoneBack.addEventListener(
+        "click",
+        resetSteps
+      );
+    }
+
+  };
+
+
+// =====================================
+// PHONE REGISTRATION OTP FLOW
+// =====================================
+
+window.bindPhoneRegisterFlow =
+  function () {
+
+    const sendButton =
+      document.getElementById(
+        "sendRegisterPhoneCodeButton"
+      );
+
+    if (!sendButton) {
+      return;
+    }
+
+    if (
+      sendButton.dataset.bound ===
+      "true"
+    ) {
+      return;
+    }
+
+    sendButton.dataset.bound =
+      "true";
+
+    const verifyButton =
+      document.getElementById(
+        "verifyRegisterPhoneCodeButton"
+      );
+
+    const codeStep =
+      document.getElementById(
+        "registerPhoneCodeStep"
+      );
+
+    const codeInput =
+      document.getElementById(
+        "registerPhoneVerificationCode"
+      );
+
+    const phoneStep =
+      document.getElementById(
+        "registerPhoneStep"
+      );
+
+    const profileStep =
+      document.getElementById(
+        "registerPhoneProfileStep"
+      );
+
+    const phoneError =
+      document.getElementById(
+        "registerPhoneError"
+      );
+
+    const profileForm =
+      document.getElementById(
+        "registerPhoneProfileForm"
+      );
+
+    const profileError =
+      document.getElementById(
+        "registerPhoneProfileError"
+      );
+
+
+    function showPhoneError(
+      message
+    ) {
+
+      if (!phoneError) {
+        return;
+      }
+
+      phoneError.textContent =
+        message || "";
+
+      phoneError.style.display =
+        message
+          ? "block"
+          : "none";
+    }
+
+
+    function showProfileError(
+      message
+    ) {
+
+      if (!profileError) {
+        return;
+      }
+
+      profileError.textContent =
+        message || "";
+
+      profileError.style.display =
+        message
+          ? "block"
+          : "none";
+    }
+
+
+    function getPhone() {
+
+      return String(
+        document.getElementById(
+          "registerIdentity"
+        )?.value || ""
+      )
+        .trim()
+        .replace(
+          /[\s().-]/g,
+          ""
+        );
+    }
+
+
+    // -----------------------------
+    // SEND CODE
+    // -----------------------------
+
+    sendButton.addEventListener(
+      "click",
+      async function () {
+
+        showPhoneError("");
+
+        if (
+          !window.XynaPhoneAuth
+        ) {
+
+          showPhoneError(
+            "Phone authentication is unavailable."
+          );
+
+          return;
+        }
+
+        if (
+          !window.XynaPhoneAuth
+            .isAvailable()
+        ) {
+
+          showPhoneError(
+            "Phone registration is available in the XynaFaith mobile app."
+          );
+
+          return;
+        }
+
+        sendButton.disabled =
+          true;
+
+        sendButton.textContent =
+          "Sending Code...";
+
+        try {
+
+          await window.XynaPhoneAuth
+            .sendCode(
+              getPhone()
+            );
+
+          if (codeStep) {
+            codeStep.hidden =
+              false;
+          }
+
+          codeInput?.focus();
+
+        } catch (err) {
+
+          console.error(
+            "Phone registration code error:",
+            err
+          );
+
+          showPhoneError(
+            err?.message ||
+            "Unable to send verification code."
+          );
+
+        } finally {
+
+          sendButton.disabled =
+            false;
+
+          sendButton.textContent =
+            "Send Verification Code";
+        }
+      }
+    );
+
+
+    // -----------------------------
+    // VERIFY CODE
+    // -----------------------------
+
+    if (verifyButton) {
+
+      verifyButton.addEventListener(
+        "click",
+        async function () {
+
+          showPhoneError("");
+
+          const code =
+            String(
+              codeInput?.value || ""
+            ).trim();
+
+          if (
+            !/^[0-9]{6}$/.test(
+              code
+            )
+          ) {
+
+            showPhoneError(
+              "Enter the 6-digit verification code."
+            );
+
+            return;
+          }
+
+          verifyButton.disabled =
+            true;
+
+          verifyButton.textContent =
+            "Verifying...";
+
+          try {
+
+            await window.XynaPhoneAuth
+              .verifyCode(code);
+
+            if (phoneStep) {
+              phoneStep.hidden =
+                true;
+            }
+
+            if (profileStep) {
+              profileStep.hidden =
+                false;
+            }
+
+            document
+              .getElementById(
+                "registerPhoneName"
+              )
+              ?.focus();
+
+          } catch (err) {
+
+            console.error(
+              "Phone registration verification error:",
+              err
+            );
+
+            showPhoneError(
+              err?.message ||
+              "Phone verification failed."
+            );
+
+          } finally {
+
+            verifyButton.disabled =
+              false;
+
+            verifyButton.textContent =
+              "Verify Phone";
+          }
+        }
+      );
+    }
+
+
+    // -----------------------------
+    // CREATE PHONE ACCOUNT
+    // -----------------------------
+
+    if (profileForm) {
+
+      profileForm.addEventListener(
+        "submit",
+        async function (event) {
+
+          event.preventDefault();
+
+          showProfileError("");
+
+          const name =
+            String(
+              document.getElementById(
+                "registerPhoneName"
+              )?.value || ""
+            ).trim();
+
+          const email =
+            String(
+              document.getElementById(
+                "registerPhoneEmail"
+              )?.value || ""
+            ).trim();
+
+          const terms =
+            document.getElementById(
+              "registerPhoneAgreeTerms"
+            );
+
+          if (name.length < 2) {
+
+            showProfileError(
+              "Please enter your full name."
+            );
+
+            return;
+          }
+
+          if (
+            terms &&
+            !terms.checked
+          ) {
+
+            showProfileError(
+              "Please agree to the Terms of Service."
+            );
+
+            return;
+          }
+
+          const submitButton =
+            profileForm.querySelector(
+              'button[type="submit"]'
+            );
+
+          if (submitButton) {
+
+            submitButton.disabled =
+              true;
+
+            submitButton.textContent =
+              "Creating Account...";
+          }
+
+          try {
+
+            await window.XynaPhoneAuth
+              .register({
+                name,
+                email:
+                  email || null
+              });
+
+          } catch (err) {
+
+            console.error(
+              "Phone registration error:",
+              err
+            );
+
+            showProfileError(
+              err?.message ||
+              "Unable to create account."
+            );
+
+          } finally {
+
+            if (submitButton) {
+
+              submitButton.disabled =
+                false;
+
+              submitButton.textContent =
+                "Create Account";
+            }
+          }
+        }
+      );
+    }
+
+  };

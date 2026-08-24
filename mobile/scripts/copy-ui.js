@@ -43,28 +43,89 @@ fs.cpSync(source, destination, {
 });
 
 // -------------------------------------
-// Rewrite web paths for Capacitor
+// Rewrite static web asset paths
+// for Capacitor.
+//
+// IMPORTANT:
+// Do not globally remove "/faith/".
+// API routes and public/share URLs may
+// intentionally contain that prefix.
 // -------------------------------------
 
-const htmlFiles = [
-    "layout.html",
-    "index.html"
-];
+function rewriteStaticPaths(filePath) {
 
-for (const file of htmlFiles) {
+    let content =
+        fs.readFileSync(
+            filePath,
+            "utf8"
+        );
 
-    const filePath = path.join(destination, file);
+    content = content
+        .replaceAll(
+            'href="/faith/',
+            'href="'
+        )
+        .replaceAll(
+            'src="/faith/',
+            'src="'
+        )
+        .replaceAll(
+            "url('/faith/assets/",
+            "url('assets/"
+        )
+        .replaceAll(
+            'url("/faith/assets/',
+            'url("assets/'
+        );
 
-    if (!fs.existsSync(filePath))
-        continue;
-
-    let html = fs.readFileSync(filePath, "utf8");
-
-    html = html.replaceAll('href="/faith/', 'href="');
-    html = html.replaceAll('src="/faith/', 'src="');
-
-    fs.writeFileSync(filePath, html, "utf8");
+    fs.writeFileSync(
+        filePath,
+        content,
+        "utf8"
+    );
 }
+
+
+function walk(directory) {
+
+    for (
+        const entry of
+        fs.readdirSync(
+            directory,
+            { withFileTypes: true }
+        )
+    ) {
+
+        const fullPath =
+            path.join(
+                directory,
+                entry.name
+            );
+
+        if (entry.isDirectory()) {
+
+            walk(fullPath);
+            continue;
+        }
+
+        const extension =
+            path.extname(
+                entry.name
+            ).toLowerCase();
+
+        if (
+            extension === ".html" ||
+            extension === ".css"
+        ) {
+
+            rewriteStaticPaths(
+                fullPath
+            );
+        }
+    }
+}
+
+walk(destination);
 
 console.log("");
 console.log("✅ Build Complete");

@@ -4,169 +4,396 @@
 
     <div class="auth-card">
 
-      <!-- LOGO -->
       <img
-        src="assets/xynafaith.png"
+        src="/faith/assets/xynafaith.png"
         class="auth-logo"
         alt="XynaFaith Logo"
       >
 
-      <!-- TITLE -->
       <h2>Create Your Account</h2>
 
       <p class="auth-sub">
         Join pastors and believers around the world.
       </p>
 
-      <form id="registerForm">
 
-        <!-- FULL NAME -->
-        <div class="form-group">
+      <!-- =========================
+           STEP 1 — EMAIL OR PHONE
+      ========================== -->
 
-          <label for="name">
-            Full Name
-          </label>
+      <section id="registerIdentityStep">
 
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter your full name"
-            autocomplete="name"
-            required
+        <form id="registerIdentityForm">
+
+          <div class="form-group">
+
+            <label for="registerIdentity">
+              Email or phone
+            </label>
+
+            <input
+              type="text"
+              id="registerIdentity"
+              autocomplete="username"
+              placeholder="Enter your email or phone number"
+              required
+            >
+
+          </div>
+
+          <p
+            id="registerIdentityError"
+            class="auth-error"
+          ></p>
+
+          <button
+            type="submit"
+            class="btn-primary full"
           >
+            Continue
+          </button>
 
-        </div>
+        </form>
 
-        <!-- EMAIL -->
-        <div class="form-group">
+      </section>
 
-          <label for="email">
-            Email
-          </label>
+
+      <!-- =========================
+           STEP 2A — EMAIL
+      ========================== -->
+
+      <section
+        id="registerEmailStep"
+        hidden
+      >
+
+        <button
+          id="registerEmailBack"
+          type="button"
+          class="auth-step-back"
+        >
+          ← Back
+        </button>
+
+        <div
+          id="registerEmailDisplay"
+          class="auth-identity-display"
+        ></div>
+
+        <form id="registerForm">
+
+          <div class="form-group">
+
+            <label for="name">
+              Full Name
+            </label>
+
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your full name"
+              autocomplete="name"
+              required
+            >
+
+          </div>
 
           <input
             type="email"
             id="email"
-            placeholder="Enter your email"
             autocomplete="email"
-            required
+            hidden
           >
 
-        </div>
+          <div class="account-info">
 
-        <!-- MEMBER INFO -->
-        <div class="account-info">
+            <strong>
+              Member Account
+            </strong>
 
-          <strong>
-            Member Account
-          </strong>
-
-          <p>
-            Every new account starts as a Member.
-            You can apply to become a verified Pastor
-            from your dashboard at any time.
-          </p>
-
-        </div>
-
-        <!-- PASSWORD -->
-        <div class="form-group">
-
-          <label for="password">
-            Password
-          </label>
-
-          <div class="password-wrapper">
-
-            <input
-              type="password"
-              id="password"
-              placeholder="Create a password"
-              autocomplete="new-password"
-              required
-            >
-
-            <button
-              type="button"
-              class="password-toggle"
-              aria-label="Show Password"
-              title="Show Password"
-            >
-              👁
-            </button>
+            <p>
+              Every new account starts as a Member.
+              You can apply to become a verified Pastor
+              from your dashboard at any time.
+            </p>
 
           </div>
 
-        </div>
+          <div class="form-group">
 
-        <!-- CONFIRM PASSWORD -->
-        <div class="form-group">
+            <label for="password">
+              Password
+            </label>
 
-          <label for="confirmPassword">
-            Confirm Password
-          </label>
+            <div class="password-wrapper">
 
-          <div class="password-wrapper">
+              <input
+                type="password"
+                id="password"
+                placeholder="Create a password"
+                autocomplete="new-password"
+                required
+              >
 
-            <input
-              type="password"
-              id="confirmPassword"
-              placeholder="Confirm your password"
-              autocomplete="new-password"
-              required
-            >
+              <button
+                type="button"
+                class="password-toggle"
+                aria-label="Show Password"
+                title="Show Password"
+              >
+                👁
+              </button>
 
-            <button
-              type="button"
-              class="password-toggle"
-              aria-label="Show Password"
-              title="Show Password"
-            >
-              👁
-            </button>
+            </div>
 
           </div>
 
-        </div>
+          <div class="form-group">
 
-        <!-- TERMS -->
-        <div class="remember-me">
+            <label for="confirmPassword">
+              Confirm Password
+            </label>
 
-          <input
-            type="checkbox"
-            id="agreeTerms"
-            required
+            <div class="password-wrapper">
+
+              <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm your password"
+                autocomplete="new-password"
+                required
+              >
+
+              <button
+                type="button"
+                class="password-toggle"
+                aria-label="Show Password"
+                title="Show Password"
+              >
+                👁
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="remember-me">
+
+            <input
+              type="checkbox"
+              id="agreeTerms"
+              required
+            >
+
+            <label for="agreeTerms">
+              I agree to the
+              <a href="#">
+                Terms of Service
+              </a>
+            </label>
+
+          </div>
+
+          <p
+            id="registerError"
+            class="auth-error"
+          ></p>
+
+          <button
+            type="submit"
+            class="btn-primary full"
           >
+            Create Account
+          </button>
 
-          <label for="agreeTerms">
+        </form>
 
-            I agree to the
+      </section>
 
-            <a href="#">
-              Terms of Service
-            </a>
 
-          </label>
+      <!-- =========================
+           STEP 2B — PHONE
+      ========================== -->
+
+      <section
+        id="registerPhoneStep"
+        hidden
+      >
+
+        <button
+          id="registerPhoneBack"
+          type="button"
+          class="auth-step-back"
+        >
+          ← Back
+        </button>
+
+        <h3>
+          Verify Your Phone
+        </h3>
+
+        <p class="auth-sub">
+          We'll send a verification code to your phone.
+        </p>
+
+        <div
+          id="registerPhoneDisplay"
+          class="auth-identity-display"
+        ></div>
+
+        <div id="registerPhoneRequestStep">
+
+          <button
+            id="sendRegisterPhoneCodeButton"
+            type="button"
+            class="btn-primary full"
+          >
+            Send Verification Code
+          </button>
 
         </div>
 
-        <!-- ERROR -->
+
+        <div
+          id="registerPhoneCodeStep"
+          hidden
+        >
+
+          <div class="form-group">
+
+            <label for="registerPhoneVerificationCode">
+              Verification Code
+            </label>
+
+            <input
+              type="text"
+              id="registerPhoneVerificationCode"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              placeholder="Enter verification code"
+            >
+
+          </div>
+
+          <button
+            id="verifyRegisterPhoneCodeButton"
+            type="button"
+            class="btn-primary full"
+          >
+            Verify Phone
+          </button>
+
+        </div>
+
         <p
-          id="registerError"
+          id="registerPhoneError"
           class="auth-error"
         ></p>
 
-        <!-- BUTTON -->
-        <button
-          type="submit"
-          class="btn-primary full"
-        >
-          Create Account
-        </button>
+      </section>
 
-      </form>
 
-      <!-- FOOTER -->
+      <!-- =========================
+           STEP 3 — PHONE PROFILE
+      ========================== -->
+
+      <section
+        id="registerPhoneProfileStep"
+        hidden
+      >
+
+        <h3>
+          Complete Your Account
+        </h3>
+
+        <p class="auth-sub">
+          Tell us a little about yourself.
+        </p>
+
+        <form id="registerPhoneProfileForm">
+
+          <div class="form-group">
+
+            <label for="registerPhoneName">
+              Full Name
+            </label>
+
+            <input
+              type="text"
+              id="registerPhoneName"
+              autocomplete="name"
+              placeholder="Enter your full name"
+              required
+            >
+
+          </div>
+
+          <div class="form-group">
+
+            <label for="registerPhoneEmail">
+              Email
+              <span class="optional">
+                (optional)
+              </span>
+            </label>
+
+            <input
+              type="email"
+              id="registerPhoneEmail"
+              autocomplete="email"
+              placeholder="Enter your email"
+            >
+
+          </div>
+
+          <div class="account-info">
+
+            <strong>
+              Member Account
+            </strong>
+
+            <p>
+              Every new account starts as a Member.
+              You can apply to become a verified Pastor
+              from your dashboard at any time.
+            </p>
+
+          </div>
+
+          <div class="remember-me">
+
+            <input
+              type="checkbox"
+              id="registerPhoneAgreeTerms"
+              required
+            >
+
+            <label for="registerPhoneAgreeTerms">
+              I agree to the
+              <a href="#">
+                Terms of Service
+              </a>
+            </label>
+
+          </div>
+
+          <p
+            id="registerPhoneProfileError"
+            class="auth-error"
+          ></p>
+
+          <button
+            type="submit"
+            class="btn-primary full"
+          >
+            Create Account
+          </button>
+
+        </form>
+
+      </section>
+
+
       <div class="auth-footer">
 
         Already have an account?
