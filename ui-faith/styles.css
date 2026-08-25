@@ -9513,3 +9513,81 @@ select {
   }
 
 }
+
+
+/* =========================================================
+   PRAYER JOURNEY — MOBILE 4-STEP FIT
+   Keep Submitted / Praying / Encouraged / Answered visible
+========================================================= */
+
+@media (max-width: 640px) {
+
+  .prayer-journey {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 14px 8px;
+
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .prayer-journey .journey-step {
+    flex: 0 1 22%;
+    min-width: 0;
+  }
+
+  .prayer-journey .journey-step span {
+    width: 28px;
+    height: 28px;
+
+    flex: 0 0 28px;
+
+    font-size: 0.78rem;
+  }
+
+  .prayer-journey .journey-step small {
+    width: 100%;
+
+    margin-top: 6px;
+
+    font-size: 0.62rem;
+    line-height: 1.15;
+
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .prayer-journey .journey-line {
+    flex: 1 1 auto;
+    min-width: 8px;
+
+    margin: 0 2px 20px;
+  }
+}
+
+@media (max-width: 380px) {
+
+  .prayer-journey {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .prayer-journey .journey-step span {
+    width: 26px;
+    height: 26px;
+
+    flex-basis: 26px;
+  }
+
+  .prayer-journey .journey-step small {
+    font-size: 0.58rem;
+  }
+
+  .prayer-journey .journey-line {
+    min-width: 5px;
+    margin-left: 1px;
+    margin-right: 1px;
+  }
+}
