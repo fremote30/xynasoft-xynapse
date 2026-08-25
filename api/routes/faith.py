@@ -860,6 +860,9 @@ async def get_single_sermon(
         # =====================================
         sermon_content = {}
 
+        # =====================================
+        # STRUCTURED SERMON DATA
+        # =====================================
         if (
             sermon.sermon_data and
             isinstance(
@@ -871,7 +874,33 @@ async def get_single_sermon(
                 sermon.sermon_data
             )
 
-        elif sermon.content:
+        # =====================================
+        # DETERMINE WHETHER STRUCTURED DATA
+        # ACTUALLY CONTAINS A SERMON BODY
+        # =====================================
+        body_fields = (
+            "introduction",
+            "main_points",
+            "application",
+            "conclusion",
+        )
+
+        has_structured_body = any(
+            sermon_content.get(field)
+            for field in body_fields
+        )
+
+        # =====================================
+        # FALL BACK TO PERSISTED CONTENT
+        #
+        # Important for legacy / Genesis sermons
+        # where sermon_data may contain metadata
+        # only, such as {"genesis_seed": True}.
+        # =====================================
+        if (
+            not has_structured_body and
+            sermon.content
+        ):
             try:
                 parsed = json.loads(
                     sermon.content
@@ -881,21 +910,26 @@ async def get_single_sermon(
                     parsed,
                     dict
                 ):
-                    sermon_content = parsed
-                else:
+                    # Preserve metadata already stored
+                    # in sermon_data while restoring the
+                    # actual saved sermon body.
                     sermon_content = {
-                        "introduction":
-                            str(parsed)
+                        **sermon_content,
+                        **parsed,
                     }
+
+                else:
+                    sermon_content[
+                        "introduction"
+                    ] = str(parsed)
 
             except (
                 json.JSONDecodeError,
                 TypeError
             ):
-                sermon_content = {
-                    "introduction":
-                        sermon.content
-                }
+                sermon_content[
+                    "introduction"
+                ] = sermon.content
 
         # =====================================
         # ENSURE REQUIRED METADATA
