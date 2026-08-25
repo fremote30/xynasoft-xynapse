@@ -8685,3 +8685,140 @@ select {
   border-radius: 999px 999px 0 0;
   background: #2563eb;
 }
+
+/* =========================================================
+   XYNAFAITH PUBLIC HOMEPAGE V1.1
+========================================================= */
+
+/* ---------------------------------------------------------
+   WHY XYNAFAITH
+--------------------------------------------------------- */
+
+.why-xynafaith {
+  width: 100%;
+  padding: 70px 20px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.why-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.why-container h2 {
+  margin: 0 0 16px;
+  font-size: 34px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111827;
+}
+
+.why-description {
+  max-width: 780px;
+  margin: 0 auto 36px;
+  color: #4b5563;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.why-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 76px;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.05);
+  color: #1f2937;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   PUBLIC PLATFORM MODULES
+--------------------------------------------------------- */
+
+.features-header h2 {
+  margin-bottom: 12px;
+  font-size: 34px;
+  line-height: 1.2;
+  color: #111827;
+}
+
+.features-header p {
+  max-width: 720px;
+  margin: 0 auto 34px;
+  color: #4b5563;
+  line-height: 1.65;
+}
+
+.feature-section-title {
+  margin: 12px 0 22px;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------
+   PUBLIC HOMEPAGE MOBILE
+--------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+  .why-xynafaith {
+    padding: 48px 18px;
+  }
+
+  .why-container h2,
+  .features-header h2 {
+    font-size: 28px;
+  }
+
+  .why-description {
+    margin-bottom: 28px;
+    font-size: 15px;
+  }
+
+  .why-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .why-item {
+    min-height: 64px;
+    padding: 16px;
+  }
+
+  .features {
+    padding: 48px 18px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .why-container h2,
+  .features-header h2 {
+    font-size: 25px;
+  }
+}
