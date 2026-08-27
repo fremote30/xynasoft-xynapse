@@ -52,21 +52,15 @@ workflows:
         script: |
           xcode-project use-profiles
 
-      - name: Increment build number
+      - name: Set build number
         script: |
           cd "$CM_BUILD_DIR/mobile/ios/App"
 
-          LATEST_BUILD_NUMBER=$( \
-            app-store-connect get-latest-app-store-build-number \
-              "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0 \
-          )
+          BUILD_NUMBER=2
 
-          NEXT_BUILD_NUMBER=$((LATEST_BUILD_NUMBER + 1))
+          echo "Using build number: $BUILD_NUMBER"
 
-          echo "Latest App Store build: $LATEST_BUILD_NUMBER"
-          echo "New build number: $NEXT_BUILD_NUMBER"
-
-          agvtool new-version -all "$NEXT_BUILD_NUMBER"
+          agvtool new-version -all "$BUILD_NUMBER"
 
       - name: Build signed IPA
         script: |
