@@ -1,0 +1,87 @@
+workflows:
+  xynafaith-ios-testflight:
+    name: XynaFaith iOS TestFlight
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: Codemagic XynaFaith
+
+    environment:
+      groups:
+        - xynafaith_ios
+
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.xynasoft.xynafaith
+
+      vars:
+        APP_STORE_APPLE_ID: "6805760283"
+        XCODE_PROJECT: "mobile/ios/App/App.xcodeproj"
+        XCODE_SCHEME: "App"
+
+      node: 22
+      xcode: latest
+
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd "$CM_BUILD_DIR/mobile"
+          npm ci
+
+      - name: Restore Firebase iOS configuration
+        script: |
+          echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode \
+            > "$CM_BUILD_DIR/mobile/ios/App/App/GoogleService-Info.plist"
+
+          test -s "$CM_BUILD_DIR/mobile/ios/App/App/GoogleService-Info.plist"
+
+      - name: Build mobile web assets and sync iOS
+        script: |
+          cd "$CM_BUILD_DIR/mobile"
+          npm run copy
+          npx cap sync ios
+
+      - name: Inspect Xcode project
+        script: |
+          xcodebuild \
+            -project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            -list
+
+      - name: Set up iOS signing
+        script: |
+          xcode-project use-profiles
+
+      - name: Increment build number
+        script: |
+          cd "$CM_BUILD_DIR/mobile/ios/App"
+
+          LATEST_BUILD_NUMBER=$( \
+            app-store-connect get-latest-app-store-build-number \
+              "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0 \
+          )
+
+          NEXT_BUILD_NUMBER=$((LATEST_BUILD_NUMBER + 1))
+
+          echo "Latest App Store build: $LATEST_BUILD_NUMBER"
+          echo "New build number: $NEXT_BUILD_NUMBER"
+
+          agvtool new-version -all "$NEXT_BUILD_NUMBER"
+
+      - name: Build signed IPA
+        script: |
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - mobile/ios/App/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
