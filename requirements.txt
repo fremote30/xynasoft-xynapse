@@ -41,3 +41,4 @@ reportlab
 python-docx
 alembic
 firebase-admin
+httpx
