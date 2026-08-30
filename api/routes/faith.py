@@ -46,6 +46,11 @@ from api.services.ai_service import (
     refine_sermon,
     generate_multiverse_sermons
 )
+from api.core.config import XYNASSIST_ENABLED
+from api.services.xynassist_client import (
+    XynAssistClient,
+    XynAssistError,
+)
 from api.models.sermon_comment import SermonComment
 
 router = APIRouter()
@@ -83,9 +88,25 @@ async def create_sermon(
     print("Scripture:", payload.scripture)
     print("Input:", payload.input)
     print("==========\n")
-    sermon = generate_ai_response(
-    payload
-    )
+    if XYNASSIST_ENABLED:
+        try:
+            xynassist_client = XynAssistClient()
+
+            sermon = await xynassist_client.generate_sermon(
+                payload.model_dump()
+            )
+        except XynAssistError as exc:
+            raise HTTPException(
+                status_code=503,
+                detail=(
+                    "Sermon generation service "
+                    "is temporarily unavailable"
+                ),
+            ) from exc
+    else:
+        sermon = generate_ai_response(
+            payload
+        )
 
     # =====================================
     # FORCE REQUESTED BIBLE VERSE

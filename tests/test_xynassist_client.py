@@ -69,6 +69,7 @@ async def test_generate_sermon_posts_expected_contract():
 
     client = XynAssistClient(
         base_url="https://xynassist.test",
+        service_token="test-service-token",
         transport=httpx.MockTransport(handler),
     )
 
@@ -91,6 +92,7 @@ async def test_generate_sermon_rejects_error_response():
 
     client = XynAssistClient(
         base_url="https://xynassist.test",
+        service_token="test-service-token",
         transport=httpx.MockTransport(handler),
     )
 
@@ -118,6 +120,7 @@ async def test_generate_sermon_rejects_invalid_json():
 
     client = XynAssistClient(
         base_url="https://xynassist.test",
+        service_token="test-service-token",
         transport=httpx.MockTransport(handler),
     )
 
@@ -142,6 +145,7 @@ async def test_generate_sermon_rejects_non_object_json():
 
     client = XynAssistClient(
         base_url="https://xynassist.test",
+        service_token="test-service-token",
         transport=httpx.MockTransport(handler),
     )
 
@@ -166,6 +170,7 @@ async def test_generate_sermon_translates_network_failure():
 
     client = XynAssistClient(
         base_url="https://xynassist.test",
+        service_token="test-service-token",
         transport=httpx.MockTransport(handler),
     )
 
@@ -176,3 +181,69 @@ async def test_generate_sermon_translates_network_failure():
         await client.generate_sermon(
             SERMON_PAYLOAD
         )
+
+
+@pytest.mark.anyio
+async def test_generate_sermon_sends_service_credential():
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert (
+            request.headers[
+                "X-XynAssist-Service-Token"
+            ]
+            == "test-service-token"
+        )
+
+        return httpx.Response(
+            200,
+            json=SERMON_RESPONSE,
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    result = await client.generate_sermon(
+        SERMON_PAYLOAD
+    )
+
+    assert result == SERMON_RESPONSE
+
+
+@pytest.mark.anyio
+async def test_generate_sermon_fails_closed_without_service_credential():
+    from api.services.xynassist_client import (
+        XynAssistConfigurationError,
+    )
+
+    called = False
+
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        nonlocal called
+        called = True
+
+        return httpx.Response(
+            200,
+            json=SERMON_RESPONSE,
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(
+        XynAssistConfigurationError,
+        match="not configured",
+    ):
+        await client.generate_sermon(
+            SERMON_PAYLOAD
+        )
+
+    assert called is False

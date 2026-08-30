@@ -33,3 +33,12 @@ XYNASSIST_TIMEOUT_SECONDS = float(
         "30",
     )
 )
+
+# Backend-to-backend credential used when XynaFaith
+# calls trusted XynAssist integration endpoints.
+#
+# No credential value is stored in source control.
+XYNASSIST_SERVICE_TOKEN = os.getenv(
+    "XYNASSIST_SERVICE_TOKEN",
+    "",
+).strip()
