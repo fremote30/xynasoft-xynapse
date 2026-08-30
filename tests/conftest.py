@@ -22,7 +22,7 @@ def api_key() -> str:
 @pytest.fixture(scope="session")
 def client() -> TestClient:
     # Lazy import avoids blowing up pytest collection
-    from api.main import app  # noqa
+    from main import app  # noqa
     return TestClient(app)
 
 
