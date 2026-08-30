@@ -6,12 +6,14 @@ import os
 # ================================
 # DATABASE URL
 # ================================
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+psycopg2://xynapse:xynapse_password@db:5432/xynapse"
-)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-print(f"📦 Connecting to DB: {DATABASE_URL}")
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is required"
+    )
+
+print("📦 Database configuration loaded")
 
 
 # ================================

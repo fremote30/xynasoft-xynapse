@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: xynapse
       POSTGRES_USER: xynapse
-      POSTGRES_PASSWORD: xynapse_fremote
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
 
     ports:
       - "5432:5432"
@@ -36,8 +36,12 @@ services:
       - "8000:8000"
 
     environment:
-      DATABASE_URL: postgresql+psycopg2://xynapse:xynapse_password@db:5432/xynapse
-      SECRET_KEY: 0646d3b5a2142b11a15e36e7133652c58456b1899e5a4c2523c0a1e9e727bd9f
+      DATABASE_URL: postgresql+psycopg2://xynapse:${POSTGRES_PASSWORD}@db:5432/xynapse
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      XYNASSIST_ENABLED: ${XYNASSIST_ENABLED:-false}
+      XYNASSIST_BASE_URL: ${XYNASSIST_BASE_URL:-http://localhost:8001}
+      XYNASSIST_TIMEOUT_SECONDS: ${XYNASSIST_TIMEOUT_SECONDS:-60}
+      XYNASSIST_SERVICE_TOKEN: ${XYNASSIST_SERVICE_TOKEN:?XYNASSIST_SERVICE_TOKEN is required}
     working_dir: /workspaces/xynasoft-xynapse
 
     command: >

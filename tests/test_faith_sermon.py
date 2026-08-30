@@ -15,6 +15,22 @@ from api.core.dependencies import get_current_user
 
 
 # =========================================================
+# Test isolation
+# =========================================================
+
+@pytest.fixture(autouse=True)
+def force_legacy_sermon_path(monkeypatch):
+    """
+    Characterization tests exercise the pre-XynAssist
+    sermon generator and must never make network calls.
+    """
+    monkeypatch.setattr(
+        "api.routes.faith.XYNASSIST_ENABLED",
+        False,
+    )
+
+
+# =========================================================
 # Helpers
 # =========================================================
 
