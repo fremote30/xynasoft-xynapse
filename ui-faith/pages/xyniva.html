@@ -1,0 +1,163 @@
+<div class="app clean-app">
+  <div class="clean-main">
+
+    <section class="xyniva-page">
+
+      <div class="xyniva-header">
+
+        <div>
+          <span class="eyebrow">
+            XynaFaith AI
+          </span>
+
+          <h1>
+            Ask Xyniva
+          </h1>
+
+          <p>
+            Tell Xyniva what you're preparing.
+            Start naturally — you don't need to fill out a form.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-secondary"
+          onclick="navigate('sermon')"
+        >
+          Advanced Sermon Studio
+        </button>
+
+      </div>
+
+
+      <div class="xyniva-workspace">
+
+        <!-- =====================================
+             WELCOME / EMPTY STATE
+        ====================================== -->
+
+        <div
+          id="xynivaWelcome"
+          class="xyniva-welcome"
+        >
+
+          <div class="xyniva-mark">
+            ✦
+          </div>
+
+          <h2>
+            What are you preparing for today?
+          </h2>
+
+          <p>
+            Describe the sermon you need in your own words.
+            Xyniva will help you develop it conversationally.
+          </p>
+
+
+          <div class="xyniva-prompts">
+
+            <button
+              type="button"
+              class="xyniva-prompt"
+              data-xyniva-prompt="Create a Pentecostal sermon on Proverbs 3 about trusting God during uncertainty."
+            >
+              <strong>Trusting God</strong>
+              <span>
+                Pentecostal sermon on Proverbs 3
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="xyniva-prompt"
+              data-xyniva-prompt="Create a sermon about finding hope when life feels uncertain."
+            >
+              <strong>Finding Hope</strong>
+              <span>
+                Develop a sermon for difficult seasons
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="xyniva-prompt"
+              data-xyniva-prompt="Create a sermon on faith that speaks to young adults."
+            >
+              <strong>Faith for Young Adults</strong>
+              <span>
+                Prepare a message for a younger audience
+              </span>
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =====================================
+             CONVERSATION
+        ====================================== -->
+
+        <div
+          id="xynivaMessages"
+          class="xyniva-messages"
+          aria-live="polite"
+          aria-label="Conversation with Xyniva"
+        ></div>
+
+
+        <!-- =====================================
+             COMPOSER
+        ====================================== -->
+
+        <div class="xyniva-composer-shell">
+
+          <form
+            id="xynivaForm"
+            class="xyniva-composer"
+          >
+
+            <textarea
+              id="xynivaInput"
+              rows="1"
+              maxlength="50000"
+              placeholder="Ask Xyniva to help prepare your sermon..."
+              aria-label="Message Xyniva"
+              required
+            ></textarea>
+
+            <button
+              id="xynivaSend"
+              type="submit"
+              class="btn-primary xyniva-send"
+            >
+              Send
+            </button>
+
+          </form>
+
+          <div class="xyniva-composer-footer">
+            <span>
+              Xyniva can make mistakes. Review Scripture
+              references and sermon content before use.
+            </span>
+
+            <button
+              type="button"
+              class="xyniva-studio-link"
+              onclick="navigate('sermon')"
+            >
+              Open Sermon Studio →
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+</div>

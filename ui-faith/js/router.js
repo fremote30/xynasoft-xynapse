@@ -34,6 +34,9 @@
     sermon:
       "/faith/pages/sermon.html",
 
+    xyniva:
+      "/faith/pages/xyniva.html",
+
     "member-dashboard":
       "/faith/pages/member-dashboard.html",
 
@@ -67,6 +70,8 @@ window.protectedRoutes = [
     "dashboard",
 
     "sermon",
+
+    "xyniva",
 
     "network",
 
@@ -475,6 +480,17 @@ try {
     if (page === "admin-approvals") {
       await loadUserInfo();
       await loadPastorApplications();
+    }
+
+    if (page === "xyniva") {
+      await loadUserInfo();
+
+      if (
+        typeof window.bindXyniva ===
+        "function"
+      ) {
+        window.bindXyniva();
+      }
     }
 
     if (page === "sermon") {

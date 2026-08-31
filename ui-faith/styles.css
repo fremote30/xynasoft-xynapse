@@ -9591,3 +9591,371 @@ select {
     margin-right: 1px;
   }
 }
+
+
+/* =========================================================
+   XYNIVA CONVERSATIONAL EXPERIENCE
+========================================================= */
+
+.xyniva-page {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 42px 0 64px;
+}
+
+.xyniva-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.xyniva-header h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+.xyniva-header p {
+  max-width: 650px;
+  margin: 0;
+  line-height: 1.65;
+  opacity: 0.82;
+}
+
+.xyniva-workspace {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 620px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+}
+
+.xyniva-welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 54px 34px 36px;
+}
+
+.xyniva-mark {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 20px;
+  border-radius: 18px;
+  font-size: 30px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.xyniva-welcome h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+}
+
+.xyniva-welcome > p {
+  max-width: 620px;
+  margin: 0;
+  line-height: 1.65;
+  opacity: 0.78;
+}
+
+.xyniva-prompts {
+  width: min(820px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.xyniva-prompt {
+  min-height: 118px;
+  padding: 18px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  color: inherit;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.xyniva-prompt:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.085);
+}
+
+.xyniva-prompt strong,
+.xyniva-prompt span {
+  display: block;
+}
+
+.xyniva-prompt strong {
+  margin-bottom: 7px;
+  font-size: 0.98rem;
+}
+
+.xyniva-prompt span {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  opacity: 0.7;
+}
+
+
+/* =========================================================
+   XYNIVA MESSAGES
+========================================================= */
+
+.xyniva-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px;
+}
+
+.xyniva-messages:empty {
+  display: none;
+}
+
+.xyniva-message {
+  width: min(820px, 92%);
+}
+
+.xyniva-message-user {
+  align-self: flex-end;
+}
+
+.xyniva-message-assistant {
+  align-self: flex-start;
+}
+
+.xyniva-message-label {
+  margin-bottom: 7px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.xyniva-message-user .xyniva-message-label {
+  text-align: right;
+}
+
+.xyniva-message-body {
+  padding: 16px 18px;
+  border-radius: 18px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.xyniva-message-user .xyniva-message-body {
+  background: rgba(255, 255, 255, 0.12);
+  border-bottom-right-radius: 6px;
+}
+
+.xyniva-message-assistant .xyniva-message-body {
+  background: rgba(255, 255, 255, 0.065);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom-left-radius: 6px;
+}
+
+.xyniva-error {
+  width: min(820px, 92%);
+  align-self: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  background: rgba(180, 50, 50, 0.12);
+  border: 1px solid rgba(220, 80, 80, 0.22);
+}
+
+
+/* =========================================================
+   XYNIVA COMPOSER
+========================================================= */
+
+.xyniva-composer-shell {
+  margin-top: auto;
+  padding: 20px 24px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.xyniva-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.xyniva-composer textarea {
+  flex: 1;
+  min-height: 54px;
+  max-height: 180px;
+  resize: vertical;
+  padding: 15px 17px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.07);
+  color: inherit;
+  font: inherit;
+  line-height: 1.45;
+  outline: none;
+}
+
+.xyniva-composer textarea:focus {
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.xyniva-composer textarea::placeholder {
+  color: inherit;
+  opacity: 0.48;
+}
+
+.xyniva-send {
+  min-width: 100px;
+  min-height: 54px;
+}
+
+.xyniva-composer-footer {
+  width: min(900px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 11px auto 0;
+  font-size: 0.75rem;
+  opacity: 0.62;
+}
+
+.xyniva-studio-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   XYNIVA DASHBOARD ENTRY
+========================================================= */
+
+.xyniva-dashboard-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.xyniva-dashboard-card::before {
+  content: "✦";
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  font-size: 2.4rem;
+  opacity: 0.08;
+}
+
+
+/* =========================================================
+   XYNIVA MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .xyniva-page {
+    width: min(100% - 20px, 1100px);
+    padding: 22px 0 36px;
+  }
+
+  .xyniva-header {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .xyniva-header .btn-secondary {
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  .xyniva-workspace {
+    min-height: calc(100vh - 210px);
+    border-radius: 18px;
+  }
+
+  .xyniva-welcome {
+    padding: 36px 18px 26px;
+  }
+
+  .xyniva-prompts {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .xyniva-prompt {
+    min-height: auto;
+    padding: 15px;
+  }
+
+  .xyniva-messages {
+    gap: 16px;
+    padding: 20px 14px;
+  }
+
+  .xyniva-message {
+    width: 94%;
+  }
+
+  .xyniva-message-body {
+    padding: 14px;
+  }
+
+  .xyniva-composer-shell {
+    padding: 14px 12px 12px;
+  }
+
+  .xyniva-composer {
+    gap: 8px;
+  }
+
+  .xyniva-composer textarea {
+    min-height: 50px;
+    padding: 13px 14px;
+  }
+
+  .xyniva-send {
+    min-width: 72px;
+    min-height: 50px;
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+
+  .xyniva-composer-footer {
+    display: block;
+    line-height: 1.45;
+  }
+
+  .xyniva-studio-link {
+    display: block;
+    margin-top: 8px;
+  }
+
+}
