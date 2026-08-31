@@ -76,6 +76,10 @@ from api.routes.faith import (
     router as faith_router
 )
 
+from api.routes.faith_conversations import (
+    router as faith_conversations_router
+)
+
 # =========================================
 # For Prayer Wall
 # =========================================
@@ -143,6 +147,12 @@ print("✅ Auth routes loaded")
 # =====================================
 app.include_router(
     faith_router,
+    prefix="/api/v1/faith",
+    tags=["Faith"]
+)
+
+app.include_router(
+    faith_conversations_router,
     prefix="/api/v1/faith",
     tags=["Faith"]
 )
