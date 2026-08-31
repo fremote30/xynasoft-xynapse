@@ -79,6 +79,7 @@
   function assistantContent(result) {
 
     const candidates = [
+      result?.assistant_content,
       result?.assistant_message?.content,
       result?.assistant?.content,
       result?.message?.content,

@@ -8,6 +8,8 @@ const MODULE_PATH = path.resolve(
 );
 
 function element(overrides = {}) {
+  const children = [];
+
   return {
     value: "",
     textContent: "",
@@ -16,13 +18,17 @@ function element(overrides = {}) {
     hidden: false,
     style: {},
     dataset: {},
+    children,
     classList: {
       add() {},
       remove() {},
       toggle() {}
     },
     addEventListener() {},
-    appendChild() {},
+    appendChild(child) {
+      children.push(child);
+      return child;
+    },
     focus() {},
     ...overrides
   };
@@ -234,5 +240,60 @@ test("fails clearly if conversation client is unavailable", async () => {
   await assert.rejects(
     () => api.send("Create a sermon."),
     /Xyniva conversation service is unavailable/
+  );
+});
+
+test("renders canonical assistant_content from XynAssist turn response", async () => {
+  const rendered = [];
+
+  const { api, elements } = setup({
+    client: {
+      async create() {
+        return {
+          id: "conversation-contract"
+        };
+      },
+
+      async turn() {
+        return {
+          assistant_message_id: "message-1",
+          assistant_content:
+            "Canonical sermon response."
+        };
+      }
+    }
+  });
+
+  elements.xynivaMessages.appendChild =
+    (node) => {
+      rendered.push(node);
+    };
+
+  await api.send(
+    "Create a sermon on Proverbs 3."
+  );
+
+  const assistantMessage =
+    rendered.find(
+      (node) =>
+        node.className ===
+        "xyniva-message xyniva-message-assistant"
+    );
+
+  assert.ok(
+    assistantMessage,
+    "assistant message should be rendered"
+  );
+
+  const body =
+    assistantMessage.children?.find?.(
+      (child) =>
+        child.className ===
+        "xyniva-message-body"
+    );
+
+  assert.equal(
+    body?.textContent,
+    "Canonical sermon response."
   );
 });
