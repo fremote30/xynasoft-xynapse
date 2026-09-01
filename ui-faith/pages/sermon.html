@@ -1142,7 +1142,26 @@ textarea{
         aria-live="polite"
         hidden
       >
-        ✦ Xyniva is working…
+        <div class="xyniva-studio-status-row">
+          <span
+            class="xyniva-studio-spinner"
+            aria-hidden="true"
+          ></span>
+
+          <span id="xynivaStudioStatusText">
+            Xyniva is refining your sermon…
+          </span>
+        </div>
+
+        <div
+          class="xyniva-studio-progress"
+          aria-hidden="true"
+        >
+          <div
+            id="xynivaStudioProgressBar"
+            class="xyniva-studio-progress-bar"
+          ></div>
+        </div>
       </div>
 
       <form

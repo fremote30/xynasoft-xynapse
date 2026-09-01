@@ -623,3 +623,139 @@ test(
 
   }
 );
+
+
+test(
+  "shows visible working status while Xyniva is responding",
+  async () => {
+
+    const {
+      window,
+      elements
+    } =
+      createEnvironment({
+        sermon:
+          existingSermon()
+      });
+
+    elements.xynivaStudioStatusText =
+      element();
+
+    elements.xynivaStudioProgressBar =
+      element({
+        classList: {
+          add() {},
+          remove() {}
+        },
+        offsetWidth: 100
+      });
+
+    let releaseTurn;
+
+    window.XynivaConversation.turn =
+      async () =>
+        new Promise(resolve => {
+
+          releaseTurn = () =>
+            resolve({
+              assistant_content:
+                JSON.stringify({
+                  title:
+                    "Refined Sermon",
+                  scripture:
+                    "Proverbs 3:5-6",
+                  introduction:
+                    "Updated introduction.",
+                  main_points: [
+                    {
+                      title:
+                        "Trust God",
+                      content:
+                        "Trust Him."
+                    }
+                  ],
+                  application:
+                    "Walk by faith.",
+                  conclusion:
+                    "Trust the Lord."
+                })
+            });
+
+        });
+
+    const pending =
+      window.XynivaStudio.send(
+        "Strengthen the introduction."
+      );
+
+    for (
+      let attempt = 0;
+      attempt < 20 &&
+      typeof releaseTurn !== "function";
+      attempt += 1
+    ) {
+      await new Promise(resolve =>
+        setImmediate(resolve)
+      );
+    }
+
+    assert.equal(
+      typeof releaseTurn,
+      "function"
+    );
+
+    assert.equal(
+      elements
+        .xynivaStudioStatus
+        .hidden,
+      false
+    );
+
+    assert.equal(
+      elements
+        .xynivaStudioSend
+        .disabled,
+      true
+    );
+
+    assert.equal(
+      elements
+        .xynivaStudioInput
+        .disabled,
+      true
+    );
+
+    assert.match(
+      elements
+        .xynivaStudioStatusText
+        .textContent,
+      /Understanding your request/
+    );
+
+    releaseTurn();
+
+    await pending;
+
+    assert.equal(
+      elements
+        .xynivaStudioStatus
+        .hidden,
+      true
+    );
+
+    assert.equal(
+      elements
+        .xynivaStudioSend
+        .disabled,
+      false
+    );
+
+    assert.equal(
+      elements
+        .xynivaStudioInput
+        .disabled,
+      false
+    );
+
+  }
+);

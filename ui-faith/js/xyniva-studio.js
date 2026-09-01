@@ -20,6 +20,14 @@
   let sending = false;
   let sermonContextSeeded = false;
   let boundForm = null;
+  let statusTimer = null;
+
+  const STATUS_MESSAGES = [
+    "Understanding your request…",
+    "Refining your sermon…",
+    "Preserving your sermon context…",
+    "Preparing the updated message…"
+  ];
 
 
   function byId(id) {
@@ -157,6 +165,107 @@
   }
 
 
+  function stopStatusTimer() {
+
+    if (
+      statusTimer !== null &&
+      typeof clearInterval === "function"
+    ) {
+      clearInterval(
+        statusTimer
+      );
+    }
+
+    statusTimer = null;
+
+  }
+
+
+  function startStatus() {
+
+    stopStatusTimer();
+
+    const status =
+      byId("xynivaStudioStatus");
+
+    const text =
+      byId("xynivaStudioStatusText");
+
+    const progress =
+      byId("xynivaStudioProgressBar");
+
+    if (status) {
+      status.hidden = false;
+    }
+
+    if (text) {
+      text.textContent =
+        STATUS_MESSAGES[0];
+    }
+
+    if (progress) {
+      progress.classList?.remove(
+        "active"
+      );
+
+      void progress.offsetWidth;
+
+      progress.classList?.add(
+        "active"
+      );
+    }
+
+    if (
+      typeof setInterval !== "function"
+    ) {
+      return;
+    }
+
+    let index = 0;
+
+    statusTimer =
+      setInterval(
+        () => {
+
+          index =
+            (index + 1) %
+            STATUS_MESSAGES.length;
+
+          if (text) {
+            text.textContent =
+              STATUS_MESSAGES[index];
+          }
+
+        },
+        2200
+      );
+
+  }
+
+
+  function stopStatus() {
+
+    stopStatusTimer();
+
+    const status =
+      byId("xynivaStudioStatus");
+
+    const progress =
+      byId("xynivaStudioProgressBar");
+
+    if (status) {
+      status.hidden = true;
+    }
+
+    if (progress) {
+      progress.classList?.remove(
+        "active"
+      );
+    }
+
+  }
+
+
   function setSending(value) {
 
     sending = Boolean(value);
@@ -170,9 +279,10 @@
     const input =
       byId("xynivaStudioInput");
 
-    if (status) {
-      status.hidden =
-        !sending;
+    if (sending) {
+      startStatus();
+    } else {
+      stopStatus();
     }
 
     if (button) {
@@ -531,6 +641,7 @@
     sending = false;
     sermonContextSeeded = false;
     boundForm = null;
+    stopStatus();
 
   }
 
