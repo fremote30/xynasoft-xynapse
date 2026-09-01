@@ -52,6 +52,11 @@ from api.services.xynassist_client import (
     XynAssistError,
 )
 from api.models.sermon_comment import SermonComment
+from api.services.sermon_persistence import (
+    SermonNotFoundError,
+    save_sermon_for_user,
+    update_sermon_for_user,
+)
 
 router = APIRouter()
 
@@ -629,89 +634,39 @@ async def export_sermon_docx(
 # =========================================
 @router.post("/sermon/save")
 async def save_sermon(
-
     payload: dict,
-
-    db: Session = Depends(
-        get_db
-    ),
-
+    db: Session = Depends(get_db),
     current_user: User = Depends(
         get_current_user
-    )
+    ),
 ):
-
     try:
-
-        # =========================
-        # TITLE
-        # =========================
-        title = payload.get(
-            "title",
-            "Untitled Sermon"
+        sermon = save_sermon_for_user(
+            db=db,
+            user_id=current_user.id,
+            payload=payload,
         )
-
-        # =========================
-        # SCRIPTURE
-        # =========================
-        scripture = payload.get(
-            "scripture"
-        )
-
-        # =========================
-        # CREATE SERMON
-        # =========================
-        sermon = Sermon(
-
-            title=title,
-
-            scripture=scripture,
-
-            author_id=current_user.id,
-
-            # LEGACY STORAGE
-            content=json.dumps(
-                payload
-            ),
-
-            # NEW STRUCTURED STORAGE
-            sermon_data=payload,
-
-            is_public=0
-        )
-
-        # =========================
-        # SAVE
-        # =========================
-        db.add(sermon)
-
-        db.commit()
-
-        db.refresh(sermon)
 
         return {
-
             "success": True,
-
-            "message":
-                "Sermon saved",
-
-            "sermon_id":
-                sermon.id
+            "message": "Sermon saved",
+            "sermon_id": sermon.id,
         }
 
-    except Exception as e:
+    except Exception as exc:
+        db.rollback()
 
         print(
             "SAVE SERMON ERROR:",
-            str(e)
+            str(exc),
         )
 
         raise HTTPException(
             status_code=500,
-            detail="Failed to save sermon"
+            detail="Failed to save sermon",
         )
-    
+
+
 # =========================================
 # GET MY SERMONS
 # =========================================
@@ -1045,91 +1000,46 @@ async def get_single_sermon(
 # =========================================
 @router.put("/sermon/update/{sermon_id}")
 async def update_sermon(
-
     sermon_id: int,
-
     payload: dict,
-
-    db: Session = Depends(
-        get_db
-    ),
-
+    db: Session = Depends(get_db),
     current_user: User = Depends(
         get_current_user
-    )
+    ),
 ):
-
     try:
-
-        sermon = (
-
-            db.query(Sermon)
-
-            .filter(
-                Sermon.id == sermon_id
-            )
-
-            .filter(
-                Sermon.author_id
-                == current_user.id
-            )
-
-            .first()
+        update_sermon_for_user(
+            db=db,
+            user_id=current_user.id,
+            sermon_id=sermon_id,
+            payload=payload,
         )
-
-        if not sermon:
-
-            raise HTTPException(
-                status_code=404,
-                detail="Sermon not found"
-            )
-
-        # =========================
-        # UPDATE FIELDS
-        # =========================
-        sermon.title = payload.get(
-            "title",
-            sermon.title
-        )
-
-        sermon.scripture = payload.get(
-            "scripture",
-            sermon.scripture
-        )
-
-        # LEGACY
-        sermon.content = json.dumps(
-            payload
-        )
-
-        # STRUCTURED
-        sermon.sermon_data = payload
-
-        db.commit()
-
-        db.refresh(sermon)
 
         return {
-
             "success": True,
-
-            "message":
-                "Sermon updated"
+            "message": "Sermon updated",
         }
 
-    except Exception as e:
+    except SermonNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="Sermon not found",
+        )
+
+    except Exception as exc:
+        db.rollback()
 
         print(
             "UPDATE SERMON ERROR:",
-            str(e)
+            str(exc),
         )
 
         raise HTTPException(
             status_code=500,
-            detail=
-              "Failed to update sermon"
+            detail="Failed to update sermon",
         )
-    
+
+
 # =========================================
 # SHARE SERMON
 # =========================================
