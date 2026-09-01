@@ -2804,9 +2804,15 @@ select {
 
 /* Mobile sermon tabs */
 .mobile-sermon-tabs {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-sermon-tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
 }
 
 .mobile-tab {
