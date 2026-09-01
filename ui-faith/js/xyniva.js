@@ -122,6 +122,277 @@
   }
 
 
+  function parseSermon(content) {
+
+    if (
+      typeof content !== "string" ||
+      !content.trim()
+    ) {
+      return null;
+    }
+
+    let payload;
+
+    try {
+      payload = JSON.parse(
+        content
+      );
+    } catch (_) {
+      return null;
+    }
+
+    if (
+      !payload ||
+      typeof payload !== "object" ||
+      Array.isArray(payload)
+    ) {
+      return null;
+    }
+
+    const title =
+      typeof payload.title === "string"
+        ? payload.title.trim()
+        : "";
+
+    const scripture =
+      typeof payload.scripture === "string"
+        ? payload.scripture.trim()
+        : "";
+
+    const introduction =
+      typeof payload.introduction === "string"
+        ? payload.introduction.trim()
+        : "";
+
+    const application =
+      typeof payload.application === "string"
+        ? payload.application.trim()
+        : "";
+
+    const conclusion =
+      typeof payload.conclusion === "string"
+        ? payload.conclusion.trim()
+        : "";
+
+    const mainPoints =
+      Array.isArray(payload.main_points)
+        ? payload.main_points.filter(
+            (point) =>
+              point &&
+              typeof point === "object"
+          )
+        : [];
+
+    if (
+      !title ||
+      !scripture ||
+      !introduction ||
+      mainPoints.length === 0
+    ) {
+      return null;
+    }
+
+    return {
+      title,
+      scripture,
+      introduction,
+      mainPoints,
+      application,
+      conclusion
+    };
+
+  }
+
+
+  function appendTextElement(
+    parent,
+    tag,
+    className,
+    content
+  ) {
+
+    if (
+      !content ||
+      typeof document ===
+        "undefined"
+    ) {
+      return null;
+    }
+
+    const element =
+      document.createElement(tag);
+
+    element.className =
+      className;
+
+    // AI-generated output remains untrusted.
+    // Never inject it as HTML.
+    element.textContent =
+      content;
+
+    parent.appendChild(element);
+
+    return element;
+
+  }
+
+
+  function renderSermon(
+    body,
+    sermon
+  ) {
+
+    body.classList?.add(
+      "xyniva-sermon"
+    );
+
+    appendTextElement(
+      body,
+      "h2",
+      "xyniva-sermon-title",
+      sermon.title
+    );
+
+    appendTextElement(
+      body,
+      "div",
+      "xyniva-sermon-scripture",
+      sermon.scripture
+    );
+
+    const introduction =
+      document.createElement("section");
+
+    introduction.className =
+      "xyniva-sermon-section";
+
+    appendTextElement(
+      introduction,
+      "h3",
+      "xyniva-sermon-heading",
+      "Introduction"
+    );
+
+    appendTextElement(
+      introduction,
+      "p",
+      "xyniva-sermon-text",
+      sermon.introduction
+    );
+
+    body.appendChild(
+      introduction
+    );
+
+    sermon.mainPoints.forEach(
+      (point, index) => {
+
+        const section =
+          document.createElement(
+            "section"
+          );
+
+        section.className =
+          "xyniva-sermon-section";
+
+        const pointTitle =
+          typeof point.title ===
+            "string"
+            ? point.title.trim()
+            : "";
+
+        const pointContent =
+          typeof point.content ===
+            "string"
+            ? point.content.trim()
+            : "";
+
+        appendTextElement(
+          section,
+          "h3",
+          "xyniva-sermon-heading",
+          pointTitle
+            ? `${index + 1}. ${pointTitle}`
+            : `Point ${index + 1}`
+        );
+
+        appendTextElement(
+          section,
+          "p",
+          "xyniva-sermon-text",
+          pointContent
+        );
+
+        body.appendChild(
+          section
+        );
+
+      }
+    );
+
+    if (sermon.application) {
+
+      const section =
+        document.createElement(
+          "section"
+        );
+
+      section.className =
+        "xyniva-sermon-section";
+
+      appendTextElement(
+        section,
+        "h3",
+        "xyniva-sermon-heading",
+        "Application"
+      );
+
+      appendTextElement(
+        section,
+        "p",
+        "xyniva-sermon-text",
+        sermon.application
+      );
+
+      body.appendChild(
+        section
+      );
+
+    }
+
+    if (sermon.conclusion) {
+
+      const section =
+        document.createElement(
+          "section"
+        );
+
+      section.className =
+        "xyniva-sermon-section";
+
+      appendTextElement(
+        section,
+        "h3",
+        "xyniva-sermon-heading",
+        "Conclusion"
+      );
+
+      appendTextElement(
+        section,
+        "p",
+        "xyniva-sermon-text",
+        sermon.conclusion
+      );
+
+      body.appendChild(
+        section
+      );
+
+    }
+
+  }
+
+
   function appendMessage(
     role,
     content
@@ -163,10 +434,26 @@
     body.className =
       "xyniva-message-body";
 
-    // Deliberately textContent, not innerHTML.
-    // Conversation output is untrusted text.
-    body.textContent =
-      content;
+    const sermon =
+      role === "assistant"
+        ? parseSermon(content)
+        : null;
+
+    if (sermon) {
+
+      renderSermon(
+        body,
+        sermon
+      );
+
+    } else {
+
+      // Deliberately textContent, not innerHTML.
+      // Conversation output is untrusted text.
+      body.textContent =
+        content;
+
+    }
 
     message.appendChild(label);
     message.appendChild(body);
@@ -216,6 +503,180 @@
 
 
   // ========================================================
+  // NAVIGATION
+  // ========================================================
+
+  function goBack() {
+
+    if (
+      typeof window !== "undefined" &&
+      window.history &&
+      window.history.length > 1
+    ) {
+
+      window.history.back();
+      return;
+
+    }
+
+    if (
+      typeof window !== "undefined" &&
+      typeof window.navigate === "function"
+    ) {
+
+      window.navigate("dashboard");
+
+    }
+
+  }
+
+
+  function bindBackButton() {
+
+    const button =
+      byId("xynivaBack");
+
+    if (
+      !button ||
+      typeof button.addEventListener !==
+        "function"
+    ) {
+      return;
+    }
+
+    if (
+      button.dataset?.xynivaBound ===
+      "true"
+    ) {
+      return;
+    }
+
+    if (button.dataset) {
+      button.dataset.xynivaBound =
+        "true";
+    }
+
+    button.addEventListener(
+      "click",
+      goBack
+    );
+
+  }
+
+
+  // ========================================================
+  // STATUS / PROGRESS
+  // ========================================================
+
+  const STATUS_MESSAGES = [
+    "Understanding your request…",
+    "Preparing your sermon…",
+    "Developing the message…",
+    "Almost ready…"
+  ];
+
+  let statusTimer = null;
+  let statusIndex = 0;
+
+
+  function updateStatusText() {
+
+    const text =
+      byId("xynivaStatusText");
+
+    if (!text) {
+      return;
+    }
+
+    text.textContent =
+      STATUS_MESSAGES[
+        statusIndex %
+        STATUS_MESSAGES.length
+      ];
+
+  }
+
+
+  function startStatus() {
+
+    const status =
+      byId("xynivaStatus");
+
+    const progress =
+      byId("xynivaProgressBar");
+
+    statusIndex = 0;
+
+    if (status) {
+      status.hidden = false;
+    }
+
+    if (progress) {
+      progress.classList?.add(
+        "is-active"
+      );
+    }
+
+    updateStatusText();
+
+    if (
+      typeof window !== "undefined" &&
+      typeof window.setInterval ===
+        "function"
+    ) {
+
+      statusTimer =
+        window.setInterval(
+          () => {
+            statusIndex += 1;
+            updateStatusText();
+          },
+          2200
+        );
+
+    }
+
+  }
+
+
+  function stopStatus() {
+
+    const status =
+      byId("xynivaStatus");
+
+    const progress =
+      byId("xynivaProgressBar");
+
+    if (
+      statusTimer !== null &&
+      typeof window !== "undefined" &&
+      typeof window.clearInterval ===
+        "function"
+    ) {
+
+      window.clearInterval(
+        statusTimer
+      );
+
+    }
+
+    statusTimer = null;
+    statusIndex = 0;
+
+    if (status) {
+      status.hidden = true;
+    }
+
+    if (progress) {
+      progress.classList?.remove(
+        "is-active"
+      );
+    }
+
+  }
+
+
+  // ========================================================
   // LOADING STATE
   // ========================================================
 
@@ -243,6 +704,12 @@
 
     if (input) {
       input.disabled = value;
+    }
+
+    if (value) {
+      startStatus();
+    } else {
+      stopStatus();
     }
 
   }
@@ -355,6 +822,9 @@
   // ========================================================
   // FORM
   // ========================================================
+
+  bindBackButton();
+
 
   function bindForm() {
 

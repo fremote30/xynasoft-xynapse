@@ -5,19 +5,33 @@
 
       <div class="xyniva-header">
 
-        <div>
-          <span class="eyebrow">
-            XynaFaith AI
-          </span>
+        <div class="xyniva-heading">
 
-          <h1>
-            Ask Xyniva
-          </h1>
+          <button
+            id="xynivaBack"
+            type="button"
+            class="xyniva-back"
+            aria-label="Go back"
+            title="Go back"
+          >
+            ←
+          </button>
 
-          <p>
-            Tell Xyniva what you're preparing.
-            Start naturally — you don't need to fill out a form.
-          </p>
+          <div>
+            <span class="eyebrow">
+              XynaFaith AI
+            </span>
+
+            <h1>
+              Ask Xyniva
+            </h1>
+
+            <p>
+              Tell Xyniva what you're preparing.
+              Start naturally — you don't need to fill out a form.
+            </p>
+          </div>
+
         </div>
 
         <button
@@ -113,6 +127,35 @@
         ====================================== -->
 
         <div class="xyniva-composer-shell">
+
+          <div
+            id="xynivaStatus"
+            class="xyniva-status"
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            <div class="xyniva-status-row">
+              <span
+                class="xyniva-status-spinner"
+                aria-hidden="true"
+              ></span>
+
+              <span id="xynivaStatusText">
+                Xyniva is preparing your response…
+              </span>
+            </div>
+
+            <div
+              class="xyniva-progress"
+              aria-hidden="true"
+            >
+              <div
+                id="xynivaProgressBar"
+                class="xyniva-progress-bar"
+              ></div>
+            </div>
+          </div>
 
           <form
             id="xynivaForm"

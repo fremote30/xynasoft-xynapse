@@ -9959,3 +9959,269 @@ select {
   }
 
 }
+
+
+/* =========================================================
+   XYNIVA PRESENTATION HARDENING
+========================================================= */
+
+.xyniva-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.xyniva-back {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-top: 2px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.055);
+  color: inherit;
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.xyniva-back:hover {
+  transform: translateX(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.xyniva-back:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   XYNIVA STATUS / PROGRESS
+========================================================= */
+
+.xyniva-status {
+  width: min(900px, 100%);
+  margin: 0 auto 14px;
+}
+
+.xyniva-status[hidden] {
+  display: none;
+}
+
+.xyniva-status-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 9px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  opacity: 0.78;
+}
+
+.xyniva-status-spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: xyniva-spin 0.85s linear infinite;
+}
+
+.xyniva-progress {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.xyniva-progress-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -38%;
+  width: 38%;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+}
+
+.xyniva-progress-bar.is-active {
+  opacity: 0.55;
+  animation:
+    xyniva-progress 1.45s ease-in-out infinite;
+}
+
+@keyframes xyniva-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes xyniva-progress {
+  0% {
+    left: -38%;
+  }
+
+  55% {
+    left: 42%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+
+/* =========================================================
+   XYNIVA STRUCTURED SERMON
+========================================================= */
+
+.xyniva-message-assistant {
+  width: min(900px, 96%);
+}
+
+.xyniva-message-assistant .xyniva-message-body.xyniva-sermon {
+  padding: 28px 30px 32px;
+  border-radius: 20px;
+  white-space: normal;
+}
+
+.xyniva-sermon-title {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.xyniva-sermon-scripture {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.3;
+  opacity: 0.82;
+}
+
+.xyniva-sermon-section {
+  margin-top: 30px;
+}
+
+.xyniva-sermon-section:first-of-type {
+  margin-top: 34px;
+}
+
+.xyniva-sermon-heading {
+  margin: 0 0 10px;
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.xyniva-sermon-text {
+  margin: 0;
+  line-height: 1.78;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  opacity: 0.92;
+}
+
+.xyniva-sermon-section + .xyniva-sermon-section {
+  padding-top: 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+
+/* =========================================================
+   XYNIVA MESSAGE HIERARCHY
+========================================================= */
+
+.xyniva-message-user .xyniva-message-body {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.xyniva-message-assistant .xyniva-message-body {
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   XYNIVA PRESENTATION MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .xyniva-heading {
+    gap: 10px;
+  }
+
+  .xyniva-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    font-size: 1.2rem;
+  }
+
+  .xyniva-status {
+    margin-bottom: 12px;
+  }
+
+  .xyniva-status-row {
+    font-size: 0.78rem;
+  }
+
+  .xyniva-message-assistant {
+    width: 100%;
+  }
+
+  .xyniva-message-assistant .xyniva-message-body.xyniva-sermon {
+    padding: 22px 18px 24px;
+    border-radius: 16px;
+  }
+
+  .xyniva-sermon-title {
+    font-size: 1.55rem;
+  }
+
+  .xyniva-sermon-section {
+    margin-top: 24px;
+  }
+
+  .xyniva-sermon-section:first-of-type {
+    margin-top: 28px;
+  }
+
+  .xyniva-sermon-section + .xyniva-sermon-section {
+    padding-top: 22px;
+  }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  .xyniva-status-spinner,
+  .xyniva-progress-bar.is-active {
+    animation-duration: 3s;
+  }
+
+}

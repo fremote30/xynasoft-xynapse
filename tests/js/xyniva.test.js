@@ -297,3 +297,148 @@ test("renders canonical assistant_content from XynAssist turn response", async (
     "Canonical sermon response."
   );
 });
+
+test("renders structured sermon JSON as sermon sections", async () => {
+  const rendered = [];
+
+  const sermon = {
+    title: "Trusting God When the Way Is Uncertain",
+    scripture: "Proverbs 3:5-6",
+    introduction:
+      "Trust God even when the path is unclear.",
+    main_points: [
+      {
+        title: "Trust With All Your Heart",
+        content:
+          "Biblical trust is wholehearted."
+      },
+      {
+        title: "Acknowledge Him",
+        content:
+          "Invite God into every decision."
+      }
+    ],
+    application:
+      "Surrender one uncertainty to God this week.",
+    conclusion:
+      "Trust the God who sees the whole road."
+  };
+
+  const { api, elements } = setup({
+    client: {
+      async create() {
+        return {
+          id: "conversation-sermon"
+        };
+      },
+
+      async turn() {
+        return {
+          assistant_content:
+            JSON.stringify(sermon)
+        };
+      }
+    }
+  });
+
+  elements.xynivaMessages.appendChild =
+    (node) => {
+      rendered.push(node);
+    };
+
+  await api.send(
+    "Create a sermon on Proverbs 3."
+  );
+
+  const assistantMessage =
+    rendered.find(
+      (node) =>
+        node.className ===
+        "xyniva-message xyniva-message-assistant"
+    );
+
+  assert.ok(
+    assistantMessage,
+    "assistant sermon should be rendered"
+  );
+
+  const body =
+    assistantMessage.children.find(
+      (child) =>
+        child.className.includes(
+          "xyniva-message-body"
+        )
+    );
+
+  assert.ok(
+    body,
+    "sermon body should exist"
+  );
+
+  assert.equal(
+    body.classList?.added?.includes?.(
+      "xyniva-sermon"
+    ) ?? true,
+    true
+  );
+
+  const allText = [];
+
+  function collect(node) {
+    if (
+      typeof node.textContent === "string" &&
+      node.textContent
+    ) {
+      allText.push(node.textContent);
+    }
+
+    if (Array.isArray(node.children)) {
+      node.children.forEach(collect);
+    }
+  }
+
+  collect(body);
+
+  assert.ok(
+    allText.includes(
+      "Trusting God When the Way Is Uncertain"
+    )
+  );
+
+  assert.ok(
+    allText.includes(
+      "Proverbs 3:5-6"
+    )
+  );
+
+  assert.ok(
+    allText.includes(
+      "Introduction"
+    )
+  );
+
+  assert.ok(
+    allText.includes(
+      "1. Trust With All Your Heart"
+    )
+  );
+
+  assert.ok(
+    allText.includes(
+      "Application"
+    )
+  );
+
+  assert.ok(
+    allText.includes(
+      "Conclusion"
+    )
+  );
+
+  assert.equal(
+    body.textContent.includes?.(
+      '"main_points"'
+    ) ?? false,
+    false
+  );
+});
