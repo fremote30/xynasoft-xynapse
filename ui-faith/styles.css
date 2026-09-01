@@ -10225,3 +10225,48 @@ select {
   }
 
 }
+
+
+/* =========================================================
+   XYNIVA FINAL READABILITY POLISH
+========================================================= */
+
+.xyniva-composer textarea {
+  font-size: 1rem;
+}
+
+.xyniva-composer textarea::placeholder {
+  font-size: 1rem;
+  opacity: 0.68;
+}
+
+.xyniva-studio-link {
+  font-size: 0.95rem;
+  opacity: 1;
+}
+
+.xyniva-composer-footer > span {
+  font-size: 0.8rem;
+}
+
+/*
+ * Keep the XynaFaith identity visible without allowing the
+ * decorative watermark to compete with generated content.
+ */
+.xyniva-workspace::before,
+.xyniva-workspace::after {
+  opacity: 0.025 !important;
+}
+
+@media (max-width: 768px) {
+
+  .xyniva-composer textarea,
+  .xyniva-composer textarea::placeholder {
+    font-size: 1rem;
+  }
+
+  .xyniva-studio-link {
+    font-size: 1rem;
+  }
+
+}

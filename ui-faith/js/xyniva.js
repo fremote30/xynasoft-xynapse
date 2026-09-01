@@ -510,21 +510,21 @@
 
     if (
       typeof window !== "undefined" &&
-      window.history &&
-      window.history.length > 1
+      typeof window.navigate === "function"
     ) {
 
-      window.history.back();
+      window.navigate("dashboard");
       return;
 
     }
 
     if (
       typeof window !== "undefined" &&
-      typeof window.navigate === "function"
+      window.location
     ) {
 
-      window.navigate("dashboard");
+      window.location.href =
+        "/faith/";
 
     }
 
