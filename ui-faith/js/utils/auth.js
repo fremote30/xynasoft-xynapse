@@ -286,15 +286,47 @@ window.logout =
       // =========================
       if (
         window.NotificationService &&
-        typeof NotificationService.unregisterToken === "function"
+        typeof window.NotificationService.unregisterToken === "function"
       ) {
-        await NotificationService.unregisterToken();
+        await window.NotificationService.unregisterToken();
+      }
+
+      // =========================
+      // CAPTURE CURRENT USER
+      // before clearing auth/session
+      // =========================
+      const currentUserId =
+        window.currentUser?.id;
+
+      // =========================
+      // CLEAR CURRENT SERMON DRAFT
+      // Logout is a clean Studio
+      // session boundary. Saved
+      // sermons remain server-side.
+      // =========================
+      if (currentUserId) {
+        localStorage.removeItem(
+          `latest_sermon_${currentUserId}`
+        );
+      }
+
+      localStorage.removeItem(
+        "last_saved_sermon_id"
+      );
+
+      if (
+        window.XynivaStudio &&
+        typeof window.XynivaStudio.reset ===
+          "function"
+      ) {
+        window.XynivaStudio.reset();
       }
 
       // =========================
       // CLEAR AUTH
       // =========================
       await removeToken();
+
       localStorage.removeItem(
         "user"
       );
@@ -314,14 +346,6 @@ window.logout =
 
       window.currentSermonId =
         null;
-
-      // =========================
-      // DO NOT REMOVE
-      // USER DRAFTS
-      // =========================
-      // latest_sermon_<userId>
-      // remains intact so users
-      // can restore drafts later
 
       // =========================
       // REFRESH NAVBAR
