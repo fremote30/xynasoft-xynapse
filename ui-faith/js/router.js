@@ -503,6 +503,13 @@ try {
       ) {
         await window.loadSelectedSermon();
       }
+
+      if (
+        typeof window.bindXynivaStudio ===
+          "function"
+      ) {
+        window.bindXynivaStudio();
+      }
     }
     // =====================================
     // MY SERMONS (FIXED SAFETY)

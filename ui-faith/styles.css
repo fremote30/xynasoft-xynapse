@@ -10270,3 +10270,143 @@ select {
   }
 
 }
+
+
+/* =========================================================
+   XYNIVA — SERMON STUDIO ASSISTANT
+========================================================= */
+
+.xyniva-studio-panel {
+  border:
+    1px solid rgba(79, 70, 229, 0.14);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(238, 242, 255, 0.72),
+      #ffffff 42%
+    );
+}
+
+.xyniva-studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.xyniva-studio-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.xyniva-studio-header p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.xyniva-studio-messages {
+  display: grid;
+  gap: 10px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.xyniva-studio-welcome {
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.xyniva-studio-status {
+  margin-bottom: 10px;
+  color: #4f46e5;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.xyniva-studio-form {
+  display: grid;
+  gap: 10px;
+}
+
+.xyniva-studio-form textarea {
+  min-height: 96px;
+  margin: 0;
+  padding: 12px;
+  resize: vertical;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.action-card .xyniva-studio-send {
+  margin: 0;
+  text-align: center;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #4f46e5
+    );
+}
+
+.action-card .xyniva-studio-send:hover {
+  transform: translateY(-1px);
+}
+
+.xyniva-studio-hint {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1200px) {
+
+  .xyniva-studio-messages {
+    max-height: 320px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .xyniva-studio-form textarea {
+    font-size: 1rem;
+  }
+
+}
+
+
+.xyniva-studio-message {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.xyniva-studio-message-user {
+  margin-left: 18px;
+  background: #eef2ff;
+  color: #312e81;
+}
+
+.xyniva-studio-message-assistant {
+  margin-right: 18px;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.xyniva-studio-send:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
