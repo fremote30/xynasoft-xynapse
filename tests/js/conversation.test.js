@@ -7,6 +7,10 @@ const MODULE_PATH = path.resolve(
   "../../ui-faith/js/conversation.js"
 );
 
+
+const REQUEST_ID =
+  "66666666-7777-4888-8999-aaaaaaaaaaaa";
+
 function loadConversation(apiFetch) {
   global.window = {
     apiFetch
@@ -150,7 +154,7 @@ test("get encodes the conversation id", async () => {
   );
 });
 
-test("turn sends only conversational content", async () => {
+test("turn sends request identity without trusted identity", async () => {
   let captured;
 
   const client = loadConversation(
@@ -168,7 +172,10 @@ test("turn sends only conversational content", async () => {
 
   const result = await client.turn(
     "conversation-1",
-    "Create a Pentecostal sermon on Proverbs 3."
+    "Create a Pentecostal sermon on Proverbs 3.",
+    {
+      requestId: REQUEST_ID
+    }
   );
 
   assert.equal(
@@ -185,7 +192,8 @@ test("turn sends only conversational content", async () => {
     JSON.parse(captured.options.body),
     {
       content:
-        "Create a Pentecostal sermon on Proverbs 3."
+        "Create a Pentecostal sermon on Proverbs 3.",
+      request_id: REQUEST_ID
     }
   );
 
@@ -213,6 +221,97 @@ test("turn sends only conversational content", async () => {
   );
 });
 
+
+test("turn includes optional sermon context", async () => {
+  let captured;
+
+  const client = loadConversation(
+    async (url, options = {}) => {
+      captured = { url, options };
+
+      return jsonResponse({
+        conversation_id: "conversation-1"
+      });
+    }
+  );
+
+  const sermon = {
+    id: 42,
+    data: {
+      title: "Trust the Lord",
+      scripture: "Proverbs 3:5-6"
+    }
+  };
+
+  await client.turn(
+    "conversation-1",
+    "Save this.",
+    {
+      requestId: REQUEST_ID,
+      sermon
+    }
+  );
+
+  assert.deepEqual(
+    JSON.parse(captured.options.body),
+    {
+      content: "Save this.",
+      request_id: REQUEST_ID,
+      sermon
+    }
+  );
+});
+
+
+test("turn requires caller supplied request id", async () => {
+  let called = false;
+
+  const client = loadConversation(
+    async () => {
+      called = true;
+      return jsonResponse({});
+    }
+  );
+
+  await assert.rejects(
+    () =>
+      client.turn(
+        "conversation-1",
+        "Create a sermon."
+      ),
+    /Request ID is required/
+  );
+
+  assert.equal(called, false);
+});
+
+
+test("turn rejects an invalid request id", async () => {
+  let called = false;
+
+  const client = loadConversation(
+    async () => {
+      called = true;
+      return jsonResponse({});
+    }
+  );
+
+  await assert.rejects(
+    () =>
+      client.turn(
+        "conversation-1",
+        "Create a sermon.",
+        {
+          requestId: "not-a-uuid"
+        }
+      ),
+    /Request ID must be a UUID/
+  );
+
+  assert.equal(called, false);
+});
+
+
 test("throws the server detail for an unsuccessful response", async () => {
   const client = loadConversation(
     async () =>
@@ -232,7 +331,10 @@ test("throws the server detail for an unsuccessful response", async () => {
     () =>
       client.turn(
         "conversation-1",
-        "Create a sermon."
+        "Create a sermon.",
+        {
+          requestId: REQUEST_ID
+        }
       ),
     /Conversation service is temporarily unavailable/
   );

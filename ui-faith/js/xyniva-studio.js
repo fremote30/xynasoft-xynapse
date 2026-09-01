@@ -7,8 +7,10 @@
  * Uses the authenticated XynaFaith conversation client.
  * The current sermon is supplied on the first turn only.
  *
- * Xyniva may refine the in-memory Studio sermon, but this
- * controller never saves, updates, exports, or shares it.
+ * Xyniva may refine the in-memory Studio sermon.
+ * Trusted product actions are requested through the
+ * authenticated XynaFaith backend; this controller never
+ * performs direct database mutations.
  * ==========================================================
  */
 
@@ -63,6 +65,26 @@
   }
 
 
+  function createRequestId() {
+
+    const cryptoApi =
+      window.crypto;
+
+    if (
+      !cryptoApi ||
+      typeof cryptoApi.randomUUID !==
+        "function"
+    ) {
+      throw new Error(
+        "Secure request identity is unavailable"
+      );
+    }
+
+    return cryptoApi.randomUUID();
+
+  }
+
+
   function assistantContent(result) {
 
     const candidates = [
@@ -86,6 +108,120 @@
     }
 
     return "";
+  }
+
+
+  function completedAction(result) {
+
+    const action =
+      result?.action;
+
+    if (
+      !action ||
+      typeof action !== "object" ||
+      action.status !== "completed"
+    ) {
+      return null;
+    }
+
+    return action;
+
+  }
+
+
+  function applyCompletedAction(result) {
+
+    const action =
+      completedAction(result);
+
+    if (!action) {
+      return null;
+    }
+
+    if (action.name !== "sermon.save") {
+      return null;
+    }
+
+    const sermonId =
+      Number(
+        action?.result?.sermon_id
+      );
+
+    if (
+      !Number.isInteger(sermonId) ||
+      sermonId <= 0
+    ) {
+      throw new Error(
+        "Xyniva returned an invalid saved sermon"
+      );
+    }
+
+    const sermon =
+      window.currentGeneratedSermon;
+
+    if (
+      !sermon ||
+      typeof sermon !== "object"
+    ) {
+      throw new Error(
+        "The saved sermon is no longer open"
+      );
+    }
+
+    sermon.id =
+      sermonId;
+
+    if (
+      window.currentUser?.id &&
+      !sermon.author_id
+    ) {
+      sermon.author_id =
+        Number(
+          window.currentUser.id
+        );
+    }
+
+    window.currentGeneratedSermon =
+      sermon;
+
+    window.currentSermonId =
+      sermonId;
+
+    try {
+
+      window.localStorage?.setItem(
+        "last_saved_sermon_id",
+        String(sermonId)
+      );
+
+      const userId =
+        window.currentUser?.id;
+
+      if (userId) {
+        window.localStorage?.setItem(
+          `latest_sermon_${userId}`,
+          JSON.stringify(sermon)
+        );
+      }
+
+    } catch (_) {
+      // Persistence is best-effort; server save already succeeded.
+    }
+
+    if (
+      typeof window.renderCurrentSermon ===
+        "function"
+    ) {
+      window.renderCurrentSermon(
+        sermon,
+        false
+      );
+    }
+
+    return (
+      "I saved this sermon to your sermons."
+    );
+
   }
 
 
@@ -386,6 +522,39 @@
   }
 
 
+  function sermonActionContext() {
+
+    const data =
+      sermonContext();
+
+    if (!data) {
+      return null;
+    }
+
+    const rawId =
+      window.currentSermonId ??
+      window.currentGeneratedSermon?.id ??
+      null;
+
+    const numericId =
+      rawId === null ||
+      rawId === undefined ||
+      rawId === ""
+        ? null
+        : Number(rawId);
+
+    return {
+      id:
+        Number.isInteger(numericId) &&
+        numericId > 0
+          ? numericId
+          : null,
+      data
+    };
+
+  }
+
+
   function buildTurnContent(
     instruction
   ) {
@@ -511,13 +680,37 @@
           instruction
         );
 
+      const requestId =
+        createRequestId();
+
       const result =
         await client().turn(
           id,
-          turnContent
+          turnContent,
+          {
+            requestId,
+            sermon:
+              sermonActionContext()
+          }
         );
 
       sermonContextSeeded = true;
+
+      const actionMessage =
+        applyCompletedAction(
+          result
+        );
+
+      if (actionMessage) {
+
+        appendMessage(
+          "assistant",
+          actionMessage
+        );
+
+        return result;
+
+      }
 
       const response =
         assistantContent(result);

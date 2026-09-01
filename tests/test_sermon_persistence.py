@@ -6,9 +6,42 @@ import pytest
 
 from api.services.sermon_persistence import (
     SermonNotFoundError,
+    build_sermon_for_user,
     save_sermon_for_user,
     update_sermon_for_user,
 )
+
+
+
+def test_build_sermon_uses_current_transaction_without_commit():
+    db = MagicMock()
+
+    payload = {
+        "title": "Trust the Lord",
+        "scripture": "Proverbs 3:5-6",
+        "author_id": 999,
+    }
+
+    sermon = build_sermon_for_user(
+        db=db,
+        user_id=123,
+        payload=payload,
+    )
+
+    assert sermon.author_id == 123
+    assert sermon.title == "Trust the Lord"
+    assert sermon.scripture == "Proverbs 3:5-6"
+    assert sermon.sermon_data == payload
+    assert json.loads(sermon.content) == payload
+    assert sermon.is_public == 0
+
+    db.add.assert_called_once_with(
+        sermon
+    )
+    db.flush.assert_called_once()
+    db.commit.assert_not_called()
+    db.refresh.assert_not_called()
+
 
 
 def test_save_sermon_uses_authenticated_user_as_owner():
@@ -41,6 +74,7 @@ def test_save_sermon_uses_authenticated_user_as_owner():
     db.add.assert_called_once_with(
         sermon
     )
+    db.flush.assert_called_once()
     db.commit.assert_called_once()
     db.refresh.assert_called_once_with(
         sermon

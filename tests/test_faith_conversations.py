@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from fastapi.testclient import TestClient
@@ -14,6 +14,11 @@ from main import app
 
 CONVERSATION_ID = (
     "11111111-2222-3333-4444-555555555555"
+)
+
+
+REQUEST_ID = (
+    "66666666-7777-4888-8999-aaaaaaaaaaaa"
 )
 
 CONVERSATION = {
@@ -275,6 +280,7 @@ def test_execute_turn_uses_authenticated_user(
         f"{CONVERSATION_ID}/turns",
         json={
             "content": content,
+            "request_id": REQUEST_ID,
         },
     )
 
@@ -359,6 +365,35 @@ def test_create_conversation_rejects_product_injection(
     assert response.status_code == 422
 
 
+def test_execute_turn_requires_request_id(
+    authorized_client,
+):
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Make point two stronger.",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_execute_turn_rejects_invalid_request_id(
+    authorized_client,
+):
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Make point two stronger.",
+            "request_id": "not-a-uuid",
+        },
+    )
+
+    assert response.status_code == 422
+
+
 def test_execute_turn_rejects_external_user_injection(
     authorized_client,
 ):
@@ -367,6 +402,7 @@ def test_execute_turn_rejects_external_user_injection(
         f"{CONVERSATION_ID}/turns",
         json={
             "content": "Make point two stronger.",
+            "request_id": REQUEST_ID,
             "external_user_id": "999",
         },
     )
@@ -382,6 +418,7 @@ def test_execute_turn_rejects_product_injection(
         f"{CONVERSATION_ID}/turns",
         json={
             "content": "Make point two stronger.",
+            "request_id": REQUEST_ID,
             "product": "xynalegal",
         },
     )
@@ -397,6 +434,7 @@ def test_execute_turn_rejects_blank_content(
         f"{CONVERSATION_ID}/turns",
         json={
             "content": "   ",
+            "request_id": REQUEST_ID,
         },
     )
 
@@ -424,6 +462,7 @@ def test_execute_turn_rejects_overlong_content(
         f"{CONVERSATION_ID}/turns",
         json={
             "content": "x" * 50_001,
+            "request_id": REQUEST_ID,
         },
     )
 
@@ -503,5 +542,352 @@ def test_wrong_owner_upstream_not_found_is_not_exposed(
         "detail": (
             "Conversation service is "
             "temporarily unavailable"
+        )
+    }
+
+
+
+def test_execute_turn_accepts_sermon_action_context(
+    monkeypatch,
+    authorized_client,
+):
+    # This test is specifically about the transport
+    # boundary. Return a normal AI response so the trusted
+    # action executor is not part of this assertion.
+    execute_turn = AsyncMock(
+        return_value=TURN_RESPONSE
+    )
+
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            *,
+            external_user_id,
+            conversation_id,
+            content,
+        ):
+            return await execute_turn(
+                external_user_id=external_user_id,
+                conversation_id=conversation_id,
+                content=content,
+            )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": (
+                "Make the conclusion stronger."
+            ),
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "data": {
+                    "title": "Trust the Lord",
+                    "scripture": (
+                        "Proverbs 3:5-6"
+                    ),
+                    "introduction": (
+                        "Trust begins where sight ends."
+                    ),
+                    "points": [],
+                    "conclusion": (
+                        "Trust the Lord completely."
+                    ),
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == TURN_RESPONSE
+
+    # Current sermon context remains inside XynaFaith.
+    # XynAssist receives only the conversational content
+    # plus server-derived trusted external identity.
+    execute_turn.assert_awaited_once_with(
+        external_user_id="123",
+        conversation_id=CONVERSATION_ID,
+        content=(
+            "Make the conclusion stronger."
+        ),
+    )
+
+def test_execute_turn_rejects_identity_inside_sermon_context(
+    authorized_client,
+):
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Save this.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "data": {
+                    "title": "Trust the Lord",
+                },
+                "external_user_id": "999",
+            },
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_execute_turn_rejects_invalid_sermon_id(
+    authorized_client,
+):
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Save this.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "id": 0,
+                "data": {
+                    "title": "Trust the Lord",
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_execute_turn_executes_sermon_save_as_authenticated_user(
+    monkeypatch,
+    authorized_client,
+):
+    action_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": (
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+        "action": {
+            "name": "sermon.save",
+            "arguments": {},
+        },
+    }
+
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            *,
+            external_user_id,
+            conversation_id,
+            content,
+        ):
+            assert external_user_id == "123"
+            assert conversation_id == CONVERSATION_ID
+            assert content == "Save this."
+
+            return action_response
+
+    execute_action = Mock(
+        return_value={
+            "name": "sermon.save",
+            "status": "completed",
+            "result": {
+                "sermon_id": 42,
+            },
+        }
+    )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "execute_conversation_action",
+        execute_action,
+    )
+
+    sermon_data = {
+        "title": "Trust the Lord",
+        "scripture": "Proverbs 3:5-6",
+        "points": [],
+    }
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Save this.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "data": sermon_data,
+            },
+        },
+    )
+
+    assert response.status_code == 200
+
+    execute_action.assert_called_once()
+
+    call = execute_action.call_args.kwargs
+
+    assert call["user_id"] == 123
+    assert call["request_id"] == REQUEST_ID
+    assert call["source_message_id"] == (
+        "aaaaaaaa-2222-3333-4444-555555555555"
+    )
+    assert call["action"] == {
+        "name": "sermon.save",
+        "arguments": {},
+    }
+    assert call["sermon_id"] is None
+    assert call["sermon_data"] == sermon_data
+
+    payload = response.json()
+
+    assert payload["action"] == {
+        "name": "sermon.save",
+        "status": "completed",
+        "result": {
+            "sermon_id": 42,
+        },
+    }
+
+
+def test_execute_turn_leaves_ai_response_unchanged(
+    monkeypatch,
+    authorized_client,
+):
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            **kwargs,
+        ):
+            return TURN_RESPONSE
+
+    execute_action = Mock()
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "execute_conversation_action",
+        execute_action,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": (
+                "Make point two more pastoral."
+            ),
+            "request_id": REQUEST_ID,
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == TURN_RESPONSE
+
+    execute_action.assert_not_called()
+
+
+def test_execute_turn_action_requires_sermon_context(
+    monkeypatch,
+    authorized_client,
+):
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            **kwargs,
+        ):
+            return {
+                "conversation_id": CONVERSATION_ID,
+                "user_message_id": (
+                    "aaaaaaaa-2222-3333-4444-555555555555"
+                ),
+                "action": {
+                    "name": "sermon.save",
+                    "arguments": {},
+                },
+            }
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Save this.",
+            "request_id": REQUEST_ID,
+        },
+    )
+
+    assert response.status_code == 422
+
+    assert response.json() == {
+        "detail": (
+            "Current sermon context is required"
+        )
+    }
+
+
+def test_execute_turn_rejects_unknown_action(
+    monkeypatch,
+    authorized_client,
+):
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            **kwargs,
+        ):
+            return {
+                "conversation_id": CONVERSATION_ID,
+                "user_message_id": (
+                    "aaaaaaaa-2222-3333-4444-555555555555"
+                ),
+                "action": {
+                    "name": "sermon.delete",
+                    "arguments": {},
+                },
+            }
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Delete this.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "data": {
+                    "title": "Sermon",
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 422
+
+    assert response.json() == {
+        "detail": (
+            "Unsupported conversation action"
         )
     }

@@ -21,6 +21,9 @@ from api.models.sermon_collaborator import SermonCollaborator
 from api.models.refresh_token import RefreshToken
 from api.models.church import Church
 from api.models.member_profile import MemberProfile
+from api.models.conversation_action_execution import (
+    ConversationActionExecution,
+)
 
 target_metadata = Base.metadata
 # -------------------------------------------------

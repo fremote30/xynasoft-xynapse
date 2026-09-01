@@ -14,6 +14,10 @@ const path =
   require("node:path");
 
 
+const REQUEST_ID =
+  "66666666-7777-4888-8999-aaaaaaaaaaaa";
+
+
 const SOURCE =
   fs.readFileSync(
     path.join(
@@ -132,12 +136,35 @@ function createEnvironment({
     turn: [],
     render: [],
     save: 0,
-    update: 0
+    update: 0,
+    storage: []
   };
 
   const window = {
     currentGeneratedSermon:
       sermon,
+
+    currentSermonId:
+      sermon?.id ?? null,
+
+    currentUser: {
+      id: 7
+    },
+
+    crypto: {
+      randomUUID() {
+        return REQUEST_ID;
+      }
+    },
+
+    localStorage: {
+      setItem(key, value) {
+        calls.storage.push({
+          key,
+          value
+        });
+      }
+    },
 
     XynivaConversation: {
 
@@ -154,12 +181,14 @@ function createEnvironment({
 
       async turn(
         conversationId,
-        content
+        content,
+        options
       ) {
 
         calls.turn.push({
           conversationId,
-          content
+          content,
+          options
         });
 
         return {
@@ -359,9 +388,76 @@ test(
       /Trusting God/
     );
 
+    assert.equal(
+      calls.turn[0].options.requestId,
+      REQUEST_ID
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.id,
+      42
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.data.title,
+      "Trusting God"
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.data.scripture,
+      "Proverbs 3:5-6"
+    );
+
     assert.match(
       calls.turn[0].content,
       /Strengthen the introduction\./
+    );
+
+  }
+);
+
+
+test(
+  "unsaved Studio sermon is transported with null id",
+  async () => {
+
+    const unsaved = {
+      ...existingSermon()
+    };
+
+    delete unsaved.id;
+    delete unsaved.author_id;
+
+    const {
+      window,
+      calls
+    } =
+      createEnvironment({
+        sermon: unsaved
+      });
+
+    await window.XynivaStudio.send(
+      "Strengthen the introduction."
+    );
+
+    assert.equal(
+      calls.turn.length,
+      1
+    );
+
+    assert.equal(
+      calls.turn[0].options.requestId,
+      REQUEST_ID
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.id,
+      null
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.data.title,
+      "Trusting God"
     );
 
   }
@@ -484,6 +580,131 @@ test(
     assert.equal(
       refined.author_id,
       7
+    );
+
+  }
+);
+
+
+test(
+  "trusted sermon save action synchronizes Studio state",
+  async () => {
+
+    const unsaved = {
+      ...existingSermon()
+    };
+
+    delete unsaved.id;
+    delete unsaved.author_id;
+
+    const {
+      window,
+      calls
+    } =
+      createEnvironment({
+        sermon: unsaved
+      });
+
+    window.XynivaConversation.turn =
+      async (
+        conversationId,
+        content,
+        options
+      ) => {
+
+        calls.turn.push({
+          conversationId,
+          content,
+          options
+        });
+
+        return {
+          conversation_id:
+            "conversation-1",
+          user_message_id:
+            "aaaaaaaa-2222-3333-4444-555555555555",
+          action: {
+            name: "sermon.save",
+            status: "completed",
+            result: {
+              sermon_id: 91
+            }
+          }
+        };
+
+      };
+
+    await window.XynivaStudio.send(
+      "Save this."
+    );
+
+    assert.equal(
+      calls.turn.length,
+      1
+    );
+
+    assert.equal(
+      calls.turn[0].options.requestId,
+      REQUEST_ID
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.id,
+      null
+    );
+
+    assert.equal(
+      window.currentSermonId,
+      91
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon.id,
+      91
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon.author_id,
+      7
+    );
+
+    assert.equal(
+      calls.render.length,
+      1
+    );
+
+    assert.equal(
+      calls.render[0].value.id,
+      91
+    );
+
+    assert.equal(
+      calls.save,
+      0
+    );
+
+    assert.equal(
+      calls.update,
+      0
+    );
+
+    assert.ok(
+      calls.storage.some(
+        entry =>
+          entry.key ===
+            "last_saved_sermon_id" &&
+          entry.value === "91"
+      )
+    );
+
+    assert.ok(
+      calls.storage.some(
+        entry =>
+          entry.key ===
+            "latest_sermon_7" &&
+          JSON.parse(entry.value).id ===
+            91
+      )
     );
 
   }

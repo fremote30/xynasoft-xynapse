@@ -146,6 +146,39 @@
   }
 
 
+  function normalizeRequestId(
+    requestId
+  ) {
+
+    const id =
+      String(
+        requestId ?? ""
+      ).trim();
+
+    if (!id) {
+
+      throw new Error(
+        "Request ID is required"
+      );
+
+    }
+
+    const uuidPattern =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (!uuidPattern.test(id)) {
+
+      throw new Error(
+        "Request ID must be a UUID"
+      );
+
+    }
+
+    return id;
+
+  }
+
+
   // ========================================================
   // CREATE
   // ========================================================
@@ -214,7 +247,8 @@
 
   async function turn(
     conversationId,
-    content
+    content,
+    options = {}
   ) {
 
     const path =
@@ -227,6 +261,26 @@
         content
       );
 
+    const requestId =
+      normalizeRequestId(
+        options.requestId
+      );
+
+    const payload = {
+      content: message,
+      request_id: requestId
+    };
+
+    if (
+      options.sermon !== undefined &&
+      options.sermon !== null
+    ) {
+
+      payload.sermon =
+        options.sermon;
+
+    }
+
     return request(
       `${path}/turns`,
       {
@@ -237,9 +291,9 @@
             "application/json"
         },
 
-        body: JSON.stringify({
-          content: message
-        })
+        body: JSON.stringify(
+          payload
+        )
       }
     );
 

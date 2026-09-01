@@ -10,16 +10,17 @@ class SermonNotFoundError(Exception):
     """Raised when a sermon is not owned by the requested user."""
 
 
-def save_sermon_for_user(
+def build_sermon_for_user(
     *,
     db: Session,
     user_id: int,
     payload: dict[str, Any],
 ) -> Sermon:
     """
-    Persist a new sermon for an authenticated XynaFaith user.
+    Add a new authenticated user's sermon to the current
+    transaction without committing it.
 
-    Ownership always comes from the authenticated user context,
+    Ownership always comes from authenticated user context,
     never from the sermon payload.
     """
     sermon = Sermon(
@@ -39,6 +40,32 @@ def save_sermon_for_user(
     )
 
     db.add(sermon)
+
+    # Allocate database-generated values such as sermon.id
+    # while preserving the caller's transaction boundary.
+    db.flush()
+
+    return sermon
+
+
+def save_sermon_for_user(
+    *,
+    db: Session,
+    user_id: int,
+    payload: dict[str, Any],
+) -> Sermon:
+    """
+    Persist a new sermon for an authenticated XynaFaith user.
+
+    This convenience function preserves the existing
+    save-route behavior by owning its commit.
+    """
+    sermon = build_sermon_for_user(
+        db=db,
+        user_id=user_id,
+        payload=payload,
+    )
+
     db.commit()
     db.refresh(sermon)
 

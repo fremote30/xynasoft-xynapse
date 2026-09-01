@@ -73,6 +73,32 @@
 
 
   // ========================================================
+  // REQUEST IDENTITY
+  // ========================================================
+
+  function createRequestId() {
+
+    const cryptoApi =
+      window.crypto;
+
+    if (
+      !cryptoApi ||
+      typeof cryptoApi.randomUUID !==
+        "function"
+    ) {
+
+      throw new Error(
+        "Secure request identity is unavailable"
+      );
+
+    }
+
+    return cryptoApi.randomUUID();
+
+  }
+
+
+  // ========================================================
   // CONTENT EXTRACTION
   // ========================================================
 
@@ -788,10 +814,16 @@
       const id =
         await ensureConversation();
 
+      const requestId =
+        createRequestId();
+
       const result =
         await client().turn(
           id,
-          message
+          message,
+          {
+            requestId
+          }
         );
 
       appendMessage(

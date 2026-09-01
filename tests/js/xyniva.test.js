@@ -7,6 +7,10 @@ const MODULE_PATH = path.resolve(
   "../../ui-faith/js/xyniva.js"
 );
 
+
+const REQUEST_ID =
+  "77777777-8888-4999-8aaa-bbbbbbbbbbbb";
+
 function element(overrides = {}) {
   const children = [];
 
@@ -56,6 +60,12 @@ function setup(options = {}) {
   };
 
   global.window = {
+    crypto: {
+      randomUUID() {
+        return REQUEST_ID;
+      }
+    },
+
     XynivaConversation:
       options.client || {
         async create() {
@@ -110,11 +120,16 @@ test("first message creates a conversation before sending turn", async () => {
         };
       },
 
-      async turn(id, content) {
+      async turn(
+        id,
+        content,
+        options
+      ) {
         calls.push([
           "turn",
           id,
-          content
+          content,
+          options
         ]);
 
         return {
@@ -137,7 +152,10 @@ test("first message creates a conversation before sending turn", async () => {
       [
         "turn",
         "conversation-42",
-        "Create a Pentecostal sermon on Proverbs 3."
+        "Create a Pentecostal sermon on Proverbs 3.",
+        {
+          requestId: REQUEST_ID
+        }
       ]
     ]
   );
@@ -162,10 +180,15 @@ test("follow-up reuses the same conversation", async () => {
         };
       },
 
-      async turn(id, content) {
+      async turn(
+        id,
+        content,
+        options
+      ) {
         turns.push({
           id,
-          content
+          content,
+          options
         });
 
         return {
@@ -196,12 +219,18 @@ test("follow-up reuses the same conversation", async () => {
       {
         id: "conversation-7",
         content:
-          "Create a sermon on Proverbs 3."
+          "Create a sermon on Proverbs 3.",
+        options: {
+          requestId: REQUEST_ID
+        }
       },
       {
         id: "conversation-7",
         content:
-          "Make the opening more powerful."
+          "Make the opening more powerful.",
+        options: {
+          requestId: REQUEST_ID
+        }
       }
     ]
   );
