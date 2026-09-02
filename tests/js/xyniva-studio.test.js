@@ -980,3 +980,55 @@ test(
 
   }
 );
+
+
+test(
+  "first Studio save turn preserves literal action instruction",
+  async () => {
+
+    const unsaved = {
+      ...existingSermon()
+    };
+
+    delete unsaved.id;
+    delete unsaved.author_id;
+
+    const {
+      window,
+      calls
+    } =
+      createEnvironment({
+        sermon: unsaved
+      });
+
+    await window.XynivaStudio.send(
+      "Save this."
+    );
+
+    assert.equal(
+      calls.turn.length,
+      1
+    );
+
+    assert.equal(
+      calls.turn[0].content,
+      "Save this."
+    );
+
+    assert.doesNotMatch(
+      calls.turn[0].content,
+      /CURRENT SERMON:/
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.id,
+      null
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.data.title,
+      "Trusting God"
+    );
+
+  }
+);

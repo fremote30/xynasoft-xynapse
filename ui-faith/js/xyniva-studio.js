@@ -555,6 +555,26 @@
   }
 
 
+  function isTrustedStudioAction(
+    instruction
+  ) {
+
+    const normalized =
+      String(instruction ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[.!?]+$/, "");
+
+    return [
+      "save this",
+      "save this sermon",
+      "save the sermon",
+      "save my sermon"
+    ].includes(normalized);
+
+  }
+
+
   function buildTurnContent(
     instruction
   ) {
@@ -562,7 +582,17 @@
     const current =
       sermonContext();
 
+    /*
+     * Trusted product actions must reach XynAssist as the
+     * user's literal instruction. The authoritative sermon
+     * payload is transported separately in `options.sermon`.
+     *
+     * Wrapping an action inside the refinement context would
+     * cause words such as "sermon" in the envelope to route
+     * the turn back through sermon.generate.
+     */
     if (
+      isTrustedStudioAction(instruction) ||
       sermonContextSeeded ||
       !current
     ) {
