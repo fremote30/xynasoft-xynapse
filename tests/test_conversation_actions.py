@@ -206,3 +206,134 @@ def test_sermon_save_rejects_nonempty_arguments(
         )
 
     save.assert_not_called()
+
+def test_sermon_update_uses_authenticated_user(
+    monkeypatch,
+):
+    db = Mock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
+    update = Mock(
+        return_value=SimpleNamespace(
+            id=42,
+        )
+    )
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_update_for_user",
+        update,
+    )
+
+    sermon_data = {
+        "title": "Updated Sermon",
+        "scripture": "Proverbs 3:5-6",
+        "points": [],
+    }
+
+    result = execute_conversation_action(
+        db=db,
+        user_id=123,
+        request_id=REQUEST_ID,
+        source_message_id=(
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+        action={
+            "name": "sermon.update",
+            "arguments": {},
+        },
+        sermon_id=42,
+        sermon_data=sermon_data,
+    )
+
+    update.assert_called_once_with(
+        db=db,
+        user_id=123,
+        sermon_id=42,
+        payload=sermon_data,
+    )
+
+    db.commit.assert_called_once()
+
+    assert result == {
+        "name": "sermon.update",
+        "status": "completed",
+        "result": {
+            "sermon_id": 42,
+        },
+    }
+
+
+def test_sermon_update_requires_saved_sermon_id(
+    monkeypatch,
+):
+    update = Mock()
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_update_for_user",
+        update,
+    )
+
+    with pytest.raises(
+        ConversationActionContextError,
+        match="requires a saved sermon",
+    ):
+        execute_conversation_action(
+            db=Mock(),
+            user_id=123,
+            request_id=REQUEST_ID,
+            source_message_id=(
+                "aaaaaaaa-2222-3333-4444-555555555555"
+            ),
+            action={
+                "name": "sermon.update",
+                "arguments": {},
+            },
+            sermon_id=None,
+            sermon_data={
+                "title": "Updated Sermon",
+            },
+        )
+
+    update.assert_not_called()
+
+
+def test_sermon_update_rejects_nonempty_arguments(
+    monkeypatch,
+):
+    update = Mock()
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_update_for_user",
+        update,
+    )
+
+    with pytest.raises(
+        ConversationActionContextError,
+        match="does not accept arguments",
+    ):
+        execute_conversation_action(
+            db=Mock(),
+            user_id=123,
+            request_id=REQUEST_ID,
+            source_message_id=(
+                "aaaaaaaa-2222-3333-4444-555555555555"
+            ),
+            action={
+                "name": "sermon.update",
+                "arguments": {
+                    "sermon_id": 999,
+                },
+            },
+            sermon_id=42,
+            sermon_data={
+                "title": "Updated Sermon",
+            },
+        )
+
+    update.assert_not_called()

@@ -7,6 +7,7 @@ import pytest
 from api.services.sermon_persistence import (
     SermonNotFoundError,
     build_sermon_for_user,
+    build_sermon_update_for_user,
     save_sermon_for_user,
     update_sermon_for_user,
 )
@@ -80,6 +81,70 @@ def test_save_sermon_uses_authenticated_user_as_owner():
         sermon
     )
 
+
+
+def test_build_sermon_update_uses_current_transaction():
+    db = MagicMock()
+
+    sermon = SimpleNamespace(
+        id=42,
+        author_id=123,
+        title="Old title",
+        scripture="Romans 10",
+        content=None,
+        sermon_data=None,
+    )
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = sermon
+
+    payload = {
+        "title": "Updated title",
+        "scripture": "Romans 10:1-17",
+        "main_points": [],
+    }
+
+    result = build_sermon_update_for_user(
+        db=db,
+        user_id=123,
+        sermon_id=42,
+        payload=payload,
+    )
+
+    assert result is sermon
+    assert sermon.title == "Updated title"
+    assert sermon.scripture == "Romans 10:1-17"
+    assert sermon.sermon_data == payload
+    assert json.loads(sermon.content) == payload
+
+    assert query.filter.call_count == 2
+
+    db.commit.assert_not_called()
+    db.refresh.assert_not_called()
+
+
+def test_build_sermon_update_fails_closed_when_not_owned():
+    db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
+    with pytest.raises(
+        SermonNotFoundError
+    ):
+        build_sermon_update_for_user(
+            db=db,
+            user_id=123,
+            sermon_id=42,
+            payload={
+                "title": "Attempted update",
+            },
+        )
+
+    db.commit.assert_not_called()
+    db.refresh.assert_not_called()
 
 def test_update_sermon_requires_authenticated_owner():
     db = MagicMock()

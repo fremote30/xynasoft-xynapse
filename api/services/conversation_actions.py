@@ -16,11 +16,14 @@ from api.models.conversation_action_execution import (
     ConversationActionExecution,
 )
 from api.services.sermon_persistence import (
+    SermonNotFoundError,
     build_sermon_for_user,
+    build_sermon_update_for_user,
 )
 
 
 SERMON_SAVE_ACTION = "sermon.save"
+SERMON_UPDATE_ACTION = "sermon.update"
 
 
 class UnsupportedConversationActionError(Exception):
@@ -119,7 +122,10 @@ def execute_conversation_action(
 
     action_name = action.get("name")
 
-    if action_name != SERMON_SAVE_ACTION:
+    if action_name not in {
+        SERMON_SAVE_ACTION,
+        SERMON_UPDATE_ACTION,
+    }:
         raise UnsupportedConversationActionError(
             "Unsupported conversation action"
         )
@@ -134,7 +140,7 @@ def execute_conversation_action(
         or arguments
     ):
         raise ConversationActionContextError(
-            "sermon.save does not accept arguments"
+            f"{action_name} does not accept arguments"
         )
 
     if sermon_data is None:
@@ -142,12 +148,20 @@ def execute_conversation_action(
             "Current sermon context is required"
         )
 
-    # sermon.save currently means create a new saved sermon.
-    # Existing-sermon update semantics will be introduced as
-    # the separate sermon.update action.
-    if sermon_id is not None:
+    if (
+        action_name == SERMON_SAVE_ACTION
+        and sermon_id is not None
+    ):
         raise ConversationActionContextError(
             "sermon.save requires an unsaved sermon"
+        )
+
+    if (
+        action_name == SERMON_UPDATE_ACTION
+        and sermon_id is None
+    ):
+        raise ConversationActionContextError(
+            "sermon.update requires a saved sermon"
         )
 
     existing = _find_execution(
@@ -166,17 +180,30 @@ def execute_conversation_action(
             existing
         )
 
-    sermon = build_sermon_for_user(
-        db=db,
-        user_id=user_id,
-        payload=sermon_data,
-    )
+    if action_name == SERMON_SAVE_ACTION:
+        sermon = build_sermon_for_user(
+            db=db,
+            user_id=user_id,
+            payload=sermon_data,
+        )
+    else:
+        try:
+            sermon = build_sermon_update_for_user(
+                db=db,
+                user_id=user_id,
+                sermon_id=sermon_id,
+                payload=sermon_data,
+            )
+        except SermonNotFoundError as exc:
+            raise ConversationActionContextError(
+                "Sermon not found"
+            ) from exc
 
     execution = ConversationActionExecution(
         user_id=user_id,
         request_id=request_id,
         source_message_id=source_message_id,
-        action_name=SERMON_SAVE_ACTION,
+        action_name=action_name,
         status="completed",
         result={
             "sermon_id": sermon.id,

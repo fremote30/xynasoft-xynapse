@@ -72,7 +72,7 @@ def save_sermon_for_user(
     return sermon
 
 
-def update_sermon_for_user(
+def build_sermon_update_for_user(
     *,
     db: Session,
     user_id: int,
@@ -80,8 +80,10 @@ def update_sermon_for_user(
     payload: dict[str, Any],
 ) -> Sermon:
     """
-    Update an existing sermon only when it belongs to the
-    authenticated XynaFaith user.
+    Update an authenticated user's sermon in the current
+    transaction without committing it.
+
+    Ownership always comes from authenticated user context.
     """
     sermon = (
         db.query(Sermon)
@@ -114,6 +116,29 @@ def update_sermon_for_user(
     )
 
     sermon.sermon_data = payload
+
+    return sermon
+
+
+def update_sermon_for_user(
+    *,
+    db: Session,
+    user_id: int,
+    sermon_id: int,
+    payload: dict[str, Any],
+) -> Sermon:
+    """
+    Persist an update to an authenticated user's sermon.
+
+    This convenience function preserves the existing route
+    behavior by owning its commit.
+    """
+    sermon = build_sermon_update_for_user(
+        db=db,
+        user_id=user_id,
+        sermon_id=sermon_id,
+        payload=payload,
+    )
 
     db.commit()
     db.refresh(sermon)
