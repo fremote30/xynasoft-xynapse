@@ -621,6 +621,68 @@ def test_execute_turn_accepts_sermon_action_context(
         ),
         context={
             "active_resource": "sermon",
+            "resource_persisted": False,
+        },
+    )
+
+
+def test_execute_turn_marks_saved_sermon_as_persisted(
+    monkeypatch,
+    authorized_client,
+):
+    execute_turn = AsyncMock(
+        return_value=TURN_RESPONSE
+    )
+
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            *,
+            external_user_id,
+            conversation_id,
+            content,
+            context=None,
+        ):
+            return await execute_turn(
+                external_user_id=external_user_id,
+                conversation_id=conversation_id,
+                content=content,
+                context=context,
+            )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Save these changes.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "id": 42,
+                "data": {
+                    "title": "Trust the Lord",
+                    "scripture": "Proverbs 3:5-6",
+                    "points": [],
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == TURN_RESPONSE
+
+    execute_turn.assert_awaited_once_with(
+        external_user_id="123",
+        conversation_id=CONVERSATION_ID,
+        content="Save these changes.",
+        context={
+            "active_resource": "sermon",
+            "resource_persisted": True,
         },
     )
 

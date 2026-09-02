@@ -182,6 +182,10 @@ async def execute_conversation_turn(
                 context=(
                     {
                         "active_resource": "sermon",
+                        "resource_persisted": (
+                            payload.sermon.id
+                            is not None
+                        ),
                     }
                     if payload.sermon is not None
                     else None
