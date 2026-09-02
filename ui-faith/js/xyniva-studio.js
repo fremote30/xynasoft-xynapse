@@ -138,9 +138,15 @@
       return null;
     }
 
-    if (action.name !== "sermon.save") {
+    if (
+      action.name !== "sermon.save" &&
+      action.name !== "sermon.update"
+    ) {
       return null;
     }
+
+    const isUpdate =
+      action.name === "sermon.update";
 
     const sermonId =
       Number(
@@ -219,7 +225,9 @@
     }
 
     return (
-      "I saved this sermon to your sermons."
+      isUpdate
+        ? "I saved your changes."
+        : "I saved this sermon to your sermons."
     );
 
   }
@@ -569,7 +577,10 @@
       "save this",
       "save this sermon",
       "save the sermon",
-      "save my sermon"
+      "save my sermon",
+      "save these changes",
+      "save the changes",
+      "save my changes"
     ].includes(normalized);
 
   }

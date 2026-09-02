@@ -743,6 +743,111 @@ test(
 
 
 test(
+  "trusted sermon update action synchronizes existing Studio state",
+  async () => {
+
+    const {
+      window,
+      elements,
+      calls
+    } =
+      createEnvironment({
+        sermon:
+          existingSermon()
+      });
+
+    window.XynivaConversation.turn =
+      async (
+        conversationId,
+        content,
+        options
+      ) => {
+
+        calls.turn.push({
+          conversationId,
+          content,
+          options
+        });
+
+        return {
+          conversation_id:
+            "conversation-1",
+          user_message_id:
+            "aaaaaaaa-2222-3333-4444-555555555555",
+          action: {
+            name: "sermon.update",
+            status: "completed",
+            result: {
+              sermon_id: 42
+            }
+          }
+        };
+
+      };
+
+    const result =
+      await window.XynivaStudio.send(
+        "Save these changes."
+      );
+
+    assert.equal(
+      result.action.name,
+      "sermon.update"
+    );
+
+    assert.equal(
+      calls.turn.length,
+      1
+    );
+
+    assert.equal(
+      calls.turn[0].content,
+      "Save these changes."
+    );
+
+    assert.doesNotMatch(
+      calls.turn[0].content,
+      /CURRENT SERMON:/
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.id,
+      42
+    );
+
+    assert.equal(
+      window.currentSermonId,
+      42
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon.id,
+      42
+    );
+
+    assert.equal(
+      elements.xynivaStudioMessages
+        .children.at(-1)
+        .textContent,
+      "I saved your changes."
+    );
+
+    assert.equal(
+      calls.save,
+      0
+    );
+
+    assert.equal(
+      calls.update,
+      0
+    );
+
+  }
+);
+
+
+
+test(
   "without an open sermon the first turn remains conversational",
   async () => {
 
