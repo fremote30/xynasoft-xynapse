@@ -488,6 +488,51 @@ async def test_execute_conversation_turn_posts_content():
     assert result == TURN_RESPONSE
 
 
+
+@pytest.mark.anyio
+async def test_execute_conversation_turn_posts_context():
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert request.method == "POST"
+
+        import json
+
+        payload = json.loads(
+            request.content.decode("utf-8")
+        )
+
+        assert payload == {
+            "content": "Save this.",
+            "context": {
+                "active_resource": "sermon",
+            },
+        }
+
+        return httpx.Response(
+            200,
+            json=TURN_RESPONSE,
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    result = await client.execute_conversation_turn(
+        external_user_id="123",
+        conversation_id=CONVERSATION_ID,
+        content="Save this.",
+        context={
+            "active_resource": "sermon",
+        },
+    )
+
+    assert result == TURN_RESPONSE
+
+
+
 @pytest.mark.anyio
 async def test_conversation_client_rejects_blank_external_user():
     called = False

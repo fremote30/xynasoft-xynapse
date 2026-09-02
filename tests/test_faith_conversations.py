@@ -257,6 +257,7 @@ def test_execute_turn_uses_authenticated_user(
             external_user_id,
             conversation_id,
             content,
+            context=None,
         ):
             return await execute_turn(
                 external_user_id=external_user_id,
@@ -565,11 +566,13 @@ def test_execute_turn_accepts_sermon_action_context(
             external_user_id,
             conversation_id,
             content,
+            context=None,
         ):
             return await execute_turn(
                 external_user_id=external_user_id,
                 conversation_id=conversation_id,
                 content=content,
+                context=context,
             )
 
     monkeypatch.setattr(
@@ -607,15 +610,18 @@ def test_execute_turn_accepts_sermon_action_context(
     assert response.status_code == 200
     assert response.json() == TURN_RESPONSE
 
-    # Current sermon context remains inside XynaFaith.
-    # XynAssist receives only the conversational content
-    # plus server-derived trusted external identity.
+    # The sermon body remains inside XynaFaith.
+    # XynAssist receives only the minimal trusted resource
+    # signal needed to resolve the conversational referent.
     execute_turn.assert_awaited_once_with(
         external_user_id="123",
         conversation_id=CONVERSATION_ID,
         content=(
             "Make the conclusion stronger."
         ),
+        context={
+            "active_resource": "sermon",
+        },
     )
 
 def test_execute_turn_rejects_identity_inside_sermon_context(
@@ -682,6 +688,7 @@ def test_execute_turn_executes_sermon_save_as_authenticated_user(
             external_user_id,
             conversation_id,
             content,
+            context=None,
         ):
             assert external_user_id == "123"
             assert conversation_id == CONVERSATION_ID

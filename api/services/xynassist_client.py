@@ -302,9 +302,14 @@ class XynAssistClient:
         external_user_id: str,
         conversation_id: str,
         content: str,
+        context: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """
         Execute one conversational XynaFaith turn.
+
+        Optional context carries trusted product state used
+        by XynAssist for turn routing. It does not grant
+        authority to execute product mutations.
         """
 
         path = (
@@ -312,13 +317,18 @@ class XynAssistClient:
             f"{conversation_id}/turns"
         )
 
+        payload: dict[str, Any] = {
+            "content": content,
+        }
+
+        if context is not None:
+            payload["context"] = context
+
         data = await self._request_json(
             "POST",
             path,
             external_user_id=external_user_id,
-            payload={
-                "content": content,
-            },
+            payload=payload,
         )
 
         if not isinstance(data, dict):

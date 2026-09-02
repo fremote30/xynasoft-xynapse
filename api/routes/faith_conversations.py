@@ -179,6 +179,13 @@ async def execute_conversation_turn(
                 ),
                 conversation_id=conversation_id,
                 content=payload.content,
+                context=(
+                    {
+                        "active_resource": "sermon",
+                    }
+                    if payload.sermon is not None
+                    else None
+                ),
             )
         )
     except XynAssistError as exc:
