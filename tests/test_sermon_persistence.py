@@ -6,6 +6,7 @@ import pytest
 
 from api.services.sermon_persistence import (
     SermonNotFoundError,
+    build_sermon_delete_for_user,
     build_sermon_for_user,
     build_sermon_update_for_user,
     save_sermon_for_user,
@@ -208,5 +209,53 @@ def test_update_sermon_fails_closed_when_not_owned():
             },
         )
 
+    db.commit.assert_not_called()
+    db.refresh.assert_not_called()
+
+def test_build_sermon_delete_uses_current_transaction():
+    db = MagicMock()
+
+    sermon = SimpleNamespace(
+        id=42,
+        author_id=123,
+    )
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = sermon
+
+    result = build_sermon_delete_for_user(
+        db=db,
+        user_id=123,
+        sermon_id=42,
+    )
+
+    assert result is sermon
+    assert query.filter.call_count == 2
+
+    db.delete.assert_called_once_with(
+        sermon
+    )
+    db.commit.assert_not_called()
+    db.refresh.assert_not_called()
+
+
+def test_build_sermon_delete_fails_closed_when_not_owned():
+    db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
+    with pytest.raises(
+        SermonNotFoundError
+    ):
+        build_sermon_delete_for_user(
+            db=db,
+            user_id=123,
+            sermon_id=42,
+        )
+
+    db.delete.assert_not_called()
     db.commit.assert_not_called()
     db.refresh.assert_not_called()

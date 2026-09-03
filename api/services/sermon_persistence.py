@@ -120,6 +120,41 @@ def build_sermon_update_for_user(
     return sermon
 
 
+def build_sermon_delete_for_user(
+    *,
+    db: Session,
+    user_id: int,
+    sermon_id: int,
+) -> Sermon:
+    """
+    Delete an authenticated user's sermon in the current
+    transaction without committing it.
+
+    Ownership is enforced by the database query using the
+    authenticated user context.
+    """
+    sermon = (
+        db.query(Sermon)
+        .filter(
+            Sermon.id == sermon_id,
+        )
+        .filter(
+            Sermon.author_id == user_id,
+        )
+        .first()
+    )
+
+    if sermon is None:
+        raise SermonNotFoundError(
+            "Sermon not found"
+        )
+
+    db.delete(sermon)
+
+    return sermon
+
+
+
 def update_sermon_for_user(
     *,
     db: Session,
