@@ -1307,3 +1307,184 @@ test(
 
   }
 );
+
+
+test(
+  "failed trusted sermon save preserves unsaved Studio state",
+  async () => {
+
+    const unsaved = {
+      ...existingSermon()
+    };
+
+    delete unsaved.id;
+    delete unsaved.author_id;
+
+    const {
+      window,
+      calls
+    } =
+      createEnvironment({
+        sermon: unsaved
+      });
+
+    window.XynivaConversation.turn =
+      async () => {
+        throw new Error(
+          "Conversation service is temporarily unavailable"
+        );
+      };
+
+    await assert.rejects(
+      () =>
+        window.XynivaStudio.send(
+          "Save this."
+        ),
+      /temporarily unavailable/
+    );
+
+    assert.equal(
+      window.currentSermonId,
+      null
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon.id,
+      undefined
+    );
+
+    assert.equal(
+      calls.render.length,
+      0
+    );
+
+    assert.equal(
+      calls.save,
+      0
+    );
+
+    assert.equal(
+      calls.update,
+      0
+    );
+
+  }
+);
+
+
+test(
+  "failed trusted sermon update preserves existing Studio state",
+  async () => {
+
+    const original =
+      existingSermon();
+
+    const {
+      window,
+      calls
+    } =
+      createEnvironment({
+        sermon: original
+      });
+
+    window.XynivaConversation.turn =
+      async () => {
+        throw new Error(
+          "Conversation action could not be completed"
+        );
+      };
+
+    await assert.rejects(
+      () =>
+        window.XynivaStudio.send(
+          "Save these changes."
+        ),
+      /could not be completed/
+    );
+
+    assert.equal(
+      window.currentSermonId,
+      42
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon,
+      original
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon.title,
+      "Trusting God"
+    );
+
+    assert.equal(
+      calls.render.length,
+      0
+    );
+
+    assert.equal(
+      calls.save,
+      0
+    );
+
+    assert.equal(
+      calls.update,
+      0
+    );
+
+  }
+);
+
+
+test(
+  "failed trusted sermon delete keeps sermon open in Studio",
+  async () => {
+
+    const original =
+      existingSermon();
+
+    const {
+      window,
+      calls
+    } =
+      createEnvironment({
+        sermon: original
+      });
+
+    window.XynivaConversation.turn =
+      async () => {
+        throw new Error(
+          "Conversation action could not be completed"
+        );
+      };
+
+    await assert.rejects(
+      () =>
+        window.XynivaStudio.send(
+          "Yes"
+        ),
+      /could not be completed/
+    );
+
+    assert.equal(
+      window.currentSermonId,
+      42
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon,
+      original
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon.title,
+      "Trusting God"
+    );
+
+    assert.equal(
+      calls.render.length,
+      0
+    );
+
+  }
+);
