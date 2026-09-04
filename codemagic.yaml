@@ -56,7 +56,7 @@ workflows:
         script: |
           cd "$CM_BUILD_DIR/mobile/ios/App"
 
-          BUILD_NUMBER=2
+          BUILD_NUMBER=3
 
           echo "Using build number: $BUILD_NUMBER"
 
