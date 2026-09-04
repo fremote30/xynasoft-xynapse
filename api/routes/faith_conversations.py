@@ -23,6 +23,11 @@ from api.services.conversation_actions import (
     UnsupportedConversationActionError,
     execute_conversation_action,
 )
+from api.services.conversation_pending_actions import (
+    ConversationPendingActionError,
+    SERMON_DELETE_ACTION,
+    record_pending_sermon_delete,
+)
 from api.services.xynassist_client import (
     XynAssistClient,
     XynAssistError,
@@ -231,6 +236,57 @@ async def execute_conversation_turn(
         )
 
     sermon_context = payload.sermon
+
+    # Confirmation-required actions are pending state, not
+    # executable product mutations. Bind the request to the
+    # exact authenticated product resource before returning
+    # the confirmation prompt to the browser.
+    prompt = result.get("prompt")
+
+    if prompt is not None:
+        if (
+            not isinstance(prompt, str)
+            or not prompt.strip()
+            or action.get("name")
+            != SERMON_DELETE_ACTION
+        ):
+            raise HTTPException(
+                status_code=502,
+                detail=(
+                    "Conversation service returned "
+                    "an invalid confirmation"
+                ),
+            )
+
+        try:
+            record_pending_sermon_delete(
+                db=db,
+                user_id=current_user.id,
+                conversation_id=conversation_id,
+                sermon_id=(
+                    sermon_context.id
+                    if sermon_context
+                    else None
+                ),
+                source_message_id=source_message_id,
+            )
+        except ConversationPendingActionError as exc:
+            raise HTTPException(
+                status_code=422,
+                detail=str(exc),
+            ) from exc
+        except Exception as exc:
+            db.rollback()
+
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Conversation confirmation could not "
+                    "be recorded"
+                ),
+            ) from exc
+
+        return result
 
     try:
         executed_action = execute_conversation_action(

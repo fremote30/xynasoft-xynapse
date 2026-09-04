@@ -960,3 +960,183 @@ def test_execute_turn_rejects_unknown_action(
             "Unsupported conversation action"
         )
     }
+
+
+def test_execute_turn_records_pending_sermon_delete(
+    monkeypatch,
+    authorized_client,
+):
+    confirmation_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": (
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+        "action": {
+            "name": "sermon.delete",
+            "arguments": {},
+        },
+        "prompt": (
+            "Are you sure you want to delete this sermon?"
+        ),
+    }
+
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            **kwargs,
+        ):
+            return confirmation_response
+
+    record_pending = Mock()
+    execute_action = Mock()
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "record_pending_sermon_delete",
+        record_pending,
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "execute_conversation_action",
+        execute_action,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Delete this sermon.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "id": 42,
+                "data": {
+                    "title": "Trust the Lord",
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == confirmation_response
+
+    record_pending.assert_called_once_with(
+        db=record_pending.call_args.kwargs["db"],
+        user_id=123,
+        conversation_id=CONVERSATION_ID,
+        sermon_id=42,
+        source_message_id=(
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+    )
+
+    execute_action.assert_not_called()
+
+
+def test_execute_turn_delete_confirmation_requires_saved_sermon(
+    monkeypatch,
+    authorized_client,
+):
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            **kwargs,
+        ):
+            return {
+                "conversation_id": CONVERSATION_ID,
+                "user_message_id": (
+                    "aaaaaaaa-2222-3333-4444-555555555555"
+                ),
+                "action": {
+                    "name": "sermon.delete",
+                    "arguments": {},
+                },
+                "prompt": (
+                    "Are you sure you want to delete "
+                    "this sermon?"
+                ),
+            }
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Delete this sermon.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "data": {
+                    "title": "Unsaved sermon",
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "detail": (
+            "A saved sermon is required for deletion"
+        )
+    }
+
+
+def test_execute_turn_rejects_unknown_confirmation_action(
+    monkeypatch,
+    authorized_client,
+):
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            **kwargs,
+        ):
+            return {
+                "conversation_id": CONVERSATION_ID,
+                "user_message_id": (
+                    "aaaaaaaa-2222-3333-4444-555555555555"
+                ),
+                "action": {
+                    "name": "sermon.update",
+                    "arguments": {},
+                },
+                "prompt": "Confirm this action?",
+            }
+
+    execute_action = Mock()
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "execute_conversation_action",
+        execute_action,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Do this.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "id": 42,
+                "data": {
+                    "title": "Sermon",
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 502
+    execute_action.assert_not_called()
