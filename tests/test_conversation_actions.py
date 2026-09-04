@@ -6,6 +6,9 @@ import pytest
 from api.models.conversation_action_execution import (
     ConversationActionExecution,
 )
+from api.models.conversation_pending_action import (
+    ConversationPendingAction,
+)
 
 from api.services.sermon_persistence import (
     SermonNotFoundError,
@@ -384,6 +387,18 @@ def test_execute_sermon_delete_uses_trusted_bound_sermon(
         sermon_id=999,
         sermon_data=None,
         bound_sermon_id=42,
+        pending_action=ConversationPendingAction(
+            user_id=123,
+            conversation_id=(
+                "22222222-3333-4444-8555-666666666666"
+            ),
+            action_name="sermon.delete",
+            resource_type="sermon",
+            resource_id=42,
+            source_message_id=(
+                "aaaaaaaa-2222-3333-4444-555555555555"
+            ),
+        ),
     )
 
     delete.assert_called_once_with(
@@ -434,6 +449,11 @@ def test_execute_sermon_delete_requires_trusted_binding(
     bound_sermon_id,
 ):
     db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
     delete = MagicMock()
 
     monkeypatch.setattr(
@@ -505,6 +525,18 @@ def test_execute_sermon_delete_fails_closed_when_not_owned(
             sermon_id=999,
             sermon_data=None,
             bound_sermon_id=42,
+            pending_action=ConversationPendingAction(
+                user_id=123,
+                conversation_id=(
+                    "22222222-3333-4444-8555-666666666666"
+                ),
+                action_name="sermon.delete",
+                resource_type="sermon",
+                resource_id=42,
+                source_message_id=(
+                    "aaaaaaaa-2222-3333-4444-555555555555"
+                ),
+            ),
         )
 
     delete.assert_called_once_with(
@@ -514,3 +546,193 @@ def test_execute_sermon_delete_fails_closed_when_not_owned(
     )
 
     db.commit.assert_not_called()
+
+
+def _pending_sermon_delete(
+    *,
+    user_id=123,
+    resource_id=42,
+    action_name="sermon.delete",
+    resource_type="sermon",
+):
+    return ConversationPendingAction(
+        user_id=user_id,
+        conversation_id=(
+            "22222222-3333-4444-8555-666666666666"
+        ),
+        action_name=action_name,
+        resource_type=resource_type,
+        resource_id=resource_id,
+        source_message_id=(
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+    )
+
+
+def test_sermon_delete_consumes_pending_confirmation(
+    monkeypatch,
+):
+    db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
+    pending = _pending_sermon_delete()
+
+    delete_sermon = MagicMock(
+        return_value=SimpleNamespace(id=42)
+    )
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_delete_for_user",
+        delete_sermon,
+    )
+
+    result = execute_conversation_action(
+        db=db,
+        user_id=123,
+        request_id=REQUEST_ID,
+        source_message_id=(
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+        action={
+            "name": "sermon.delete",
+            "arguments": {},
+        },
+        sermon_id=999,
+        sermon_data=None,
+        bound_sermon_id=42,
+        pending_action=pending,
+    )
+
+    delete_sermon.assert_called_once_with(
+        db=db,
+        user_id=123,
+        sermon_id=42,
+    )
+
+    db.delete.assert_called_once_with(pending)
+    db.commit.assert_called_once()
+
+    assert result == {
+        "name": "sermon.delete",
+        "status": "completed",
+        "result": {
+            "sermon_id": 42,
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    "pending",
+    [
+        _pending_sermon_delete(user_id=999),
+        _pending_sermon_delete(resource_id=84),
+        _pending_sermon_delete(
+            action_name="sermon.update"
+        ),
+        _pending_sermon_delete(
+            resource_type="document"
+        ),
+        None,
+    ],
+)
+def test_sermon_delete_rejects_untrusted_pending_confirmation(
+    monkeypatch,
+    pending,
+):
+    db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
+    delete_sermon = MagicMock()
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_delete_for_user",
+        delete_sermon,
+    )
+
+    with pytest.raises(
+        ConversationActionContextError,
+        match="trusted pending confirmation",
+    ):
+        execute_conversation_action(
+            db=db,
+            user_id=123,
+            request_id=REQUEST_ID,
+            source_message_id=(
+                "aaaaaaaa-2222-3333-4444-555555555555"
+            ),
+            action={
+                "name": "sermon.delete",
+                "arguments": {},
+            },
+            sermon_id=999,
+            sermon_data=None,
+            bound_sermon_id=42,
+            pending_action=pending,
+        )
+
+    delete_sermon.assert_not_called()
+    db.delete.assert_not_called()
+    db.commit.assert_not_called()
+
+
+def test_completed_sermon_delete_replays_without_pending_confirmation(
+    monkeypatch,
+):
+    db = MagicMock()
+
+    existing = SimpleNamespace(
+        action_name="sermon.delete",
+        status="completed",
+        result={
+            "sermon_id": 42,
+        },
+    )
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = existing
+
+    delete_sermon = MagicMock()
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_delete_for_user",
+        delete_sermon,
+    )
+
+    result = execute_conversation_action(
+        db=db,
+        user_id=123,
+        request_id=REQUEST_ID,
+        source_message_id=(
+            "bbbbbbbb-2222-3333-4444-555555555555"
+        ),
+        action={
+            "name": "sermon.delete",
+            "arguments": {},
+        },
+        sermon_id=None,
+        sermon_data=None,
+        bound_sermon_id=None,
+        pending_action=None,
+    )
+
+    delete_sermon.assert_not_called()
+    db.delete.assert_not_called()
+    db.commit.assert_not_called()
+
+    assert result == {
+        "name": "sermon.delete",
+        "status": "completed",
+        "result": {
+            "sermon_id": 42,
+        },
+    }

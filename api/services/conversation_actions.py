@@ -15,6 +15,9 @@ from sqlalchemy.orm import Session
 from api.models.conversation_action_execution import (
     ConversationActionExecution,
 )
+from api.models.conversation_pending_action import (
+    ConversationPendingAction,
+)
 from api.services.sermon_persistence import (
     SermonNotFoundError,
     build_sermon_delete_for_user,
@@ -89,6 +92,7 @@ def execute_conversation_action(
     sermon_id: int | None,
     sermon_data: dict[str, Any] | None,
     bound_sermon_id: int | None = None,
+    pending_action: ConversationPendingAction | None = None,
 ) -> dict[str, Any]:
     """
     Execute one allowlisted conversational product action.
@@ -174,19 +178,6 @@ def execute_conversation_action(
             "sermon.update requires a saved sermon"
         )
 
-    if (
-        action_name == SERMON_DELETE_ACTION
-        and (
-            not isinstance(bound_sermon_id, int)
-            or isinstance(bound_sermon_id, bool)
-            or bound_sermon_id < 1
-        )
-    ):
-        raise ConversationActionContextError(
-            "sermon.delete requires a trusted "
-            "bound sermon"
-        )
-
     existing = _find_execution(
         db=db,
         user_id=user_id,
@@ -202,6 +193,31 @@ def execute_conversation_action(
         return _execution_response(
             existing
         )
+
+    if action_name == SERMON_DELETE_ACTION:
+        if (
+            not isinstance(bound_sermon_id, int)
+            or isinstance(bound_sermon_id, bool)
+            or bound_sermon_id < 1
+        ):
+            raise ConversationActionContextError(
+                "sermon.delete requires a trusted "
+                "bound sermon"
+            )
+
+        if (
+            pending_action is None
+            or pending_action.user_id != user_id
+            or pending_action.action_name
+            != SERMON_DELETE_ACTION
+            or pending_action.resource_type != "sermon"
+            or pending_action.resource_id
+            != bound_sermon_id
+        ):
+            raise ConversationActionContextError(
+                "sermon.delete requires trusted "
+                "pending confirmation"
+            )
 
     if action_name == SERMON_SAVE_ACTION:
         sermon = build_sermon_for_user(
@@ -246,8 +262,12 @@ def execute_conversation_action(
 
     db.add(execution)
 
+    if action_name == SERMON_DELETE_ACTION:
+        db.delete(pending_action)
+
     try:
-        # Sermon + execution record become durable together.
+        # Product mutation, execution record, and any consumed
+        # destructive confirmation become durable together.
         db.commit()
 
     except IntegrityError:

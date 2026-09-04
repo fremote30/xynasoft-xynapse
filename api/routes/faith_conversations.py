@@ -319,6 +319,24 @@ async def execute_conversation_turn(
                 if sermon_context
                 else None
             ),
+            bound_sermon_id=(
+                pending.resource_id
+                if (
+                    action.get("name")
+                    == SERMON_DELETE_ACTION
+                    and pending is not None
+                )
+                else None
+            ),
+            pending_action=(
+                pending
+                if (
+                    action.get("name")
+                    == SERMON_DELETE_ACTION
+                    and pending is not None
+                )
+                else None
+            ),
         )
     except (
         UnsupportedConversationActionError,
