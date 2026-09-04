@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/mobile-app
+      - feature/xynassist-integration
 
   workflow_dispatch:
 
