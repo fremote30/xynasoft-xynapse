@@ -210,3 +210,120 @@ def test_record_pending_delete_normalizes_identifiers():
 
     assert pending.conversation_id == CONVERSATION_ID
     assert pending.source_message_id == SOURCE_MESSAGE_ID
+
+
+def test_get_pending_delete_returns_exact_binding():
+    from api.services.conversation_pending_actions import (
+        get_pending_sermon_delete,
+    )
+
+    existing = SimpleNamespace(
+        user_id=123,
+        conversation_id=CONVERSATION_ID,
+        action_name=SERMON_DELETE_ACTION,
+        resource_type=SERMON_RESOURCE,
+        resource_id=42,
+        source_message_id=SOURCE_MESSAGE_ID,
+    )
+
+    db, _ = make_db(
+        existing=existing,
+    )
+
+    result = get_pending_sermon_delete(
+        db=db,
+        user_id=123,
+        conversation_id=CONVERSATION_ID,
+        sermon_id=42,
+    )
+
+    assert result is existing
+
+
+def test_get_pending_delete_rejects_different_sermon():
+    from api.services.conversation_pending_actions import (
+        get_pending_sermon_delete,
+    )
+
+    existing = SimpleNamespace(
+        action_name=SERMON_DELETE_ACTION,
+        resource_type=SERMON_RESOURCE,
+        resource_id=42,
+    )
+
+    db, _ = make_db(
+        existing=existing,
+    )
+
+    result = get_pending_sermon_delete(
+        db=db,
+        user_id=123,
+        conversation_id=CONVERSATION_ID,
+        sermon_id=84,
+    )
+
+    assert result is None
+
+
+@pytest.mark.parametrize(
+    ("action_name", "resource_type"),
+    [
+        ("sermon.update", SERMON_RESOURCE),
+        (SERMON_DELETE_ACTION, "prayer"),
+    ],
+)
+def test_get_pending_delete_rejects_wrong_pending_type(
+    action_name,
+    resource_type,
+):
+    from api.services.conversation_pending_actions import (
+        get_pending_sermon_delete,
+    )
+
+    existing = SimpleNamespace(
+        action_name=action_name,
+        resource_type=resource_type,
+        resource_id=42,
+    )
+
+    db, _ = make_db(
+        existing=existing,
+    )
+
+    result = get_pending_sermon_delete(
+        db=db,
+        user_id=123,
+        conversation_id=CONVERSATION_ID,
+        sermon_id=42,
+    )
+
+    assert result is None
+
+
+@pytest.mark.parametrize(
+    "sermon_id",
+    [
+        None,
+        0,
+        -1,
+        True,
+    ],
+)
+def test_get_pending_delete_requires_saved_current_sermon(
+    sermon_id,
+):
+    from api.services.conversation_pending_actions import (
+        get_pending_sermon_delete,
+    )
+
+    db = Mock()
+
+    result = get_pending_sermon_delete(
+        db=db,
+        user_id=123,
+        conversation_id=CONVERSATION_ID,
+        sermon_id=sermon_id,
+    )
+
+    assert result is None
+    db.query.assert_not_called()

@@ -103,3 +103,58 @@ def record_pending_sermon_delete(
     db.commit()
 
     return pending
+
+
+def get_pending_sermon_delete(
+    *,
+    db: Session,
+    user_id: int,
+    conversation_id: str,
+    sermon_id: int | None,
+) -> ConversationPendingAction | None:
+    """
+    Return the pending sermon deletion only when it belongs
+    to the authenticated user and conversation and remains
+    bound to the exact currently active saved sermon.
+
+    A missing, stale, malformed, or resource-mismatched
+    pending action fails closed by returning None.
+    """
+    if (
+        not isinstance(conversation_id, str)
+        or not conversation_id.strip()
+        or len(conversation_id.strip()) > 36
+    ):
+        return None
+
+    if (
+        not isinstance(sermon_id, int)
+        or isinstance(sermon_id, bool)
+        or sermon_id < 1
+    ):
+        return None
+
+    pending = (
+        db.query(ConversationPendingAction)
+        .filter(
+            ConversationPendingAction.user_id
+            == user_id
+        )
+        .filter(
+            ConversationPendingAction.conversation_id
+            == conversation_id.strip()
+        )
+        .first()
+    )
+
+    if pending is None:
+        return None
+
+    if (
+        pending.action_name != SERMON_DELETE_ACTION
+        or pending.resource_type != SERMON_RESOURCE
+        or pending.resource_id != sermon_id
+    ):
+        return None
+
+    return pending

@@ -68,13 +68,23 @@ class FakeUser:
 
 
 @pytest.fixture
-def authorized_client():
+def authorized_client(monkeypatch):
     async def fake_current_user():
         return FakeUser()
 
     app.dependency_overrides[
         dependencies.get_current_user
     ] = fake_current_user
+
+    # Route tests do not depend on the pending-action
+    # database table unless a test explicitly opts into
+    # pending-state behavior. Keep that service boundary
+    # isolated from the real database by default.
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_sermon_delete",
+        Mock(return_value=None),
+    )
 
     with TestClient(app) as client:
         yield client
@@ -1140,3 +1150,141 @@ def test_execute_turn_rejects_unknown_confirmation_action(
 
     assert response.status_code == 502
     execute_action.assert_not_called()
+
+
+def test_execute_turn_forwards_trusted_pending_delete(
+    monkeypatch,
+    authorized_client,
+):
+    execute_turn = AsyncMock(
+        return_value=TURN_RESPONSE
+    )
+
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            *,
+            external_user_id,
+            conversation_id,
+            content,
+            context=None,
+        ):
+            return await execute_turn(
+                external_user_id=external_user_id,
+                conversation_id=conversation_id,
+                content=content,
+                context=context,
+            )
+
+    pending = Mock()
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_sermon_delete",
+        Mock(return_value=pending),
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Yes, delete it.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "id": 42,
+                "data": {
+                    "title": "Trust the Lord",
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 200
+
+    execute_turn.assert_awaited_once_with(
+        external_user_id="123",
+        conversation_id=CONVERSATION_ID,
+        content="Yes, delete it.",
+        context={
+            "active_resource": "sermon",
+            "resource_persisted": True,
+            "pending_action": "sermon.delete",
+        },
+    )
+
+
+def test_execute_turn_withholds_pending_delete_for_other_sermon(
+    monkeypatch,
+    authorized_client,
+):
+    execute_turn = AsyncMock(
+        return_value=TURN_RESPONSE
+    )
+
+    class FakeXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            *,
+            external_user_id,
+            conversation_id,
+            content,
+            context=None,
+        ):
+            return await execute_turn(
+                external_user_id=external_user_id,
+                conversation_id=conversation_id,
+                content=content,
+                context=context,
+            )
+
+    lookup = Mock(return_value=None)
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XynAssistClient",
+        FakeXynAssistClient,
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_sermon_delete",
+        lookup,
+    )
+
+    response = authorized_client.post(
+        "/api/v1/faith/conversations/"
+        f"{CONVERSATION_ID}/turns",
+        json={
+            "content": "Yes.",
+            "request_id": REQUEST_ID,
+            "sermon": {
+                "id": 84,
+                "data": {
+                    "title": "Different sermon",
+                },
+            },
+        },
+    )
+
+    assert response.status_code == 200
+
+    lookup.assert_called_once_with(
+        db=lookup.call_args.kwargs["db"],
+        user_id=123,
+        conversation_id=CONVERSATION_ID,
+        sermon_id=84,
+    )
+
+    execute_turn.assert_awaited_once_with(
+        external_user_id="123",
+        conversation_id=CONVERSATION_ID,
+        content="Yes.",
+        context={
+            "active_resource": "sermon",
+            "resource_persisted": True,
+        },
+    )

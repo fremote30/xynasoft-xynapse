@@ -26,6 +26,7 @@ from api.services.conversation_actions import (
 from api.services.conversation_pending_actions import (
     ConversationPendingActionError,
     SERMON_DELETE_ACTION,
+    get_pending_sermon_delete,
     record_pending_sermon_delete,
 )
 from api.services.xynassist_client import (
@@ -175,6 +176,30 @@ async def execute_conversation_turn(
         get_current_user
     ),
 ):
+    sermon_context = payload.sermon
+
+    trusted_context = None
+
+    if sermon_context is not None:
+        trusted_context = {
+            "active_resource": "sermon",
+            "resource_persisted": (
+                sermon_context.id is not None
+            ),
+        }
+
+        pending = get_pending_sermon_delete(
+            db=db,
+            user_id=current_user.id,
+            conversation_id=conversation_id,
+            sermon_id=sermon_context.id,
+        )
+
+        if pending is not None:
+            trusted_context["pending_action"] = (
+                SERMON_DELETE_ACTION
+            )
+
     try:
         result = (
             await XynAssistClient()
@@ -184,17 +209,7 @@ async def execute_conversation_turn(
                 ),
                 conversation_id=conversation_id,
                 content=payload.content,
-                context=(
-                    {
-                        "active_resource": "sermon",
-                        "resource_persisted": (
-                            payload.sermon.id
-                            is not None
-                        ),
-                    }
-                    if payload.sermon is not None
-                    else None
-                ),
+                context=trusted_context,
             )
         )
     except XynAssistError as exc:
@@ -234,8 +249,6 @@ async def execute_conversation_turn(
                 "an invalid action"
             ),
         )
-
-    sermon_context = payload.sermon
 
     # Confirmation-required actions are pending state, not
     # executable product mutations. Bind the request to the
