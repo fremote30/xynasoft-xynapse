@@ -1,6 +1,8 @@
 from types import SimpleNamespace
 from unittest.mock import MagicMock, Mock
 
+from sqlalchemy.exc import IntegrityError
+
 import pytest
 
 from api.models.conversation_action_execution import (
@@ -736,3 +738,69 @@ def test_completed_sermon_delete_replays_without_pending_confirmation(
             "sermon_id": 42,
         },
     }
+
+
+def test_sermon_delete_commit_failure_rolls_back_transaction(
+    monkeypatch,
+):
+    db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+
+    # No prior completed execution exists, and after rollback
+    # no winning concurrent execution can be recovered.
+    query.first.return_value = None
+
+    pending = _pending_sermon_delete()
+
+    delete_sermon = MagicMock(
+        return_value=SimpleNamespace(id=42)
+    )
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_delete_for_user",
+        delete_sermon,
+    )
+
+    db.commit.side_effect = IntegrityError(
+        statement="DELETE",
+        params={},
+        orig=Exception(
+            "database commit failed"
+        ),
+    )
+
+    with pytest.raises(IntegrityError):
+        execute_conversation_action(
+            db=db,
+            user_id=123,
+            request_id=REQUEST_ID,
+            source_message_id=(
+                "aaaaaaaa-2222-3333-4444-555555555555"
+            ),
+            action={
+                "name": "sermon.delete",
+                "arguments": {},
+            },
+            sermon_id=999,
+            sermon_data=None,
+            bound_sermon_id=42,
+            pending_action=pending,
+        )
+
+    delete_sermon.assert_called_once_with(
+        db=db,
+        user_id=123,
+        sermon_id=42,
+    )
+
+    # The pending confirmation is scheduled for deletion in
+    # the same transaction as the sermon mutation.
+    db.delete.assert_called_once_with(
+        pending
+    )
+
+    db.commit.assert_called_once()
+    db.rollback.assert_called_once()
