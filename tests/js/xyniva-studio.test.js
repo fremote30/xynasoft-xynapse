@@ -1275,7 +1275,7 @@ test(
           user_message_id:
             "aaaaaaaa-2222-3333-4444-555555555555",
           confirmation_required: true,
-          confirmation_prompt:
+          prompt:
             "Are you sure you want to delete this sermon?"
         };
 

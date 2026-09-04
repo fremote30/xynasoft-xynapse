@@ -89,7 +89,7 @@
 
     const candidates = [
       result?.assistant_content,
-        result?.confirmation_prompt,
+        result?.prompt,
       result?.assistant_message?.content,
       result?.assistant?.content,
       result?.message?.content,
