@@ -89,6 +89,7 @@
 
     const candidates = [
       result?.assistant_content,
+        result?.confirmation_prompt,
       result?.assistant_message?.content,
       result?.assistant?.content,
       result?.message?.content,
@@ -140,10 +141,14 @@
 
     if (
       action.name !== "sermon.save" &&
-      action.name !== "sermon.update"
+      action.name !== "sermon.update" &&
+      action.name !== "sermon.delete"
     ) {
       return null;
     }
+
+    const isDelete =
+      action.name === "sermon.delete";
 
     const isUpdate =
       action.name === "sermon.update";
@@ -172,6 +177,63 @@
       throw new Error(
         "The saved sermon is no longer open"
       );
+    }
+
+    if (isDelete) {
+
+      const currentId =
+        Number(
+          window.currentSermonId ??
+          sermon.id
+        );
+
+      if (
+        !Number.isInteger(currentId) ||
+        currentId <= 0 ||
+        currentId !== sermonId
+      ) {
+        throw new Error(
+          "The deleted sermon is no longer open"
+        );
+      }
+
+      try {
+
+        window.localStorage?.removeItem(
+          "last_saved_sermon_id"
+        );
+
+        const userId =
+          window.currentUser?.id;
+
+        if (userId) {
+          window.localStorage?.removeItem(
+            `latest_sermon_${userId}`
+          );
+        }
+
+      } catch (_) {
+        // Server deletion already succeeded.
+        // Local persistence cleanup is best-effort.
+      }
+
+      window.currentGeneratedSermon =
+        null;
+
+      window.currentSermonId =
+        null;
+
+      if (
+        typeof window.renderCurrentSermon ===
+          "function"
+      ) {
+        window.renderCurrentSermon(
+          null,
+          false
+        );
+      }
+
+      return "I deleted this sermon.";
     }
 
     sermon.id =
@@ -571,7 +633,8 @@
       String(instruction ?? "")
         .trim()
         .toLowerCase()
-        .replace(/[.!?]+$/, "");
+          .replace(/[.!?]+$/, "")
+          .replace(/,/g, "");
 
     return [
       "save this",
@@ -580,7 +643,18 @@
       "save my sermon",
       "save these changes",
       "save the changes",
-      "save my changes"
+      "save my changes",
+        "delete this",
+        "delete this sermon",
+        "delete the sermon",
+        "delete my sermon",
+        "yes",
+        "yes delete it",
+        "yes delete this",
+        "yes delete this sermon",
+        "confirm",
+        "confirm deletion",
+        "delete it"
     ].includes(normalized);
 
   }

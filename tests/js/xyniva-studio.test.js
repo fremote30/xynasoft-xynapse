@@ -1137,3 +1137,173 @@ test(
 
   }
 );
+
+
+test(
+  "trusted sermon delete confirmation clears persisted Studio state",
+  async () => {
+
+    const {
+      window,
+      elements,
+      calls
+    } =
+      createEnvironment({
+        sermon:
+          existingSermon()
+      });
+
+    window.XynivaConversation.turn =
+      async (
+        conversationId,
+        content,
+        options
+      ) => {
+
+        calls.turn.push({
+          conversationId,
+          content,
+          options
+        });
+
+        return {
+          conversation_id:
+            "conversation-1",
+          user_message_id:
+            "aaaaaaaa-2222-3333-4444-555555555555",
+          action: {
+            name: "sermon.delete",
+            status: "completed",
+            result: {
+              sermon_id: 42
+            }
+          }
+        };
+
+      };
+
+    const result =
+      await window.XynivaStudio.send(
+        "Yes, delete it."
+      );
+
+    assert.equal(
+      result.action.name,
+      "sermon.delete"
+    );
+
+    assert.equal(
+      calls.turn.length,
+      1
+    );
+
+    assert.equal(
+      calls.turn[0].content,
+      "Yes, delete it."
+    );
+
+    assert.doesNotMatch(
+      calls.turn[0].content,
+      /CURRENT SERMON:/
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.id,
+      42
+    );
+
+    assert.equal(
+      window.currentSermonId,
+      null
+    );
+
+    assert.equal(
+      window.currentGeneratedSermon,
+      null
+    );
+
+    assert.equal(
+      calls.render.length,
+      1
+    );
+
+    assert.equal(
+      calls.render[0].value,
+      null
+    );
+
+    assert.equal(
+      elements.xynivaStudioMessages
+        .children.at(-1)
+        .textContent,
+      "I deleted this sermon."
+    );
+
+  }
+);
+
+
+test(
+  "initial sermon delete request reaches Xyniva literally",
+  async () => {
+
+    const {
+      window,
+      calls
+    } =
+      createEnvironment({
+        sermon:
+          existingSermon()
+      });
+
+    window.XynivaConversation.turn =
+      async (
+        conversationId,
+        content,
+        options
+      ) => {
+
+        calls.turn.push({
+          conversationId,
+          content,
+          options
+        });
+
+        return {
+          conversation_id:
+            "conversation-1",
+          user_message_id:
+            "aaaaaaaa-2222-3333-4444-555555555555",
+          confirmation_required: true,
+          confirmation_prompt:
+            "Are you sure you want to delete this sermon?"
+        };
+
+      };
+
+    await window.XynivaStudio.send(
+      "Delete this sermon."
+    );
+
+    assert.equal(
+      calls.turn.length,
+      1
+    );
+
+    assert.equal(
+      calls.turn[0].content,
+      "Delete this sermon."
+    );
+
+    assert.doesNotMatch(
+      calls.turn[0].content,
+      /CURRENT SERMON:/
+    );
+
+    assert.equal(
+      calls.turn[0].options.sermon.id,
+      42
+    );
+
+  }
+);
