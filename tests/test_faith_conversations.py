@@ -938,7 +938,7 @@ def test_execute_turn_rejects_unknown_action(
                     "aaaaaaaa-2222-3333-4444-555555555555"
                 ),
                 "action": {
-                    "name": "sermon.delete",
+                    "name": "sermon.publish",
                     "arguments": {},
                 },
             }

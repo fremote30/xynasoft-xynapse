@@ -179,6 +179,7 @@ async def execute_conversation_turn(
     sermon_context = payload.sermon
 
     trusted_context = None
+    pending = None
 
     if sermon_context is not None:
         trusted_context = {

@@ -17,6 +17,7 @@ from api.models.conversation_action_execution import (
 )
 from api.services.sermon_persistence import (
     SermonNotFoundError,
+    build_sermon_delete_for_user,
     build_sermon_for_user,
     build_sermon_update_for_user,
 )
@@ -24,6 +25,7 @@ from api.services.sermon_persistence import (
 
 SERMON_SAVE_ACTION = "sermon.save"
 SERMON_UPDATE_ACTION = "sermon.update"
+SERMON_DELETE_ACTION = "sermon.delete"
 
 
 class UnsupportedConversationActionError(Exception):
@@ -86,6 +88,7 @@ def execute_conversation_action(
     action: dict[str, Any],
     sermon_id: int | None,
     sermon_data: dict[str, Any] | None,
+    bound_sermon_id: int | None = None,
 ) -> dict[str, Any]:
     """
     Execute one allowlisted conversational product action.
@@ -125,6 +128,7 @@ def execute_conversation_action(
     if action_name not in {
         SERMON_SAVE_ACTION,
         SERMON_UPDATE_ACTION,
+        SERMON_DELETE_ACTION,
     }:
         raise UnsupportedConversationActionError(
             "Unsupported conversation action"
@@ -143,7 +147,13 @@ def execute_conversation_action(
             f"{action_name} does not accept arguments"
         )
 
-    if sermon_data is None:
+    if (
+        action_name in {
+            SERMON_SAVE_ACTION,
+            SERMON_UPDATE_ACTION,
+        }
+        and sermon_data is None
+    ):
         raise ConversationActionContextError(
             "Current sermon context is required"
         )
@@ -162,6 +172,19 @@ def execute_conversation_action(
     ):
         raise ConversationActionContextError(
             "sermon.update requires a saved sermon"
+        )
+
+    if (
+        action_name == SERMON_DELETE_ACTION
+        and (
+            not isinstance(bound_sermon_id, int)
+            or isinstance(bound_sermon_id, bool)
+            or bound_sermon_id < 1
+        )
+    ):
+        raise ConversationActionContextError(
+            "sermon.delete requires a trusted "
+            "bound sermon"
         )
 
     existing = _find_execution(
@@ -186,13 +209,24 @@ def execute_conversation_action(
             user_id=user_id,
             payload=sermon_data,
         )
-    else:
+    elif action_name == SERMON_UPDATE_ACTION:
         try:
             sermon = build_sermon_update_for_user(
                 db=db,
                 user_id=user_id,
                 sermon_id=sermon_id,
                 payload=sermon_data,
+            )
+        except SermonNotFoundError as exc:
+            raise ConversationActionContextError(
+                "Sermon not found"
+            ) from exc
+    else:
+        try:
+            sermon = build_sermon_delete_for_user(
+                db=db,
+                user_id=user_id,
+                sermon_id=bound_sermon_id,
             )
         except SermonNotFoundError as exc:
             raise ConversationActionContextError(

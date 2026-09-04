@@ -1,7 +1,15 @@
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 import pytest
+
+from api.models.conversation_action_execution import (
+    ConversationActionExecution,
+)
+
+from api.services.sermon_persistence import (
+    SermonNotFoundError,
+)
 
 from api.services.conversation_actions import (
     ConversationActionContextError,
@@ -93,7 +101,7 @@ def test_unknown_action_fails_closed(
                 "aaaaaaaa-2222-3333-4444-555555555555"
             ),
             action={
-                "name": "sermon.delete",
+                "name": "sermon.publish",
                 "arguments": {},
             },
             sermon_id=None,
@@ -337,3 +345,172 @@ def test_sermon_update_rejects_nonempty_arguments(
         )
 
     update.assert_not_called()
+
+
+def test_execute_sermon_delete_uses_trusted_bound_sermon(
+    monkeypatch,
+):
+    db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
+    delete = MagicMock(
+        return_value=SimpleNamespace(
+            id=42,
+        )
+    )
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_delete_for_user",
+        delete,
+    )
+
+    result = execute_conversation_action(
+        db=db,
+        user_id=123,
+        request_id=REQUEST_ID,
+        source_message_id=(
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+        action={
+            "name": "sermon.delete",
+            "arguments": {},
+        },
+        # Browser/current resource context is deliberately
+        # different. It must not become deletion authority.
+        sermon_id=999,
+        sermon_data=None,
+        bound_sermon_id=42,
+    )
+
+    delete.assert_called_once_with(
+        db=db,
+        user_id=123,
+        sermon_id=42,
+    )
+
+    execution = None
+
+    for call in db.add.call_args_list:
+        candidate = call.args[0]
+
+        if isinstance(
+            candidate,
+            ConversationActionExecution,
+        ):
+            execution = candidate
+
+    assert execution is not None
+    assert execution.action_name == "sermon.delete"
+    assert execution.result == {
+        "sermon_id": 42,
+    }
+
+    db.commit.assert_called_once()
+
+    assert result == {
+        "name": "sermon.delete",
+        "status": "completed",
+        "result": {
+            "sermon_id": 42,
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    "bound_sermon_id",
+    [
+        None,
+        0,
+        -1,
+        True,
+    ],
+)
+def test_execute_sermon_delete_requires_trusted_binding(
+    monkeypatch,
+    bound_sermon_id,
+):
+    db = MagicMock()
+    delete = MagicMock()
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_delete_for_user",
+        delete,
+    )
+
+    with pytest.raises(
+        ConversationActionContextError,
+        match="trusted bound sermon",
+    ):
+        execute_conversation_action(
+            db=db,
+            user_id=123,
+            request_id=REQUEST_ID,
+            source_message_id=(
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+            action={
+                "name": "sermon.delete",
+                "arguments": {},
+            },
+            sermon_id=999,
+            sermon_data=None,
+            bound_sermon_id=bound_sermon_id,
+        )
+
+    delete.assert_not_called()
+    db.commit.assert_not_called()
+
+
+def test_execute_sermon_delete_fails_closed_when_not_owned(
+    monkeypatch,
+):
+    db = MagicMock()
+
+    query = db.query.return_value
+    query.filter.return_value = query
+    query.first.return_value = None
+
+    delete = MagicMock(
+        side_effect=SermonNotFoundError(
+            "Sermon not found"
+        )
+    )
+
+    monkeypatch.setattr(
+        "api.services.conversation_actions."
+        "build_sermon_delete_for_user",
+        delete,
+    )
+
+    with pytest.raises(
+        ConversationActionContextError,
+        match="Sermon not found",
+    ):
+        execute_conversation_action(
+            db=db,
+            user_id=123,
+            request_id=REQUEST_ID,
+            source_message_id=(
+            "aaaaaaaa-2222-3333-4444-555555555555"
+        ),
+            action={
+                "name": "sermon.delete",
+                "arguments": {},
+            },
+            sermon_id=999,
+            sermon_data=None,
+            bound_sermon_id=42,
+        )
+
+    delete.assert_called_once_with(
+        db=db,
+        user_id=123,
+        sermon_id=42,
+    )
+
+    db.commit.assert_not_called()
