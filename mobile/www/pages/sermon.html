@@ -16,7 +16,7 @@
 
   <link
     rel="stylesheet"
-    href="/faith/styles.css"
+    href="styles.css"
   >
 
 <style>
@@ -1099,6 +1099,101 @@ textarea{
     style="display:none;"
   >
 
+    <!-- ===================================== -->
+    <!-- XYNIVA SERMON ASSISTANT -->
+    <!-- ===================================== -->
+    <div
+      id="xynivaStudioPanel"
+      class="action-card xyniva-studio-panel"
+    >
+
+      <div class="xyniva-studio-header">
+
+        <div>
+          <h3>
+            ✦ Xyniva
+          </h3>
+
+          <p>
+            Your sermon assistant
+          </p>
+        </div>
+
+      </div>
+
+      <div
+        id="xynivaStudioMessages"
+        class="xyniva-studio-messages"
+        aria-live="polite"
+      >
+
+        <div class="xyniva-studio-welcome">
+          Ask Xyniva to strengthen,
+          shorten, expand, or reshape
+          the sermon you are preparing.
+        </div>
+
+      </div>
+
+      <div
+        id="xynivaStudioStatus"
+        class="xyniva-studio-status"
+        role="status"
+        aria-live="polite"
+        hidden
+      >
+        <div class="xyniva-studio-status-row">
+          <span
+            class="xyniva-studio-spinner"
+            aria-hidden="true"
+          ></span>
+
+          <span id="xynivaStudioStatusText">
+            Xyniva is refining your sermon…
+          </span>
+        </div>
+
+        <div
+          class="xyniva-studio-progress"
+          aria-hidden="true"
+        >
+          <div
+            id="xynivaStudioProgressBar"
+            class="xyniva-studio-progress-bar"
+          ></div>
+        </div>
+      </div>
+
+      <form
+        id="xynivaStudioForm"
+        class="xyniva-studio-form"
+      >
+
+        <textarea
+          id="xynivaStudioInput"
+          rows="4"
+          maxlength="50000"
+          placeholder="Ask Xyniva about this sermon…"
+          aria-label="Ask Xyniva about this sermon"
+        ></textarea>
+
+        <button
+          id="xynivaStudioSend"
+          type="submit"
+          class="xyniva-studio-send"
+        >
+          Ask Xyniva
+        </button>
+
+      </form>
+
+      <div class="xyniva-studio-hint">
+        Xyniva works with the sermon
+        currently open in Studio.
+      </div>
+
+    </div>
+
     <!-- REFINE -->
     <div class="action-card pastor-only">
 
@@ -1799,7 +1894,7 @@ function activateMultiverseMode(){
   </div>
 
 </div>
-<script src="/faith/app.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>

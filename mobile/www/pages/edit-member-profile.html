@@ -67,7 +67,7 @@
 
           <div
             class="member-avatar-upload-card"
-            onclick="document.getElementById('memberProfileImageFile').click()"
+            onclick="chooseMemberProfilePhoto()"
           >
 
             <div
@@ -80,6 +80,8 @@
             <button
               type="button"
               class="camera-pill"
+              aria-label="Take profile photo"
+              onclick="event.stopPropagation(); takeMemberProfilePhoto()"
             >
               📷
             </button>

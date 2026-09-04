@@ -147,7 +147,7 @@
         //     "Notification Service",
         //     window.NotificationService
         // );
-        
+
         await initializeService(
             "Authentication Service",
             window.MobileAuthService
@@ -172,20 +172,11 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
 
-        if (window.XynaSplash) {
-
-            await XynaSplash.show();
-
-        }
         await initializeMobileServices();
 
         if (window.XynaSplash) {
 
-            setTimeout(async () => {
-
-                await XynaSplash.hide();
-
-            }, 900);
+            await XynaSplash.hide();
 
         }
 

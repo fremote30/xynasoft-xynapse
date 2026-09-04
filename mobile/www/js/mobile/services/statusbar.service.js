@@ -3,6 +3,18 @@
  * XYNASOFT MOBILE SDK
  * Status Bar Service
  * ==========================================================
+ *
+ * Android 15+ uses edge-to-edge system bars.
+ * Status bar background-color control is therefore not
+ * available on modern Android.
+ *
+ * XynaFaith handles the top system inset through CSS:
+ *
+ *   env(safe-area-inset-top)
+ *
+ * This service is responsible primarily for status-bar
+ * icon/text appearance.
+ * ==========================================================
  */
 
 (() => {
@@ -18,137 +30,176 @@
         }
 
         // =====================================================
+        // Plugin
+        // =====================================================
+
+        getPlugin() {
+
+            if (!window.Capacitor) {
+                return null;
+            }
+
+            return Capacitor.Plugins?.StatusBar || null;
+
+        }
+
+        // =====================================================
+        // Platform
+        // =====================================================
+
+        getPlatform() {
+
+            try {
+
+                return Capacitor.getPlatform?.() || "web";
+
+            }
+
+            catch (_) {
+
+                return "web";
+
+            }
+
+        }
+
+        // =====================================================
         // Initialize
         // =====================================================
 
         async initialize() {
 
             if (this.initialized) {
-                return;
+                return true;
             }
 
-            console.log("📱 Initializing Status Bar...");
+            console.log(
+                "📱 Initializing Status Bar..."
+            );
 
-            this.initialized = true;
+            const StatusBar =
+                this.getPlugin();
 
-            if (!window.Capacitor) {
+            if (!StatusBar) {
 
-                console.log("ℹ️ Running in browser.");
+                console.log(
+                    "ℹ️ Status Bar unavailable in browser."
+                );
 
-                return;
+                this.initialized = true;
 
+                return true;
             }
 
             try {
 
-                const { StatusBar } =
-                    Capacitor.Plugins;
-
-                if (!StatusBar) {
-
-                    console.warn("StatusBar plugin unavailable.");
-
-                    return;
-
-                }
-
-                // ---------------------------------
-                // Default Launch Style
-                // ---------------------------------
-
+                // XynaFaith currently uses a light header.
+                // DARK = dark status-bar icons/text.
                 await StatusBar.setStyle({
-
                     style: "DARK"
-
                 });
 
-                await StatusBar.setBackgroundColor({
+                /*
+                 * Background-color control is not available
+                 * on Android 15+.
+                 *
+                 * iOS does not require this call because the
+                 * web content/safe-area supplies the visual
+                 * background.
+                 */
 
-                    color: "#ffffff"
+                this.initialized = true;
 
-                });
+                console.log(
+                    "✅ Status Bar Ready"
+                );
 
-                console.log("✅ Status Bar Ready");
+                return true;
 
             }
 
             catch (error) {
 
                 console.warn(
-                    "StatusBar initialization failed:",
+                    "Status Bar initialization failed:",
                     error
                 );
 
+                // Do not prevent the mobile runtime from
+                // starting if system-bar configuration fails.
+                this.initialized = true;
+
+                return false;
             }
 
         }
 
         // =====================================================
-        // Light Theme
+        // Light Application Theme
         // =====================================================
 
         async light() {
 
-            if (!window.Capacitor) return;
+            const StatusBar =
+                this.getPlugin();
+
+            if (!StatusBar) {
+                return false;
+            }
 
             try {
 
-                const { StatusBar } =
-                    Capacitor.Plugins;
-
                 await StatusBar.setStyle({
-
                     style: "DARK"
-
                 });
 
-                await StatusBar.setBackgroundColor({
-
-                    color: "#ffffff"
-
-                });
+                return true;
 
             }
 
-            catch (e) {
+            catch (error) {
 
-                console.warn(e);
+                console.warn(
+                    "Status Bar light mode failed:",
+                    error
+                );
 
+                return false;
             }
 
         }
 
         // =====================================================
-        // Dark Theme
+        // Dark Application Theme
         // =====================================================
 
         async dark() {
 
-            if (!window.Capacitor) return;
+            const StatusBar =
+                this.getPlugin();
+
+            if (!StatusBar) {
+                return false;
+            }
 
             try {
 
-                const { StatusBar } =
-                    Capacitor.Plugins;
-
                 await StatusBar.setStyle({
-
                     style: "LIGHT"
-
                 });
 
-                await StatusBar.setBackgroundColor({
-
-                    color: "#121212"
-
-                });
+                return true;
 
             }
 
-            catch (e) {
+            catch (error) {
 
-                console.warn(e);
+                console.warn(
+                    "Status Bar dark mode failed:",
+                    error
+                );
 
+                return false;
             }
 
         }

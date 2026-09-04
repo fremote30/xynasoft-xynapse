@@ -1243,9 +1243,345 @@
 ========================================== */
 
 body.keyboard-open {
+    padding-bottom: 0 !important;
+}
 
-    padding-bottom: 300px;
+body.keyboard-open .mobile-bottom-nav {
+    display: none !important;
+}
 
-    transition: padding .25s ease;
+body.keyboard-open #app {
+    padding-bottom: 16px;
+}
 
+/* =========================================================
+   XYNAFAITH MOBILE — HOME WHY SECTION
+   ---------------------------------------------------------
+   Mobile-only presentation for the "Built for Modern
+   Ministry" section. Does not alter desktop styling.
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .why-xynafaith {
+    width: 100%;
+    padding: 48px 20px;
+    background: #ffffff;
+  }
+
+  .why-container {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .why-container h2 {
+    margin: 0 0 16px;
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #111827;
+    text-align: center;
+  }
+
+  .why-description {
+    max-width: 500px;
+    margin: 0 auto 28px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: #667085;
+    text-align: center;
+  }
+
+  .why-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .why-item {
+    width: 100%;
+    max-width: 340px;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #374151;
+  }
+
+}
+
+
+/* =========================================================
+   XYNAFAITH MOBILE — AUTH PAGES
+   ---------------------------------------------------------
+   Prevent legacy desktop auth rules from clipping Login
+   and Registration inside the native mobile shell.
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .auth-page {
+    width: 100% !important;
+    height: auto !important;
+    min-height:
+      calc(
+        100dvh -
+        var(--xf-mobile-header-height) -
+        var(--xf-mobile-bottom-nav-height)
+      ) !important;
+
+    padding: 24px 16px 36px !important;
+    overflow: visible !important;
+
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  .auth-wrapper {
+    width: 100% !important;
+    max-width: 460px !important;
+    margin: 0 auto !important;
+  }
+
+  .auth-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 28px 22px !important;
+    box-sizing: border-box;
+  }
+
+  .auth-logo {
+    display: block !important;
+    width: auto !important;
+    max-width: 110px !important;
+    height: 72px !important;
+    margin: 0 auto 18px !important;
+    object-fit: contain;
+  }
+
+  .auth-card h2,
+  .auth-sub,
+  .auth-footer {
+    text-align: center;
+  }
+
+}
+
+
+/* =========================================================
+   XYNAFAITH — MOBILE PUBLIC HOME VIEWPORT FIX
+   Prevent legacy desktop home styles from overflowing iOS.
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* All public home sections must remain inside the viewport */
+  .simple-hero,
+  .why-xynafaith,
+  .features {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden;
+  }
+
+  .simple-hero {
+    padding: 48px 18px 44px !important;
+    margin: 0 !important;
+  }
+
+  .simple-hero .hero-content,
+  .hero-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .simple-hero .hero-title,
+  .hero-title {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    font-size: clamp(30px, 9vw, 40px) !important;
+    line-height: 1.12 !important;
+
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .simple-hero .hero-sub,
+  .hero-sub,
+  .hero-tagline {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+
+    overflow-wrap: break-word;
+  }
+
+  .simple-hero .hero-sub,
+  .hero-sub {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+
+  .hero-tagline {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+  }
+
+  .hero-buttons {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    gap: 12px !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .hero-buttons button,
+  .hero-buttons .btn-primary,
+  .hero-buttons .btn-secondary {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Why XynaFaith */
+  .why-xynafaith {
+    padding: 48px 18px !important;
+  }
+
+  .why-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .why-container h2,
+  .why-description {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-wrap: break-word;
+  }
+
+  .why-container h2 {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+  }
+
+  .why-description {
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+  }
+
+  .why-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    grid-template-columns: minmax(0, 1fr) !important;
+
+    box-sizing: border-box !important;
+  }
+
+  .why-item {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Platform modules */
+  .features {
+    padding: 48px 18px !important;
+  }
+
+  .features-header,
+  .feature-grid,
+  .feature-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .feature-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .simple-hero .hero-title,
+  .hero-title {
+    font-size: 30px !important;
+  }
+
+  .why-container h2,
+  .features-header h2 {
+    font-size: 26px !important;
+  }
+}
+
+
+/* =========================================================
+   XYNAFAITH — MOBILE BOTTOM NAV VIEWPORT FIT
+   Keep all five navigation items inside the iOS viewport.
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .mobile-bottom-nav {
+    right: 0 !important;
+    left: 0 !important;
+
+    width: auto !important;
+    max-width: 100vw !important;
+
+    box-sizing: border-box !important;
+
+    grid-template-columns:
+      repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .mobile-bottom-nav[data-items="4"] {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .mobile-bottom-nav-item,
+  .mobile-bottom-nav button,
+  .mobile-bottom-nav a {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+
+    box-sizing: border-box !important;
+
+    overflow: hidden;
+  }
+
+  .mobile-bottom-nav-label,
+  .bottom-nav-label {
+    width: 100%;
+    max-width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    text-align: center;
+  }
 }

@@ -28,7 +28,10 @@
 
             this.timeout = 30000;
 
-            this.baseUrl = "";
+            this.baseUrl =
+                window.XynaPlatform?.isMobile
+                    ? "https://xynafaith.com"
+                    : "";
 
         }
 
@@ -174,19 +177,26 @@
         // DELETE
         // =====================================================
 
-        async delete(url) {
+        async delete(url, body = null) {
+
+            const options = {
+
+                method: "DELETE",
+
+                headers: this.headers()
+
+            };
+
+            if (body !== null) {
+                options.body =
+                    JSON.stringify(body);
+            }
 
             const response = await fetch(
 
                 this.baseUrl + url,
 
-                {
-
-                    method: "DELETE",
-
-                    headers: this.headers()
-
-                }
+                options
 
             );
 

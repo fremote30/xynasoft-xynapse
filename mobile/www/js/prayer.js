@@ -1,6 +1,39 @@
 (() => {
 
-  const API_BASE = window.API_BASE || "/api/v1";
+  const API_PATH = "/api/v1";
+
+  function getPrayerApiBase() {
+
+    const mobileBase =
+      window.MobileApi?.baseUrl;
+
+    if (mobileBase) {
+
+      return (
+        String(mobileBase)
+          .replace(/\/$/, "") +
+        API_PATH
+      );
+    }
+
+    const isNative =
+      !!(
+        window.Capacitor &&
+        typeof window.Capacitor.isNativePlatform ===
+          "function" &&
+        window.Capacitor.isNativePlatform()
+      );
+
+    if (isNative) {
+
+      return (
+        "https://xynafaith.com" +
+        API_PATH
+      );
+    }
+
+    return API_PATH;
+  }
   let prayerState = {
   view: "wall",
   filter: "recent",
@@ -32,14 +65,63 @@ let activeTestimonyPrayerId = null;
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${API_BASE}${path}`, {
-      ...options,
-      headers
-    });
+    const url =
+      `${getPrayerApiBase()}${path}`;
+
+    const res =
+      await fetch(url, {
+        ...options,
+        headers
+      });
+
+    const contentType =
+      res.headers.get(
+        "content-type"
+      ) || "";
 
     if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || "Prayer request failed");
+
+      const text =
+        await res.text();
+
+      console.error(
+        "Prayer API request failed:",
+        {
+          url,
+          status: res.status,
+          contentType,
+          response: text
+        }
+      );
+
+      throw new Error(
+        "Prayer Wall is temporarily unavailable. Please try again."
+      );
+    }
+
+    if (
+      !contentType.includes(
+        "application/json"
+      )
+    ) {
+
+      const text =
+        await res.text();
+
+      console.error(
+        "Prayer API returned non-JSON:",
+        {
+          url,
+          status: res.status,
+          contentType,
+          response:
+            text.slice(0, 500)
+        }
+      );
+
+      throw new Error(
+        "Prayer Wall is temporarily unavailable. Please try again."
+      );
     }
 
     return await res.json();

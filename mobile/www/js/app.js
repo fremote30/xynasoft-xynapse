@@ -91,6 +91,17 @@
       }
 
       // =====================================
+      // RESTORE PUSH DEVICE REGISTRATION
+      // =====================================
+      if (
+        token &&
+        window.NotificationService &&
+        typeof NotificationService.syncToken === "function"
+      ) {
+        await NotificationService.syncToken();
+      }
+
+      // =====================================
       // NAVBAR
       // =====================================
       if (typeof renderNavbar === "function") {

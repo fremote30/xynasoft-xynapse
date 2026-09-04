@@ -37,7 +37,7 @@ body {
       rgba(255, 255, 255, 0.85),
       rgba(255, 255, 255, 0.95)
     ),
-    url("/faith/assets/hero.webp");
+    url("assets/hero.webp");
 
   background-size: cover;
   background-position: center;

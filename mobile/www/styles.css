@@ -14,7 +14,7 @@ body {
 
   background: 
     linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.95)),
-    url('/faith/assets/hero.webp');
+    url('assets/hero.webp');
 
   background-size: cover;
   background-position: center;
@@ -239,7 +239,7 @@ body {
 
   background:
     linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.95)),
-    url('/faith/assets/hero.webp');
+    url('assets/hero.webp');
 
   background-size: cover;
   background-position: center;
@@ -2804,9 +2804,15 @@ select {
 
 /* Mobile sermon tabs */
 .mobile-sermon-tabs {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-sermon-tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
 }
 
 .mobile-tab {
@@ -9119,5 +9125,1396 @@ select {
     gap:16px;
 
     flex-wrap:wrap;
+
+}
+
+/* =========================================================
+   XYNAFAITH AUTH — EMAIL / PHONE MULTI-STEP FLOW
+   ---------------------------------------------------------
+   Extends the existing auth design without replacing it.
+========================================================= */
+
+.auth-card [hidden] {
+  display: none !important;
+}
+
+.auth-step-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin: 0 0 18px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.auth-step-back:hover {
+  text-decoration: underline;
+}
+
+.auth-identity-display {
+  margin: -5px 0 20px;
+  padding: 11px 14px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+
+  overflow-wrap: anywhere;
+}
+
+#loginIdentityError,
+#phoneLoginError {
+  display: none;
+
+  margin: -8px 0 12px;
+
+  color: #dc2626;
+  font-size: 13px;
+}
+
+#loginIdentityForm .btn-primary,
+#loginPhoneStep .btn-primary {
+  min-height: 46px;
+}
+
+#loginPhoneStep {
+  text-align: left;
+}
+
+
+/* =========================================================
+   MOBILE AUTH REFINEMENTS
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .auth-page {
+    min-height: 100dvh;
+    height: auto;
+
+    padding:
+      calc(24px + env(safe-area-inset-top))
+      16px
+      calc(24px + env(safe-area-inset-bottom));
+
+    overflow-y: auto;
+  }
+
+  .auth-wrapper {
+    min-height: 100%;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 440px;
+
+    padding: 30px 22px;
+  }
+
+  .auth-step-back {
+    min-height: 36px;
+  }
+
+  #loginIdentity,
+  #password {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  #loginIdentityForm .btn-primary,
+  #loginForm .btn-primary,
+  #loginPhoneStep .btn-primary {
+    min-height: 48px;
+  }
+
+  .login-options {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
+
+
+/* =========================================================
+   PHONE AUTH ERROR ALERT
+========================================================= */
+
+#phoneLoginError {
+  display: none;
+
+  margin: 16px 0 0;
+  padding: 12px 14px;
+
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+
+  background: #fef2f2;
+
+  color: #b91c1c;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+#phoneLoginError:not(:empty) {
+  display: block;
+}
+
+@media (max-width: 600px) {
+
+  #phoneLoginError {
+    margin-top: 14px;
+    padding: 12px;
+
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
+
+
+/* =========================================================
+   XYNAFAITH V1.1 PUBLIC PAGE POLISH
+========================================================= */
+
+
+/* ---------------------------------------------------------
+   AUTH BRAND
+--------------------------------------------------------- */
+
+.auth-logo {
+  display: block;
+
+  width: 92px;
+  height: auto;
+
+  margin: 0 auto 18px;
+
+  object-fit: contain;
+}
+
+.auth-card {
+  text-align: center;
+}
+
+.auth-card form,
+.auth-card .form-group,
+#loginPhoneStep,
+#registerPhoneStep,
+#registerEmailStep,
+#registerPhoneProfileStep {
+  text-align: left;
+}
+
+
+/* ---------------------------------------------------------
+   WHY XYNAFAITH
+--------------------------------------------------------- */
+
+.why-xynafaith {
+  width: 100%;
+
+  padding: 70px 20px;
+
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.why-container {
+  width: 100%;
+  max-width: 1100px;
+
+  margin: 0 auto;
+
+  text-align: center;
+}
+
+.why-container h2 {
+  margin: 0 0 16px;
+
+  font-size: 34px;
+  line-height: 1.2;
+  font-weight: 700;
+
+  color: #111827;
+}
+
+.why-description {
+  max-width: 780px;
+
+  margin: 0 auto 36px;
+
+  color: #4b5563;
+
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.why-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(190px, 1fr));
+
+  gap: 16px;
+
+  width: 100%;
+}
+
+.why-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 76px;
+
+  padding: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.05);
+
+  color: #1f2937;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* ---------------------------------------------------------
+   PUBLIC PLATFORM MODULES
+--------------------------------------------------------- */
+
+.features-header h2 {
+  margin-bottom: 12px;
+
+  font-size: 34px;
+  line-height: 1.2;
+
+  color: #111827;
+}
+
+.features-header p {
+  max-width: 720px;
+
+  margin: 0 auto 34px;
+
+  color: #4b5563;
+
+  line-height: 1.65;
+}
+
+.feature-section-title {
+  margin: 12px 0 22px;
+
+  color: #111827;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE PUBLIC/AUTH POLISH
+--------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+  .auth-page {
+    min-height: 100vh;
+    height: auto;
+
+    overflow-y: auto;
+
+    padding: 24px 16px;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 500px;
+
+    padding: 32px 24px;
+  }
+
+  .auth-logo {
+    width: 80px;
+
+    margin-bottom: 16px;
+  }
+
+  .why-xynafaith {
+    padding: 48px 18px;
+  }
+
+  .why-container h2,
+  .features-header h2 {
+    font-size: 28px;
+  }
+
+  .why-description {
+    margin-bottom: 28px;
+
+    font-size: 15px;
+  }
+
+  .why-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .why-item {
+    min-height: 64px;
+
+    padding: 16px;
+  }
+
+  .features {
+    padding: 48px 18px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .auth-card {
+    padding: 28px 20px;
+  }
+
+  .auth-card h1,
+  .auth-card h2 {
+    line-height: 1.2;
+  }
+
+  .why-container h2,
+  .features-header h2 {
+    font-size: 26px;
+  }
+
+}
+
+
+/* =========================================================
+   PRAYER JOURNEY — MOBILE 4-STEP FIT
+   Keep Submitted / Praying / Encouraged / Answered visible
+========================================================= */
+
+@media (max-width: 640px) {
+
+  .prayer-journey {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 14px 8px;
+
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .prayer-journey .journey-step {
+    flex: 0 1 22%;
+    min-width: 0;
+  }
+
+  .prayer-journey .journey-step span {
+    width: 28px;
+    height: 28px;
+
+    flex: 0 0 28px;
+
+    font-size: 0.78rem;
+  }
+
+  .prayer-journey .journey-step small {
+    width: 100%;
+
+    margin-top: 6px;
+
+    font-size: 0.62rem;
+    line-height: 1.15;
+
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .prayer-journey .journey-line {
+    flex: 1 1 auto;
+    min-width: 8px;
+
+    margin: 0 2px 20px;
+  }
+}
+
+@media (max-width: 380px) {
+
+  .prayer-journey {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .prayer-journey .journey-step span {
+    width: 26px;
+    height: 26px;
+
+    flex-basis: 26px;
+  }
+
+  .prayer-journey .journey-step small {
+    font-size: 0.58rem;
+  }
+
+  .prayer-journey .journey-line {
+    min-width: 5px;
+    margin-left: 1px;
+    margin-right: 1px;
+  }
+}
+
+
+/* =========================================================
+   XYNIVA CONVERSATIONAL EXPERIENCE
+========================================================= */
+
+.xyniva-page {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 42px 0 64px;
+}
+
+.xyniva-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.xyniva-header h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+.xyniva-header p {
+  max-width: 650px;
+  margin: 0;
+  line-height: 1.65;
+  opacity: 0.82;
+}
+
+.xyniva-workspace {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 620px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+}
+
+.xyniva-welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 54px 34px 36px;
+}
+
+.xyniva-mark {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 20px;
+  border-radius: 18px;
+  font-size: 30px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.xyniva-welcome h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+}
+
+.xyniva-welcome > p {
+  max-width: 620px;
+  margin: 0;
+  line-height: 1.65;
+  opacity: 0.78;
+}
+
+.xyniva-prompts {
+  width: min(820px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.xyniva-prompt {
+  min-height: 118px;
+  padding: 18px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  color: inherit;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.xyniva-prompt:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.085);
+}
+
+.xyniva-prompt strong,
+.xyniva-prompt span {
+  display: block;
+}
+
+.xyniva-prompt strong {
+  margin-bottom: 7px;
+  font-size: 0.98rem;
+}
+
+.xyniva-prompt span {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  opacity: 0.7;
+}
+
+
+/* =========================================================
+   XYNIVA MESSAGES
+========================================================= */
+
+.xyniva-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px;
+}
+
+.xyniva-messages:empty {
+  display: none;
+}
+
+.xyniva-message {
+  width: min(820px, 92%);
+}
+
+.xyniva-message-user {
+  align-self: flex-end;
+}
+
+.xyniva-message-assistant {
+  align-self: flex-start;
+}
+
+.xyniva-message-label {
+  margin-bottom: 7px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+.xyniva-message-user .xyniva-message-label {
+  text-align: right;
+}
+
+.xyniva-message-body {
+  padding: 16px 18px;
+  border-radius: 18px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.xyniva-message-user .xyniva-message-body {
+  background: rgba(255, 255, 255, 0.12);
+  border-bottom-right-radius: 6px;
+}
+
+.xyniva-message-assistant .xyniva-message-body {
+  background: rgba(255, 255, 255, 0.065);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom-left-radius: 6px;
+}
+
+.xyniva-error {
+  width: min(820px, 92%);
+  align-self: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  background: rgba(180, 50, 50, 0.12);
+  border: 1px solid rgba(220, 80, 80, 0.22);
+}
+
+
+/* =========================================================
+   XYNIVA COMPOSER
+========================================================= */
+
+.xyniva-composer-shell {
+  margin-top: auto;
+  padding: 20px 24px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.xyniva-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.xyniva-composer textarea {
+  flex: 1;
+  min-height: 54px;
+  max-height: 180px;
+  resize: vertical;
+  padding: 15px 17px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.07);
+  color: inherit;
+  font: inherit;
+  line-height: 1.45;
+  outline: none;
+}
+
+.xyniva-composer textarea:focus {
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.xyniva-composer textarea::placeholder {
+  color: inherit;
+  opacity: 0.48;
+}
+
+.xyniva-send {
+  min-width: 100px;
+  min-height: 54px;
+}
+
+.xyniva-composer-footer {
+  width: min(900px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 11px auto 0;
+  font-size: 0.75rem;
+  opacity: 0.62;
+}
+
+.xyniva-studio-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   XYNIVA DASHBOARD ENTRY
+========================================================= */
+
+.xyniva-dashboard-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.xyniva-dashboard-card::before {
+  content: "✦";
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  font-size: 2.4rem;
+  opacity: 0.08;
+}
+
+
+/* =========================================================
+   XYNIVA MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .xyniva-page {
+    width: min(100% - 20px, 1100px);
+    padding: 22px 0 36px;
+  }
+
+  .xyniva-header {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .xyniva-header .btn-secondary {
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  .xyniva-workspace {
+    min-height: calc(100vh - 210px);
+    border-radius: 18px;
+  }
+
+  .xyniva-welcome {
+    padding: 36px 18px 26px;
+  }
+
+  .xyniva-prompts {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .xyniva-prompt {
+    min-height: auto;
+    padding: 15px;
+  }
+
+  .xyniva-messages {
+    gap: 16px;
+    padding: 20px 14px;
+  }
+
+  .xyniva-message {
+    width: 94%;
+  }
+
+  .xyniva-message-body {
+    padding: 14px;
+  }
+
+  .xyniva-composer-shell {
+    padding: 14px 12px 12px;
+  }
+
+  .xyniva-composer {
+    gap: 8px;
+  }
+
+  .xyniva-composer textarea {
+    min-height: 50px;
+    padding: 13px 14px;
+  }
+
+  .xyniva-send {
+    min-width: 72px;
+    min-height: 50px;
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+
+  .xyniva-composer-footer {
+    display: block;
+    line-height: 1.45;
+  }
+
+  .xyniva-studio-link {
+    display: block;
+    margin-top: 8px;
+  }
+
+}
+
+
+/* =========================================================
+   XYNIVA PRESENTATION HARDENING
+========================================================= */
+
+.xyniva-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+
+.xyniva-back {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-top: 2px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.055);
+  color: inherit;
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.xyniva-back:hover {
+  transform: translateX(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.xyniva-back:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   XYNIVA STATUS / PROGRESS
+========================================================= */
+
+.xyniva-status {
+  width: min(900px, 100%);
+  margin: 0 auto 14px;
+}
+
+.xyniva-status[hidden] {
+  display: none;
+}
+
+.xyniva-status-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 9px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  opacity: 0.78;
+}
+
+.xyniva-status-spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: xyniva-spin 0.85s linear infinite;
+}
+
+.xyniva-progress {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.xyniva-progress-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -38%;
+  width: 38%;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+}
+
+.xyniva-progress-bar.is-active {
+  opacity: 0.55;
+  animation:
+    xyniva-progress 1.45s ease-in-out infinite;
+}
+
+@keyframes xyniva-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes xyniva-progress {
+  0% {
+    left: -38%;
+  }
+
+  55% {
+    left: 42%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
+
+/* =========================================================
+   XYNIVA STRUCTURED SERMON
+========================================================= */
+
+.xyniva-message-assistant {
+  width: min(900px, 96%);
+}
+
+.xyniva-message-assistant .xyniva-message-body.xyniva-sermon {
+  padding: 28px 30px 32px;
+  border-radius: 20px;
+  white-space: normal;
+}
+
+.xyniva-sermon-title {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.xyniva-sermon-scripture {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.3;
+  opacity: 0.82;
+}
+
+.xyniva-sermon-section {
+  margin-top: 30px;
+}
+
+.xyniva-sermon-section:first-of-type {
+  margin-top: 34px;
+}
+
+.xyniva-sermon-heading {
+  margin: 0 0 10px;
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.xyniva-sermon-text {
+  margin: 0;
+  line-height: 1.78;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  opacity: 0.92;
+}
+
+.xyniva-sermon-section + .xyniva-sermon-section {
+  padding-top: 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.075);
+}
+
+
+/* =========================================================
+   XYNIVA MESSAGE HIERARCHY
+========================================================= */
+
+.xyniva-message-user .xyniva-message-body {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.xyniva-message-assistant .xyniva-message-body {
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   XYNIVA PRESENTATION MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .xyniva-heading {
+    gap: 10px;
+  }
+
+  .xyniva-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    font-size: 1.2rem;
+  }
+
+  .xyniva-status {
+    margin-bottom: 12px;
+  }
+
+  .xyniva-status-row {
+    font-size: 0.78rem;
+  }
+
+  .xyniva-message-assistant {
+    width: 100%;
+  }
+
+  .xyniva-message-assistant .xyniva-message-body.xyniva-sermon {
+    padding: 22px 18px 24px;
+    border-radius: 16px;
+  }
+
+  .xyniva-sermon-title {
+    font-size: 1.55rem;
+  }
+
+  .xyniva-sermon-section {
+    margin-top: 24px;
+  }
+
+  .xyniva-sermon-section:first-of-type {
+    margin-top: 28px;
+  }
+
+  .xyniva-sermon-section + .xyniva-sermon-section {
+    padding-top: 22px;
+  }
+
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+
+  .xyniva-status-spinner,
+  .xyniva-progress-bar.is-active {
+    animation-duration: 3s;
+  }
+
+}
+
+
+/* =========================================================
+   XYNIVA FINAL READABILITY POLISH
+========================================================= */
+
+.xyniva-composer textarea {
+  font-size: 1rem;
+}
+
+.xyniva-composer textarea::placeholder {
+  font-size: 1rem;
+  opacity: 0.68;
+}
+
+.xyniva-studio-link {
+  font-size: 0.95rem;
+  opacity: 1;
+}
+
+.xyniva-composer-footer > span {
+  font-size: 0.8rem;
+}
+
+/*
+ * Keep the XynaFaith identity visible without allowing the
+ * decorative watermark to compete with generated content.
+ */
+.xyniva-workspace::before,
+.xyniva-workspace::after {
+  opacity: 0.025 !important;
+}
+
+@media (max-width: 768px) {
+
+  .xyniva-composer textarea,
+  .xyniva-composer textarea::placeholder {
+    font-size: 1rem;
+  }
+
+  .xyniva-studio-link {
+    font-size: 1rem;
+  }
+
+}
+
+
+/* =========================================================
+   XYNIVA — SERMON STUDIO ASSISTANT
+========================================================= */
+
+.xyniva-studio-panel {
+  border:
+    1px solid rgba(79, 70, 229, 0.14);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(238, 242, 255, 0.72),
+      #ffffff 42%
+    );
+}
+
+.xyniva-studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.xyniva-studio-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.xyniva-studio-header p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.xyniva-studio-messages {
+  display: grid;
+  gap: 10px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.xyniva-studio-welcome {
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.xyniva-studio-status {
+  margin-bottom: 10px;
+  color: #4f46e5;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.xyniva-studio-form {
+  display: grid;
+  gap: 10px;
+}
+
+.xyniva-studio-form textarea {
+  min-height: 96px;
+  margin: 0;
+  padding: 12px;
+  resize: vertical;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.action-card .xyniva-studio-send {
+  margin: 0;
+  text-align: center;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #4f46e5
+    );
+}
+
+.action-card .xyniva-studio-send:hover {
+  transform: translateY(-1px);
+}
+
+.xyniva-studio-hint {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1200px) {
+
+  .xyniva-studio-messages {
+    max-height: 320px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .xyniva-studio-form textarea {
+    font-size: 1rem;
+  }
+
+}
+
+
+.xyniva-studio-message {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.xyniva-studio-message-user {
+  margin-left: 18px;
+  background: #eef2ff;
+  color: #312e81;
+}
+
+.xyniva-studio-message-assistant {
+  margin-right: 18px;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.xyniva-studio-send:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+
+/* =========================================================
+   XYNIVA STUDIO — WORKING STATE
+========================================================= */
+
+.xyniva-studio-status {
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid rgba(79, 70, 229, 0.16);
+  border-radius: 12px;
+  background: #f8faff;
+}
+
+.xyniva-studio-status-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #3730a3;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.xyniva-studio-spinner {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  border: 2px solid rgba(79, 70, 229, 0.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation:
+    xyniva-studio-spin
+    0.8s linear infinite;
+}
+
+.xyniva-studio-progress {
+  position: relative;
+  height: 5px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.12);
+}
+
+.xyniva-studio-progress-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 38%;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      90deg,
+      #2563eb,
+      #4f46e5
+    );
+  transform: translateX(-110%);
+}
+
+.xyniva-studio-progress-bar.active {
+  animation:
+    xyniva-studio-progress
+    1.35s ease-in-out infinite;
+}
+
+@keyframes xyniva-studio-spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+@keyframes xyniva-studio-progress {
+
+  0% {
+    transform: translateX(-110%);
+  }
+
+  50% {
+    transform: translateX(110%);
+  }
+
+  100% {
+    transform: translateX(290%);
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .xyniva-studio-spinner,
+  .xyniva-studio-progress-bar.active {
+    animation: none;
+  }
+
+  .xyniva-studio-progress-bar.active {
+    width: 70%;
+    transform: none;
+  }
 
 }

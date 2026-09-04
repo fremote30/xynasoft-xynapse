@@ -5,170 +5,282 @@
     <div class="auth-card">
 
       <img
-        src="/faith/assets/xynafaith.png"
+        src="assets/xynafaith.png"
         class="auth-logo"
         alt="XynaFaith Logo"
       >
 
-      <h2>Welcome Back</h2>
+      <!-- =========================
+           STEP 1 — EMAIL OR PHONE
+      ========================== -->
 
-      <p class="auth-sub">
-        Continue your ministry journey with XynaFaith.
-      </p>
+      <section id="loginIdentityStep">
 
-      <form id="loginForm">
+        <h2>Welcome Back</h2>
 
-        <!-- EMAIL -->
+        <p class="auth-sub">
+          Continue your ministry journey with XynaFaith.
+        </p>
 
-        <div class="form-group">
+        <form id="loginIdentityForm">
 
-          <label for="email">
-            Email
-          </label>
+          <div class="form-group">
 
-          <input
-            type="email"
-            id="email"
-            autocomplete="email"
-            placeholder="Enter your email"
-            required
-          >
-
-        </div>
-
-        <!-- PASSWORD -->
-
-        <div class="form-group">
-
-          <label for="password">
-            Password
-          </label>
-
-          <div class="password-wrapper">
+            <label for="loginIdentity">
+              Email or phone
+            </label>
 
             <input
-              type="password"
-              id="password"
-              autocomplete="current-password"
-              placeholder="Enter your password"
+              type="text"
+              id="loginIdentity"
+              autocomplete="username"
+              placeholder="Email address or phone number"
               required
             >
 
-            <button
-              type="button"
-              id="togglePassword"
-              class="password-toggle"
-              aria-label="Show Password"
-            >
-              👁
-            </button>
-
           </div>
 
-        </div>
+          <p
+            id="loginIdentityError"
+            class="auth-error"
+          ></p>
 
-        <!-- OPTIONS -->
+          <button
+            type="submit"
+            class="btn-primary full"
+          >
+            Continue
+          </button>
 
-        <div class="login-options">
+        </form>
 
-          <label class="remember-me">
+        <div class="auth-footer">
 
-            <input
-              type="checkbox"
-              id="rememberMe"
-            >
-
-            <span>
-              Remember me
-            </span>
-
-          </label>
+          Don't have an account?
 
           <a
             href="#"
-            onclick="navigate('forgot-password')"
+            onclick="event.preventDefault(); navigate('register')"
           >
-            Forgot Password?
+            Create Account
           </a>
 
         </div>
 
-        <!-- ERROR -->
+      </section>
+
+
+      <!-- =========================
+           STEP 2A — EMAIL PASSWORD
+      ========================== -->
+
+      <section
+        id="loginEmailStep"
+        hidden
+      >
+
+        <button
+          type="button"
+          id="loginEmailBack"
+          class="auth-step-back"
+          aria-label="Go back"
+        >
+          ← Back
+        </button>
+
+        <h2>Welcome Back</h2>
+
+        <p class="auth-sub">
+          Enter your password to continue.
+        </p>
+
+        <div
+          id="loginEmailDisplay"
+          class="auth-identity-display"
+        ></div>
+
+        <!-- Keep this ID for existing auth.js -->
+        <form id="loginForm">
+
+          <input
+            type="hidden"
+            id="email"
+          >
+
+          <div class="form-group">
+
+            <label for="password">
+              Password
+            </label>
+
+            <div class="password-wrapper">
+
+              <input
+                type="password"
+                id="password"
+                autocomplete="current-password"
+                placeholder="Enter your password"
+                required
+              >
+
+              <button
+                type="button"
+                id="togglePassword"
+                class="password-toggle"
+                aria-label="Show Password"
+                title="Show Password"
+              >
+                👁
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="login-options">
+
+            <label class="remember-me">
+
+              <input
+                type="checkbox"
+                id="rememberMe"
+              >
+
+              <span>
+                Remember me
+              </span>
+
+            </label>
+
+            <a
+              href="#"
+              onclick="event.preventDefault(); navigate('forgot-password')"
+            >
+              Forgot Password?
+            </a>
+
+          </div>
+
+          <p
+            id="loginError"
+            class="auth-error"
+          ></p>
+
+          <button
+            id="loginButton"
+            type="submit"
+            class="btn-primary full"
+          >
+            Log In
+          </button>
+
+        </form>
+
+      </section>
+
+
+      <!-- =========================
+           STEP 2B — PHONE
+      ========================== -->
+
+      <section
+        id="loginPhoneStep"
+        hidden
+      >
+
+        <button
+          type="button"
+          id="loginPhoneBack"
+          class="auth-step-back"
+          aria-label="Go back"
+        >
+          ← Back
+        </button>
+
+        <div id="phoneRequestStep">
+
+          <h2>Verify Your Phone</h2>
+
+          <p class="auth-sub">
+            We'll send a verification code to your phone.
+          </p>
+
+          <div
+            id="loginPhoneDisplay"
+            class="auth-identity-display"
+          ></div>
+
+          <button
+            id="sendPhoneCodeButton"
+            type="button"
+            class="btn-primary full"
+          >
+            Send Verification Code
+          </button>
+
+        </div>
+
+
+        <div
+          id="phoneCodeStep"
+          hidden
+        >
+
+          <h2>Enter Verification Code</h2>
+
+          <p class="auth-sub">
+            Enter the 6-digit code sent to your phone.
+          </p>
+
+          <div
+            id="loginPhoneCodeDisplay"
+            class="auth-identity-display"
+          ></div>
+
+          <div class="form-group">
+
+            <label for="phoneVerificationCode">
+              Verification Code
+            </label>
+
+            <input
+              type="text"
+              id="phoneVerificationCode"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              maxlength="6"
+              placeholder="6-digit code"
+            >
+
+          </div>
+
+          <button
+            id="verifyPhoneCodeButton"
+            type="button"
+            class="btn-primary full"
+          >
+            Verify & Log In
+          </button>
+
+          <button
+            id="resendPhoneCodeButton"
+            type="button"
+            class="auth-secondary-button"
+          >
+            Resend Code
+          </button>
+
+        </div>
 
         <p
-          id="loginError"
+          id="phoneLoginError"
           class="auth-error"
         ></p>
 
-        <!-- BUTTON -->
-
-        <button
-          id="loginButton"
-          type="submit"
-          class="btn-primary full"
-        >
-          Log In
-        </button>
-
-      </form>
-
-      <div class="auth-footer">
-
-        Don't have an account?
-
-        <a
-          href="#"
-          onclick="navigate('register')"
-        >
-          Create Account
-        </a>
-
-      </div>
+      </section>
 
     </div>
 
   </div>
 
 </main>
-
-
-<!-- =========================
-     LOGIN LOGIC (SAFE)
-========================= -->
-<script>
-document.getElementById("loginForm").addEventListener("submit", async function(e) {
-  e.preventDefault();
-
-  const errorEl = document.getElementById("loginError");
-  errorEl.style.display = "none";
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  try {
-    const res = await fetch("/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.detail || "Login failed");
-    }
-
-    // ✅ STORE TOKEN
-    localStorage.setItem("access_token", data.access_token);
-
-    // ✅ REDIRECT
-    navigate("dashboard");
-
-  } catch (err) {
-    errorEl.innerText = err.message;
-    errorEl.style.display = "block";
-  }
-});
-</script>

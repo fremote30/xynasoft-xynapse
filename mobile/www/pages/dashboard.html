@@ -17,8 +17,12 @@
         </p>
 
         <div class="hero-buttons">
-          <button class="btn-primary" onclick="navigate('sermon')">
-            ✍️ Open Sermon Studio
+          <button class="btn-primary" onclick="navigate('xyniva')">
+            ✦ Ask Xyniva
+          </button>
+
+          <button class="btn-secondary" onclick="navigate('sermon')">
+            ✍️ Sermon Studio
           </button>
 
           <button class="btn-secondary" onclick="navigate('prayer')">
@@ -46,6 +50,21 @@
       </div>
 
       <div class="feature-grid dashboard-command-grid">
+
+        <div
+          class="feature-card dashboard-action-card xyniva-dashboard-card"
+          onclick="navigate('xyniva')"
+        >
+          <div class="icon">✦</div>
+          <h3>Ask Xyniva</h3>
+          <p>
+            Describe the sermon you want to prepare
+            and develop it through conversation.
+          </p>
+          <button class="btn-primary">
+            Start Conversation
+          </button>
+        </div>
 
         <div class="feature-card dashboard-action-card" onclick="navigate('sermon')">
           <div class="icon">✍️</div>

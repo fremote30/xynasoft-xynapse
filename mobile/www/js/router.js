@@ -34,6 +34,9 @@
     sermon:
       "/faith/pages/sermon.html",
 
+    xyniva:
+      "/faith/pages/xyniva.html",
+
     "member-dashboard":
       "/faith/pages/member-dashboard.html",
 
@@ -68,6 +71,8 @@ window.protectedRoutes = [
 
     "sermon",
 
+    "xyniva",
+
     "network",
 
     "member-dashboard",
@@ -91,6 +96,11 @@ window.protectedRoutes = [
   // NAVIGATION STATE
   // =====================================
   window.isNavigating = false;
+
+  window.__navigationStack =
+    window.__navigationStack || [];
+
+  window.__isBackNavigation = false;
 
   let __navRequestId = 0;
 
@@ -198,6 +208,9 @@ window.protectedRoutes = [
 async function navigate(page) {
 
   const requestId = ++__navRequestId;
+
+  const previousPage =
+    window.currentPage || null;
 
   // =====================================
   // PREVENT DOUBLE NAVIGATION
@@ -390,6 +403,29 @@ try {
     window.currentPage = page;
 
     // =====================================
+    // SPA NAVIGATION HISTORY
+    // =====================================
+    if (
+      !window.__isBackNavigation &&
+      previousPage &&
+      previousPage !== page
+    ) {
+      window.__navigationStack.push(
+        previousPage
+      );
+
+      // Keep history bounded.
+      if (
+        window.__navigationStack.length >
+        30
+      ) {
+        window.__navigationStack.shift();
+      }
+    }
+
+    window.__isBackNavigation = false;
+
+    // =====================================
     // NAVBAR
     // =====================================
     if (typeof renderNavbar === "function") {
@@ -404,6 +440,10 @@ try {
     // =====================================
     safeRun(() => bindAuthForms(), "auth");
     safeRun(() => bindPasswordToggle(), "password");
+    safeRun(() => bindLoginIdentityFlow(), "login-identity");
+    safeRun(() => bindPhoneLoginFlow(), "phone-login");
+    safeRun(() => bindRegisterIdentityFlow(), "register-identity");
+    safeRun(() => bindPhoneRegisterFlow(), "phone-register");
 
     if (typeof bindSermonStudio === "function") {
       safeRun(() => bindSermonStudio(), "sermon");
@@ -442,6 +482,17 @@ try {
       await loadPastorApplications();
     }
 
+    if (page === "xyniva") {
+      await loadUserInfo();
+
+      if (
+        typeof window.bindXyniva ===
+        "function"
+      ) {
+        window.bindXyniva();
+      }
+    }
+
     if (page === "sermon") {
       await loadUserInfo();
 
@@ -451,6 +502,13 @@ try {
           "function"
       ) {
         await window.loadSelectedSermon();
+      }
+
+      if (
+        typeof window.bindXynivaStudio ===
+          "function"
+      ) {
+        window.bindXynivaStudio();
       }
     }
     // =====================================

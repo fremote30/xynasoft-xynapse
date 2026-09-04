@@ -20,13 +20,46 @@ window.currentSermonPage = 1;
   // =====================================
   function bindPasswordToggle() {
     setTimeout(() => {
-      document.querySelectorAll(".toggle").forEach(toggle => {
-        toggle.onclick = () => {
-          const input = toggle.previousElementSibling;
-          if (!input) return;
-          input.type = input.type === "password" ? "text" : "password";
-        };
-      });
+
+      document
+        .querySelectorAll(".password-toggle")
+        .forEach(toggle => {
+
+          toggle.onclick = () => {
+
+            const input =
+              toggle.previousElementSibling;
+
+            if (!input) {
+              return;
+            }
+
+            const isHidden =
+              input.type === "password";
+
+            input.type =
+              isHidden
+                ? "text"
+                : "password";
+
+            toggle.setAttribute(
+              "aria-label",
+              isHidden
+                ? "Hide Password"
+                : "Show Password"
+            );
+
+            toggle.setAttribute(
+              "title",
+              isHidden
+                ? "Hide Password"
+                : "Show Password"
+            );
+
+          };
+
+        });
+
     }, 100);
   }
 

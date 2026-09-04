@@ -995,13 +995,9 @@ if (updateButton) {
         ${
           data.main_points?.length
 
-            ? data.main_points.map((point, index) => `
+            ? data.main_points.map((point) => `
 
                 <section class="sermon-section">
-
-                  <div class="point-number">
-                    ${index + 1}
-                  </div>
 
                   <h2>
                     ${point.title || "Point"}

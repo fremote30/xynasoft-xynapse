@@ -1021,7 +1021,7 @@ function updateProfilePreview() {
 // IMAGE UPLOAD
 // =====================================
 
-window.uploadPastorProfileImage = async function (type) {
+window.uploadPastorProfileImage = async function (type, providedFile = null) {
 
   let inputId = "";
 
@@ -1044,12 +1044,16 @@ window.uploadPastorProfileImage = async function (type) {
 
   const fileInput = $(inputId);
 
-  if (!fileInput?.files?.length) {
+  const file =
+    providedFile ||
+    fileInput?.files?.[0];
+
+  if (!file) {
     return;
   }
 
   const formData = new FormData();
-  formData.append("file", fileInput.files[0]);
+  formData.append("file", file);
 
   try {
 
