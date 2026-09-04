@@ -644,6 +644,7 @@
       "save these changes",
       "save the changes",
       "save my changes",
+        "delete",
         "delete this",
         "delete this sermon",
         "delete the sermon",

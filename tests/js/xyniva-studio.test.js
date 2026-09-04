@@ -1282,7 +1282,7 @@ test(
       };
 
     await window.XynivaStudio.send(
-      "Delete this sermon."
+      "Delete"
     );
 
     assert.equal(
@@ -1292,7 +1292,7 @@ test(
 
     assert.equal(
       calls.turn[0].content,
-      "Delete this sermon."
+      "Delete"
     );
 
     assert.doesNotMatch(
