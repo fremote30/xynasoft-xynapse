@@ -28,6 +28,285 @@ def upgrade() -> None:
     inspector = inspect(bind)
     existing_tables = inspector.get_table_names()
 
+    # ============================================================
+    # LEGACY XYNAFAITH FOUNDATION
+    # ============================================================
+    # Early XynaFaith application tables originally existed outside
+    # the Alembic migration history. Production databases therefore
+    # already contain them, while a clean database does not.
+    #
+    # Create only the historical minimum schema here when missing.
+    # Later migrations remain responsible for adding newer columns.
+    # ============================================================
+
+    if "churches" not in existing_tables:
+        op.create_table(
+            "churches",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column("name", sa.String(), nullable=False),
+            sa.Column("location", sa.String(), nullable=True),
+        )
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "users" not in existing_tables:
+        op.create_table(
+            "users",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column("name", sa.String(), nullable=False),
+            sa.Column("email", sa.String(), nullable=False),
+            sa.Column("password", sa.String(), nullable=False),
+            sa.Column("role", sa.String(), nullable=True),
+            sa.Column("is_verified", sa.Boolean(), nullable=True),
+            sa.Column(
+                "church_id",
+                sa.Integer(),
+                sa.ForeignKey("churches.id"),
+                nullable=True,
+            ),
+            sa.Column("created_at", sa.DateTime(), nullable=True),
+        )
+        op.create_index("ix_users_id", "users", ["id"], unique=False)
+        op.create_index("ix_users_email", "users", ["email"], unique=True)
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "sermons" not in existing_tables:
+        op.create_table(
+            "sermons",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column("title", sa.String(), nullable=False),
+            sa.Column("content", sa.Text(), nullable=True),
+            sa.Column(
+                "author_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=True,
+            ),
+            sa.Column("is_public", sa.Integer(), nullable=True),
+            sa.Column("created_at", sa.DateTime(), nullable=True),
+            sa.Column("views", sa.Integer(), nullable=True),
+            sa.Column("shares", sa.Integer(), nullable=True),
+        )
+        op.create_index("ix_sermons_id", "sermons", ["id"], unique=False)
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "refresh_tokens" not in existing_tables:
+        op.create_table(
+            "refresh_tokens",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column("token", sa.String(), nullable=True),
+            sa.Column(
+                "user_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=True,
+            ),
+            sa.Column(
+                "is_revoked",
+                sa.Boolean(),
+                nullable=True,
+                server_default=sa.text("false"),
+            ),
+            sa.Column(
+                "created_at",
+                sa.DateTime(),
+                nullable=True,
+                server_default=sa.text("now()"),
+            ),
+            sa.Column("revoked_at", sa.DateTime(), nullable=True),
+        )
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "pastor_members" not in existing_tables:
+        op.create_table(
+            "pastor_members",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column(
+                "pastor_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=False,
+            ),
+            sa.Column(
+                "member_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=False,
+            ),
+            sa.Column("created_at", sa.DateTime(), nullable=True),
+            sa.UniqueConstraint(
+                "pastor_id",
+                "member_id",
+                name="unique_follow",
+            ),
+        )
+        op.create_index(
+            "ix_pastor_members_id",
+            "pastor_members",
+            ["id"],
+            unique=False,
+        )
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "pastor_profiles" not in existing_tables:
+        op.create_table(
+            "pastor_profiles",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column(
+                "user_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id", ondelete="CASCADE"),
+                nullable=False,
+                unique=True,
+            ),
+            sa.Column("bio", sa.Text(), nullable=True),
+            sa.Column("church_name", sa.String(), nullable=True),
+            sa.Column("ministry_focus", sa.String(), nullable=True),
+            sa.Column("location", sa.String(), nullable=True),
+            sa.Column("website", sa.String(), nullable=True),
+            sa.Column("profile_image", sa.String(), nullable=True),
+            sa.Column("cover_image", sa.String(), nullable=True),
+            sa.Column(
+                "created_at",
+                sa.DateTime(timezone=True),
+                server_default=sa.text("now()"),
+                nullable=True,
+            ),
+        )
+        op.create_index(
+            "ix_pastor_profiles_id",
+            "pastor_profiles",
+            ["id"],
+            unique=False,
+        )
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "pastor_followers" not in existing_tables:
+        op.create_table(
+            "pastor_followers",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column(
+                "member_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id", ondelete="CASCADE"),
+                nullable=False,
+            ),
+            sa.Column(
+                "pastor_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id", ondelete="CASCADE"),
+                nullable=False,
+            ),
+            sa.Column(
+                "created_at",
+                sa.DateTime(timezone=True),
+                server_default=sa.text("now()"),
+                nullable=True,
+            ),
+        )
+        op.create_index(
+            "ix_pastor_followers_id",
+            "pastor_followers",
+            ["id"],
+            unique=False,
+        )
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "shared_sermons" not in existing_tables:
+        op.create_table(
+            "shared_sermons",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column(
+                "sermon_id",
+                sa.Integer(),
+                sa.ForeignKey("sermons.id"),
+                nullable=False,
+            ),
+            sa.Column(
+                "from_pastor_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=False,
+            ),
+            sa.Column(
+                "to_pastor_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=False,
+            ),
+            sa.Column("comment", sa.Text(), nullable=True),
+            sa.Column("created_at", sa.DateTime(), nullable=True),
+        )
+        op.create_index(
+            "ix_shared_sermons_id",
+            "shared_sermons",
+            ["id"],
+            unique=False,
+        )
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "sermon_comments" not in existing_tables:
+        op.create_table(
+            "sermon_comments",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column(
+                "sermon_id",
+                sa.Integer(),
+                sa.ForeignKey("sermons.id"),
+                nullable=False,
+            ),
+            sa.Column(
+                "pastor_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=False,
+            ),
+            sa.Column("comment", sa.Text(), nullable=False),
+            sa.Column("created_at", sa.DateTime(), nullable=True),
+        )
+        op.create_index(
+            "ix_sermon_comments_id",
+            "sermon_comments",
+            ["id"],
+            unique=False,
+        )
+
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
+    if "prayers" not in existing_tables:
+        op.create_table(
+            "prayers",
+            sa.Column("id", sa.Integer(), primary_key=True),
+            sa.Column(
+                "user_id",
+                sa.Integer(),
+                sa.ForeignKey("users.id"),
+                nullable=False,
+            ),
+            sa.Column("message", sa.String(), nullable=False),
+            sa.Column("created_at", sa.DateTime(), nullable=True),
+        )
+
+    # Refresh the inspector before the existing launch-readiness work.
+    inspector = inspect(bind)
+    existing_tables = inspector.get_table_names()
+
     # USERS
     if "users" in existing_tables:
         if not _column_exists(inspector, "users", "pastor_status"):

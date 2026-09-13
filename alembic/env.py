@@ -29,18 +29,25 @@ target_metadata = Base.metadata
 # -------------------------------------------------
 # Load environment variables
 # -------------------------------------------------
+
+# Preserve an explicitly supplied DATABASE_URL before loading .env.
+# This lets CI, Render, and isolated development environments select
+# their database without being overridden by DATABASE_URL_LOCAL.
+EXPLICIT_DATABASE_URL = os.getenv("DATABASE_URL")
+
 load_dotenv(".env")
 
-# Prefer LOCAL URL for Alembic (host machine)
 DATABASE_URL = (
-    os.getenv("DATABASE_URL_LOCAL")
+    EXPLICIT_DATABASE_URL
+    or os.getenv("DATABASE_URL_LOCAL")
     or os.getenv("DATABASE_URL")
 )
 
 if not DATABASE_URL:
     raise RuntimeError(
         "DATABASE_URL not set. "
-        "Define DATABASE_URL_LOCAL or DATABASE_URL in .env"
+        "Provide DATABASE_URL explicitly or define "
+        "DATABASE_URL_LOCAL / DATABASE_URL in .env"
     )
 
 # -------------------------------------------------
