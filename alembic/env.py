@@ -117,3 +117,7 @@ from api.models.plan import Plan
 from api.models.plan_entitlement import PlanEntitlement
 from api.models.subscription import Subscription
 from api.models.ai_usage_event import AIUsageEvent
+
+# XynaFaith V2 AI usage metering
+from api.models.usage_bucket import UsageBucket
+from api.models.ai_usage_reservation import AIUsageReservation
