@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy.orm import relationship
 from api.db.database import Base
 
 class Church(Base):
@@ -20,3 +21,9 @@ class Church(Base):
     is_featured = Column(Boolean, default=False)
 
     is_verified = Column(Boolean, default=False)
+
+    memberships = relationship(
+        "ChurchMembership",
+        back_populates="church",
+        cascade="all, delete-orphan",
+    )

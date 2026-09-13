@@ -104,3 +104,11 @@ class User(Base):
         foreign_keys="PastorMember.member_id",
         back_populates="member"
     )
+
+    # XynaFaith V2 Church Space memberships.
+    # Legacy church_id remains for V1 compatibility.
+    church_memberships = relationship(
+        "ChurchMembership",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

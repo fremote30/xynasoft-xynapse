@@ -10,6 +10,7 @@ from api.routes.push_devices import router as push_devices_router
 # ================================
 from api.models.user import User
 from api.models.church import Church
+from api.models.church_membership import ChurchMembership
 from api.models.refresh_token import RefreshToken
 from api.models.sermon import Sermon
 from api.models.pastor_member import PastorMember
