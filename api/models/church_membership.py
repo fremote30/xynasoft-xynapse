@@ -38,6 +38,7 @@ class ChurchMembership(Base):
             "user_id",
             unique=True,
             postgresql_where=text("is_primary = true"),
+            sqlite_where=text("is_primary = 1"),
         ),
     )
 

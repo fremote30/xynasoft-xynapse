@@ -10,3 +10,8 @@ from .follow import PastorFollower
 from .pastor_profile import PastorProfile
 from .push_device_token import PushDeviceToken
 from .church_membership import ChurchMembership
+
+from api.models.plan import Plan
+from api.models.plan_entitlement import PlanEntitlement
+from api.models.subscription import Subscription
+from api.models.ai_usage_event import AIUsageEvent
