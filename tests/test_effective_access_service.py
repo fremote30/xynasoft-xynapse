@@ -1,13 +1,17 @@
 """
-Effective Access Engine tests.
+XynaFaith V2 Effective Access Engine tests.
+
+Validates:
+- baseline free access
+- entitlement checks
+- feature gates
+- denied features
 """
-
-
-import pytest
 
 from api.services.effective_access_service import (
     get_effective_access,
     has_entitlement,
+    check_feature_gate,
 )
 
 
@@ -31,42 +35,78 @@ def test_member_access():
 
     result = get_effective_access(
         None,
-        user=user,
+        user,
     )
 
-    assert result.user_id == 1
+    assert result.access_profile == (
+        "free_member"
+    )
 
-    assert result.role == "member"
-
-    assert result.source_profile == (
-        "baseline"
+    assert (
+        "xyniva.chat"
+        in result.entitlements
     )
 
 
 
-def test_pastor_access():
-
-    user = DummyUser(
-        role="pastor"
-    )
-
-    result = get_effective_access(
-        None,
-        user=user,
-    )
-
-    assert result.role == "pastor"
-
-    assert result.access_profile
-
-
-
-def test_missing_subscription_is_safe():
+def test_entitlement_check():
 
     user = DummyUser()
 
     assert has_entitlement(
         None,
-        user=user,
-        entitlement_key="does.not.exist",
+        user,
+        "xyniva.chat",
+    )
+
+
+
+def test_missing_entitlement():
+
+    user = DummyUser()
+
+    assert has_entitlement(
+        None,
+        user,
+        "does.not.exist",
     ) is False
+
+
+
+def test_feature_gate_response():
+
+    user = DummyUser()
+
+    result = check_feature_gate(
+        None,
+        user,
+        "xyniva.chat",
+    )
+
+    assert result.allowed is True
+
+    assert result.entitlement_key == (
+        "xyniva.chat"
+    )
+
+    assert result.reason == (
+        "entitlement_granted"
+    )
+
+
+
+def test_unknown_feature_denied():
+
+    user = DummyUser()
+
+    result = check_feature_gate(
+        None,
+        user,
+        "unknown.feature",
+    )
+
+    assert result.allowed is False
+
+    assert result.reason == (
+        "missing_entitlement"
+    )

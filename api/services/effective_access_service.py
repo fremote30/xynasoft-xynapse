@@ -1,235 +1,274 @@
 """
-XynaFaith V2 Effective Access Engine.
+XynaFaith V2 Effective Access Service.
 
-Single authority for resolving:
+Public application-facing access API.
 
-- free member access
-- pastor access
-- paid subscriptions
-- plan capabilities
+Application routes and product features should ask this service about
+capabilities rather than inspect plans, subscriptions, or payment state.
 
-Consumers should ask:
+The authoritative entitlement composition engine lives in:
 
-    has_entitlement(
-        user,
-        "xyniva.chat"
-    )
+    api.services.entitlement_service
 
-not:
+That engine owns:
 
-    if subscription.plan == pastor_pro
+- role-aware free baseline access
+- active individual subscriptions
+- active Church subscriptions
+- Church membership validation
+- inactive/expired subscription handling
+- entitlement merge semantics
+- entitlement provenance
 
+This module adapts that richer internal result into the stable
+application-facing EffectiveAccessResponse and FeatureGateResponse.
 """
-
 
 from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from api.models.plan import Plan
+from api.models.subscription import Subscription
 from api.schemas.access import (
     EffectiveAccessResponse,
+    FeatureGateResponse,
+)
+from api.services.entitlement_service import (
+    EffectiveAccess,
+    resolve_effective_access,
 )
 
-from api.core.access_policy import (
-    baseline_grants,
-    baseline_profile_for_role,
-)
 
-
-def _safe_role(user):
-    return getattr(
-        user,
-        "role",
-        "member",
-    )
-
-
-def _subscription_for_user(
-    db: Session,
-    user_id: int,
-):
+def _resolve_plan_code(
+    db: Optional[Session],
+    access: EffectiveAccess,
+) -> Optional[str]:
     """
-    Resolve active subscription.
+    Resolve the commercial plan code that contributed to effective access.
 
-    Defensive because subscription
-    schema may evolve during V2.
+    Individual subscription takes precedence for the application-facing
+    plan_code. If there is no individual subscription, an authorized Church
+    subscription may supply the plan code.
+
+    The entitlement engine remains authoritative for actual capabilities.
     """
 
-    try:
-        from api.models.subscription import (
-            Subscription,
-        )
-
-        return (
-            db.query(Subscription)
-            .filter(
-                Subscription.user_id == user_id
-            )
-            .filter(
-                Subscription.status.in_(
-                    [
-                        "active",
-                        "trialing",
-                    ]
-                )
-            )
-            .first()
-        )
-
-    except Exception:
+    if db is None:
         return None
 
+    subscription_id = (
+        access.user_subscription_id
+        or access.church_subscription_id
+    )
 
-def _plan_code(subscription):
-
-    if not subscription:
+    if subscription_id is None:
         return None
 
-    plan = getattr(
-        subscription,
-        "plan",
-        None,
-    )
-
-    if not plan:
-        return None
-
-    return getattr(
-        plan,
-        "code",
-        None,
-    )
-
-
-def _subscription_entitlements(
-    subscription,
-):
-
-    if not subscription:
-        return []
-
-    plan = getattr(
-        subscription,
-        "plan",
-        None,
-    )
-
-    if not plan:
-        return []
-
-    result = []
-
-    entitlements = getattr(
-        plan,
-        "entitlements",
-        [],
-    )
-
-    for item in entitlements:
-
-        key = getattr(
-            item,
-            "key",
-            None,
+    row = (
+        db.query(Subscription, Plan)
+        .join(
+            Plan,
+            Plan.id == Subscription.plan_id,
         )
+        .filter(
+            Subscription.id == subscription_id,
+        )
+        .first()
+    )
 
-        if key:
-            result.append(key)
+    if row is None:
+        return None
 
-    return result
+    _subscription, plan = row
+
+    return plan.code
+
+
+def _resolve_access_profile(
+    db: Optional[Session],
+    access: EffectiveAccess,
+) -> str:
+    """
+    Resolve the final presentation/access profile.
+
+    baseline_profile records where free access originated.
+
+    access_profile may expand to the active paid plan profile.
+
+    If both individual and Church subscriptions are present, individual
+    subscription profile takes precedence for this single display field.
+    Effective entitlements themselves are still merged by the authoritative
+    entitlement service.
+    """
+
+    if db is None:
+        return access.baseline_profile
+
+    subscription_id = (
+        access.user_subscription_id
+        or access.church_subscription_id
+    )
+
+    if subscription_id is None:
+        return access.baseline_profile
+
+    row = (
+        db.query(Subscription, Plan)
+        .join(
+            Plan,
+            Plan.id == Subscription.plan_id,
+        )
+        .filter(
+            Subscription.id == subscription_id,
+        )
+        .first()
+    )
+
+    if row is None:
+        return access.baseline_profile
+
+    _subscription, plan = row
+
+    return (
+        plan.access_profile
+        or access.baseline_profile
+    )
 
 
 def get_effective_access(
-    db: Session,
-    *,
+    db: Optional[Session],
     user,
+    *,
+    church_id: Optional[int] = None,
 ) -> EffectiveAccessResponse:
     """
-    Resolve final user capability.
+    Return application-facing effective access for an authenticated user.
+
+    Church-paid capabilities are considered only when church_id is explicitly
+    supplied and the entitlement engine verifies an active membership.
     """
 
-    role = _safe_role(user)
-
-    profile = baseline_profile_for_role(
-        role
-    )
-
-    grants = set(
-        baseline_grants(role)
-    )
-
-    subscription = _subscription_for_user(
-        db,
-        user.id,
-    )
-
-
-    subscription_grants = (
-        _subscription_entitlements(
-            subscription
+    if db is None:
+        # The entitlement resolver expects a database session for paid access,
+        # but baseline-only unit tests intentionally call this service without
+        # one. Preserve that lightweight contract without duplicating paid
+        # subscription logic.
+        from api.core.access_policy import (
+            baseline_grants,
+            baseline_profile_for_role,
         )
+
+        baseline_profile = baseline_profile_for_role(
+            getattr(user, "role", None)
+        )
+
+        grants = {
+            grant.entitlement_key: grant
+            for grant in baseline_grants(baseline_profile)
+            if grant.enabled
+        }
+
+        return EffectiveAccessResponse(
+            user_id=user.id,
+            role=getattr(user, "role", "member"),
+            access_profile=baseline_profile,
+            source_profile=baseline_profile,
+            plan_code=None,
+            entitlements=sorted(grants.keys()),
+            limits={
+                key: grant.usage_limit
+                for key, grant in grants.items()
+                if grant.usage_limit is not None
+            },
+        )
+
+    resolved = resolve_effective_access(
+        db,
+        user=user,
+        church_id=church_id,
     )
 
-    grants.update(
-        subscription_grants
+    access_profile = _resolve_access_profile(
+        db,
+        resolved,
     )
 
-
-    plan_code = _plan_code(
-        subscription
+    plan_code = _resolve_plan_code(
+        db,
+        resolved,
     )
 
+    enabled_entitlements = {
+        key: grant
+        for key, grant in resolved.entitlements.items()
+        if grant.enabled
+    }
 
     return EffectiveAccessResponse(
-
         user_id=user.id,
-
-        role=role,
-
-        access_profile=(
-            plan_code
-            or profile
-        ),
-
+        role=getattr(user, "role", "member"),
+        access_profile=access_profile,
+        source_profile=resolved.baseline_profile,
         plan_code=plan_code,
-
         entitlements=sorted(
-            grants
+            enabled_entitlements.keys()
         ),
-
-        limits={},
-
-        source_profile=(
-            "subscription"
-            if subscription
-            else "baseline"
-        ),
+        limits={
+            key: grant.usage_limit
+            for key, grant in enabled_entitlements.items()
+            if grant.usage_limit is not None
+        },
     )
 
 
 def has_entitlement(
-    db: Session,
-    *,
+    db: Optional[Session],
     user,
     entitlement_key: str,
+    *,
+    church_id: Optional[int] = None,
 ) -> bool:
     """
-    Capability check.
-
-    Example:
-
-        has_entitlement(
-            user,
-            "xyniva.chat"
-        )
-
+    Return whether the user has the requested effective entitlement.
     """
 
     access = get_effective_access(
         db,
-        user=user,
+        user,
+        church_id=church_id,
     )
 
-    return entitlement_key in (
-        access.entitlements
+    return entitlement_key in access.entitlements
+
+
+def check_feature_gate(
+    db: Optional[Session],
+    user,
+    entitlement_key: str,
+    *,
+    church_id: Optional[int] = None,
+) -> FeatureGateResponse:
+    """
+    Return a stable feature-gate decision for application code.
+    """
+
+    access = get_effective_access(
+        db,
+        user,
+        church_id=church_id,
+    )
+
+    allowed = entitlement_key in access.entitlements
+
+    return FeatureGateResponse(
+        allowed=allowed,
+        entitlement_key=entitlement_key,
+        reason=(
+            "entitlement_granted"
+            if allowed
+            else "missing_entitlement"
+        ),
+        access_profile=access.access_profile,
+        plan_code=access.plan_code,
     )
