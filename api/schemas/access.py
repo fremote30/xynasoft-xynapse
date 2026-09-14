@@ -1,88 +1,18 @@
-"""
-XynaFaith V2 effective access contracts.
-
-These schemas represent resolved product access after evaluating:
-
-- user role
-- baseline access profile
-- subscriptions
-- plans
-- entitlements
-- usage limits
-
-They are intentionally independent from payment providers.
-"""
-
-from typing import Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
 
-class EntitlementAccess(BaseModel):
+class EffectiveAccessResponse(BaseModel):
     """
-    One resolved feature entitlement.
-    """
+    Final resolved capability contract.
 
-    entitlement_key: str
+    The rest of XynaFaith should not care about:
+    - subscription tables
+    - plans
+    - payment providers
 
-    allowed: bool
-
-    source: str = Field(
-        description=(
-            "Where access came from: "
-            "free_profile, subscription, override"
-        )
-    )
-
-    plan_code: Optional[str] = None
-
-    reason: Optional[str] = None
-
-
-class UsageAccess(BaseModel):
-    """
-    AI/product usage availability.
-    """
-
-    entitlement_key: str
-
-    metric: str
-
-    allowed: bool
-
-    allowance_units: Optional[int] = None
-
-    consumed_units: int = 0
-
-    reserved_units: int = 0
-
-    remaining_units: Optional[int] = None
-
-    reason: Optional[str] = None
-
-
-class AccessDecision(BaseModel):
-    """
-    Final decision returned by access checks.
-    """
-
-    allowed: bool
-
-    entitlement_key: str
-
-    source: Optional[str] = None
-
-    reason: Optional[str] = None
-
-    usage: Optional[UsageAccess] = None
-
-
-class EffectiveAccessContext(BaseModel):
-    """
-    Complete resolved access state for a user.
-
-    This becomes the object XynaFaith/Xyniva uses
-    to decide what the user can do.
+    It only consumes this object.
     """
 
     user_id: int
@@ -91,7 +21,14 @@ class EffectiveAccessContext(BaseModel):
 
     access_profile: str
 
-    active_plan: Optional[str] = None
+    plan_code: Optional[str] = None
 
-    entitlements: list[EntitlementAccess] = []
+    entitlements: List[str] = Field(
+        default_factory=list
+    )
 
+    limits: Dict[str, int] = Field(
+        default_factory=dict
+    )
+
+    source_profile: str
