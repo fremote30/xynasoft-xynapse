@@ -29,9 +29,22 @@ from api.services.conversation_pending_actions import (
     get_pending_sermon_delete,
     record_pending_sermon_delete,
 )
+from api.services.ai_usage_metering import (
+    UsageLimitExceeded,
+    UsageMeteringError,
+)
 from api.services.xynassist_client import (
     XynAssistClient,
     XynAssistError,
+)
+from api.services.xyniva_turn_metering import (
+    consume_conversation_turn,
+    release_conversation_turn,
+    reserve_conversation_turn,
+)
+from api.services.xyniva_usage_service import (
+    XynivaUsageConfigurationError,
+    XynivaUsageDenied,
 )
 
 
@@ -95,6 +108,48 @@ def conversation_service_unavailable(
             "Conversation service is "
             "temporarily unavailable"
         ),
+    )
+
+
+def conversation_usage_unavailable(
+    exc: Exception,
+) -> HTTPException:
+    """
+    Convert internal entitlement/metering failures into the
+    public conversation API contract without exposing billing
+    or quota internals.
+    """
+
+    if isinstance(exc, XynivaUsageDenied):
+        return HTTPException(
+            status_code=403,
+            detail="Xyniva is not available for this account",
+        )
+
+    if isinstance(exc, UsageLimitExceeded):
+        return HTTPException(
+            status_code=429,
+            detail="Xyniva usage limit reached",
+        )
+
+    if isinstance(
+        exc,
+        (
+            XynivaUsageConfigurationError,
+            UsageMeteringError,
+        ),
+    ):
+        return HTTPException(
+            status_code=503,
+            detail=(
+                "Xyniva usage service is "
+                "temporarily unavailable"
+            ),
+        )
+
+    return HTTPException(
+        status_code=500,
+        detail="Xyniva usage could not be recorded",
     )
 
 
@@ -201,6 +256,22 @@ async def execute_conversation_turn(
                 SERMON_DELETE_ACTION
             )
 
+    request_id = str(payload.request_id)
+
+    # Reserve quota and commit it before the expensive external
+    # XynAssist call. This prevents concurrent requests from
+    # overspending the same allowance.
+    try:
+        reserve_conversation_turn(
+            db,
+            user=current_user,
+            request_id=request_id,
+        )
+    except Exception as exc:
+        raise conversation_usage_unavailable(
+            exc
+        ) from exc
+
     try:
         result = (
             await XynAssistClient()
@@ -214,7 +285,47 @@ async def execute_conversation_turn(
             )
         )
     except XynAssistError as exc:
+        # The external AI operation did not complete successfully,
+        # so return the reservation to the user's allowance.
+        try:
+            release_conversation_turn(
+                db,
+                request_id=request_id,
+            )
+        except Exception as release_exc:
+            raise conversation_usage_unavailable(
+                release_exc
+            ) from release_exc
+
         raise conversation_service_unavailable(
+            exc
+        ) from exc
+    except Exception:
+        # Unexpected failures before a successful AI response must
+        # also return reserved quota.
+        try:
+            release_conversation_turn(
+                db,
+                request_id=request_id,
+            )
+        except Exception as release_exc:
+            raise conversation_usage_unavailable(
+                release_exc
+            ) from release_exc
+
+        raise
+
+    # XynAssist successfully produced a turn. Usage is consumed
+    # before processing any optional local product action. If a
+    # later product mutation fails, the AI work was still performed
+    # and must remain consumed.
+    try:
+        consume_conversation_turn(
+            db,
+            request_id=request_id,
+        )
+    except Exception as exc:
+        raise conversation_usage_unavailable(
             exc
         ) from exc
 
@@ -306,7 +417,7 @@ async def execute_conversation_turn(
         executed_action = execute_conversation_action(
             db=db,
             user_id=current_user.id,
-            request_id=str(payload.request_id),
+            request_id=request_id,
             source_message_id=source_message_id,
             action=action,
             sermon_id=(

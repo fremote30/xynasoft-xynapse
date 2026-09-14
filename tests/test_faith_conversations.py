@@ -12,6 +12,34 @@ from api.services.xynassist_client import (
 from main import app
 
 
+
+@pytest.fixture(autouse=True)
+def bypass_xyniva_turn_metering(monkeypatch):
+    """
+    Existing conversation tests exercise the Faith/XynAssist
+    transport and trusted-action contracts, not V2 quota
+    accounting.
+
+    Route-level metering behavior is covered separately by
+    test_faith_conversation_metering.py.
+    """
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "reserve_conversation_turn",
+        Mock(),
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "consume_conversation_turn",
+        Mock(),
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "release_conversation_turn",
+        Mock(),
+    )
+
+
 CONVERSATION_ID = (
     "11111111-2222-3333-4444-555555555555"
 )
