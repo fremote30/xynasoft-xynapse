@@ -326,6 +326,7 @@ def reserve_usage(
     units: int,
     allowance_units: int,
     usage_period: str,
+    explicit_period: Optional[UsagePeriod] = None,
     now: Optional[datetime] = None,
 ) -> AIUsageReservation:
     """
@@ -385,10 +386,19 @@ def reserve_usage(
 
         return existing
 
-    period = resolve_usage_period(
-        usage_period,
-        now=now,
+    period = (
+        explicit_period
+        if explicit_period is not None
+        else resolve_usage_period(
+            usage_period,
+            now=now,
+        )
     )
+
+    if period.start >= period.end:
+        raise ValueError(
+            "explicit usage period must have start < end"
+        )
 
     bucket = _get_or_create_bucket(
         db,
