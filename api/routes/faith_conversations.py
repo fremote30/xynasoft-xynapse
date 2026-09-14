@@ -11,6 +11,7 @@ from fastapi import (
     HTTPException,
 )
 
+from api.core.config import XYNASSIST_ENABLED
 from api.core.dependencies import (
     get_current_user,
     get_db,
@@ -49,6 +50,25 @@ from api.services.xyniva_usage_service import (
 
 
 router = APIRouter()
+
+
+def require_xynassist_enabled() -> None:
+    """
+    Fail closed when the shared XynAssist conversation service
+    is intentionally disabled.
+
+    The check occurs before any remote call or AI quota
+    reservation so disabled infrastructure cannot consume usage.
+    """
+
+    if not XYNASSIST_ENABLED:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Conversation service is "
+                "temporarily unavailable"
+            ),
+        )
 
 
 class ConversationCreate(BaseModel):
@@ -163,6 +183,8 @@ async def create_conversation(
         get_current_user
     ),
 ):
+    require_xynassist_enabled()
+
     try:
         return await XynAssistClient().create_conversation(
             external_user_id=str(
@@ -184,6 +206,8 @@ async def list_conversations(
         get_current_user
     ),
 ):
+    require_xynassist_enabled()
+
     try:
         return await XynAssistClient().list_conversations(
             external_user_id=str(
@@ -205,6 +229,8 @@ async def get_conversation(
         get_current_user
     ),
 ):
+    require_xynassist_enabled()
+
     try:
         return await XynAssistClient().get_conversation(
             external_user_id=str(
@@ -231,6 +257,8 @@ async def execute_conversation_turn(
         get_current_user
     ),
 ):
+    require_xynassist_enabled()
+
     sermon_context = payload.sermon
 
     trusted_context = None
