@@ -18,6 +18,7 @@ from xynassist_service.db.database import Base
 from xynassist_service.models import (  # noqa: F401
     Conversation,
     ConversationMessage,
+    ConversationTurn,
 )
 
 

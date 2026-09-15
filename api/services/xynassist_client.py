@@ -27,6 +27,29 @@ class XynAssistResponseError(XynAssistError):
     """Raised when XynAssist returns an invalid or unsuccessful response."""
 
 
+class XynAssistConflictError(XynAssistResponseError):
+    """
+    Raised when a request_id is reused for different turn input.
+    """
+
+
+class XynAssistRequestInProgressError(XynAssistResponseError):
+    """
+    Raised when the same logical request is already processing.
+
+    The remote operation may already be executing, so callers must
+    not release or re-spend the associated usage reservation.
+    """
+
+
+class XynAssistRequestStateError(XynAssistResponseError):
+    """
+    Raised when an existing request cannot be replayed safely.
+
+    This includes durable failed/non-replayable request states.
+    """
+
+
 class XynAssistClient:
     """
     HTTP boundary between XynaFaith and XynAssist.
@@ -198,6 +221,43 @@ class XynAssistClient:
                 "Unable to reach XynAssist"
             ) from exc
 
+        if response.status_code == 409:
+            detail = ""
+
+            try:
+                error_data = response.json()
+            except ValueError:
+                error_data = None
+
+            if isinstance(error_data, dict):
+                raw_detail = error_data.get("detail")
+
+                if isinstance(raw_detail, str):
+                    detail = raw_detail.strip()
+
+            normalized_detail = detail.lower()
+
+            if "already processing" in normalized_detail:
+                raise XynAssistRequestInProgressError(
+                    detail or (
+                        "XynAssist request is already processing"
+                    )
+                )
+
+            if "cannot be replayed" in normalized_detail:
+                raise XynAssistRequestStateError(
+                    detail or (
+                        "XynAssist request cannot be replayed"
+                    )
+                )
+
+            raise XynAssistConflictError(
+                detail or (
+                    "XynAssist rejected conflicting "
+                    "request_id reuse"
+                )
+            )
+
         if not response.is_success:
             raise XynAssistResponseError(
                 f"XynAssist returned HTTP "
@@ -301,6 +361,7 @@ class XynAssistClient:
         *,
         external_user_id: str,
         conversation_id: str,
+        request_id: str,
         content: str,
         context: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
@@ -318,6 +379,7 @@ class XynAssistClient:
         )
 
         payload: dict[str, Any] = {
+            "request_id": request_id,
             "content": content,
         }
 

@@ -21,6 +21,7 @@ from xynassist_service.schemas.conversations import (
     ConversationCreate,
     ConversationDetailResponse,
     ConversationResponse,
+    ConversationTurnCreate,
 )
 from xynassist_service.services.conversations import (
     create_conversation,
@@ -114,3 +115,63 @@ def get_conversation_route(
         updated_at=conversation.updated_at,
         messages=messages,
     )
+
+
+@router.post(
+    "/{conversation_id}/turns",
+)
+def execute_conversation_turn_route(
+    conversation_id: str,
+    payload: ConversationTurnCreate,
+    external_user_id: str = Depends(
+        require_external_user
+    ),
+    db: Session = Depends(get_db),
+):
+    from xynassist_service.services.turn_idempotency import (
+        TurnRequestConflict,
+        TurnRequestInProgress,
+        TurnRequestStateError,
+    )
+    from xynassist_service.services.turns import (
+        ConversationTurnNotFound,
+        execute_conversation_turn,
+    )
+
+    try:
+        return execute_conversation_turn(
+            db,
+            external_user_id=external_user_id,
+            conversation_id=conversation_id,
+            request_id=payload.request_id,
+            content=payload.content,
+            context=payload.context,
+        )
+    except ConversationTurnNotFound as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found",
+        ) from exc
+    except TurnRequestConflict as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                "request_id was already used "
+                "for different turn input"
+            ),
+        ) from exc
+    except TurnRequestInProgress as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Turn request is already processing",
+        ) from exc
+    except TurnRequestStateError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Turn request cannot be replayed",
+        ) from exc
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        ) from exc

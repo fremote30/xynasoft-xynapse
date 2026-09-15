@@ -250,6 +250,10 @@ async def test_generate_sermon_fails_closed_without_service_credential():
     assert called is False
 
 
+TURN_REQUEST_ID = (
+    "99999999-8888-7777-6666-555555555555"
+)
+
 CONVERSATION_ID = (
     "11111111-2222-3333-4444-555555555555"
 )
@@ -459,6 +463,7 @@ async def test_execute_conversation_turn_posts_content():
         )
 
         assert payload == {
+            "request_id": TURN_REQUEST_ID,
             "content": (
                 "I need a sermon on Proverbs 3."
             ),
@@ -479,6 +484,7 @@ async def test_execute_conversation_turn_posts_content():
         await client.execute_conversation_turn(
             external_user_id="123",
             conversation_id=CONVERSATION_ID,
+            request_id=TURN_REQUEST_ID,
             content=(
                 "I need a sermon on Proverbs 3."
             ),
@@ -503,6 +509,7 @@ async def test_execute_conversation_turn_posts_context():
         )
 
         assert payload == {
+            "request_id": TURN_REQUEST_ID,
             "content": "Save this.",
             "context": {
                 "active_resource": "sermon",
@@ -523,6 +530,7 @@ async def test_execute_conversation_turn_posts_context():
     result = await client.execute_conversation_turn(
         external_user_id="123",
         conversation_id=CONVERSATION_ID,
+        request_id=TURN_REQUEST_ID,
         content="Save this.",
         context={
             "active_resource": "sermon",
@@ -758,6 +766,7 @@ async def test_execute_turn_rejects_non_object_response():
         await client.execute_conversation_turn(
             external_user_id="123",
             conversation_id=CONVERSATION_ID,
+            request_id=TURN_REQUEST_ID,
             content="Make point two stronger.",
         )
 
@@ -810,4 +819,106 @@ async def test_conversation_request_rejects_upstream_error():
         await client.get_conversation(
             external_user_id="123",
             conversation_id=CONVERSATION_ID,
+        )
+
+
+@pytest.mark.anyio
+async def test_conversation_turn_translates_request_conflict():
+    from api.services.xynassist_client import (
+        XynAssistConflictError,
+    )
+
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        return httpx.Response(
+            409,
+            json={
+                "detail": "request_id conflict",
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(
+        XynAssistConflictError,
+        match="request_id conflict",
+    ):
+        await client.execute_conversation_turn(
+            external_user_id="123",
+            conversation_id=CONVERSATION_ID,
+            request_id=TURN_REQUEST_ID,
+            content="Different content",
+        )
+
+
+@pytest.mark.anyio
+async def test_conversation_turn_translates_request_in_progress():
+    from api.services.xynassist_client import (
+        XynAssistRequestInProgressError,
+    )
+
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        return httpx.Response(
+            409,
+            json={
+                "detail": "Turn request is already processing",
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(
+        XynAssistRequestInProgressError,
+        match="already processing",
+    ):
+        await client.execute_conversation_turn(
+            external_user_id="123",
+            conversation_id=CONVERSATION_ID,
+            request_id=TURN_REQUEST_ID,
+            content="Retry me",
+        )
+
+
+@pytest.mark.anyio
+async def test_conversation_turn_translates_nonreplayable_state():
+    from api.services.xynassist_client import (
+        XynAssistRequestStateError,
+    )
+
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        return httpx.Response(
+            409,
+            json={
+                "detail": "Turn request cannot be replayed",
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(
+        XynAssistRequestStateError,
+        match="cannot be replayed",
+    ):
+        await client.execute_conversation_turn(
+            external_user_id="123",
+            conversation_id=CONVERSATION_ID,
+            request_id=TURN_REQUEST_ID,
+            content="Retry failed request",
         )

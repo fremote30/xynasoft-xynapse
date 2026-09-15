@@ -36,7 +36,10 @@ from api.services.ai_usage_metering import (
 )
 from api.services.xynassist_client import (
     XynAssistClient,
+    XynAssistConflictError,
     XynAssistError,
+    XynAssistRequestInProgressError,
+    XynAssistRequestStateError,
 )
 from api.services.xyniva_turn_metering import (
     consume_conversation_turn,
@@ -308,10 +311,42 @@ async def execute_conversation_turn(
                     current_user.id
                 ),
                 conversation_id=conversation_id,
+                request_id=request_id,
                 content=payload.content,
                 context=trusted_context,
             )
         )
+    except XynAssistRequestInProgressError as exc:
+        # The remote operation may already be executing. Releasing
+        # quota here could allow the same logical work to be spent
+        # twice while the first execution is still in flight.
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "This conversation request is already "
+                "being processed"
+            ),
+        ) from exc
+    except XynAssistRequestStateError as exc:
+        # Failed/non-replayable remote requests remain fail-closed.
+        # A new logical attempt must use a new request identifier.
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "This conversation request cannot be "
+                "replayed; start a new request"
+            ),
+        ) from exc
+    except XynAssistConflictError as exc:
+        # A conflicting identifier can belong to work that already
+        # completed and consumed quota. Never release usage here.
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "This request identifier was already used "
+                "for a different conversation turn"
+            ),
+        ) from exc
     except XynAssistError as exc:
         # The external AI operation did not complete successfully,
         # so return the reservation to the user's allowance.

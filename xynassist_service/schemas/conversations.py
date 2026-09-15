@@ -44,3 +44,26 @@ class ConversationDetailResponse(
     ConversationResponse,
 ):
     messages: list[MessageResponse]
+
+
+class ConversationTurnCreate(BaseModel):
+    request_id: str
+    content: str
+    context: dict | None = None
+
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+
+class ConversationTurnResponse(BaseModel):
+    conversation: ConversationDetailResponse
+    user_message: MessageResponse
+    assistant_message: MessageResponse
+    skill: str | None = None
+
+    # Compatibility fields used by XynaFaith action handling.
+    user_message_id: str | None = None
+    action: dict | None = None
+    prompt: str | None = None

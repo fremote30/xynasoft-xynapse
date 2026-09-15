@@ -40,6 +40,21 @@ def bypass_xyniva_turn_metering(monkeypatch):
     )
 
 
+@pytest.fixture(autouse=True)
+def enable_xynassist_for_conversation_tests(
+    monkeypatch,
+):
+    """
+    Legacy conversation tests exercise the enabled XynAssist
+    integration path. Production remains fail-closed by default.
+    """
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XYNASSIST_ENABLED",
+        True,
+    )
+
+
 CONVERSATION_ID = (
     "11111111-2222-3333-4444-555555555555"
 )
@@ -294,6 +309,7 @@ def test_execute_turn_uses_authenticated_user(
             *,
             external_user_id,
             conversation_id,
+            request_id,
             content,
             context=None,
         ):
@@ -603,6 +619,7 @@ def test_execute_turn_accepts_sermon_action_context(
             *,
             external_user_id,
             conversation_id,
+            request_id,
             content,
             context=None,
         ):
@@ -678,6 +695,7 @@ def test_execute_turn_marks_saved_sermon_as_persisted(
             *,
             external_user_id,
             conversation_id,
+            request_id,
             content,
             context=None,
         ):
@@ -787,6 +805,7 @@ def test_execute_turn_executes_sermon_save_as_authenticated_user(
             *,
             external_user_id,
             conversation_id,
+            request_id,
             content,
             context=None,
         ):
@@ -1194,6 +1213,7 @@ def test_execute_turn_forwards_trusted_pending_delete(
             *,
             external_user_id,
             conversation_id,
+            request_id,
             content,
             context=None,
         ):
@@ -1260,6 +1280,7 @@ def test_execute_turn_withholds_pending_delete_for_other_sermon(
             *,
             external_user_id,
             conversation_id,
+            request_id,
             content,
             context=None,
         ):
