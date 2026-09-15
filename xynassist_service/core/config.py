@@ -32,3 +32,30 @@ def get_service_token() -> str:
     """
 
     return _required_env("XYNASSIST_SERVICE_TOKEN")
+
+
+def get_model_provider_name() -> str:
+    """
+    Return the configured XynAssist model provider.
+
+    Provider selection belongs to XynAssist rather than a product
+    application such as XynaFaith.
+    """
+
+    return _required_env(
+        "XYNASSIST_MODEL_PROVIDER"
+    ).lower()
+
+
+def get_openai_api_key() -> str:
+    """Return the OpenAI credential used by XynAssist."""
+
+    return _required_env("OPENAI_API_KEY")
+
+
+def get_openai_model() -> str:
+    """Return the OpenAI model configured for XynAssist."""
+
+    return _required_env(
+        "XYNASSIST_OPENAI_MODEL"
+    )

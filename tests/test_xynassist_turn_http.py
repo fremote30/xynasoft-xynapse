@@ -99,12 +99,37 @@ def create_conversation(
 def test_turn_executes_and_persists(
     client,
     db,
+    monkeypatch,
 ):
     user_id = "http-user-1"
 
     conversation = create_conversation(
         db,
         user_id=user_id,
+    )
+
+    from xynassist_service.services import turns
+    from xynassist_service.services.turn_engine import (
+        TurnEngineResult,
+    )
+
+    def fake_engine(
+        *,
+        content,
+        context,
+    ):
+        assert content == "Hello Xyniva"
+        assert context is None
+
+        return TurnEngineResult(
+            content="Hello from Xyniva.",
+            skill="conversation.respond",
+        )
+
+    monkeypatch.setattr(
+        turns,
+        "execute_turn_engine",
+        fake_engine,
     )
 
     request_id = str(uuid.uuid4())
@@ -136,10 +161,7 @@ def test_turn_executes_and_persists(
 
     assert (
         payload["assistant_message"]["content"]
-        == (
-            "XynAssist received your message. "
-            "AI orchestration is not yet configured."
-        )
+        == "Hello from Xyniva."
     )
 
     assert payload["user_message_id"] == (
@@ -238,12 +260,34 @@ def test_identical_retry_executes_engine_once(
 def test_same_request_different_content_is_409(
     client,
     db,
+    monkeypatch,
 ):
     user_id = "http-user-3"
 
     conversation = create_conversation(
         db,
         user_id=user_id,
+    )
+
+    from xynassist_service.services import turns
+    from xynassist_service.services.turn_engine import (
+        TurnEngineResult,
+    )
+
+    def fake_engine(
+        *,
+        content,
+        context,
+    ):
+        return TurnEngineResult(
+            content="Processed by Xyniva.",
+            skill="conversation.respond",
+        )
+
+    monkeypatch.setattr(
+        turns,
+        "execute_turn_engine",
+        fake_engine,
     )
 
     request_id = str(uuid.uuid4())

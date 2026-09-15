@@ -1,15 +1,22 @@
 """
 XynAssist conversation turn engine boundary.
 
-The current implementation is deliberately deterministic and exists
-only to establish the persistence/idempotency HTTP contract. Real
-model routing and ministry skills will replace this implementation.
+This boundary connects durable conversation-turn execution to the
+Xyniva intelligence orchestrator. Provider selection and construction
+remain outside domain orchestration.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
+
+from xynassist_service.ai.bootstrap import (
+    get_configured_model_provider,
+)
+from xynassist_service.xyniva.orchestrator import (
+    execute_xyniva_turn,
+)
 
 
 @dataclass(frozen=True)
@@ -26,15 +33,23 @@ def execute_turn_engine(
     context: dict[str, Any] | None,
 ) -> TurnEngineResult:
     """
-    Temporary deterministic engine.
+    Execute one Xyniva intelligence turn.
 
-    This is NOT the production Xyniva intelligence layer.
+    Durable request idempotency, processing leases, persistence, and
+    failure handling are owned by the surrounding turn service.
     """
 
+    provider = get_configured_model_provider()
+
+    result = execute_xyniva_turn(
+        content=content,
+        context=context,
+        provider_name=provider.name,
+    )
+
     return TurnEngineResult(
-        content=(
-            "XynAssist received your message. "
-            "AI orchestration is not yet configured."
-        ),
-        skill="conversation.respond",
+        content=result.content,
+        skill=result.skill,
+        action=result.action,
+        prompt=result.prompt,
     )
