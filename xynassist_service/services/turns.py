@@ -32,6 +32,7 @@ from xynassist_service.services.turn_idempotency import (
     claim_turn_request,
     complete_turn_request,
     fail_turn_request,
+    require_turn_lease,
 )
 
 
@@ -110,12 +111,21 @@ def execute_conversation_turn(
         )
     except Exception:
         try:
-            # Reattach the persisted turn after the prior commit.
-            turn = db.merge(claim.turn)
+            # Serialize with recovery and verify the current
+            # fencing token before mutating durable state.
+            turn = require_turn_lease(
+                db,
+                product=PRODUCT_XYNAFAITH,
+                external_user_id=external_user_id,
+                request_id=request_id,
+                turn_id=claim.turn.id,
+                lease_token=claim.lease_token,
+            )
 
             fail_turn_request(
                 db,
                 turn=turn,
+                lease_token=claim.lease_token,
                 error_code="turn_engine_failure",
             )
 
@@ -126,7 +136,17 @@ def execute_conversation_turn(
         raise
 
     try:
-        turn = db.merge(claim.turn)
+        # Serialize with recovery before writing messages.
+        # The advisory lock remains held through commit/rollback,
+        # so recovery cannot rotate the token mid-completion.
+        turn = require_turn_lease(
+            db,
+            product=PRODUCT_XYNAFAITH,
+            external_user_id=external_user_id,
+            request_id=request_id,
+            turn_id=claim.turn.id,
+            lease_token=claim.lease_token,
+        )
 
         user_message = ConversationMessage(
             id=str(uuid.uuid4()),
@@ -185,6 +205,7 @@ def execute_conversation_turn(
         complete_turn_request(
             db,
             turn=turn,
+            lease_token=claim.lease_token,
             response=response,
             user_message_id=user_message.id,
             assistant_message_id=assistant_message.id,

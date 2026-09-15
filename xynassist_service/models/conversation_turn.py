@@ -12,6 +12,7 @@ from sqlalchemy import (
     Column,
     DateTime,
     ForeignKey,
+    Integer,
     String,
     Text,
     UniqueConstraint,
@@ -106,6 +107,25 @@ class ConversationTurn(Base):
     error_code = Column(
         String(120),
         nullable=True,
+    )
+
+    # Processing leases allow abandoned turns to be recovered while
+    # fencing workers that no longer own the current attempt.
+    lease_token = Column(
+        String(36),
+        nullable=True,
+    )
+
+    lease_expires_at = Column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+
+    attempt_count = Column(
+        Integer,
+        nullable=False,
+        default=1,
+        server_default="1",
     )
 
     created_at = Column(
