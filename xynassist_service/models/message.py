@@ -10,6 +10,7 @@ from sqlalchemy import (
     BigInteger,
     Column,
     DateTime,
+    FetchedValue,
     ForeignKey,
     String,
     Text,
@@ -59,6 +60,7 @@ class ConversationMessage(Base):
         BigInteger,
         nullable=False,
         index=True,
+        server_default=FetchedValue(),
     )
 
     created_at = Column(
