@@ -164,6 +164,7 @@ def test_completed_request_replays_response(db):
         conversation_id=conversation.id,
         role="user",
         content="Hello",
+        sequence_number=1,
     )
 
     assistant_message = ConversationMessage(
@@ -171,6 +172,7 @@ def test_completed_request_replays_response(db):
         conversation_id=conversation.id,
         role="assistant",
         content="Hi",
+        sequence_number=2,
     )
 
     db.add_all(
@@ -622,12 +624,14 @@ def test_current_lease_owner_can_complete(db):
         conversation_id=conversation.id,
         role="user",
         content="Complete lease",
+        sequence_number=1,
     )
     assistant_message = ConversationMessage(
         id=str(uuid.uuid4()),
         conversation_id=conversation.id,
         role="assistant",
         content="Completed",
+        sequence_number=2,
     )
 
     db.add_all(

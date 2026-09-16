@@ -13,7 +13,8 @@ os.environ[
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event, func, select
+from sqlalchemy.orm import Session as OrmSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -23,6 +24,43 @@ from xynassist_service.main import app
 from xynassist_service.models.conversation import (
     Conversation,
 )
+from xynassist_service.models.message import (
+    ConversationMessage,
+)
+
+
+def _assign_sqlite_message_sequences(
+    session,
+    flush_context,
+    instances,
+):
+    """Emulate PostgreSQL message sequencing in SQLite tests."""
+    pending = [
+        obj
+        for obj in session.new
+        if isinstance(obj, ConversationMessage)
+        and obj.sequence_number is None
+    ]
+
+    if not pending:
+        return
+
+    current = session.execute(
+        select(
+            func.coalesce(
+                func.max(
+                    ConversationMessage.sequence_number
+                ),
+                0,
+            )
+        )
+    ).scalar_one()
+
+    for offset, message in enumerate(
+        pending,
+        start=1,
+    ):
+        message.sequence_number = current + offset
 
 
 @pytest.fixture()
@@ -41,6 +79,12 @@ def db():
         bind=engine,
         autoflush=False,
         autocommit=False,
+    )
+
+    event.listen(
+        OrmSession,
+        "before_flush",
+        _assign_sqlite_message_sequences,
     )
 
     session = Session()

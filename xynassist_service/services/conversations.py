@@ -100,8 +100,7 @@ def list_messages(
             == conversation_id
         )
         .order_by(
-            ConversationMessage.created_at.asc(),
-            ConversationMessage.id.asc(),
+            ConversationMessage.sequence_number.asc(),
         )
     )
 

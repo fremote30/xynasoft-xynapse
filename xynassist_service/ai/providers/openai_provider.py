@@ -54,8 +54,7 @@ class OpenAIModelProvider:
                 }
                 for message in request.messages
             ],
-            temperature=request.temperature,
-            max_tokens=request.max_output_tokens,
+            max_completion_tokens=request.max_output_tokens,
         )
 
         if not response.choices:

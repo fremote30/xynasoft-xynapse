@@ -7,6 +7,7 @@ from __future__ import annotations
 import uuid
 
 from sqlalchemy import (
+    BigInteger,
     Column,
     DateTime,
     ForeignKey,
@@ -51,6 +52,12 @@ class ConversationMessage(Base):
     skill = Column(
         String(120),
         nullable=True,
+        index=True,
+    )
+
+    sequence_number = Column(
+        BigInteger,
+        nullable=False,
         index=True,
     )
 

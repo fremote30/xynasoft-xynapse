@@ -124,7 +124,7 @@ def test_list_conversations_is_owner_scoped():
 
 
 def test_messages_are_ordered_and_scoped_to_conversation():
-    from datetime import datetime, timedelta, timezone
+    from datetime import datetime, timezone
 
     db = make_session()
 
@@ -135,7 +135,7 @@ def test_messages_are_ordered_and_scoped_to_conversation():
             title="Sunday sermon",
         )
 
-        first_time = datetime(
+        same_time = datetime(
             2026,
             9,
             14,
@@ -145,29 +145,27 @@ def test_messages_are_ordered_and_scoped_to_conversation():
             tzinfo=timezone.utc,
         )
 
-        second_time = first_time + timedelta(
-            seconds=1
-        )
-
-        first = ConversationMessage(
+        user_message = ConversationMessage(
             conversation_id=conversation.id,
             role="user",
             content="Hello",
             skill="conversation",
-            created_at=first_time,
+            sequence_number=1,
+            created_at=same_time,
         )
 
-        second = ConversationMessage(
+        assistant_message = ConversationMessage(
             conversation_id=conversation.id,
             role="assistant",
             content="Hi",
             skill="conversation",
-            created_at=second_time,
+            sequence_number=2,
+            created_at=same_time,
         )
 
         db.add_all([
-            second,
-            first,
+            user_message,
+            assistant_message,
         ])
         db.commit()
 
@@ -177,6 +175,17 @@ def test_messages_are_ordered_and_scoped_to_conversation():
         )
 
         assert len(messages) == 2
+        assert [
+            message.role
+            for message in messages
+        ] == [
+            "user",
+            "assistant",
+        ]
+        assert (
+            messages[0].sequence_number
+            < messages[1].sequence_number
+        )
         assert messages[0].content == "Hello"
         assert messages[1].content == "Hi"
     finally:

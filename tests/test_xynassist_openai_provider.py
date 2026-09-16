@@ -69,6 +69,8 @@ def test_openai_provider_translates_model_contract():
 
     call = fake_completions.calls[0]
 
+    assert "temperature" not in call
+
     assert call == {
         "model": "configured-model",
         "messages": [
@@ -81,8 +83,7 @@ def test_openai_provider_translates_model_contract():
                 "content": "Explain grace.",
             },
         ],
-        "temperature": 0.2,
-        "max_tokens": 900,
+        "max_completion_tokens": 900,
     }
 
     assert result.content == "Grace and peace."
