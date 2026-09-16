@@ -163,3 +163,60 @@ def deactivate_memory(
     db.flush()
 
     return True
+
+
+def get_active_memory(
+    db: Session,
+    *,
+    external_user_id: str,
+    memory_id: str,
+    product: str = "xynafaith",
+) -> Memory | None:
+    owner = _required(
+        external_user_id,
+        "External user identifier",
+    )
+    identifier = _required(
+        memory_id,
+        "Memory identifier",
+    )
+    product_name = _required(product, "Product")
+
+    return (
+        db.query(Memory)
+        .filter(
+            Memory.id == identifier,
+            Memory.product == product_name,
+            Memory.external_user_id == owner,
+            Memory.status == "active",
+        )
+        .one_or_none()
+    )
+
+
+def update_memory_value(
+    db: Session,
+    *,
+    external_user_id: str,
+    memory_id: str,
+    value: str,
+    product: str = "xynafaith",
+) -> Memory | None:
+    memory_value = _required(value, "Memory value")
+
+    memory = get_active_memory(
+        db,
+        external_user_id=external_user_id,
+        memory_id=memory_id,
+        product=product,
+    )
+
+    if memory is None:
+        return None
+
+    memory.value = memory_value
+    memory.source = "explicit_user"
+
+    db.flush()
+
+    return memory
