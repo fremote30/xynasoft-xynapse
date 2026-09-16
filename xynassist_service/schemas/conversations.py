@@ -17,6 +17,10 @@ from pydantic import (
 from xynassist_service.actions.contracts import (
     is_supported_action,
 )
+from xynassist_service.actions.schemas import (
+    ForgetMemoryArguments,
+    RememberMemoryArguments,
+)
 
 
 class ConversationCreate(BaseModel):
@@ -96,6 +100,45 @@ class ConversationAction(BaseModel):
             raise ValueError(
                 "Unsupported conversation action"
             )
+
+        return value
+
+    @field_validator("arguments")
+    @classmethod
+    def validate_action_arguments(
+        cls,
+        value: dict,
+        info,
+    ) -> dict:
+        name = info.data.get("name")
+
+        if name in {
+            "sermon.save",
+            "sermon.update",
+            "sermon.delete",
+        }:
+            if value:
+                raise ValueError(
+                    "Sermon action arguments must be empty"
+                )
+
+            return value
+
+        if name == "memory.remember":
+            validated = (
+                RememberMemoryArguments
+                .model_validate(value)
+            )
+
+            return validated.model_dump()
+
+        if name == "memory.forget":
+            validated = (
+                ForgetMemoryArguments
+                .model_validate(value)
+            )
+
+            return validated.model_dump()
 
         return value
 

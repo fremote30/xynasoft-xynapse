@@ -41,6 +41,16 @@ ACTION_DEFINITIONS: dict[str, ActionDefinition] = {
         product="xynafaith",
         confirmation="required",
     ),
+    "memory.remember": ActionDefinition(
+        name="memory.remember",
+        product="xynafaith",
+        confirmation="none",
+    ),
+    "memory.forget": ActionDefinition(
+        name="memory.forget",
+        product="xynafaith",
+        confirmation="required",
+    ),
 }
 
 

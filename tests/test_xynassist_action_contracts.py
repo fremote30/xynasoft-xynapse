@@ -50,3 +50,32 @@ def test_non_destructive_action_does_not_require_confirmation():
 
     assert definition is not None
     assert definition.confirmation == "none"
+
+
+def test_memory_actions_are_registered_for_xynafaith():
+    assert is_supported_action(
+        "memory.remember",
+        product="xynafaith",
+    )
+    assert is_supported_action(
+        "memory.forget",
+        product="xynafaith",
+    )
+
+
+def test_memory_remember_does_not_require_confirmation():
+    definition = get_action_definition(
+        "memory.remember"
+    )
+
+    assert definition is not None
+    assert definition.confirmation == "none"
+
+
+def test_memory_forget_requires_confirmation():
+    definition = get_action_definition(
+        "memory.forget"
+    )
+
+    assert definition is not None
+    assert definition.confirmation == "required"
