@@ -337,3 +337,56 @@ def test_blank_memory_value_is_rejected():
     finally:
         db.close()
         engine.dispose()
+
+
+def test_list_active_memories_supports_query_limit():
+    engine, db = make_session()
+
+    try:
+        user_id = "limited-memory-user"
+
+        for index in range(5):
+            create_or_update_memory(
+                db,
+                external_user_id=user_id,
+                memory_type="user_fact",
+                key=f"fact-{index:03d}",
+                value=f"value-{index}",
+            )
+
+        db.commit()
+
+        memories = list_active_memories(
+            db,
+            external_user_id=user_id,
+            limit=2,
+        )
+
+        assert len(memories) == 2
+
+        assert [
+            memory.key
+            for memory in memories
+        ] == [
+            "fact-000",
+            "fact-001",
+        ]
+
+        try:
+            list_active_memories(
+                db,
+                external_user_id=user_id,
+                limit=0,
+            )
+        except ValueError as exc:
+            assert (
+                str(exc)
+                == "Memory limit must be greater than zero"
+            )
+        else:
+            raise AssertionError(
+                "Non-positive memory limit was accepted"
+            )
+    finally:
+        db.close()
+        engine.dispose()

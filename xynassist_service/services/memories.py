@@ -99,6 +99,7 @@ def list_active_memories(
     *,
     external_user_id: str,
     product: str = "xynafaith",
+    limit: int | None = None,
 ) -> list[Memory]:
     owner = _required(
         external_user_id,
@@ -106,7 +107,12 @@ def list_active_memories(
     )
     product_name = _required(product, "Product")
 
-    return (
+    if limit is not None and limit <= 0:
+        raise ValueError(
+            "Memory limit must be greater than zero"
+        )
+
+    query = (
         db.query(Memory)
         .filter(
             Memory.product == product_name,
@@ -118,8 +124,12 @@ def list_active_memories(
             Memory.key.asc(),
             Memory.id.asc(),
         )
-        .all()
     )
+
+    if limit is not None:
+        query = query.limit(limit)
+
+    return query.all()
 
 
 def deactivate_memory(

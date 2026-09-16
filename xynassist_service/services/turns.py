@@ -17,6 +17,9 @@ from xynassist_service.schemas.conversations import (
     ConversationTurnResponse,
     MessageResponse,
 )
+from xynassist_service.services.context_assembly import (
+    assemble_xyniva_context,
+)
 from xynassist_service.services.conversations import (
     PRODUCT_XYNAFAITH,
     get_conversation,
@@ -105,9 +108,18 @@ def execute_conversation_turn(
     db.commit()
 
     try:
+        context_bundle = assemble_xyniva_context(
+            db,
+            external_user_id=external_user_id,
+            conversation_id=conversation_id,
+            product=PRODUCT_XYNAFAITH,
+            context=context,
+        )
+
         engine_result = execute_turn_engine(
             content=content,
             context=context,
+            context_bundle=context_bundle,
         )
     except Exception:
         try:

@@ -14,6 +14,9 @@ from typing import Any
 from xynassist_service.ai.bootstrap import (
     get_configured_model_provider,
 )
+from xynassist_service.services.context_assembly import (
+    XynivaContextBundle,
+)
 from xynassist_service.xyniva.orchestrator import (
     execute_xyniva_turn,
 )
@@ -31,6 +34,7 @@ def execute_turn_engine(
     *,
     content: str,
     context: dict[str, Any] | None,
+    context_bundle: XynivaContextBundle | None = None,
 ) -> TurnEngineResult:
     """
     Execute one Xyniva intelligence turn.
@@ -44,6 +48,7 @@ def execute_turn_engine(
     result = execute_xyniva_turn(
         content=content,
         context=context,
+        context_bundle=context_bundle,
         provider_name=provider.name,
     )
 

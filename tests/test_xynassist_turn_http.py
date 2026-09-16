@@ -161,6 +161,7 @@ def test_turn_executes_and_persists(
         *,
         content,
         context,
+        context_bundle=None,
     ):
         assert content == "Hello Xyniva"
         assert context is None
@@ -255,6 +256,7 @@ def test_identical_retry_executes_engine_once(
         *,
         content,
         context,
+        context_bundle=None,
     ):
         calls.append(
             {
@@ -322,6 +324,7 @@ def test_same_request_different_content_is_409(
         *,
         content,
         context,
+        context_bundle=None,
     ):
         return TurnEngineResult(
             content="Processed by Xyniva.",
