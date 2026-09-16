@@ -16,6 +16,7 @@ from xynassist_service.db.database import Base
 
 # Import models so SQLAlchemy metadata is complete.
 from xynassist_service.models import (  # noqa: F401
+    ActionExecution,
     Conversation,
     ConversationMessage,
     ConversationTurn,

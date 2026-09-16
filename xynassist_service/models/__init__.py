@@ -1,3 +1,6 @@
+from xynassist_service.models.action_execution import (
+    ActionExecution,
+)
 from xynassist_service.models.conversation import (
     Conversation,
 )
@@ -13,6 +16,7 @@ from xynassist_service.models.message import (
 
 
 __all__ = [
+    "ActionExecution",
     "Conversation",
     "ConversationMessage",
     "ConversationTurn",
