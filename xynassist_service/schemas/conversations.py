@@ -7,7 +7,16 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+)
+
+from xynassist_service.actions.contracts import (
+    is_supported_action,
+)
 
 
 class ConversationCreate(BaseModel):
@@ -57,6 +66,40 @@ class ConversationTurnCreate(BaseModel):
     )
 
 
+class ConversationAction(BaseModel):
+    """
+    Typed action proposal returned to a trusted product.
+
+    This is a proposal only. XynAssist does not authorize or
+    execute product mutations. The receiving product remains
+    responsible for authentication, authorization, validation,
+    confirmation, idempotency, and execution.
+    """
+
+    name: str
+    arguments: dict = Field(default_factory=dict)
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+
+    @field_validator("name")
+    @classmethod
+    def validate_action_name(
+        cls,
+        value: str,
+    ) -> str:
+        if not is_supported_action(
+            value,
+            product="xynafaith",
+        ):
+            raise ValueError(
+                "Unsupported conversation action"
+            )
+
+        return value
+
+
 class ConversationTurnResponse(BaseModel):
     conversation: ConversationDetailResponse
     user_message: MessageResponse
@@ -65,5 +108,5 @@ class ConversationTurnResponse(BaseModel):
 
     # Compatibility fields used by XynaFaith action handling.
     user_message_id: str | None = None
-    action: dict | None = None
+    action: ConversationAction | None = None
     prompt: str | None = None
