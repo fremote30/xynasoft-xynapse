@@ -6,6 +6,9 @@ Memory access is always scoped to the trusted product-user identity.
 
 from __future__ import annotations
 
+import hashlib
+
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from xynassist_service.models.memory import Memory
@@ -36,6 +39,74 @@ def _required(value: str, field: str) -> str:
     return normalized
 
 
+def _memory_lock_key(
+    *,
+    product: str,
+    external_user_id: str,
+    memory_type: str,
+    key: str,
+) -> int:
+    """
+    Stable signed 64-bit key for one logical memory identity.
+
+    The namespace prefix prevents accidental overlap with other
+    advisory-lock domains that may hash similar identifiers.
+    """
+
+    raw = (
+        f"xynassist-memory\x1f"
+        f"{product}\x1f"
+        f"{external_user_id}\x1f"
+        f"{memory_type}\x1f"
+        f"{key}"
+    ).encode("utf-8")
+
+    digest = hashlib.sha256(raw).digest()
+
+    return int.from_bytes(
+        digest[:8],
+        byteorder="big",
+        signed=True,
+    )
+
+
+def _lock_memory_identity(
+    db: Session,
+    *,
+    product: str,
+    external_user_id: str,
+    memory_type: str,
+    key: str,
+) -> None:
+    """
+    Serialize writes to one logical memory on PostgreSQL.
+
+    The transaction-scoped lock is released automatically when
+    the caller commits or rolls back. Non-PostgreSQL test
+    databases intentionally use the database unique constraint
+    without advisory locking.
+    """
+
+    bind = db.get_bind()
+
+    if bind.dialect.name != "postgresql":
+        return
+
+    lock_key = _memory_lock_key(
+        product=product,
+        external_user_id=external_user_id,
+        memory_type=memory_type,
+        key=key,
+    )
+
+    db.execute(
+        text(
+            "SELECT pg_advisory_xact_lock(:key)"
+        ),
+        {"key": lock_key},
+    )
+
+
 def create_or_update_memory(
     db: Session,
     *,
@@ -61,6 +132,14 @@ def create_or_update_memory(
 
     if memory_source not in ALLOWED_MEMORY_SOURCES:
         raise ValueError("Unsupported memory source")
+
+    _lock_memory_identity(
+        db,
+        product=product_name,
+        external_user_id=owner,
+        memory_type=kind,
+        key=memory_key,
+    )
 
     memory = (
         db.query(Memory)
