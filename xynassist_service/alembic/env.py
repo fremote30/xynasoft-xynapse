@@ -19,6 +19,7 @@ from xynassist_service.models import (  # noqa: F401
     Conversation,
     ConversationMessage,
     ConversationTurn,
+    Memory,
 )
 
 
