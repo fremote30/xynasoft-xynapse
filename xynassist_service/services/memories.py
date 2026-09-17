@@ -299,3 +299,97 @@ def update_memory_value(
     db.flush()
 
     return memory
+
+
+def get_active_memory_by_identity(
+    db: Session,
+    *,
+    external_user_id: str,
+    memory_type: str,
+    key: str,
+    product: str = "xynafaith",
+) -> Memory | None:
+    """
+    Return one active memory by its trusted logical identity.
+
+    This intentionally avoids exposing the internal memory UUID to
+    conversational action proposals.
+    """
+
+    owner = _required(
+        external_user_id,
+        "External user identifier",
+    )
+    product_name = _required(product, "Product")
+    kind = _required(memory_type, "Memory type")
+    memory_key = _required(key, "Memory key")
+
+    if kind not in ALLOWED_MEMORY_TYPES:
+        raise ValueError("Unsupported memory type")
+
+    return (
+        db.query(Memory)
+        .filter(
+            Memory.product == product_name,
+            Memory.external_user_id == owner,
+            Memory.memory_type == kind,
+            Memory.key == memory_key,
+            Memory.status == "active",
+        )
+        .one_or_none()
+    )
+
+
+def deactivate_memory_by_identity(
+    db: Session,
+    *,
+    external_user_id: str,
+    memory_type: str,
+    key: str,
+    product: str = "xynafaith",
+) -> Memory | None:
+    """
+    Deactivate one active memory by owner/type/key.
+
+    The memory identity is serialized on PostgreSQL so this mutation
+    composes safely with concurrent remember/forget operations.
+    """
+
+    owner = _required(
+        external_user_id,
+        "External user identifier",
+    )
+    product_name = _required(product, "Product")
+    kind = _required(memory_type, "Memory type")
+    memory_key = _required(key, "Memory key")
+
+    if kind not in ALLOWED_MEMORY_TYPES:
+        raise ValueError("Unsupported memory type")
+
+    _lock_memory_identity(
+        db,
+        product=product_name,
+        external_user_id=owner,
+        memory_type=kind,
+        key=memory_key,
+    )
+
+    memory = (
+        db.query(Memory)
+        .filter(
+            Memory.product == product_name,
+            Memory.external_user_id == owner,
+            Memory.memory_type == kind,
+            Memory.key == memory_key,
+            Memory.status == "active",
+        )
+        .one_or_none()
+    )
+
+    if memory is None:
+        return None
+
+    memory.status = "inactive"
+    db.flush()
+
+    return memory

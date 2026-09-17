@@ -67,3 +67,39 @@ def require_external_user(
         )
 
     return external_user_id
+
+
+ACTION_CONFIRMED_HEADER = "X-XynAssist-Action-Confirmed"
+
+
+def require_trusted_action_confirmation(
+    x_xynassist_action_confirmed: str | None = Header(
+        default=None,
+        alias=ACTION_CONFIRMED_HEADER,
+    ),
+) -> bool:
+    """
+    Resolve a confirmation assertion from the authenticated product backend.
+
+    This header is meaningful only on service-authenticated integration
+    routes. It must never be accepted directly from a browser as proof of
+    user confirmation.
+    """
+
+    supplied = (
+        x_xynassist_action_confirmed or ""
+    ).strip().lower()
+
+    if not supplied:
+        return False
+
+    if supplied == "true":
+        return True
+
+    if supplied == "false":
+        return False
+
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Invalid action confirmation assertion",
+    )
