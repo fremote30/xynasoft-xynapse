@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
-from uuid import UUID
+from uuid import UUID, NAMESPACE_URL, uuid4, uuid5
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -30,6 +30,11 @@ from api.services.conversation_pending_actions import (
     get_pending_sermon_delete,
     record_pending_sermon_delete,
 )
+from api.services.conversation_pending_memory_actions import (
+    ConversationPendingMemoryActionError,
+    MEMORY_FORGET_ACTION,
+    record_pending_memory_forget,
+)
 from api.services.ai_usage_metering import (
     UsageLimitExceeded,
     UsageMeteringError,
@@ -53,6 +58,92 @@ from api.services.xyniva_usage_service import (
 
 
 router = APIRouter()
+
+
+MEMORY_REMEMBER_ACTION = "memory.remember"
+MEMORY_TYPES = frozenset({
+    "preference",
+    "ministry_context",
+    "user_fact",
+})
+
+
+def _validated_memory_action_arguments(
+    action: dict[str, Any],
+) -> tuple[str, dict[str, str]]:
+    """Validate an XynAssist memory proposal at the product boundary."""
+
+    action_name = action.get("name")
+
+    if action_name not in {
+        MEMORY_REMEMBER_ACTION,
+        MEMORY_FORGET_ACTION,
+    }:
+        raise ValueError("Unsupported memory action")
+
+    arguments = action.get("arguments")
+
+    if not isinstance(arguments, dict):
+        raise ValueError("Invalid memory action arguments")
+
+    expected_keys = {"memory_type", "key"}
+
+    if action_name == MEMORY_REMEMBER_ACTION:
+        expected_keys.add("value")
+
+    if set(arguments) != expected_keys:
+        raise ValueError("Invalid memory action arguments")
+
+    memory_type = arguments.get("memory_type")
+    memory_key = arguments.get("key")
+
+    if memory_type not in MEMORY_TYPES:
+        raise ValueError("Invalid memory action arguments")
+
+    if (
+        not isinstance(memory_key, str)
+        or not memory_key.strip()
+        or len(memory_key.strip()) > 255
+    ):
+        raise ValueError("Invalid memory action arguments")
+
+    validated = {
+        "memory_type": memory_type,
+        "key": memory_key.strip(),
+    }
+
+    if action_name == MEMORY_REMEMBER_ACTION:
+        memory_value = arguments.get("value")
+
+        if (
+            not isinstance(memory_value, str)
+            or not memory_value.strip()
+        ):
+            raise ValueError("Invalid memory action arguments")
+
+        validated["value"] = memory_value.strip()
+
+    return action_name, validated
+
+
+def _memory_action_request_id(
+    *,
+    user_id: int,
+    conversation_id: str,
+    turn_request_id: str,
+    action_name: str,
+) -> str:
+    """Derive a stable execution identity for an immediate memory action."""
+
+    identity = (
+        "xynafaith:memory-action:"
+        f"{user_id}:"
+        f"{conversation_id}:"
+        f"{turn_request_id}:"
+        f"{action_name}"
+    )
+
+    return str(uuid5(NAMESPACE_URL, identity))
 
 
 def require_xynassist_enabled() -> None:
@@ -424,6 +515,111 @@ async def execute_conversation_turn(
                 "an invalid action"
             ),
         )
+
+    action_name = action.get("name")
+
+    if action_name in {
+        MEMORY_REMEMBER_ACTION,
+        MEMORY_FORGET_ACTION,
+    }:
+        try:
+            (
+                memory_action_name,
+                memory_arguments,
+            ) = _validated_memory_action_arguments(action)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=502,
+                detail=(
+                    "Conversation service returned "
+                    "an invalid memory action"
+                ),
+            ) from exc
+
+        prompt = result.get("prompt")
+
+        if memory_action_name == MEMORY_REMEMBER_ACTION:
+            if prompt is not None:
+                raise HTTPException(
+                    status_code=502,
+                    detail=(
+                        "Conversation service returned "
+                        "an invalid memory confirmation"
+                    ),
+                )
+
+            try:
+                executed_action = (
+                    await XynAssistClient()
+                    .execute_memory_action(
+                        external_user_id=str(
+                            current_user.id
+                        ),
+                        request_id=_memory_action_request_id(
+                            user_id=current_user.id,
+                            conversation_id=conversation_id,
+                            turn_request_id=request_id,
+                            action_name=memory_action_name,
+                        ),
+                        action_name=memory_action_name,
+                        arguments=memory_arguments,
+                        trusted_confirmed=False,
+                    )
+                )
+            except XynAssistError as exc:
+                raise conversation_service_unavailable(
+                    exc
+                ) from exc
+
+            result["action"] = executed_action
+            return result
+
+        if (
+            not isinstance(prompt, str)
+            or not prompt.strip()
+        ):
+            raise HTTPException(
+                status_code=502,
+                detail=(
+                    "Conversation service returned "
+                    "an invalid memory confirmation"
+                ),
+            )
+
+        action_request_id = str(uuid4())
+
+        try:
+            record_pending_memory_forget(
+                db=db,
+                user_id=current_user.id,
+                conversation_id=conversation_id,
+                memory_type=memory_arguments[
+                    "memory_type"
+                ],
+                memory_key=memory_arguments["key"],
+                source_message_id=source_message_id,
+                action_request_id=action_request_id,
+            )
+            db.commit()
+        except ConversationPendingMemoryActionError as exc:
+            db.rollback()
+
+            raise HTTPException(
+                status_code=422,
+                detail=str(exc),
+            ) from exc
+        except Exception as exc:
+            db.rollback()
+
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Conversation confirmation could not "
+                    "be recorded"
+                ),
+            ) from exc
+
+        return result
 
     # Confirmation-required actions are pending state, not
     # executable product mutations. Bind the request to the
