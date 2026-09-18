@@ -25,6 +25,9 @@ from api.models.member_profile import MemberProfile
 from api.models.conversation_action_execution import (
     ConversationActionExecution,
 )
+from api.models.conversation_pending_memory_action import (
+    ConversationPendingMemoryAction,
+)
 
 target_metadata = Base.metadata
 # -------------------------------------------------
