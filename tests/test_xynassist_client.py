@@ -922,3 +922,274 @@ async def test_conversation_turn_translates_nonreplayable_state():
             request_id=TURN_REQUEST_ID,
             content="Retry failed request",
         )
+
+
+@pytest.mark.anyio
+async def test_memory_remember_sends_trusted_identity_without_confirmation():
+    import json
+
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert request.method == "POST"
+        assert (
+            request.url.path
+            == (
+                "/api/v1/integrations/"
+                "xynafaith/memory-actions/execute"
+            )
+        )
+
+        assert (
+            request.headers[
+                "X-XynAssist-Service-Token"
+            ]
+            == "test-service-token"
+        )
+        assert (
+            request.headers[
+                "X-XynAssist-External-User-Id"
+            ]
+            == "memory-user-1"
+        )
+        assert (
+            "X-XynAssist-Action-Confirmed"
+            not in request.headers
+        )
+
+        payload = json.loads(
+            request.content.decode("utf-8")
+        )
+
+        assert payload == {
+            "request_id":
+                "11111111-1111-4111-8111-111111111111",
+            "action_name": "memory.remember",
+            "arguments": {
+                "memory_type": "preference",
+                "key": "response_style",
+                "value": "concise",
+            },
+        }
+
+        return httpx.Response(
+            200,
+            json={
+                "memory_id": "memory-1",
+                "memory_type": "preference",
+                "key": "response_style",
+                "status": "active",
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    result = await client.execute_memory_action(
+        external_user_id="memory-user-1",
+        request_id=(
+            "11111111-1111-4111-8111-111111111111"
+        ),
+        action_name="memory.remember",
+        arguments={
+            "memory_type": "preference",
+            "key": "response_style",
+            "value": "concise",
+        },
+    )
+
+    assert result["status"] == "active"
+
+
+@pytest.mark.anyio
+async def test_memory_forget_sends_trusted_confirmation():
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert (
+            request.headers[
+                "X-XynAssist-Service-Token"
+            ]
+            == "test-service-token"
+        )
+        assert (
+            request.headers[
+                "X-XynAssist-External-User-Id"
+            ]
+            == "memory-user-2"
+        )
+        assert (
+            request.headers[
+                "X-XynAssist-Action-Confirmed"
+            ]
+            == "true"
+        )
+
+        return httpx.Response(
+            200,
+            json={
+                "memory_id": "memory-2",
+                "memory_type": "user_fact",
+                "key": "preferred_translation",
+                "status": "inactive",
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    result = await client.execute_memory_action(
+        external_user_id="memory-user-2",
+        request_id=(
+            "22222222-2222-4222-8222-222222222222"
+        ),
+        action_name="memory.forget",
+        arguments={
+            "memory_type": "user_fact",
+            "key": "preferred_translation",
+        },
+        trusted_confirmed=True,
+    )
+
+    assert result["status"] == "inactive"
+
+
+@pytest.mark.anyio
+async def test_memory_action_arguments_cannot_create_confirmation_header():
+    import json
+
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert (
+            "X-XynAssist-Action-Confirmed"
+            not in request.headers
+        )
+
+        payload = json.loads(
+            request.content.decode("utf-8")
+        )
+
+        assert payload["arguments"] == {
+            "memory_type": "preference",
+            "key": "response_style",
+            "confirmed": True,
+        }
+
+        return httpx.Response(
+            422,
+            json={
+                "detail":
+                    "Invalid memory.forget arguments",
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(
+        XynAssistResponseError,
+        match="HTTP 422",
+    ):
+        await client.execute_memory_action(
+            external_user_id="memory-user-3",
+            request_id=(
+                "33333333-3333-4333-8333-333333333333"
+            ),
+            action_name="memory.forget",
+            arguments={
+                "memory_type": "preference",
+                "key": "response_style",
+                "confirmed": True,
+            },
+            trusted_confirmed=False,
+        )
+
+
+@pytest.mark.anyio
+async def test_memory_action_false_confirmation_omits_header():
+    from api.services.xynassist_client import (
+        XynAssistConflictError,
+    )
+
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        assert (
+            "X-XynAssist-Action-Confirmed"
+            not in request.headers
+        )
+
+        return httpx.Response(
+            409,
+            json={
+                "detail":
+                    "Trusted confirmation is required",
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(
+        XynAssistConflictError,
+        match="Trusted confirmation is required",
+    ):
+        await client.execute_memory_action(
+            external_user_id="memory-user-4",
+            request_id=(
+                "44444444-4444-4444-8444-444444444444"
+            ),
+            action_name="memory.forget",
+            arguments={
+                "memory_type": "preference",
+                "key": "response_style",
+            },
+            trusted_confirmed=False,
+        )
+
+
+@pytest.mark.anyio
+async def test_memory_action_rejects_non_object_response():
+    async def handler(
+        request: httpx.Request,
+    ) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json=[],
+        )
+
+    client = XynAssistClient(
+        base_url="https://xynassist.test",
+        service_token="test-service-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(
+        XynAssistResponseError,
+        match="invalid memory action response shape",
+    ):
+        await client.execute_memory_action(
+            external_user_id="memory-user-5",
+            request_id=(
+                "55555555-5555-4555-8555-555555555555"
+            ),
+            action_name="memory.remember",
+            arguments={
+                "memory_type": "preference",
+                "key": "response_style",
+                "value": "concise",
+            },
+        )

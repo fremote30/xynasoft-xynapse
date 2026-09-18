@@ -75,6 +75,15 @@ class XynAssistClient:
         "X-XynAssist-Service-Token"
     )
 
+    ACTION_CONFIRMED_HEADER = (
+        "X-XynAssist-Action-Confirmed"
+    )
+
+    MEMORY_ACTION_EXECUTE_PATH = (
+        "/api/v1/integrations/"
+        "xynafaith/memory-actions/execute"
+    )
+
     def __init__(
         self,
         *,
@@ -194,6 +203,7 @@ class XynAssistClient:
         *,
         external_user_id: str | None = None,
         payload: dict[str, Any] | None = None,
+        trusted_action_confirmed: bool = False,
     ) -> Any:
         """
         Execute one trusted XynAssist JSON request.
@@ -202,6 +212,11 @@ class XynAssistClient:
         headers = self._trusted_headers(
             external_user_id=external_user_id,
         )
+
+        if trusted_action_confirmed is True:
+            headers[
+                self.ACTION_CONFIRMED_HEADER
+            ] = "true"
 
         url = f"{self.base_url}{path}"
 
@@ -397,6 +412,47 @@ class XynAssistClient:
             raise XynAssistResponseError(
                 "XynAssist returned an invalid "
                 "response shape"
+            )
+
+        return data
+
+
+    async def execute_memory_action(
+        self,
+        *,
+        external_user_id: str,
+        request_id: str,
+        action_name: str,
+        arguments: dict[str, Any],
+        trusted_confirmed: bool = False,
+    ) -> dict[str, Any]:
+        """
+        Execute one XynAssist-owned memory action.
+
+        User identity and any confirmation assertion originate from
+        trusted XynaFaith server-side state, never model arguments.
+        """
+
+        payload = {
+            "request_id": request_id,
+            "action_name": action_name,
+            "arguments": arguments,
+        }
+
+        data = await self._request_json(
+            "POST",
+            self.MEMORY_ACTION_EXECUTE_PATH,
+            external_user_id=external_user_id,
+            payload=payload,
+            trusted_action_confirmed=(
+                trusted_confirmed is True
+            ),
+        )
+
+        if not isinstance(data, dict):
+            raise XynAssistResponseError(
+                "XynAssist returned an invalid "
+                "memory action response shape"
             )
 
         return data
