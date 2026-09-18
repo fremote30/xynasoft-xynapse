@@ -128,6 +128,11 @@ def authorized_client(monkeypatch):
         "get_pending_sermon_delete",
         Mock(return_value=None),
     )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_memory_forget",
+        Mock(return_value=None),
+    )
 
     with TestClient(app) as client:
         yield client

@@ -33,6 +33,8 @@ from api.services.conversation_pending_actions import (
 from api.services.conversation_pending_memory_actions import (
     ConversationPendingMemoryActionError,
     MEMORY_FORGET_ACTION,
+    consume_pending_memory_forget,
+    get_pending_memory_forget,
     record_pending_memory_forget,
 )
 from api.services.ai_usage_metering import (
@@ -378,6 +380,20 @@ async def execute_conversation_turn(
                 SERMON_DELETE_ACTION
             )
 
+    pending_memory = get_pending_memory_forget(
+        db=db,
+        user_id=current_user.id,
+        conversation_id=conversation_id,
+    )
+
+    if pending_memory is not None:
+        if trusted_context is None:
+            trusted_context = {}
+
+        trusted_context["pending_memory_action"] = (
+            MEMORY_FORGET_ACTION
+        )
+
     request_id = str(payload.request_id)
 
     # Reserve quota and commit it before the expensive external
@@ -574,6 +590,78 @@ async def execute_conversation_turn(
             result["action"] = executed_action
             return result
 
+        if prompt is None:
+            if pending_memory is None:
+                raise HTTPException(
+                    status_code=422,
+                    detail=(
+                        "memory.forget requires trusted "
+                        "pending confirmation"
+                    ),
+                )
+
+            if (
+                memory_arguments["memory_type"]
+                != pending_memory.memory_type
+                or memory_arguments["key"]
+                != pending_memory.memory_key
+            ):
+                raise HTTPException(
+                    status_code=502,
+                    detail=(
+                        "Conversation memory confirmation "
+                        "does not match pending action"
+                    ),
+                )
+
+            pending_arguments = {
+                "memory_type": pending_memory.memory_type,
+                "key": pending_memory.memory_key,
+            }
+
+            try:
+                executed_action = (
+                    await XynAssistClient()
+                    .execute_memory_action(
+                        external_user_id=str(
+                            current_user.id
+                        ),
+                        request_id=(
+                            pending_memory.action_request_id
+                        ),
+                        action_name=MEMORY_FORGET_ACTION,
+                        arguments=pending_arguments,
+                        trusted_confirmed=True,
+                    )
+                )
+
+                consume_pending_memory_forget(
+                    db=db,
+                    pending=pending_memory,
+                )
+                db.commit()
+
+            except XynAssistError as exc:
+                db.rollback()
+
+                raise conversation_service_unavailable(
+                    exc
+                ) from exc
+
+            except Exception as exc:
+                db.rollback()
+
+                raise HTTPException(
+                    status_code=500,
+                    detail=(
+                        "Conversation memory action could "
+                        "not be completed"
+                    ),
+                ) from exc
+
+            result["action"] = executed_action
+            return result
+
         if (
             not isinstance(prompt, str)
             or not prompt.strip()
@@ -586,7 +674,26 @@ async def execute_conversation_turn(
                 ),
             )
 
-        action_request_id = str(uuid4())
+        normalized_source_message_id = (
+            source_message_id.strip()
+        )
+
+        same_pending_proposal = (
+            pending_memory is not None
+            and pending_memory.memory_type
+            == memory_arguments["memory_type"]
+            and pending_memory.memory_key
+            == memory_arguments["key"]
+            and pending_memory.source_message_id
+            == normalized_source_message_id
+        )
+
+        if same_pending_proposal:
+            action_request_id = (
+                pending_memory.action_request_id
+            )
+        else:
+            action_request_id = str(uuid4())
 
         try:
             record_pending_memory_forget(
@@ -597,7 +704,9 @@ async def execute_conversation_turn(
                     "memory_type"
                 ],
                 memory_key=memory_arguments["key"],
-                source_message_id=source_message_id,
+                source_message_id=(
+                    normalized_source_message_id
+                ),
                 action_request_id=action_request_id,
             )
             db.commit()
