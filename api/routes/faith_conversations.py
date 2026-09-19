@@ -215,6 +215,34 @@ class ConversationTurnCreate(BaseModel):
     )
 
 
+def _validated_confirmation_action_name(
+    confirmation: Any,
+) -> str | None:
+    """
+    Validate the targetless confirmation signal returned by XynAssist.
+
+    Confirmation carries only an action type. XynaFaith resolves all
+    destructive target and execution identity state from its own
+    durable pending record.
+    """
+
+    if confirmation is None:
+        return None
+
+    if not isinstance(confirmation, dict):
+        raise ValueError("Invalid conversation confirmation")
+
+    if set(confirmation) != {"action_name"}:
+        raise ValueError("Invalid conversation confirmation")
+
+    action_name = confirmation.get("action_name")
+
+    if action_name != MEMORY_FORGET_ACTION:
+        raise ValueError("Invalid conversation confirmation")
+
+    return action_name
+
+
 def conversation_service_unavailable(
     exc: XynAssistError,
 ) -> HTTPException:
@@ -498,6 +526,97 @@ async def execute_conversation_turn(
         raise conversation_usage_unavailable(
             exc
         ) from exc
+
+    confirmation = result.get(
+        "confirmation"
+    )
+
+    try:
+        confirmation_action_name = (
+            _validated_confirmation_action_name(
+                confirmation
+            )
+        )
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=(
+                "Conversation service returned "
+                "an invalid confirmation"
+            ),
+        ) from exc
+
+    if confirmation_action_name is not None:
+        # Re-resolve server-owned pending state after the external
+        # AI turn. Never authorize a destructive action solely from
+        # state observed before the remote call.
+        confirmed_pending_memory = (
+            get_pending_memory_forget(
+                db=db,
+                user_id=current_user.id,
+                conversation_id=conversation_id,
+            )
+        )
+
+        if confirmed_pending_memory is None:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "memory.forget requires trusted "
+                    "pending confirmation"
+                ),
+            )
+
+        pending_arguments = {
+            "memory_type": (
+                confirmed_pending_memory.memory_type
+            ),
+            "key": confirmed_pending_memory.memory_key,
+        }
+
+        try:
+            executed_action = (
+                await XynAssistClient()
+                .execute_memory_action(
+                    external_user_id=str(
+                        current_user.id
+                    ),
+                    request_id=(
+                        confirmed_pending_memory
+                        .action_request_id
+                    ),
+                    action_name=MEMORY_FORGET_ACTION,
+                    arguments=pending_arguments,
+                    trusted_confirmed=True,
+                )
+            )
+
+            consume_pending_memory_forget(
+                db=db,
+                pending=confirmed_pending_memory,
+            )
+            db.commit()
+
+        except XynAssistError as exc:
+            db.rollback()
+
+            raise conversation_service_unavailable(
+                exc
+            ) from exc
+
+        except Exception as exc:
+            db.rollback()
+
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Conversation memory action could "
+                    "not be completed"
+                ),
+            ) from exc
+
+        result["action"] = executed_action
+        return result
 
     action = result.get(
         "action"

@@ -944,3 +944,317 @@ def test_memory_forget_new_proposal_replaces_action_id(
         != existing_action_request_id
     )
     assert kwargs["source_message_id"] == SOURCE_MESSAGE_ID
+
+
+def test_structured_memory_forget_confirmation_uses_pending_target(
+    monkeypatch,
+):
+    action_request_id = (
+        "12121212-3434-5656-7878-909090909090"
+    )
+    pending = _pending_memory(
+        memory_type="preference",
+        memory_key="sermon_tone",
+        action_request_id=action_request_id,
+    )
+
+    turn_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": SOURCE_MESSAGE_ID,
+        "confirmation": {
+            "action_name": "memory.forget",
+        },
+    }
+
+    executed_response = {
+        "name": "memory.forget",
+        "status": "completed",
+        "result": {},
+    }
+
+    get_pending = Mock(return_value=pending)
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_memory_forget",
+        get_pending,
+    )
+
+    consume_pending = Mock()
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "consume_pending_memory_forget",
+        consume_pending,
+    )
+
+    client, db, calls = _authorized_client(
+        monkeypatch,
+        turn_response=turn_response,
+        execute_memory_response=executed_response,
+    )
+
+    try:
+        response = _post_turn(client)
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+
+    # Once before the AI call for the trusted marker and once after
+    # the AI call before destructive execution.
+    assert get_pending.call_count == 2
+
+    assert len(calls.calls) == 1
+    call = calls.calls[0]
+
+    assert call["request_id"] == action_request_id
+    assert call["action_name"] == "memory.forget"
+    assert call["arguments"] == {
+        "memory_type": "preference",
+        "key": "sermon_tone",
+    }
+    assert call["trusted_confirmed"] is True
+
+    consume_pending.assert_called_once_with(
+        db=db,
+        pending=pending,
+    )
+    db.commit.assert_called_once()
+
+    assert response.json()["action"] == executed_response
+
+
+def test_structured_memory_forget_confirmation_requires_pending_state(
+    monkeypatch,
+):
+    turn_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": SOURCE_MESSAGE_ID,
+        "confirmation": {
+            "action_name": "memory.forget",
+        },
+    }
+
+    get_pending = Mock(side_effect=[_pending_memory(), None])
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_memory_forget",
+        get_pending,
+    )
+
+    client, db, calls = _authorized_client(
+        monkeypatch,
+        turn_response=turn_response,
+    )
+
+    try:
+        response = _post_turn(client)
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 422
+    assert get_pending.call_count == 2
+    assert calls.calls == []
+    db.commit.assert_not_called()
+
+
+def test_structured_confirmation_rejects_server_owned_fields(
+    monkeypatch,
+):
+    pending = _pending_memory()
+
+    turn_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": SOURCE_MESSAGE_ID,
+        "confirmation": {
+            "action_name": "memory.forget",
+            "action_request_id": "attacker-controlled",
+        },
+    }
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_memory_forget",
+        Mock(return_value=pending),
+    )
+
+    client, db, calls = _authorized_client(
+        monkeypatch,
+        turn_response=turn_response,
+    )
+
+    try:
+        response = _post_turn(client)
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 502
+    assert calls.calls == []
+    db.commit.assert_not_called()
+
+
+def test_structured_confirmation_rejects_unknown_action(
+    monkeypatch,
+):
+    pending = _pending_memory()
+
+    turn_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": SOURCE_MESSAGE_ID,
+        "confirmation": {
+            "action_name": "memory.remember",
+        },
+    }
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_memory_forget",
+        Mock(return_value=pending),
+    )
+
+    client, db, calls = _authorized_client(
+        monkeypatch,
+        turn_response=turn_response,
+    )
+
+    try:
+        response = _post_turn(client)
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 502
+    assert calls.calls == []
+    db.commit.assert_not_called()
+
+
+
+def test_structured_memory_forget_remote_failure_preserves_pending(
+    monkeypatch,
+):
+    from api.services.xynassist_client import XynAssistError
+
+    pending = _pending_memory()
+
+    turn_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": SOURCE_MESSAGE_ID,
+        "confirmation": {
+            "action_name": "memory.forget",
+        },
+    }
+
+    class FailingXynAssistClient:
+        async def execute_conversation_turn(
+            self,
+            **kwargs,
+        ):
+            return turn_response
+
+        async def execute_memory_action(
+            self,
+            **kwargs,
+        ):
+            raise XynAssistError("remote failure")
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_memory_forget",
+        Mock(return_value=pending),
+    )
+
+    consume_pending = Mock()
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "consume_pending_memory_forget",
+        consume_pending,
+    )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations.XynAssistClient",
+        FailingXynAssistClient,
+    )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "reserve_conversation_turn",
+        Mock(),
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "consume_conversation_turn",
+        Mock(),
+    )
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "XYNASSIST_ENABLED",
+        True,
+    )
+
+    db = Mock()
+    user = Mock(spec=User)
+    user.id = 123
+
+    app.dependency_overrides[get_current_user] = lambda: user
+    app.dependency_overrides[get_db] = lambda: db
+
+    client = TestClient(app)
+
+    try:
+        response = _post_turn(client)
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 503
+    consume_pending.assert_not_called()
+    db.rollback.assert_called_once()
+    db.commit.assert_not_called()
+
+
+def test_structured_memory_forget_local_consume_failure_preserves_pending(
+    monkeypatch,
+):
+    pending = _pending_memory()
+
+    turn_response = {
+        "conversation_id": CONVERSATION_ID,
+        "user_message_id": SOURCE_MESSAGE_ID,
+        "confirmation": {
+            "action_name": "memory.forget",
+        },
+    }
+
+    def fail_consume(**kwargs):
+        raise RuntimeError("local failure")
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "get_pending_memory_forget",
+        Mock(return_value=pending),
+    )
+
+    monkeypatch.setattr(
+        "api.routes.faith_conversations."
+        "consume_pending_memory_forget",
+        fail_consume,
+    )
+
+    client, db, calls = _authorized_client(
+        monkeypatch,
+        turn_response=turn_response,
+    )
+
+    try:
+        response = _post_turn(client)
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 500
+
+    assert len(calls.calls) == 1
+    assert (
+        calls.calls[0]["request_id"]
+        == pending.action_request_id
+    )
+    assert calls.calls[0]["trusted_confirmed"] is True
+
+    db.rollback.assert_called_once()
+    db.commit.assert_not_called()

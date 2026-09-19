@@ -208,6 +208,7 @@ def execute_conversation_turn(
             skill=engine_result.skill,
             user_message_id=user_message.id,
             action=engine_result.action,
+            confirmation=engine_result.confirmation,
             prompt=engine_result.prompt,
         ).model_dump(
             mode="json",

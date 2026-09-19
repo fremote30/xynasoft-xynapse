@@ -16,7 +16,13 @@ from xynassist_service.ai.registry import get_model_provider
 from xynassist_service.services.context_assembly import (
     XynivaContextBundle,
 )
-from xynassist_service.xyniva.policy import XYNIVA_SYSTEM_POLICY
+from xynassist_service.xyniva.policy import (
+    XYNIVA_STRUCTURED_OUTPUT_POLICY,
+    XYNIVA_SYSTEM_POLICY,
+)
+from xynassist_service.xyniva.structured_output import (
+    parse_xyniva_structured_output,
+)
 
 
 @dataclass(frozen=True)
@@ -24,6 +30,7 @@ class XynivaResult:
     content: str
     skill: str
     action: dict[str, Any] | None = None
+    confirmation: dict[str, str] | None = None
     prompt: str | None = None
     provider: str | None = None
     model: str | None = None
@@ -47,6 +54,15 @@ def _context_instruction(
 
         if isinstance(value, str) and value.strip():
             allowed[key] = value.strip()
+
+    pending_memory_action = context.get(
+        "pending_memory_action"
+    )
+
+    if pending_memory_action == "memory.forget":
+        allowed["pending_memory_action"] = (
+            "memory.forget"
+        )
 
     if not allowed:
         return None
@@ -110,7 +126,11 @@ def execute_xyniva_turn(
         ModelMessage(
             role="system",
             content=XYNIVA_SYSTEM_POLICY,
-        )
+        ),
+        ModelMessage(
+            role="system",
+            content=XYNIVA_STRUCTURED_OUTPUT_POLICY,
+        ),
     ]
 
     trusted_context = (
@@ -174,9 +194,44 @@ def execute_xyniva_turn(
             "Model provider returned an empty response"
         )
 
+    structured = parse_xyniva_structured_output(
+        response_content
+    )
+
+    if structured.kind == "response":
+        return XynivaResult(
+            content=structured.content or "",
+            skill="conversation.respond",
+            provider=response.provider,
+            model=response.model,
+        )
+
+    if structured.kind == "action":
+        assert structured.action is not None
+
+        return XynivaResult(
+            content=structured.content or "",
+            skill=structured.action.name,
+            action={
+                "name": structured.action.name,
+                "arguments": structured.action.arguments,
+            },
+            prompt=structured.prompt,
+            provider=response.provider,
+            model=response.model,
+        )
+
+    assert structured.kind == "confirmation"
+    assert structured.confirmation is not None
+
     return XynivaResult(
-        content=response_content,
-        skill="conversation.respond",
+        content=structured.content or "",
+        skill="conversation.confirm",
+        confirmation={
+            "action_name": (
+                structured.confirmation.action_name
+            ),
+        },
         provider=response.provider,
         model=response.model,
     )

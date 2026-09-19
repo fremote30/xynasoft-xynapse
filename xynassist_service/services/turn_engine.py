@@ -27,6 +27,7 @@ class TurnEngineResult:
     content: str
     skill: str | None = None
     action: dict[str, Any] | None = None
+    confirmation: dict[str, str] | None = None
     prompt: str | None = None
 
 
@@ -56,5 +57,6 @@ def execute_turn_engine(
         content=result.content,
         skill=result.skill,
         action=result.action,
+        confirmation=result.confirmation,
         prompt=result.prompt,
     )

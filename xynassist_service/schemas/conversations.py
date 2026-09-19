@@ -143,6 +143,22 @@ class ConversationAction(BaseModel):
         return value
 
 
+class ConversationConfirmation(BaseModel):
+    """
+    Targetless confirmation signal returned to XynaFaith.
+
+    The receiving product binds this signal to its durable
+    pending action. XynAssist never supplies the pending target,
+    request id, or trusted confirmation state here.
+    """
+
+    action_name: Literal["memory.forget"]
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+
+
 class ConversationTurnResponse(BaseModel):
     conversation: ConversationDetailResponse
     user_message: MessageResponse
@@ -152,4 +168,5 @@ class ConversationTurnResponse(BaseModel):
     # Compatibility fields used by XynaFaith action handling.
     user_message_id: str | None = None
     action: ConversationAction | None = None
+    confirmation: ConversationConfirmation | None = None
     prompt: str | None = None

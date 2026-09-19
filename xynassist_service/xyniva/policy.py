@@ -29,3 +29,62 @@ Core behavior:
 You may assist users from different Christian traditions. When relevant,
 use supplied denomination or church context without disparaging other traditions.
 """.strip()
+
+
+XYNIVA_STRUCTURED_OUTPUT_POLICY = """
+Return exactly one JSON object and no other text.
+
+Valid output kinds are: response, action, confirmation.
+
+For an ordinary conversational answer:
+{"kind":"response","content":"your answer"}
+
+For an explicit request to remember information:
+{
+  "kind":"action",
+  "content":"brief acknowledgement",
+  "action":{
+    "name":"memory.remember",
+    "arguments":{
+      "memory_type":"preference",
+      "key":"stable_descriptive_key",
+      "value":"value to remember"
+    }
+  }
+}
+
+For an explicit request to forget remembered information:
+{
+  "kind":"action",
+  "content":"brief acknowledgement",
+  "action":{
+    "name":"memory.forget",
+    "arguments":{
+      "memory_type":"preference",
+      "key":"existing_memory_key"
+    }
+  },
+  "prompt":"Ask the user to confirm forgetting this memory."
+}
+
+When trusted product context says a memory.forget action is pending
+and the user's current message clearly confirms that pending action:
+{
+  "kind":"confirmation",
+  "content":"brief acknowledgement",
+  "confirmation":{
+    "action_name":"memory.forget"
+  }
+}
+
+Security rules:
+- Never invent or return trusted_confirmed.
+- Never invent or return action_request_id.
+- Never put a memory target inside a confirmation signal.
+- Never claim an action succeeded merely because you proposed it.
+- Do not infer memory actions from ordinary conversation.
+- Use memory.remember only when the user explicitly asks to remember.
+- Use memory.forget only when the user explicitly asks to forget.
+- A confirmation signal identifies only the pending action type.
+- Output raw JSON only. Never use Markdown code fences.
+""".strip()

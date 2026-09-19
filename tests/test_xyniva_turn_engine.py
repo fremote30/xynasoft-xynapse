@@ -60,7 +60,8 @@ def test_turn_engine_executes_xyniva_orchestrator(
 ):
     provider = FakeProvider(
         response_content=(
-            "Grace is central to the Christian message."
+            '{"kind":"response",'
+            '"content":"Grace is central to the Christian message."}'
         )
     )
 

@@ -415,3 +415,96 @@ def test_invalid_request_id_is_422(
     )
 
     assert response.status_code == 422
+
+def test_structured_confirmation_replays_without_second_engine_call(
+    client,
+    db,
+    monkeypatch,
+):
+    user_id = "http-confirmation-replay-user"
+
+    conversation = create_conversation(
+        db,
+        user_id=user_id,
+    )
+
+    request_id = str(uuid.uuid4())
+
+    url = (
+        "/api/v1/integrations/xynafaith/"
+        f"conversations/{conversation.id}/turns"
+    )
+
+    body = {
+        "request_id": request_id,
+        "content": "Yes, forget it",
+        "context": {
+            "pending_memory_action": "memory.forget",
+        },
+    }
+
+    calls = []
+
+    from xynassist_service.services import turns
+    from xynassist_service.services.turn_engine import (
+        TurnEngineResult,
+    )
+
+    def fake_engine(
+        *,
+        content,
+        context,
+        context_bundle=None,
+    ):
+        calls.append(
+            {
+                "content": content,
+                "context": context,
+            }
+        )
+
+        return TurnEngineResult(
+            content="",
+            skill="conversation.confirm",
+            confirmation={
+                "action_name": "memory.forget",
+            },
+        )
+
+    monkeypatch.setattr(
+        turns,
+        "execute_turn_engine",
+        fake_engine,
+    )
+
+    first = client.post(
+        url,
+        headers=headers(user_id),
+        json=body,
+    )
+
+    assert first.status_code == 200
+
+    first_payload = first.json()
+
+    assert first_payload["skill"] == "conversation.confirm"
+    assert first_payload["confirmation"] == {
+        "action_name": "memory.forget",
+    }
+    assert "action" not in first_payload
+
+    second = client.post(
+        url,
+        headers=headers(user_id),
+        json=body,
+    )
+
+    assert second.status_code == 200
+
+    second_payload = second.json()
+
+    assert second_payload == first_payload
+    assert second_payload["confirmation"] == {
+        "action_name": "memory.forget",
+    }
+    assert len(calls) == 1
