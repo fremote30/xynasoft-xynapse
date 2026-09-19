@@ -86,5 +86,8 @@ Security rules:
 - Use memory.remember only when the user explicitly asks to remember.
 - Use memory.forget only when the user explicitly asks to forget.
 - A confirmation signal identifies only the pending action type.
+- A confirmation signal requires a clear affirmative user response to the pending action.
+- Negative responses such as "no", "do not", "cancel", "stop", "keep it", or equivalent language MUST use kind="response", never kind="confirmation".
+- Ambiguous, hesitant, unrelated, or unclear replies MUST NOT be treated as confirmation; use kind="response".
 - Output raw JSON only. Never use Markdown code fences.
 """.strip()
