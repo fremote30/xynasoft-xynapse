@@ -84,6 +84,10 @@ class XynAssistClient:
         "xynafaith/memory-actions/execute"
     )
 
+    MINISTRY_EXECUTE_PATH = (
+        "/api/v1/integrations/xynafaith/ministry/execute"
+    )
+
     def __init__(
         self,
         *,
@@ -456,3 +460,46 @@ class XynAssistClient:
             )
 
         return data
+
+    async def execute_ministry_skill(
+        self,
+        *,
+        external_user_id: str,
+        skill: str,
+        payload: dict[str, Any],
+    ) -> dict[str, Any]:
+        """
+        Execute one trusted XynAssist ministry content skill.
+
+        XynaFaith owns authentication, commercial entitlement checks,
+        and usage metering. XynAssist owns typed ministry execution.
+        """
+
+        data = await self._request_json(
+            "POST",
+            self.MINISTRY_EXECUTE_PATH,
+            external_user_id=external_user_id,
+            payload={
+                "skill": skill,
+                "input": payload,
+            },
+        )
+
+        if not isinstance(data, dict):
+            raise XynAssistResponseError(
+                "XynAssist returned an invalid "
+                "ministry response shape"
+            )
+
+        result = data.get("result")
+
+        if (
+            data.get("skill") != skill
+            or not isinstance(result, dict)
+        ):
+            raise XynAssistResponseError(
+                "XynAssist returned an invalid "
+                "ministry response shape"
+            )
+
+        return result

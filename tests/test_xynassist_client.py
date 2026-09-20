@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+
+
 import httpx
 import pytest
 
@@ -1191,5 +1194,92 @@ async def test_memory_action_rejects_non_object_response():
                 "memory_type": "preference",
                 "key": "response_style",
                 "value": "concise",
+            },
+        )
+
+@pytest.mark.anyio
+async def test_execute_ministry_skill_uses_trusted_identity():
+    seen = {}
+
+    async def handler(request: httpx.Request):
+        seen["headers"] = request.headers
+        seen["json"] = json.loads(
+            request.content.decode()
+        )
+
+        return httpx.Response(
+            200,
+            json={
+                "skill": "sermon.generate",
+                "result": {
+                    "title": "Grace",
+                },
+            },
+        )
+
+    transport = httpx.MockTransport(handler)
+
+    client = XynAssistClient(
+        base_url="http://xynassist.test",
+        service_token="trusted-token",
+        transport=transport,
+    )
+
+    result = await client.execute_ministry_skill(
+        external_user_id="user-7",
+        skill="sermon.generate",
+        payload={
+            "input": "Grace",
+        },
+    )
+
+    assert result == {
+        "title": "Grace",
+    }
+
+    assert (
+        seen["headers"][
+            "X-XynAssist-Service-Token"
+        ]
+        == "trusted-token"
+    )
+    assert (
+        seen["headers"][
+            "X-XynAssist-External-User-Id"
+        ]
+        == "user-7"
+    )
+
+    assert seen["json"] == {
+        "skill": "sermon.generate",
+        "input": {
+            "input": "Grace",
+        },
+    }
+
+
+@pytest.mark.anyio
+async def test_execute_ministry_skill_rejects_wrong_skill_response():
+    async def handler(request: httpx.Request):
+        return httpx.Response(
+            200,
+            json={
+                "skill": "biblical.research",
+                "result": {},
+            },
+        )
+
+    client = XynAssistClient(
+        base_url="http://xynassist.test",
+        service_token="trusted-token",
+        transport=httpx.MockTransport(handler),
+    )
+
+    with pytest.raises(XynAssistResponseError):
+        await client.execute_ministry_skill(
+            external_user_id="user-7",
+            skill="sermon.generate",
+            payload={
+                "input": "Grace",
             },
         )

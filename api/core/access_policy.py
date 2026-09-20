@@ -16,6 +16,7 @@ from api.core.access_profiles import (
     ACCESS_PROFILE_FREE_PASTOR,
 )
 from api.core.entitlements import (
+    ENTITLEMENT_BIBLICAL_RESEARCH,
     ENTITLEMENT_BIBLE_STUDY_STUDIO,
     ENTITLEMENT_CONTENT_ENGINE,
     ENTITLEMENT_DEVOTIONAL_STUDIO,
@@ -122,6 +123,11 @@ FREE_PASTOR_GRANTS = tuple(
     ),
     AccessGrant(
         ENTITLEMENT_SERMON_STUDIO,
+        usage_limit=5,
+        usage_period="monthly",
+    ),
+    AccessGrant(
+        ENTITLEMENT_BIBLICAL_RESEARCH,
         usage_limit=5,
         usage_period="monthly",
     ),

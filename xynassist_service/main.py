@@ -22,6 +22,9 @@ from xynassist_service.routes.xynafaith_memories import (
 from xynassist_service.routes.xynafaith_memory_actions import (
     router as xynafaith_memory_actions_router,
 )
+from xynassist_service.routes.xynafaith_ministry import (
+    router as xynafaith_ministry_router,
+)
 
 
 app = FastAPI(
@@ -38,6 +41,9 @@ app.include_router(
 )
 app.include_router(
     xynafaith_memory_actions_router
+)
+app.include_router(
+    xynafaith_ministry_router
 )
 
 
