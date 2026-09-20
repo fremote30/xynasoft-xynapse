@@ -607,6 +607,815 @@ async function generateSermon() {
 }
 
 
+
+// =====================================
+// V2 MINISTRY TOOLS
+// =====================================
+
+const REFINE_INSTRUCTIONS = {
+  deepen:
+    "Deepen the sermon with stronger biblical "
+    + "reasoning, richer explanation, and clearer "
+    + "ministry application while preserving its "
+    + "core message.",
+
+  illustration:
+    "Strengthen the sermon by adding a relevant "
+    + "illustration where it improves understanding. "
+    + "Keep the sermon biblically grounded.",
+
+  simplify:
+    "Simplify the sermon for clarity and accessibility "
+    + "without weakening its biblical substance.",
+
+  scripture:
+    "Strengthen the sermon with relevant supporting "
+    + "scripture. Do not invent quotations or citations."
+};
+
+
+function canonicalSermonForMinistry(
+  sermon
+) {
+
+  if (
+    !sermon ||
+    typeof sermon !== "object"
+  ) {
+    throw new Error(
+      "Generate or open a sermon first"
+    );
+  }
+
+  const mainPoints =
+    Array.isArray(
+      sermon.main_points
+    )
+      ? sermon.main_points
+      : [];
+
+  if (
+    !String(
+      sermon.title || ""
+    ).trim() ||
+    !String(
+      sermon.introduction || ""
+    ).trim() ||
+    mainPoints.length === 0 ||
+    !String(
+      sermon.application || ""
+    ).trim() ||
+    !String(
+      sermon.conclusion || ""
+    ).trim()
+  ) {
+    throw new Error(
+      "The current sermon is not ready for refinement"
+    );
+  }
+
+  return {
+    title:
+      String(
+        sermon.title
+      ).trim(),
+
+    scripture:
+      String(
+        sermon.scripture || ""
+      ).trim(),
+
+    introduction:
+      String(
+        sermon.introduction
+      ).trim(),
+
+    main_points:
+      mainPoints.map(
+        point => ({
+          title:
+            String(
+              point?.title || ""
+            ).trim(),
+
+          content:
+            String(
+              point?.content || ""
+            ).trim()
+        })
+      ),
+
+    application:
+      String(
+        sermon.application
+      ).trim(),
+
+    conclusion:
+      String(
+        sermon.conclusion
+      ).trim()
+  };
+}
+
+
+function currentMinistryContext() {
+
+  return {
+    denomination:
+      $("denomination")
+        ?.value ||
+      window.currentGeneratedSermon
+        ?.denomination ||
+      "general",
+
+    audience:
+      $("audience")
+        ?.value
+        ?.trim() ||
+      window.currentGeneratedSermon
+        ?.audience ||
+      "",
+
+    context:
+      $("context")
+        ?.value
+        ?.trim() ||
+      window.currentGeneratedSermon
+        ?.context ||
+      window.currentGeneratedSermon
+        ?.local_context ||
+      "",
+
+    tone:
+      $("tone")
+        ?.value ||
+      window.currentGeneratedSermon
+        ?.tone ||
+      "balanced"
+  };
+}
+
+
+function setRefineBusy(
+  busy
+) {
+
+  document
+    .querySelectorAll(
+      "[data-refine-action]"
+    )
+    .forEach(button => {
+      button.disabled =
+        Boolean(busy);
+    });
+}
+
+
+async function refine(
+  refineType
+) {
+
+  const ministry =
+    window.XynaFaithMinistry;
+
+  if (
+    !ministry ||
+    typeof ministry.execute !==
+      "function"
+  ) {
+    showToast?.(
+      "Xyniva ministry service is unavailable",
+      "error"
+    );
+
+    return;
+  }
+
+  const instruction =
+    REFINE_INSTRUCTIONS[
+      refineType
+    ];
+
+  if (!instruction) {
+    showToast?.(
+      "Unknown refinement option",
+      "error"
+    );
+
+    return;
+  }
+
+  const existing =
+    window.currentGeneratedSermon;
+
+  if (!existing) {
+    showToast?.(
+      "Generate or open a sermon first",
+      "error"
+    );
+
+    return;
+  }
+
+  const savedId =
+    existing.id ||
+    window.currentSermonId ||
+    null;
+
+  const authorId =
+    existing.author_id ||
+    null;
+
+  const metadata = {
+    input:
+      existing.input ||
+      existing.message ||
+      "",
+
+    message:
+      existing.message ||
+      existing.input ||
+      "",
+
+    duration:
+      existing.duration ||
+      $("duration")
+        ?.value ||
+      "30"
+  };
+
+  try {
+
+    const sermon =
+      canonicalSermonForMinistry(
+        existing
+      );
+
+    const context =
+      currentMinistryContext();
+
+    setRefineBusy(
+      true
+    );
+
+    showToast?.(
+      "✨ Xyniva is refining your sermon...",
+      "success"
+    );
+
+    const execution =
+      await ministry.execute(
+        "sermon.refine",
+        {
+          sermon,
+          instruction,
+
+          denomination:
+            context.denomination,
+
+          audience:
+            context.audience,
+
+          context:
+            context.context,
+
+          tone:
+            context.tone
+        }
+      );
+
+    const result =
+      execution?.result;
+
+    if (
+      !result ||
+      typeof result !== "object"
+    ) {
+      throw new Error(
+        "Invalid sermon refinement response"
+      );
+    }
+
+    const refined = {
+      ...result,
+
+      ...metadata,
+
+      denomination:
+        context.denomination,
+
+      audience:
+        context.audience,
+
+      context:
+        context.context,
+
+      local_context:
+        context.context,
+
+      tone:
+        context.tone
+    };
+
+    if (savedId) {
+      refined.id =
+        Number(savedId);
+    }
+
+    if (authorId) {
+      refined.author_id =
+        Number(authorId);
+    }
+
+    window.currentGeneratedSermon =
+      refined;
+
+    window.currentSermonId =
+      savedId
+        ? Number(savedId)
+        : null;
+
+    const draftKey =
+      getLatestSermonKey();
+
+    if (draftKey) {
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify(
+          refined
+        )
+      );
+    }
+
+    if (
+      typeof window.renderCurrentSermon ===
+        "function"
+    ) {
+      window.renderCurrentSermon(
+        refined,
+        false
+      );
+    } else {
+      throw new Error(
+        "Sermon renderer is unavailable"
+      );
+    }
+
+    showToast?.(
+      savedId
+        ? (
+            "✨ Sermon refined. "
+            + "Use Update Sermon to save changes."
+          )
+        : "✨ Sermon refined with Xyniva",
+      "success"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Refine sermon error:",
+      err
+    );
+
+    showToast?.(
+      err?.uncertain
+        ? (
+            "Refinement status could not be "
+            + "confirmed. Your sermon was not changed."
+          )
+        : (
+            err?.message ||
+            "Failed to refine sermon"
+          ),
+      "error"
+    );
+
+  } finally {
+
+    setRefineBusy(
+      false
+    );
+  }
+}
+
+
+function escapeMinistryHTML(
+  value
+) {
+
+  return String(
+    value ?? ""
+  )
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+}
+
+
+function renderResearchSections(
+  title,
+  sections
+) {
+
+  if (
+    !Array.isArray(sections) ||
+    sections.length === 0
+  ) {
+    return "";
+  }
+
+  const items =
+    sections
+      .map(
+        section => `
+          <div
+            style="
+              padding:12px;
+              border:1px solid #E5E7EB;
+              border-radius:12px;
+            "
+          >
+            <strong>
+              ${
+                escapeMinistryHTML(
+                  section?.heading
+                )
+              }
+            </strong>
+
+            <p
+              style="
+                margin-top:8px;
+                line-height:1.7;
+                white-space:pre-wrap;
+              "
+            >
+              ${
+                escapeMinistryHTML(
+                  section?.content
+                )
+              }
+            </p>
+          </div>
+        `
+      )
+      .join("");
+
+  return `
+    <section>
+      <h4
+        style="
+          margin-bottom:10px;
+        "
+      >
+        ${
+          escapeMinistryHTML(
+            title
+          )
+        }
+      </h4>
+
+      <div
+        style="
+          display:grid;
+          gap:10px;
+        "
+      >
+        ${items}
+      </div>
+    </section>
+  `;
+}
+
+
+function renderBiblicalResearch(
+  research
+) {
+
+  const output =
+    $("biblicalResearchOutput");
+
+  if (!output) {
+    return;
+  }
+
+  const cautions =
+    Array.isArray(
+      research?.cautions
+    )
+      ? research.cautions
+      : [];
+
+  const cautionHTML =
+    cautions.length
+      ? `
+        <section>
+          <h4>
+            ⚠️ Interpretive Cautions
+          </h4>
+
+          <ul
+            style="
+              margin-top:10px;
+              padding-left:20px;
+              line-height:1.7;
+            "
+          >
+            ${
+              cautions
+                .map(
+                  item => `
+                    <li>
+                      ${
+                        escapeMinistryHTML(
+                          item
+                        )
+                      }
+                    </li>
+                  `
+                )
+                .join("")
+            }
+          </ul>
+        </section>
+      `
+      : "";
+
+  output.innerHTML = `
+    <section>
+      <h3>
+        ${
+          escapeMinistryHTML(
+            research?.title ||
+            "Biblical Research"
+          )
+        }
+      </h3>
+
+      ${
+        research?.scripture
+          ? `
+            <p
+              style="
+                margin-top:6px;
+                color:#64748B;
+              "
+            >
+              ${
+                escapeMinistryHTML(
+                  research.scripture
+                )
+              }
+            </p>
+          `
+          : ""
+      }
+
+      <p
+        style="
+          margin-top:10px;
+          line-height:1.7;
+        "
+      >
+        ${
+          escapeMinistryHTML(
+            research?.summary || ""
+          )
+        }
+      </p>
+    </section>
+
+    ${
+      renderResearchSections(
+        "Textual Observations",
+        research?.observations
+      )
+    }
+
+    ${
+      renderResearchSections(
+        "Interpretation",
+        research?.interpretation
+      )
+    }
+
+    ${
+      renderResearchSections(
+        "Theological Perspectives",
+        research?.theological_perspectives
+      )
+    }
+
+    ${
+      renderResearchSections(
+        "Ministry Application",
+        research?.ministry_application
+      )
+    }
+
+    ${cautionHTML}
+  `;
+
+  output.hidden =
+    false;
+
+  output.style.display =
+    "grid";
+}
+
+
+async function researchCurrentSermon() {
+
+  const ministry =
+    window.XynaFaithMinistry;
+
+  const button =
+    $("biblicalResearchBtn");
+
+  const status =
+    $("biblicalResearchStatus");
+
+  if (
+    !ministry ||
+    typeof ministry.execute !==
+      "function"
+  ) {
+    showToast?.(
+      "Xyniva ministry service is unavailable",
+      "error"
+    );
+
+    return;
+  }
+
+  const current =
+    window.currentGeneratedSermon ||
+    {};
+
+  const scripture =
+    $("bibleInput")
+      ?.value
+      ?.trim() ||
+    current.scripture ||
+    "";
+
+  const topic =
+    $("userInput")
+      ?.value
+      ?.trim() ||
+    current.input ||
+    current.message ||
+    current.title ||
+    "";
+
+  const question =
+    $("biblicalResearchQuestion")
+      ?.value
+      ?.trim() ||
+    "";
+
+  if (
+    !scripture &&
+    !topic
+  ) {
+    showToast?.(
+      "Enter a scripture passage or sermon topic first",
+      "error"
+    );
+
+    return;
+  }
+
+  const context =
+    currentMinistryContext();
+
+  try {
+
+    if (button) {
+      button.disabled =
+        true;
+    }
+
+    if (status) {
+      status.hidden =
+        false;
+
+      status.textContent =
+        "Xyniva is researching the biblical context…";
+    }
+
+    const execution =
+      await ministry.execute(
+        "biblical.research",
+        {
+          scripture,
+          topic,
+          question,
+
+          denomination:
+            context.denomination,
+
+          audience:
+            context.audience,
+
+          context:
+            context.context
+        }
+      );
+
+    const result =
+      execution?.result;
+
+    if (
+      !result ||
+      typeof result !== "object"
+    ) {
+      throw new Error(
+        "Invalid biblical research response"
+      );
+    }
+
+    renderBiblicalResearch(
+      result
+    );
+
+    if (status) {
+      status.textContent =
+        "Research complete";
+    }
+
+    showToast?.(
+      "📚 Biblical research ready",
+      "success"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Biblical research error:",
+      err
+    );
+
+    if (status) {
+      status.hidden =
+        false;
+
+      status.textContent =
+        err?.uncertain
+          ? (
+              "Research status could not "
+              + "be confirmed."
+            )
+          : (
+              err?.message ||
+              "Biblical research failed"
+            );
+    }
+
+    showToast?.(
+      err?.uncertain
+        ? "Research status could not be confirmed"
+        : (
+            err?.message ||
+            "Biblical research failed"
+          ),
+      "error"
+    );
+
+  } finally {
+
+    if (button) {
+      button.disabled =
+        false;
+    }
+  }
+}
+
+
+window.refine =
+  refine;
+
+window.researchCurrentSermon =
+  researchCurrentSermon;
+
 // =====================================
 // RENDER CURRENT SERMON
 // =====================================
