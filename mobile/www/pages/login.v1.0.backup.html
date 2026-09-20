@@ -1,0 +1,95 @@
+<main class="auth-page">
+
+  <!-- CONTENT -->
+  <div class="auth-wrapper">
+
+    <div class="auth-card">
+
+      <h2>Log in</h2>
+      <p class="auth-sub">Access your XynaFaith dashboard</p>
+
+      <form id="loginForm">
+
+        <!-- EMAIL -->
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Enter password" required>
+            <span class="toggle">👁</span>
+          </div>
+        </div>
+
+        <!-- ERROR MESSAGE -->
+        <p id="loginError" class="auth-error"></p>
+
+        <!-- BUTTON -->
+        <button type="submit" class="btn-primary full">
+          Log in
+        </button>
+
+      </form>
+
+      <!-- LINKS -->
+      <div class="auth-links">
+        <a href="#">Forgot email or password?</a>
+      </div>
+
+      <!-- SPA LINK -->
+      <div class="auth-footer">
+        New to XynaFaith? 
+        <a href="#" onclick="navigate('register')">Create an account</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- =========================
+     LOGIN LOGIC (SAFE)
+========================= -->
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const errorEl = document.getElementById("loginError");
+  errorEl.style.display = "none";
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const res = await fetch("/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.detail || "Login failed");
+    }
+
+    // ✅ STORE TOKEN
+    localStorage.setItem("access_token", data.access_token);
+
+    // ✅ REDIRECT
+    navigate("dashboard");
+
+  } catch (err) {
+    errorEl.innerText = err.message;
+    errorEl.style.display = "block";
+  }
+});
+</script>

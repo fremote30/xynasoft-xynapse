@@ -14,7 +14,7 @@ body {
 
   background: 
     linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.95)),
-    url('assets/hero.webp');
+    url('/faith/assets/hero.webp');
 
   background-size: cover;
   background-position: center;
@@ -239,7 +239,7 @@ body {
 
   background:
     linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.95)),
-    url('assets/hero.webp');
+    url('/faith/assets/hero.webp');
 
   background-size: cover;
   background-position: center;

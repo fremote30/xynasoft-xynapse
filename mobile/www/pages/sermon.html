@@ -16,7 +16,7 @@
 
   <link
     rel="stylesheet"
-    href="styles.css"
+    href="/faith/styles.css"
   >
 
 <style>
@@ -1194,6 +1194,78 @@ textarea{
 
     </div>
 
+    <!-- ===================================== -->
+    <!-- BIBLICAL RESEARCH -->
+    <!-- ===================================== -->
+    <div
+      id="biblicalResearchCard"
+      class="action-card pastor-only"
+    >
+
+      <h3>
+        📚 Biblical Research
+      </h3>
+
+      <p
+        style="
+          color:#64748B;
+          line-height:1.6;
+          margin-bottom:14px;
+        "
+      >
+        Explore the scripture or topic behind
+        the sermon without changing your draft.
+      </p>
+
+      <textarea
+        id="biblicalResearchQuestion"
+        rows="3"
+        maxlength="2000"
+        placeholder="Optional research question…"
+        aria-label="Biblical research question"
+        style="
+          width:100%;
+          padding:12px;
+          border-radius:12px;
+          border:1px solid #D1D5DB;
+          resize:vertical;
+          margin-bottom:12px;
+        "
+      ></textarea>
+
+      <button
+        id="biblicalResearchBtn"
+        type="button"
+        onclick="researchCurrentSermon()"
+      >
+        📖 Research Scripture
+      </button>
+
+      <div
+        id="biblicalResearchStatus"
+        role="status"
+        aria-live="polite"
+        hidden
+        style="
+          margin-top:14px;
+          color:#64748B;
+          line-height:1.6;
+        "
+      ></div>
+
+      <div
+        id="biblicalResearchOutput"
+        aria-live="polite"
+        hidden
+        style="
+          margin-top:16px;
+          display:grid;
+          gap:16px;
+        "
+      ></div>
+
+    </div>
+
     <!-- REFINE -->
     <div class="action-card pastor-only">
 
@@ -1202,25 +1274,25 @@ textarea{
       </h3>
 
       <button
-        onclick="refine('deepen')"
+        onclick="refine('deepen')" data-refine-action="deepen"
       >
         ✨ Make Deeper
       </button>
 
       <button
-        onclick="refine('illustration')"
+        onclick="refine('illustration')" data-refine-action="illustration"
       >
         🔥 Add Illustration
       </button>
 
       <button
-        onclick="refine('simplify')"
+        onclick="refine('simplify')" data-refine-action="simplify"
       >
         🧒 Simplify
       </button>
 
       <button
-        onclick="refine('scripture')"
+        onclick="refine('scripture')" data-refine-action="scripture"
       >
         📖 Add Scripture
       </button>
@@ -1894,7 +1966,7 @@ function activateMultiverseMode(){
   </div>
 
 </div>
-<script src="app.js"></script>
+<script src="/faith/app.js"></script>
 
 </body>
 </html>
