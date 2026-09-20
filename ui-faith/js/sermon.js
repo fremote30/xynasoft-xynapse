@@ -420,51 +420,70 @@ async function generateSermon() {
     );
 
     // =====================================
-    // GENERATE SERMON
+    // GENERATE THROUGH V2 MINISTRY BOUNDARY
     // =====================================
-    const res =
-      await apiFetch(
-        "/api/v1/faith/sermon",
-        {
-          method: "POST",
+    const ministry =
+      window.XynaFaithMinistry;
 
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify(
-            payload
-          )
-        }
-      );
-
-    const data =
-      await res
-        .json()
-        .catch(() => ({}));
-
-    if (!res.ok) {
-      console.error(
-        "Generation API Error:",
-        data
-      );
-
+    if (
+      !ministry ||
+      typeof ministry.execute !==
+        "function"
+    ) {
       throw new Error(
-        data.detail ||
-        data.message ||
-        "Failed to generate sermon"
+        "Xyniva ministry service is unavailable"
       );
     }
 
+    const execution =
+      await ministry.execute(
+        "sermon.generate",
+        payload
+      );
+
+    const result =
+      execution?.result;
+
     if (
-      !data ||
-      typeof data !== "object"
+      !result ||
+      typeof result !== "object"
     ) {
       throw new Error(
         "Invalid sermon response"
       );
     }
+
+    // =====================================
+    // ADAPT STRUCTURED V2 OUTPUT TO THE
+    // EXISTING STUDIO SERMON DOCUMENT
+    // =====================================
+    const data = {
+      ...result,
+
+      input:
+        payload.input,
+
+      message:
+        payload.input,
+
+      denomination:
+        payload.denomination,
+
+      audience:
+        payload.audience,
+
+      context:
+        payload.context,
+
+      local_context:
+        payload.context,
+
+      tone:
+        payload.tone,
+
+      duration:
+        payload.duration
+    };
 
     // =====================================
     // NEW GENERATED SERMON IS UNSAVED
@@ -497,6 +516,10 @@ async function generateSermon() {
       );
     }
 
+    // A new sermon starts a new contextual
+    // Xyniva Studio conversation.
+    window.XynivaStudio?.reset?.();
+
     // =====================================
     // RENDER SERMON
     // =====================================
@@ -527,7 +550,7 @@ async function generateSermon() {
     }
 
     showToast?.(
-      "✨ Sermon generated successfully",
+      "✨ Sermon generated with Xyniva",
       "success"
     );
 
@@ -537,23 +560,34 @@ async function generateSermon() {
       err
     );
 
-    window.currentGeneratedSermon =
-      null;
+    const uncertain =
+      err?.uncertain === true;
 
-    window.currentSermonId =
-      null;
-
+    // Do not destroy the currently open sermon
+    // when a new generation attempt fails.
     output.innerHTML = `
       <div class="error-state">
 
         <h2>
-          Unable to generate sermon
+          ${
+            uncertain
+              ? "Generation status is uncertain"
+              : "Unable to generate sermon"
+          }
         </h2>
 
         <p>
           ${
-            err.message ||
-            "Please try again."
+            uncertain
+              ? (
+                  "Xyniva could not confirm whether "
+                  + "the request completed. "
+                  + "Your existing sermon was not changed."
+                )
+              : (
+                  err.message ||
+                  "Please try again."
+                )
           }
         </p>
 
@@ -561,8 +595,12 @@ async function generateSermon() {
     `;
 
     showToast?.(
-      err.message ||
-      "Failed to generate sermon",
+      uncertain
+        ? "Generation status could not be confirmed"
+        : (
+            err.message ||
+            "Failed to generate sermon"
+          ),
       "error"
     );
   }
