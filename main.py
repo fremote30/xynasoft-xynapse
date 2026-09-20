@@ -81,6 +81,10 @@ from api.routes.faith_conversations import (
     router as faith_conversations_router
 )
 
+from api.routes.faith_ministry import (
+    router as faith_ministry_router
+)
+
 # =========================================
 # For Prayer Wall
 # =========================================
@@ -156,6 +160,12 @@ app.include_router(
     faith_conversations_router,
     prefix="/api/v1/faith",
     tags=["Faith"]
+)
+
+app.include_router(
+    faith_ministry_router,
+    prefix="/api/v1/faith",
+    tags=["Faith Ministry V2"]
 )
 
 print("✅ XynaFaith AI routes loaded")
