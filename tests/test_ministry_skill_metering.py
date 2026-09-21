@@ -6,7 +6,11 @@ import pytest
 
 import api.services.ministry_skill_metering as metering
 from api.core.entitlements import (
+    ENTITLEMENT_BIBLE_STUDY_STUDIO,
     ENTITLEMENT_BIBLICAL_RESEARCH,
+    ENTITLEMENT_CONTENT_ENGINE,
+    ENTITLEMENT_DEVOTIONAL_STUDIO,
+    ENTITLEMENT_SERMON_SERIES,
     ENTITLEMENT_SERMON_STUDIO,
 )
 
@@ -40,6 +44,26 @@ class FakeDB:
             "biblical.research",
             ENTITLEMENT_BIBLICAL_RESEARCH,
             "biblical_research",
+        ),
+        (
+            "content.transform",
+            ENTITLEMENT_CONTENT_ENGINE,
+            "content_generation",
+        ),
+        (
+            "sermon.series.generate",
+            ENTITLEMENT_SERMON_SERIES,
+            "sermon_series_generation",
+        ),
+        (
+            "bible_study.generate",
+            ENTITLEMENT_BIBLE_STUDY_STUDIO,
+            "bible_study_generation",
+        ),
+        (
+            "devotional.generate",
+            ENTITLEMENT_DEVOTIONAL_STUDIO,
+            "devotional_generation",
         ),
     ],
 )

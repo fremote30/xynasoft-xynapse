@@ -17,6 +17,10 @@ MinistrySkillName = Literal[
     "sermon.generate",
     "sermon.refine",
     "biblical.research",
+    "content.transform",
+    "sermon.series.generate",
+    "bible_study.generate",
+    "devotional.generate",
 ]
 
 

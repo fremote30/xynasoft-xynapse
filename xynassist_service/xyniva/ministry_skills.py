@@ -23,6 +23,10 @@ MinistrySkillName = Literal[
     "sermon.generate",
     "sermon.refine",
     "biblical.research",
+    "content.transform",
+    "sermon.series.generate",
+    "bible_study.generate",
+    "devotional.generate",
 ]
 
 
@@ -198,11 +202,256 @@ class BiblicalResearchOutput(BaseModel):
         return normalized
 
 
+
+ContentFormat = Literal[
+    "social_post",
+    "whatsapp_summary",
+    "church_announcement",
+    "discussion_questions",
+    "sermon_recap",
+    "newsletter",
+    "devotional",
+]
+
+
+class ContentTransformInput(BaseModel):
+    """Transform ministry source material into reusable content."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    source_title: str = ""
+    source_scripture: str = ""
+    source_content: str = Field(min_length=1)
+    formats: list[ContentFormat] = Field(
+        min_length=1,
+        max_length=7,
+    )
+    audience: str = ""
+    tone: str = "balanced"
+    denomination: str = "general"
+    context: str = ""
+
+    @field_validator("formats")
+    @classmethod
+    def reject_duplicate_formats(
+        cls,
+        value: list[ContentFormat],
+    ) -> list[ContentFormat]:
+        if len(value) != len(set(value)):
+            raise ValueError(
+                "Content formats must be unique"
+            )
+
+        return value
+
+
+class ContentPiece(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    format: ContentFormat
+    title: str = ""
+    content: str = Field(min_length=1)
+
+
+class ContentTransformOutput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    source_title: str = ""
+    pieces: list[ContentPiece] = Field(min_length=1)
+
+
+class SermonSeriesGenerateInput(BaseModel):
+    """Generate a coherent multi-sermon ministry series."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    topic: str = ""
+    scripture: str = ""
+    purpose: str = ""
+    number_of_sermons: int = Field(
+        default=4,
+        ge=2,
+        le=12,
+    )
+    denomination: str = "general"
+    audience: str = ""
+    context: str = ""
+    tone: str = "balanced"
+
+    @model_validator(mode="after")
+    def require_series_subject(self):
+        if not self.topic and not self.scripture:
+            raise ValueError(
+                "A series topic or scripture is required"
+            )
+
+        return self
+
+
+class SermonSeriesEntry(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    sequence: int = Field(ge=1)
+    title: str = Field(min_length=1)
+    scripture: str = ""
+    theme: str = Field(min_length=1)
+    summary: str = Field(min_length=1)
+    key_points: list[str] = Field(min_length=1)
+
+
+class SermonSeriesOutput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    title: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    sermons: list[SermonSeriesEntry] = Field(
+        min_length=2
+    )
+
+
+class BibleStudyGenerateInput(BaseModel):
+    """Generate a structured Bible study."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    scripture: str = ""
+    topic: str = ""
+    audience: str = ""
+    denomination: str = "general"
+    context: str = ""
+    session_length_minutes: int = Field(
+        default=60,
+        ge=15,
+        le=180,
+    )
+
+    @model_validator(mode="after")
+    def require_study_subject(self):
+        if not self.scripture and not self.topic:
+            raise ValueError(
+                "A Bible study scripture or topic is required"
+            )
+
+        return self
+
+
+class BibleStudySection(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    heading: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+
+
+class BibleStudyOutput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    title: str = Field(min_length=1)
+    scripture: str = ""
+    objective: str = Field(min_length=1)
+    opening: str = Field(min_length=1)
+    sections: list[BibleStudySection] = Field(
+        min_length=1
+    )
+    discussion_questions: list[str] = Field(
+        min_length=1
+    )
+    application: str = Field(min_length=1)
+    closing_prayer_prompt: str = Field(min_length=1)
+
+
+class DevotionalGenerateInput(BaseModel):
+    """Generate a standalone devotional or devotional sequence."""
+
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    topic: str = ""
+    scripture: str = ""
+    audience: str = ""
+    denomination: str = "general"
+    context: str = ""
+    tone: str = "encouraging"
+    days: int = Field(
+        default=1,
+        ge=1,
+        le=31,
+    )
+
+    @model_validator(mode="after")
+    def require_devotional_subject(self):
+        if not self.topic and not self.scripture:
+            raise ValueError(
+                "A devotional topic or scripture is required"
+            )
+
+        return self
+
+
+class DevotionalEntry(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    day: int = Field(ge=1)
+    title: str = Field(min_length=1)
+    scripture: str = ""
+    reflection: str = Field(min_length=1)
+    application: str = Field(min_length=1)
+    prayer: str = Field(min_length=1)
+
+
+class DevotionalOutput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    title: str = Field(min_length=1)
+    entries: list[DevotionalEntry] = Field(
+        min_length=1
+    )
+
+
+
 MINISTRY_SKILLS: frozenset[str] = frozenset(
     {
         "sermon.generate",
         "sermon.refine",
         "biblical.research",
+        "content.transform",
+        "sermon.series.generate",
+        "bible_study.generate",
+        "devotional.generate",
     }
 )
 

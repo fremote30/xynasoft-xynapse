@@ -21,10 +21,18 @@ from xynassist_service.xyniva.ministry_engine import (
     execute_sermon_refine,
 )
 from xynassist_service.xyniva.ministry_skills import (
+    BibleStudyGenerateInput,
+    BibleStudyOutput,
     BiblicalResearchInput,
+    ContentTransformInput,
+    ContentTransformOutput,
+    DevotionalGenerateInput,
+    DevotionalOutput,
     SermonGenerateInput,
     SermonOutput,
     SermonRefineInput,
+    SermonSeriesGenerateInput,
+    SermonSeriesOutput,
 )
 
 
@@ -87,6 +95,101 @@ def research_json(
             ],
             "cautions": [
                 "Do not present interpretation as quotation."
+            ],
+        }
+    )
+
+
+
+def content_transform_json() -> str:
+    return json.dumps(
+        {
+            "source_title": "Grace",
+            "pieces": [
+                {
+                    "format": "social_post",
+                    "title": "Grace",
+                    "content": "A short social post about grace.",
+                },
+                {
+                    "format": "whatsapp_summary",
+                    "title": "Grace Summary",
+                    "content": "A WhatsApp summary about grace.",
+                },
+            ],
+        }
+    )
+
+
+def sermon_series_json(
+    *,
+    count: int = 3,
+) -> str:
+    return json.dumps(
+        {
+            "title": "Living by Grace",
+            "description": "A series about God's grace.",
+            "sermons": [
+                {
+                    "sequence": index,
+                    "title": f"Grace Part {index}",
+                    "scripture": f"Reference {index}",
+                    "theme": f"Grace theme {index}",
+                    "summary": f"Grace summary {index}",
+                    "key_points": [
+                        f"Grace point {index}",
+                    ],
+                }
+                for index in range(1, count + 1)
+            ],
+        }
+    )
+
+
+def bible_study_json(
+    *,
+    scripture: str = "Provider scripture",
+) -> str:
+    return json.dumps(
+        {
+            "title": "Saved by Grace",
+            "scripture": scripture,
+            "objective": "Understand salvation by grace.",
+            "opening": "Introduce the passage.",
+            "sections": [
+                {
+                    "heading": "Observe",
+                    "content": "Observe the argument in the text.",
+                }
+            ],
+            "discussion_questions": [
+                "What does the passage teach about grace?"
+            ],
+            "application": "Respond to grace with faithful living.",
+            "closing_prayer_prompt": (
+                "Invite participants to thank God for grace."
+            ),
+        }
+    )
+
+
+def devotional_json(
+    *,
+    days: int = 3,
+) -> str:
+    return json.dumps(
+        {
+            "title": "Hope Each Day",
+            "entries": [
+                {
+                    "day": day,
+                    "title": f"Hope Day {day}",
+                    "scripture": f"Reference {day}",
+                    "reflection": f"Reflection {day}",
+                    "application": f"Application {day}",
+                    "prayer": f"Suggested prayer {day}",
+                }
+                for day in range(1, days + 1)
             ],
         }
     )
@@ -321,3 +424,222 @@ def test_dispatch_rejects_unknown_skill():
         )
 
     assert provider.requests == []
+
+
+
+def test_dispatches_content_transform_with_exact_formats():
+    provider = FakeProvider(
+        content_transform_json()
+    )
+    register_model_provider(provider)
+
+    result = execute_ministry_skill(
+        skill="content.transform",
+        payload={
+            "source_title": "Grace",
+            "source_content": "A sermon about grace.",
+            "formats": [
+                "social_post",
+                "whatsapp_summary",
+            ],
+        },
+        provider_name="fake",
+    )
+
+    assert isinstance(result, ContentTransformOutput)
+
+    assert [
+        piece.format
+        for piece in result.pieces
+    ] == [
+        "social_post",
+        "whatsapp_summary",
+    ]
+
+    request = provider.requests[0]
+
+    assert request.max_output_tokens == 4000
+    assert (
+        "content.transform"
+        in request.messages[1].content
+    )
+
+
+def test_content_transform_rejects_missing_requested_format():
+    provider = FakeProvider(
+        json.dumps(
+            {
+                "source_title": "Grace",
+                "pieces": [
+                    {
+                        "format": "social_post",
+                        "title": "Grace",
+                        "content": "Social content.",
+                    }
+                ],
+            }
+        )
+    )
+    register_model_provider(provider)
+
+    with pytest.raises(
+        MinistrySkillOutputError,
+        match="unexpected number",
+    ):
+        execute_ministry_skill(
+            skill="content.transform",
+            payload={
+                "source_content": "A sermon about grace.",
+                "formats": [
+                    "social_post",
+                    "whatsapp_summary",
+                ],
+            },
+            provider_name="fake",
+        )
+
+
+def test_dispatches_sermon_series_with_exact_sequence():
+    provider = FakeProvider(
+        sermon_series_json(
+            count=3,
+        )
+    )
+    register_model_provider(provider)
+
+    result = execute_ministry_skill(
+        skill="sermon.series.generate",
+        payload={
+            "topic": "Grace",
+            "number_of_sermons": 3,
+        },
+        provider_name="fake",
+    )
+
+    assert isinstance(result, SermonSeriesOutput)
+    assert len(result.sermons) == 3
+
+    assert [
+        sermon.sequence
+        for sermon in result.sermons
+    ] == [1, 2, 3]
+
+    assert (
+        provider.requests[0].max_output_tokens
+        == 5000
+    )
+
+
+def test_sermon_series_rejects_wrong_count():
+    provider = FakeProvider(
+        sermon_series_json(
+            count=2,
+        )
+    )
+    register_model_provider(provider)
+
+    with pytest.raises(
+        MinistrySkillOutputError,
+        match="unexpected sermon count",
+    ):
+        execute_ministry_skill(
+            skill="sermon.series.generate",
+            payload={
+                "topic": "Grace",
+                "number_of_sermons": 3,
+            },
+            provider_name="fake",
+        )
+
+
+def test_bible_study_preserves_requested_scripture():
+    provider = FakeProvider(
+        bible_study_json()
+    )
+    register_model_provider(provider)
+
+    result = execute_ministry_skill(
+        skill="bible_study.generate",
+        payload={
+            "scripture": "Ephesians 2:8-10",
+            "audience": "young adults",
+        },
+        provider_name="fake",
+    )
+
+    assert isinstance(result, BibleStudyOutput)
+
+    assert (
+        result.scripture
+        == "Ephesians 2:8-10"
+    )
+
+    supplied = json.loads(
+        provider.requests[0]
+        .messages[-1]
+        .content
+    )
+
+    assert (
+        supplied["scripture"]
+        == "Ephesians 2:8-10"
+    )
+
+
+def test_dispatches_devotional_with_exact_day_sequence():
+    provider = FakeProvider(
+        devotional_json(
+            days=3,
+        )
+    )
+    register_model_provider(provider)
+
+    result = execute_ministry_skill(
+        skill="devotional.generate",
+        payload={
+            "topic": "Hope",
+            "days": 3,
+        },
+        provider_name="fake",
+    )
+
+    assert isinstance(result, DevotionalOutput)
+
+    assert [
+        entry.day
+        for entry in result.entries
+    ] == [1, 2, 3]
+
+    assert (
+        provider.requests[0].max_output_tokens
+        == 5000
+    )
+
+
+def test_devotional_rejects_wrong_day_sequence():
+    raw = json.loads(
+        devotional_json(
+            days=3,
+        )
+    )
+
+    raw["entries"][1]["day"] = 3
+    raw["entries"][2]["day"] = 2
+
+    provider = FakeProvider(
+        json.dumps(raw)
+    )
+    register_model_provider(provider)
+
+    with pytest.raises(
+        MinistrySkillOutputError,
+        match="day sequence",
+    ):
+        execute_ministry_skill(
+            skill="devotional.generate",
+            payload={
+                "topic": "Hope",
+                "days": 3,
+            },
+            provider_name="fake",
+        )

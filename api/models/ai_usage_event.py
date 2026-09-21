@@ -59,7 +59,11 @@ class AIUsageEvent(Base):
     # Examples:
     # xyniva_turn
     # sermon_generation
+    # sermon_refinement
     # biblical_research
+    # content_generation
+    # sermon_series_generation
+    # bible_study_generation
     # devotional_generation
     metric = Column(
         String(64),
