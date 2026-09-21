@@ -263,6 +263,19 @@ function createEnvironment({
         hidden: true
       }),
 
+    contentEngineBtn:
+      element(),
+
+    contentEngineStatus:
+      element({
+        hidden: true
+      }),
+
+    contentEngineOutput:
+      element({
+        hidden: true
+      }),
+
     sermonOutput:
       element(),
 
@@ -352,6 +365,38 @@ function createEnvironment({
   };
 
 
+  const contentFormatInputs = [
+    {
+      value: "social_post",
+      checked: true
+    },
+    {
+      value: "whatsapp_summary",
+      checked: true
+    },
+    {
+      value: "church_announcement",
+      checked: false
+    },
+    {
+      value: "discussion_questions",
+      checked: false
+    },
+    {
+      value: "sermon_recap",
+      checked: false
+    },
+    {
+      value: "newsletter",
+      checked: false
+    },
+    {
+      value: "devotional",
+      checked: false
+    }
+  ];
+
+
   const document = {
 
     getElementById(id) {
@@ -370,6 +415,17 @@ function createEnvironment({
         "[data-refine-action]"
       ) {
         return [];
+      }
+
+      if (
+        selector ===
+        "#contentEngineFormats "
+        + 'input[type="checkbox"]:checked'
+      ) {
+        return contentFormatInputs
+          .filter(input =>
+            input.checked
+          );
       }
 
       return [];
@@ -503,7 +559,9 @@ function createEnvironment({
     elements,
     calls,
     originalSermon:
-      current
+      current,
+
+    contentFormatInputs
   };
 }
 
@@ -871,6 +929,353 @@ test(
     assert.match(
       html,
       /&lt;img src=x/
+    );
+  }
+);
+
+
+test(
+  "content transform sends canonical sermon and selected formats without mutating sermon",
+  async () => {
+
+    let capturedInput;
+
+    const env =
+      createEnvironment({
+        ministryExecute:
+          async (
+            skill,
+            input
+          ) => {
+
+            assert.equal(
+              skill,
+              "content.transform"
+            );
+
+            capturedInput =
+              input;
+
+            return {
+              result: {
+                source_title:
+                  "Walking by Faith",
+
+                pieces: [
+                  {
+                    format:
+                      "social_post",
+
+                    title:
+                      "Walk by Faith",
+
+                    content:
+                      "Trust God today."
+                  },
+                  {
+                    format:
+                      "whatsapp_summary",
+
+                    title:
+                      "Sermon Summary",
+
+                    content:
+                      "Faith rests in God's character."
+                  }
+                ]
+              }
+            };
+          }
+      });
+
+    const before =
+      JSON.stringify(
+        env.window
+          .currentGeneratedSermon
+      );
+
+    await env.window
+      .createFromCurrentSermon();
+
+    assert.deepEqual(
+      Array.from(
+        capturedInput.formats
+      ),
+      [
+        "social_post",
+        "whatsapp_summary"
+      ]
+    );
+
+    assert.equal(
+      capturedInput.source_title,
+      "Walking by Faith"
+    );
+
+    assert.equal(
+      capturedInput.source_scripture,
+      "Hebrews 11:1"
+    );
+
+    assert.match(
+      capturedInput.source_content,
+      /Faith shapes the believer's walk/
+    );
+
+    assert.match(
+      capturedInput.source_content,
+      /Faith rests in God's character/
+    );
+
+    assert.equal(
+      capturedInput.denomination,
+      "pentecostal"
+    );
+
+    assert.equal(
+      capturedInput.audience,
+      "Church"
+    );
+
+    assert.equal(
+      capturedInput.context,
+      "Sunday service"
+    );
+
+    assert.equal(
+      capturedInput.tone,
+      "passionate"
+    );
+
+    assert.equal(
+      JSON.stringify(
+        env.window
+          .currentGeneratedSermon
+      ),
+      before
+    );
+
+    assert.equal(
+      env.calls.save,
+      0
+    );
+
+    assert.equal(
+      env.calls.update,
+      0
+    );
+  }
+);
+
+
+test(
+  "content transform safely escapes generated content",
+  async () => {
+
+    const env =
+      createEnvironment({
+        ministryExecute:
+          async () => ({
+            result: {
+              source_title:
+                "Walking by Faith",
+
+              pieces: [
+                {
+                  format:
+                    "social_post",
+
+                  title:
+                    "<img src=x onerror=alert(1)>",
+
+                  content:
+                    "<script>alert('x')</script>"
+                },
+                {
+                  format:
+                    "whatsapp_summary",
+
+                  title:
+                    "Summary",
+
+                  content:
+                    "Safe summary"
+                }
+              ]
+            }
+          })
+      });
+
+    await env.window
+      .createFromCurrentSermon();
+
+    const html =
+      env.elements
+        .contentEngineOutput
+        .innerHTML;
+
+    assert.doesNotMatch(
+      html,
+      /<script>/
+    );
+
+    assert.doesNotMatch(
+      html,
+      /<img src=x/
+    );
+
+    assert.match(
+      html,
+      /&lt;script&gt;/
+    );
+
+    assert.match(
+      html,
+      /&lt;img src=x/
+    );
+  }
+);
+
+
+test(
+  "content transform rejects mismatched returned formats",
+  async () => {
+
+    const env =
+      createEnvironment({
+        ministryExecute:
+          async () => ({
+            result: {
+              source_title:
+                "Walking by Faith",
+
+              pieces: [
+                {
+                  format:
+                    "social_post",
+
+                  title:
+                    "Post",
+
+                  content:
+                    "Content"
+                },
+                {
+                  format:
+                    "newsletter",
+
+                  title:
+                    "Newsletter",
+
+                  content:
+                    "Unexpected format"
+                }
+              ]
+            }
+          })
+      });
+
+    await env.window
+      .createFromCurrentSermon();
+
+    assert.equal(
+      env.elements
+        .contentEngineOutput
+        .innerHTML,
+      ""
+    );
+
+    assert.match(
+      env.elements
+        .contentEngineStatus
+        .textContent,
+      /Invalid content transformation response/
+    );
+  }
+);
+
+
+test(
+  "content transform rejects empty returned content",
+  async () => {
+
+    const env =
+      createEnvironment({
+        ministryExecute:
+          async () => ({
+            result: {
+              source_title:
+                "Walking by Faith",
+
+              pieces: [
+                {
+                  format:
+                    "social_post",
+
+                  title:
+                    "Post",
+
+                  content:
+                    ""
+                },
+                {
+                  format:
+                    "whatsapp_summary",
+
+                  title:
+                    "Summary",
+
+                  content:
+                    "Valid"
+                }
+              ]
+            }
+          })
+      });
+
+    await env.window
+      .createFromCurrentSermon();
+
+    assert.match(
+      env.elements
+        .contentEngineStatus
+        .textContent,
+      /Invalid content transformation response/
+    );
+  }
+);
+
+
+test(
+  "content transform requires at least one selected format",
+  async () => {
+
+    const env =
+      createEnvironment();
+
+    env.contentFormatInputs
+      .forEach(input => {
+        input.checked =
+          false;
+      });
+
+    await env.window
+      .createFromCurrentSermon();
+
+    assert.equal(
+      env.calls.execute.length,
+      0
+    );
+
+    assert.equal(
+      env.calls.toast.at(-1)?.type,
+      "error"
+    );
+
+    assert.match(
+      env.calls.toast.at(-1)?.message ||
+        "",
+      /Choose at least one content format/
     );
   }
 );

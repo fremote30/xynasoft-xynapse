@@ -1,0 +1,158 @@
+<div class="app clean-app">
+  <div class="clean-main">
+
+    <section class="xyniva-page">
+
+      <div class="xyniva-header">
+        <div class="xyniva-heading">
+
+          <button
+            type="button"
+            class="xyniva-back"
+            aria-label="Go back"
+            title="Go back"
+            onclick="navigate('sermon')"
+          >
+            ←
+          </button>
+
+          <div>
+            <span class="eyebrow">
+              Xyniva Ministry Studio
+            </span>
+
+            <h1>
+              Devotional Studio
+            </h1>
+
+            <p>
+              Create single-day or multi-day devotionals
+              with scripture, reflection, application
+              and suggested prayer.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="xyniva-workspace">
+
+        <div class="action-card">
+
+          <h3>
+            Devotional Direction
+          </h3>
+
+          <label for="devotionalTopic">
+            Topic
+          </label>
+
+          <input
+            id="devotionalTopic"
+            type="text"
+            maxlength="500"
+            placeholder="Example: Trusting God"
+          >
+
+          <label for="devotionalScripture">
+            Scripture
+          </label>
+
+          <input
+            id="devotionalScripture"
+            type="text"
+            maxlength="500"
+            placeholder="Example: Proverbs 3:5–6"
+          >
+
+          <label for="devotionalDays">
+            Number of days
+          </label>
+
+          <input
+            id="devotionalDays"
+            type="number"
+            min="1"
+            max="31"
+            value="7"
+          >
+
+          <label for="devotionalAudience">
+            Audience
+          </label>
+
+          <input
+            id="devotionalAudience"
+            type="text"
+            maxlength="500"
+            placeholder="Example: Church members"
+          >
+
+          <label for="devotionalDenomination">
+            Denomination / tradition
+          </label>
+
+          <select id="devotionalDenomination">
+            <option value="general">General Christian</option>
+            <option value="pentecostal">Pentecostal</option>
+            <option value="baptist">Baptist</option>
+            <option value="reformed">Reformed</option>
+            <option value="catholic">Catholic</option>
+            <option value="methodist">Methodist</option>
+            <option value="presbyterian">Presbyterian</option>
+            <option value="charismatic">Charismatic</option>
+          </select>
+
+          <label for="devotionalTone">
+            Tone
+          </label>
+
+          <select id="devotionalTone">
+            <option value="encouraging">Encouraging</option>
+            <option value="balanced">Balanced</option>
+            <option value="pastoral">Pastoral</option>
+            <option value="reflective">Reflective</option>
+            <option value="teaching">Teaching</option>
+          </select>
+
+          <label for="devotionalContext">
+            Ministry context
+          </label>
+
+          <textarea
+            id="devotionalContext"
+            rows="3"
+            maxlength="2000"
+            placeholder="Optional church, season or ministry context"
+          ></textarea>
+
+          <button
+            id="devotionalGenerateBtn"
+            type="button"
+            class="btn-primary"
+            onclick="generateDevotional()"
+          >
+            ✨ Create Devotional
+          </button>
+
+          <div
+            id="devotionalStatus"
+            role="status"
+            aria-live="polite"
+            hidden
+          ></div>
+
+        </div>
+
+        <div
+          id="devotionalOutput"
+          aria-live="polite"
+          hidden
+        ></div>
+
+      </div>
+
+    </section>
+
+  </div>
+</div>

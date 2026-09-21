@@ -34,6 +34,15 @@
     sermon:
       "/faith/pages/sermon.html",
 
+    "sermon-series":
+      "/faith/pages/sermon-series.html",
+
+    "bible-study":
+      "/faith/pages/bible-study.html",
+
+    devotional:
+      "/faith/pages/devotional.html",
+
     xyniva:
       "/faith/pages/xyniva.html",
 
@@ -70,6 +79,12 @@ window.protectedRoutes = [
     "dashboard",
 
     "sermon",
+
+    "sermon-series",
+
+    "bible-study",
+
+    "devotional",
 
     "xyniva",
 

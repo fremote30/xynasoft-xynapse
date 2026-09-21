@@ -1266,6 +1266,107 @@ textarea{
 
     </div>
 
+
+    <!-- ===================================== -->
+    <!-- CREATE FROM SERMON -->
+    <!-- ===================================== -->
+    <div
+      id="contentEngineCard"
+      class="action-card pastor-only"
+    >
+
+      <h3>
+        ✨ Create From Sermon
+      </h3>
+
+      <p
+        style="
+          color:#64748B;
+          line-height:1.6;
+          margin-bottom:14px;
+        "
+      >
+        Turn the current sermon into ready-to-use
+        ministry content with Xyniva.
+      </p>
+
+      <div
+        id="contentEngineFormats"
+        style="
+          display:grid;
+          gap:10px;
+          margin-bottom:14px;
+        "
+      >
+        <label>
+          <input type="checkbox" value="social_post">
+          Social Post
+        </label>
+
+        <label>
+          <input type="checkbox" value="whatsapp_summary">
+          WhatsApp Summary
+        </label>
+
+        <label>
+          <input type="checkbox" value="church_announcement">
+          Church Announcement
+        </label>
+
+        <label>
+          <input type="checkbox" value="discussion_questions">
+          Discussion Questions
+        </label>
+
+        <label>
+          <input type="checkbox" value="sermon_recap">
+          Sermon Recap
+        </label>
+
+        <label>
+          <input type="checkbox" value="newsletter">
+          Newsletter
+        </label>
+
+        <label>
+          <input type="checkbox" value="devotional">
+          Devotional
+        </label>
+      </div>
+
+      <button
+        id="contentEngineBtn"
+        type="button"
+        onclick="createFromCurrentSermon()"
+      >
+        ✨ Create Content
+      </button>
+
+      <div
+        id="contentEngineStatus"
+        role="status"
+        aria-live="polite"
+        hidden
+        style="
+          margin-top:14px;
+          color:#64748B;
+          line-height:1.6;
+        "
+      ></div>
+
+      <div
+        id="contentEngineOutput"
+        aria-live="polite"
+        hidden
+        style="
+          margin-top:16px;
+          display:grid;
+          gap:16px;
+        "
+      ></div>
+
+    </div>
+
     <!-- REFINE -->
     <div class="action-card pastor-only">
 

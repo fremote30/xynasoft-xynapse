@@ -1410,6 +1410,402 @@ async function researchCurrentSermon() {
 }
 
 
+
+function sermonSourceContent(
+  sermon
+) {
+
+  const canonical =
+    canonicalSermonForMinistry(
+      sermon
+    );
+
+  const points =
+    canonical.main_points
+      .map(
+        (point, index) =>
+          `${index + 1}. ${point.title}\n${point.content}`
+      )
+      .join("\n\n");
+
+  return [
+    `Title: ${canonical.title}`,
+    canonical.scripture
+      ? `Scripture: ${canonical.scripture}`
+      : "",
+    `Introduction:\n${canonical.introduction}`,
+    `Main Points:\n${points}`,
+    `Application:\n${canonical.application}`,
+    `Conclusion:\n${canonical.conclusion}`
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+
+function selectedContentFormats() {
+
+  return Array.from(
+    document.querySelectorAll(
+      "#contentEngineFormats "
+      + 'input[type="checkbox"]:checked'
+    )
+  )
+    .map(input =>
+      String(
+        input.value || ""
+      ).trim()
+    )
+    .filter(Boolean);
+}
+
+
+function contentFormatLabel(
+  format
+) {
+
+  const labels = {
+    social_post:
+      "Social Post",
+
+    whatsapp_summary:
+      "WhatsApp Summary",
+
+    church_announcement:
+      "Church Announcement",
+
+    discussion_questions:
+      "Discussion Questions",
+
+    sermon_recap:
+      "Sermon Recap",
+
+    newsletter:
+      "Newsletter",
+
+    devotional:
+      "Devotional"
+  };
+
+  return labels[format] ||
+    String(format || "");
+}
+
+
+function renderContentEngineResult(
+  result
+) {
+
+  const output =
+    $("contentEngineOutput");
+
+  if (!output) {
+    return;
+  }
+
+  const pieces =
+    Array.isArray(
+      result?.pieces
+    )
+      ? result.pieces
+      : [];
+
+  output.innerHTML =
+    pieces
+      .map(piece => {
+
+        const format =
+          String(
+            piece?.format || ""
+          ).trim();
+
+        const title =
+          String(
+            piece?.title || ""
+          ).trim();
+
+        const content =
+          String(
+            piece?.content || ""
+          ).trim();
+
+        return `
+          <section
+            style="
+              border:1px solid #E2E8F0;
+              border-radius:14px;
+              padding:16px;
+              background:#FFFFFF;
+            "
+          >
+            <div
+              style="
+                color:#64748B;
+                font-size:0.85rem;
+                font-weight:600;
+                margin-bottom:6px;
+              "
+            >
+              ${escapeMinistryHTML(
+                contentFormatLabel(format)
+              )}
+            </div>
+
+            ${
+              title
+                ? `
+                  <h4
+                    style="
+                      margin:0 0 10px;
+                    "
+                  >
+                    ${escapeMinistryHTML(
+                      title
+                    )}
+                  </h4>
+                `
+                : ""
+            }
+
+            <div
+              style="
+                white-space:pre-wrap;
+                line-height:1.65;
+              "
+            >${escapeMinistryHTML(
+              content
+            )}</div>
+          </section>
+        `;
+      })
+      .join("");
+
+  output.hidden =
+    pieces.length === 0;
+
+  output.style.display =
+    pieces.length
+      ? "grid"
+      : "none";
+}
+
+
+async function createFromCurrentSermon() {
+
+  const ministry =
+    window.XynaFaithMinistry;
+
+  const button =
+    $("contentEngineBtn");
+
+  const status =
+    $("contentEngineStatus");
+
+  if (
+    !ministry ||
+    typeof ministry.execute !==
+      "function"
+  ) {
+    showToast?.(
+      "Xyniva ministry service is unavailable",
+      "error"
+    );
+
+    return;
+  }
+
+  const formats =
+    selectedContentFormats();
+
+  if (formats.length === 0) {
+    showToast?.(
+      "Choose at least one content format",
+      "error"
+    );
+
+    return;
+  }
+
+  let sermon;
+  let sourceContent;
+
+  try {
+    sermon =
+      canonicalSermonForMinistry(
+        window.currentGeneratedSermon
+      );
+
+    sourceContent =
+      sermonSourceContent(
+        sermon
+      );
+  } catch (err) {
+    showToast?.(
+      err?.message ||
+        "Generate or open a sermon first",
+      "error"
+    );
+
+    return;
+  }
+
+  const context =
+    currentMinistryContext();
+
+  try {
+
+    if (button) {
+      button.disabled =
+        true;
+    }
+
+    if (status) {
+      status.hidden =
+        false;
+
+      status.textContent =
+        "Xyniva is creating ministry content…";
+    }
+
+    const execution =
+      await ministry.execute(
+        "content.transform",
+        {
+          source_title:
+            sermon.title,
+
+          source_scripture:
+            sermon.scripture,
+
+          source_content:
+            sourceContent,
+
+          formats,
+
+          audience:
+            context.audience,
+
+          tone:
+            context.tone,
+
+          denomination:
+            context.denomination,
+
+          context:
+            context.context
+        }
+      );
+
+    const result =
+      execution?.result;
+
+    const pieces =
+      Array.isArray(
+        result?.pieces
+      )
+        ? result.pieces
+        : [];
+
+    const returnedFormats =
+      pieces.map(piece =>
+        String(
+          piece?.format || ""
+        ).trim()
+      );
+
+    const expected =
+      new Set(formats);
+
+    const returned =
+      new Set(
+        returnedFormats
+      );
+
+    if (
+      !result ||
+      typeof result !== "object" ||
+      pieces.length !== formats.length ||
+      returned.size !== expected.size ||
+      [...expected].some(
+        format =>
+          !returned.has(format)
+      ) ||
+      pieces.some(
+        piece =>
+          !String(
+            piece?.content || ""
+          ).trim()
+      )
+    ) {
+      throw new Error(
+        "Invalid content transformation response"
+      );
+    }
+
+    renderContentEngineResult(
+      result
+    );
+
+    if (status) {
+      status.textContent =
+        "Content ready";
+    }
+
+    showToast?.(
+      "✨ Ministry content ready",
+      "success"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Content transformation error:",
+      err
+    );
+
+    if (status) {
+      status.hidden =
+        false;
+
+      status.textContent =
+        err?.uncertain
+          ? (
+              "Content creation status "
+              + "could not be confirmed."
+            )
+          : (
+              err?.message ||
+              "Content creation failed"
+            );
+    }
+
+    showToast?.(
+      err?.uncertain
+        ? (
+            "Content creation status "
+            + "could not be confirmed"
+          )
+        : (
+            err?.message ||
+            "Content creation failed"
+          ),
+      "error"
+    );
+
+  } finally {
+
+    if (button) {
+      button.disabled =
+        false;
+    }
+  }
+}
+
+
+window.createFromCurrentSermon =
+  createFromCurrentSermon;
+
+
 window.refine =
   refine;
 
