@@ -43,6 +43,9 @@
     devotional:
       "/faith/pages/devotional.html",
 
+    "church-space":
+      "/faith/pages/church-space.html",
+
     xyniva:
       "/faith/pages/xyniva.html",
 
@@ -85,6 +88,8 @@ window.protectedRoutes = [
     "bible-study",
 
     "devotional",
+
+    "church-space",
 
     "xyniva",
 
@@ -485,6 +490,17 @@ try {
     if (page === "network") {
       await loadUserInfo();
       await loadNetworkPage();
+    }
+
+    if (page === "church-space") {
+      await loadUserInfo();
+
+      if (
+        typeof window.loadChurchSpace ===
+        "function"
+      ) {
+        await window.loadChurchSpace();
+      }
     }
 
     if (page === "edit-member-profile") {

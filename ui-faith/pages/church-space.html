@@ -1,0 +1,117 @@
+<section class="page-section">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Church Space</p>
+      <h1 id="churchSpaceName">My Church</h1>
+      <p id="churchSpaceIdentity">
+        Loading your church community...
+      </p>
+    </div>
+
+    <span
+      id="churchSpaceRole"
+      class="status-badge"
+      hidden
+    ></span>
+  </div>
+
+  <div
+    id="churchSpaceState"
+    class="feature-card"
+  >
+    <h3>Loading Church Space</h3>
+    <p>
+      Preparing your church home.
+    </p>
+  </div>
+
+  <div
+    id="churchSpaceContent"
+    hidden
+  >
+    <section class="dashboard-section">
+      <h2>Church Home</h2>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>🙏 Prayer</h3>
+          <p>
+            Pray with your church community and
+            support shared prayer needs.
+          </p>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="navigate('prayer')"
+          >
+            Open Prayer Wall
+          </button>
+        </article>
+
+        <article
+          id="churchContentCard"
+          class="feature-card"
+          hidden
+        >
+          <h3>✍️ Ministry Content</h3>
+          <p>
+            Create sermons and ministry resources
+            for your church.
+          </p>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="navigate('sermon')"
+          >
+            Open Sermon Studio
+          </button>
+        </article>
+
+        <article
+          id="churchPastoralCareCard"
+          class="feature-card"
+          hidden
+        >
+          <h3>❤️ Pastoral Care</h3>
+          <p>
+            Pastoral care workflows will live here
+            as the care module comes online.
+          </p>
+        </article>
+
+        <article
+          id="churchAnalyticsCard"
+          class="feature-card"
+          hidden
+        >
+          <h3>📊 Church Intelligence</h3>
+          <p>
+            Ministry briefs and church insights will
+            appear here as intelligence features
+            become available.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section
+      id="churchPeopleSection"
+      class="dashboard-section"
+      hidden
+    >
+      <div class="section-heading">
+        <div>
+          <h2>People</h2>
+          <p>
+            Active members of this Church Space.
+          </p>
+        </div>
+      </div>
+
+      <div
+        id="churchPeopleList"
+        class="feature-grid"
+      ></div>
+    </section>
+  </div>
+</section>

@@ -456,6 +456,12 @@ function renderNavbar() {
           icons.network
         )}
 
+        ${navItem(
+          "church-space",
+          "My Church",
+          icons.network
+        )}
+
         <button
           type="button"
           class="nav-link"
@@ -526,6 +532,12 @@ function renderNavbar() {
         ${navItem(
           "network",
           "Network",
+          icons.network
+        )}
+
+        ${navItem(
+          "church-space",
+          "My Church",
           icons.network
         )}
 
