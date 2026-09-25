@@ -21,6 +21,8 @@ from api.models.sermon_collaborator import SermonCollaborator
 from api.models.refresh_token import RefreshToken
 from api.models.church import Church
 from api.models.church_membership import ChurchMembership
+from api.models.church_announcement import ChurchAnnouncement
+from api.models.church_event import ChurchEvent
 from api.models.member_profile import MemberProfile
 from api.models.conversation_action_execution import (
     ConversationActionExecution,

@@ -27,3 +27,15 @@ class Church(Base):
         back_populates="church",
         cascade="all, delete-orphan",
     )
+
+    announcements = relationship(
+        "ChurchAnnouncement",
+        back_populates="church",
+        cascade="all, delete-orphan",
+    )
+
+    events = relationship(
+        "ChurchEvent",
+        back_populates="church",
+        cascade="all, delete-orphan",
+    )

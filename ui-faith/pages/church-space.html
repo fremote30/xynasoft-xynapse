@@ -95,6 +95,200 @@
     </section>
 
     <section
+      id="churchCommunitySection"
+      class="dashboard-section"
+    >
+      <div class="section-heading">
+        <div>
+          <h2>Church Community</h2>
+          <p>
+            Stay connected with announcements and
+            upcoming events from your church.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="section-heading">
+            <div>
+              <h3>📣 Announcements</h3>
+              <p>
+                Recent updates from your church.
+              </p>
+            </div>
+
+            <button
+              id="churchAnnouncementCreateButton"
+              type="button"
+              class="btn btn-primary"
+              hidden
+            >
+              New Announcement
+            </button>
+          </div>
+
+          <div
+            id="churchAnnouncementForm"
+            hidden
+          >
+            <label>
+              Title
+              <input
+                id="churchAnnouncementTitle"
+                type="text"
+                maxlength="200"
+                autocomplete="off"
+              >
+            </label>
+
+            <label>
+              Announcement
+              <textarea
+                id="churchAnnouncementBody"
+                rows="5"
+              ></textarea>
+            </label>
+
+            <div>
+              <button
+                id="churchAnnouncementSaveButton"
+                type="button"
+                class="btn btn-primary"
+              >
+                Save Draft
+              </button>
+
+              <button
+                id="churchAnnouncementCancelButton"
+                type="button"
+                class="btn btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <p
+              id="churchAnnouncementFormState"
+              role="status"
+            ></p>
+          </div>
+
+          <div id="churchAnnouncementsList">
+            <p>Loading announcements...</p>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <div class="section-heading">
+            <div>
+              <h3>📅 Upcoming Events</h3>
+              <p>
+                Gatherings and activities from your
+                church community.
+              </p>
+            </div>
+
+            <button
+              id="churchEventCreateButton"
+              type="button"
+              class="btn btn-primary"
+              hidden
+            >
+              New Event
+            </button>
+          </div>
+
+          <div
+            id="churchEventForm"
+            hidden
+          >
+            <label>
+              Title
+              <input
+                id="churchEventTitle"
+                type="text"
+                maxlength="200"
+                autocomplete="off"
+              >
+            </label>
+
+            <label>
+              Description
+              <textarea
+                id="churchEventDescription"
+                rows="4"
+              ></textarea>
+            </label>
+
+            <label>
+              Starts
+              <input
+                id="churchEventStartsAt"
+                type="datetime-local"
+              >
+            </label>
+
+            <label>
+              Ends
+              <input
+                id="churchEventEndsAt"
+                type="datetime-local"
+              >
+            </label>
+
+            <label>
+              Location
+              <input
+                id="churchEventLocation"
+                type="text"
+                maxlength="255"
+                autocomplete="off"
+              >
+            </label>
+
+            <label>
+              Event link
+              <input
+                id="churchEventUrl"
+                type="url"
+                placeholder="https://"
+                autocomplete="off"
+              >
+            </label>
+
+            <div>
+              <button
+                id="churchEventSaveButton"
+                type="button"
+                class="btn btn-primary"
+              >
+                Save Draft
+              </button>
+
+              <button
+                id="churchEventCancelButton"
+                type="button"
+                class="btn btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <p
+              id="churchEventFormState"
+              role="status"
+            ></p>
+          </div>
+
+          <div id="churchEventsList">
+            <p>Loading events...</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section
       id="churchPeopleSection"
       class="dashboard-section"
       hidden

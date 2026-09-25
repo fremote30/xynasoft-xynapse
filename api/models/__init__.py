@@ -18,3 +18,6 @@ from api.models.ai_usage_event import AIUsageEvent
 
 from api.models.usage_bucket import UsageBucket
 from api.models.ai_usage_reservation import AIUsageReservation
+
+from .church_announcement import ChurchAnnouncement
+from .church_event import ChurchEvent
