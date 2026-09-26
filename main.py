@@ -112,6 +112,7 @@ from api.routes.network import router as network_router
 # 🚀 INIT APP
 # ================================
 from api.v1.churches.router import router as churches_router
+from api.v1.member.engagement_router import router as member_engagement_router
 
 app = FastAPI(title="XynaFaith API")
 
@@ -315,6 +316,17 @@ app.include_router(
 )
 
 print("✅ Church Space routes loaded")
+
+# =====================================
+# MEMBER ENGAGEMENT V2
+# =====================================
+app.include_router(
+    member_engagement_router,
+    prefix="/api/v1/member",
+    tags=["Member Engagement V2"],
+)
+
+print("✅ Member Engagement routes loaded")
 
 # ================================
 # 📁 FRONTEND (SPA)

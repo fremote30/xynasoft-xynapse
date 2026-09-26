@@ -24,3 +24,9 @@ from .church_event import ChurchEvent
 from .pastoral_care_case import PastoralCareCase
 from .pastoral_care_note import PastoralCareNote
 from .pastoral_care_activity import PastoralCareActivity
+from .reading_plan import ReadingPlan, ReadingPlanDay
+from .member_reading_plan import (
+    MemberReadingPlan,
+    MemberReadingProgress,
+)
+from .member_sermon_note import MemberSermonNote
