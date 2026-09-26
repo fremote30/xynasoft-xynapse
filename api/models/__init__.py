@@ -21,3 +21,6 @@ from api.models.ai_usage_reservation import AIUsageReservation
 
 from .church_announcement import ChurchAnnouncement
 from .church_event import ChurchEvent
+from .pastoral_care_case import PastoralCareCase
+from .pastoral_care_note import PastoralCareNote
+from .pastoral_care_activity import PastoralCareActivity

@@ -13,6 +13,20 @@ class Prayer(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     user_name = Column(String, nullable=False)
 
+    # V2 Church context. Nullable preserves legacy/global Prayer Wall records.
+    church_id = Column(
+        Integer,
+        ForeignKey("churches.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    pastoral_care_requested = Column(
+        Boolean,
+        nullable=False,
+        default=False,
+    )
+
     message = Column(Text, nullable=False)
     category = Column(String, nullable=True, index=True)
 
@@ -32,11 +46,35 @@ class Prayer(Base):
     answered_at = Column(DateTime, nullable=True)
 
     answer_testimony = Column(Text, nullable=True)
+
+    # V2 Testimony Wall moderation.
+    # None = not submitted for publication.
+    # pending = member consented to publication.
+    # approved = visible on the Church Testimony Wall.
+    # rejected = reviewed but not approved for publication.
+    testimony_status = Column(
+        String(32),
+        nullable=True,
+        index=True,
+    )
+
     testimony_shared_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship("User")
+
+    church = relationship(
+        "Church",
+        back_populates="prayers",
+    )
+
+    pastoral_care_case = relationship(
+        "PastoralCareCase",
+        back_populates="prayer",
+        uselist=False,
+    )
+
     recipients = relationship("PrayerRecipient", cascade="all, delete-orphan")
     reactions = relationship("PrayerReaction", cascade="all, delete-orphan")
     comments = relationship("PrayerComment", cascade="all, delete-orphan")

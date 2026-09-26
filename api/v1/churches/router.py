@@ -700,3 +700,10 @@ def update_church_event(
     db.refresh(event)
 
     return _event_payload(event)
+
+
+# V2 Prayer Wall + Pastoral Care workflow.
+# Kept in a sub-router so Church Spaces remains maintainable.
+from api.v1.churches.prayer_care_router import router as prayer_care_router
+
+router.include_router(prayer_care_router)

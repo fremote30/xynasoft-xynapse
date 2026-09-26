@@ -308,4 +308,187 @@
       ></div>
     </section>
   </div>
+
+  <!-- =========================================
+       V2 PRAYER + PASTORAL CARE
+  ========================================== -->
+  <section class="church-prayer-section" id="churchPrayerSection">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Prayer & Care</span>
+        <h2>Church Prayer Community</h2>
+        <p>
+          Pray together, request private pastoral follow-up,
+          and celebrate answered prayers.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        id="churchPrayerCreateButton"
+      >
+        Submit Prayer
+      </button>
+    </div>
+
+    <form id="churchPrayerForm" hidden>
+      <div class="church-community-item">
+        <h3>Share a prayer request</h3>
+
+        <label>
+          Prayer request
+          <textarea
+            id="churchPrayerMessage"
+            rows="5"
+            maxlength="5000"
+            required
+            placeholder="What would you like your church to pray about?"
+          ></textarea>
+        </label>
+
+        <label>
+          Category
+          <select id="churchPrayerCategory">
+            <option value="">Select category</option>
+            <option value="Healing">Healing</option>
+            <option value="Family">Family</option>
+            <option value="Faith">Faith</option>
+            <option value="Work">Work</option>
+            <option value="School">School</option>
+            <option value="Grief">Grief</option>
+            <option value="Guidance">Guidance</option>
+            <option value="Thanksgiving">Thanksgiving</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        <label>
+          Privacy
+          <select id="churchPrayerVisibility">
+            <option value="community">
+              Church community
+            </option>
+            <option value="private">
+              Private — only me unless I request pastoral care
+            </option>
+          </select>
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            id="churchPrayerAnonymous"
+          >
+          Show this prayer anonymously
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            id="churchPrayerPastoralCare"
+          >
+          I would like private pastoral follow-up
+        </label>
+
+        <p>
+          Pastoral-care notes are private to authorized
+          pastoral-care leaders and are not shown on the
+          Prayer Wall.
+        </p>
+
+        <div>
+          <button type="submit" class="btn btn-primary">
+            Submit Prayer
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="churchPrayerCancelButton"
+          >
+            Cancel
+          </button>
+        </div>
+
+        <p id="churchPrayerFormState"></p>
+      </div>
+    </form>
+
+    <div id="churchPrayerList">
+      <p>Loading church prayers...</p>
+    </div>
+  </section>
+
+  <!-- =========================================
+       V2 TESTIMONY WALL
+  ========================================== -->
+  <section
+    class="church-testimony-section"
+    id="churchTestimonySection"
+  >
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Answered Prayers</span>
+        <h2>Testimony Wall</h2>
+        <p>
+          Celebrate testimonies that members have chosen
+          to share with their church community.
+        </p>
+      </div>
+    </div>
+
+    <div id="churchTestimonyList">
+      <p>Loading testimonies...</p>
+    </div>
+
+    <div
+      id="churchTestimonyModeration"
+      class="church-community-item"
+      hidden
+    >
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Content Review</span>
+          <h3>Pending Testimonies</h3>
+          <p>
+            Review testimonies members have submitted
+            for publication.
+          </p>
+        </div>
+      </div>
+
+      <div id="churchPendingTestimonyList">
+        <p>No testimonies are waiting for review.</p>
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="church-pastoral-care-section"
+    id="churchPastoralCareWorkspace"
+    hidden
+  >
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Private Ministry Workflow</span>
+        <h2>Pastoral Care</h2>
+        <p>
+          Assign follow-up, schedule care, keep private notes,
+          and resolve pastoral-care requests.
+        </p>
+      </div>
+    </div>
+
+    <div id="churchPastoralCareList">
+      <p>Loading pastoral-care requests...</p>
+    </div>
+
+    <div
+      id="churchPastoralCareDetail"
+      class="church-community-item"
+      hidden
+    ></div>
+  </section>
+
 </section>

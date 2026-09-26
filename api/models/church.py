@@ -39,3 +39,14 @@ class Church(Base):
         back_populates="church",
         cascade="all, delete-orphan",
     )
+
+    prayers = relationship(
+        "Prayer",
+        back_populates="church",
+    )
+
+    pastoral_care_cases = relationship(
+        "PastoralCareCase",
+        back_populates="church",
+        cascade="all, delete-orphan",
+    )
