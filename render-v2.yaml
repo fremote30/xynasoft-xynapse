@@ -2,10 +2,11 @@ databases:
 - name: xynafaith-v2-preview-db
   databaseName: xynafaith_v2_preview
   user: xynafaith_preview
-  plan: basic
+  plan: 0.5c-1g
 services:
 - type: web
   name: xynafaith-v2-preview
+  plan: 1c-2g
   branch: release/xynafaith-v2-render-preview
   runtime: docker
   dockerfilePath: ./Dockerfile.render-v2
