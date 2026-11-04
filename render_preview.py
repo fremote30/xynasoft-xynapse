@@ -75,6 +75,14 @@ def preview_health():
     }
 
 
+# Serve the absolute asset URLs used by the V2 SPA.
+# This must precede the root static mount.
+app.mount(
+    "/ui-faith-v2-unified",
+    StaticFiles(directory=str(FRONTEND), html=True),
+    name="unified-v2-assets",
+)
+
 app.mount(
     "/",
     StaticFiles(directory=str(FRONTEND), html=True),
