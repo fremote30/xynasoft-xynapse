@@ -6,6 +6,7 @@ databases:
 services:
 - type: web
   name: xynafaith-v2-preview
+  branch: release/xynafaith-v2-render-preview
   runtime: docker
   dockerfilePath: ./Dockerfile.render-v2
   dockerContext: .
