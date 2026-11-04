@@ -1,0 +1,327 @@
+
+/*
+ * XynaFaith V2 — Batch 20D.3
+ * Member Dashboard consolidation.
+ *
+ * Preserves existing colors, IDs, navigation and functionality.
+ * Does not modify the approved member profile.
+ */
+
+/* Consistent lower-dashboard rhythm */
+
+.member-dashboard-section.features {
+  padding-top: 18px !important;
+  padding-bottom: 28px !important;
+}
+
+.member-dashboard-section .features-header {
+  margin: 26px auto 16px !important;
+  padding: 0 !important;
+}
+
+.member-dashboard-section .features-header h2 {
+  margin: 0 0 7px !important;
+  line-height: 1.25;
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+}
+
+.member-dashboard-section .features-header p {
+  margin: 0 auto !important;
+  line-height: 1.5;
+  max-width: 620px;
+}
+
+/* Compact journey cards */
+
+.member-dashboard-section .journey-grid {
+  gap: 14px !important;
+  align-items: stretch;
+}
+
+.member-dashboard-section .journey-card {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 18px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.member-dashboard-section .journey-card .journey-icon {
+  margin: 0 0 2px !important;
+}
+
+.member-dashboard-section .journey-card h3 {
+  margin: 0 !important;
+}
+
+.member-dashboard-section .journey-card p {
+  margin: 0 0 10px !important;
+  line-height: 1.5;
+}
+
+.member-dashboard-section .journey-card button {
+  margin-top: auto;
+}
+
+/* Discover and growth cards */
+
+.member-dashboard-section .member-discover-grid {
+  gap: 14px !important;
+  align-items: stretch;
+}
+
+.member-dashboard-section .member-action-card {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 18px !important;
+}
+
+.member-dashboard-section .member-action-card h3 {
+  margin: 8px 0 !important;
+}
+
+.member-dashboard-section .member-action-card p {
+  margin: 6px 0 12px;
+  line-height: 1.5;
+}
+
+/* Dynamic content must remain readable and scrollable */
+
+.member-dashboard-section #topSermons,
+.member-dashboard-section #aiInsights {
+  min-width: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* Compact activity */
+
+.member-dashboard-section .member-activity-grid {
+  gap: 12px !important;
+}
+
+.member-dashboard-section .dashboard-stats-card {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 16px !important;
+}
+
+.member-dashboard-section .dashboard-stats-card h3 {
+  margin: 0 0 8px !important;
+}
+
+.member-dashboard-section .dashboard-stats-card p {
+  margin: 0 0 6px !important;
+}
+
+.member-dashboard-section .dashboard-stats-card span {
+  line-height: 1.4;
+}
+
+/* Suggested pastors and reading continuation */
+
+.member-dashboard-section #suggestedPastors,
+.member-dashboard-section #continueReadingSection {
+  min-height: 0 !important;
+  gap: 14px;
+}
+
+.member-dashboard-section #suggestedPastors > .feature-card,
+.member-dashboard-section #continueReadingSection > .feature-card {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 18px !important;
+}
+
+/* Prayer section: use the available dashboard width */
+
+.member-dashboard-section .member-prayer-section {
+  display: grid;
+  grid-template-columns: minmax(210px, .8fr) minmax(0, 1.5fr);
+  gap: 24px;
+  align-items: start;
+  padding: 26px 0 !important;
+}
+
+.member-dashboard-section .member-prayer-section .dashboard-prayer-copy {
+  margin: 0 !important;
+}
+
+.member-dashboard-section .member-prayer-section .dashboard-prayer-widget {
+  width: 100%;
+  max-width: none !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 20px;
+}
+
+/* Preserve original XynaFaith button colors */
+
+.member-dashboard-section button {
+  min-height: 40px;
+}
+
+/* Responsive layout */
+
+@media (max-width: 900px) {
+  .member-dashboard-section .member-prayer-section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .member-dashboard-section.features {
+    padding-top: 12px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .member-dashboard-section .features-header {
+    margin: 22px auto 12px !important;
+  }
+
+  .member-dashboard-section .journey-grid,
+  .member-dashboard-section .member-discover-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .member-dashboard-section .journey-card,
+  .member-dashboard-section .member-action-card {
+    padding: 16px !important;
+  }
+
+  .member-dashboard-section .member-activity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .member-dashboard-section .dashboard-stats-card {
+    padding: 12px !important;
+  }
+
+  .member-dashboard-section .member-prayer-section {
+    padding: 18px 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .member-dashboard-section button {
+    transition: none !important;
+  }
+}
+
+
+/* BATCH 20D.4 — DASHBOARD CLEANUP */
+
+/* Content-driven growth cards */
+.member-dashboard-section .member-discover-grid,
+.member-dashboard-section .features-grid {
+  align-items: start;
+}
+
+.member-dashboard-section .member-action-card {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Avoid large empty growth panels */
+.member-dashboard-section .member-action-card:has(#topSermons),
+.member-dashboard-section .member-action-card:has(#aiInsights) {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Keep insights readable without stretching the dashboard */
+.member-dashboard-section #aiInsights {
+  max-height: 180px;
+  overflow-y: auto;
+  line-height: 1.55;
+}
+
+.member-dashboard-section #aiInsights > * {
+  overflow-wrap: anywhere;
+}
+
+/* Compact empty-state containers */
+.member-dashboard-section #suggestedPastors,
+.member-dashboard-section #continueReadingSection {
+  min-height: 0 !important;
+}
+
+.member-dashboard-section #suggestedPastors:empty,
+.member-dashboard-section #continueReadingSection:empty,
+.member-dashboard-section #topSermons:empty {
+  display: none;
+}
+
+/* Compact pastor-feed empty states without removing actions */
+.member-dashboard-section .pastor-feed-empty,
+.member-dashboard-section .empty-feed,
+.member-dashboard-section .empty-state {
+  min-height: 0 !important;
+  padding: 18px !important;
+}
+
+/* Responsive refinements */
+@media (max-width: 900px) {
+  .member-dashboard-section .member-discover-grid,
+  .member-dashboard-section .features-grid {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+  }
+}
+
+@media (max-width: 640px) {
+  .member-dashboard-section .member-discover-grid,
+  .member-dashboard-section .features-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .member-dashboard-section #aiInsights {
+    max-height: 220px;
+  }
+
+  .member-dashboard-section .member-action-card {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+
+/* BATCH 20D.5 — SIMPLIFICATION */
+
+/* One focused sermon-discovery card */
+.member-dashboard-section .member-discover-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 100%;
+}
+
+.member-dashboard-section .member-trending-card {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 20px !important;
+  text-align: left;
+}
+
+.member-dashboard-section .member-trending-card #topSermons {
+  max-height: none;
+  overflow: visible;
+}
+
+/* Never display the retained compatibility hook */
+.member-dashboard-section #aiInsights[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .member-dashboard-section .member-trending-card {
+    padding: 16px !important;
+  }
+}

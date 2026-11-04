@@ -1,0 +1,181 @@
+
+<div class="xf-ministry-hub">
+  <header class="xf-ministry-heading">
+    <span class="xf-ministry-eyebrow">POWERED BY XYNIVA</span>
+    <h1>Ministry Studio</h1>
+    <p>One workspace for sermon preparation and ministry resources.</p>
+  </header>
+
+  <div class="xf-ministry-tools">
+    <button type="button" class="xf-ministry-tool"
+      onclick="window.navigate('sermon')">
+      <strong>Create Sermon</strong>
+      <span>Prepare and refine sermons with Xyniva.</span>
+    </button>
+
+    <button type="button" class="xf-ministry-tool"
+      onclick="window.navigate('my-sermons')">
+      <strong>My Sermons</strong>
+      <span>Manage your saved sermons and drafts.</span>
+    </button>
+
+    <button type="button" class="xf-ministry-tool xf-ministry-active"
+      onclick="document.getElementById('studioWorkspace').scrollIntoView({behavior:'smooth'})">
+      <strong>Content Creator</strong>
+      <span>Turn sermons into ministry content packs.</span>
+    </button>
+  </div>
+
+  <div class="xf-ministry-tools">
+    <button type="button" class="xf-ministry-tool"
+      onclick="window.navigate('sermon-series')">
+      <strong>Sermon Series Builder</strong>
+      <span>Prepare a connected series of sermons with Xyniva.</span>
+    </button>
+
+    <button type="button" class="xf-ministry-tool"
+      onclick="window.navigate('bible-study')">
+      <strong>Bible Study Studio</strong>
+      <span>Create structured Bible studies and discussion resources.</span>
+    </button>
+
+    <button type="button" class="xf-ministry-tool"
+      onclick="window.navigate('devotional')">
+      <strong>Devotional Studio</strong>
+      <span>Create daily devotionals for individuals and groups.</span>
+    </button>
+
+    <button type="button" class="xf-ministry-tool"
+      onclick="window.navigate('reading-plans')">
+      <strong>Bible Reading Plans</strong>
+      <span>Explore plans, enroll, and track daily progress.</span>
+    </button>
+  </div>
+
+  <section id="xfBibleQuizAI" class="xf-bq-workspace"
+           aria-labelledby="xfBqTitle">
+    <div class="xf-bq-heading">
+      <span class="xf-ministry-eyebrow">POWERED BY XYNIVA</span>
+      <h2 id="xfBqTitle">AI Bible Quiz Generator</h2>
+      <p>Create a Bible Quiz draft for your church.
+         Review the generated content before publishing.</p>
+    </div>
+
+    <form id="xfBqForm" class="xf-bq-form">
+      <div class="xf-bq-grid">
+        <label>
+          <span>Church ID</span>
+          <input id="xfBqChurch" type="number" min="1"
+                 step="1" required
+                 placeholder="Your church ID">
+        </label>
+
+        <label>
+          <span>Bible topic</span>
+          <input id="xfBqTopic" type="text"
+                 maxlength="200" required
+                 placeholder="Faith, forgiveness, discipleship">
+        </label>
+
+        <label>
+          <span>Scripture reference</span>
+          <input id="xfBqScripture" type="text"
+                 maxlength="500" required
+                 placeholder="John 15:1-17">
+        </label>
+
+        <label>
+          <span>Difficulty</span>
+          <select id="xfBqDifficulty">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Number of questions</span>
+          <input id="xfBqCount" type="number"
+                 min="1" max="50" value="10" required>
+        </label>
+      </div>
+
+      <div class="xf-bq-actions">
+        <button type="submit" id="xfBqGenerate">
+          Generate Bible Quiz
+        </button>
+        <button type="button" id="xfBqRecover" hidden>
+          Check / Recover Request
+        </button>
+        <button type="button" id="xfBqNew" hidden>
+          Start New Quiz
+        </button>
+      </div>
+    </form>
+
+    <p id="xfBqStatus" role="status"
+       aria-live="polite"></p>
+
+    <div id="xfBqResult" hidden>
+      <h3>AI Quiz Draft</h3>
+      <p id="xfBqResultText"></p>
+      <p>
+        Draft questions must be reviewed through an
+        authorized authoring interface before publication.
+      </p>
+    </div>
+  </section>
+</div>
+
+<section class="unified-ministry-studio">
+  <div class="studio-heading">
+    <h1>Ministry Studio</h1>
+    <p>Create ministry content from your saved sermons with Xyniva.</p>
+  </div>
+<div id="studioWorkspace">
+    <section class="intro">
+      <p class="eyebrow">POWERED BY XYNIVA</p>
+      <h1>Sermon-to-Ministry</h1>
+      <p>
+        Turn a saved sermon into meaningful content
+        for your church and community.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>1. Choose a saved sermon</h2>
+      <label for="sermonSelect">My Sermons</label>
+      <select id="sermonSelect">
+        <option value="">Loading sermons...</option>
+      </select>
+      <button id="refreshSermons" type="button">
+        Refresh sermons
+      </button>
+    </section>
+
+    <section class="panel">
+      <h2>2. Choose content formats</h2>
+      <div id="formatOptions" class="formats"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Generate with Xyniva</h2>
+      <button id="generatePack"
+              class="primary"
+              type="button">
+        Generate Ministry Content Pack
+      </button>
+      <button id="retryPack"
+              type="button"
+              hidden>
+        Retry uncertain request
+      </button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" id="resultsPanel" hidden>
+      <h2>Your Ministry Content Pack</h2>
+      <div id="results"></div>
+    </section>
+    </div>
+</section>

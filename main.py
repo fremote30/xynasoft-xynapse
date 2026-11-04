@@ -1,0 +1,473 @@
+import os
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from api.routes.push_devices import router as push_devices_router
+
+# ================================
+# 🔥 IMPORT ALL MODELS (CRITICAL)
+# ================================
+from api.models.user import User
+from api.models.church import Church
+from api.models.church_membership import ChurchMembership
+from api.models.refresh_token import RefreshToken
+from api.models.sermon import Sermon
+from api.models.pastor_member import PastorMember
+from api.models.shared_sermon import SharedSermon
+from api.models.pastor_profile import PastorProfile
+
+from api.models import shared_sermon
+from api.models import sermon_comment
+from api.models.member_recent_sermon import MemberRecentSermon
+# ================================
+# DATABASE
+# ================================
+from api.db.database import Base, engine
+
+# ================================
+# ROUTES
+# ================================
+
+# ✅ Auth
+from api.routes import auth
+
+# ✅ Dashboard
+from api.routes.dashboard_routes import router as dashboard_router
+
+# ✅ Comments
+from api.routes.comment_routes import router as comment_router
+
+# ✅ Collaboration
+from api.routes.collaboration_routes import router as collab_router
+
+# ✅ Followers
+from api.routes.follow_routes import router as follow_router
+
+# ✅ Users
+from api.routes.users import router as users_router
+
+# ✅ Pastors
+from api.routes.pastors import router as pastors_router
+
+# ✅ Pastor Profile
+from api.routes.pastor_profile import (
+    router as pastor_profile_router
+)
+
+# ✅ Member Profile
+from api.models.member_profile import MemberProfile
+
+from api.routes.member_profile import (
+    router as member_profile_router
+)
+
+# ✅ Sermon CRUD
+from api.routes.sermon_routes import (
+    router as sermon_crud_router
+)
+
+# ✅ Upload Sermon
+from api.routes import upload
+
+# =========================================
+# ✅ NEW XYNAFAITH AI ROUTES (STEP 1D)
+# =========================================
+from api.routes.faith import (
+    router as faith_router
+)
+
+from api.routes.faith_conversations import (
+    router as faith_conversations_router
+)
+
+from api.routes.faith_ministry import (
+    router as faith_ministry_router
+)
+
+# =========================================
+# For Prayer Wall
+# =========================================
+from api.models.prayer import Prayer
+
+# =========================================
+# For Prayer Wall
+# =========================================
+
+from api.routes.prayer_routes import (
+    router as prayer_router
+)
+
+# =========================================
+# Search
+# =========================================
+from api.routes import search
+
+# =========================================
+# Network
+# =========================================
+from api.routes.network import router as network_router
+
+# ================================
+# 🚀 INIT APP
+# ================================
+from api.v1.access.router import router as access_router
+from api.v1.churches.router import router as churches_router
+from api.v1.member.engagement_router import router as member_engagement_router
+
+app = FastAPI(title="XynaFaith API")
+
+# ================================
+# 🗄️ DATABASE
+# ================================
+print("🚀 Starting API...")
+print("📦 Connecting to DB...")
+
+# 🔥 CREATE ALL TABLES
+# Base.metadata.create_all(bind=engine)
+
+print("✅ Database ready")
+
+# ================================
+# 🌐 CORS
+# ================================
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # tighten later
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+print("✅ CORS enabled")
+
+# ================================
+# 🔗 ROUTES
+# ================================
+
+# =====================================
+# AUTH
+# =====================================
+app.include_router(auth.router)
+print("✅ Auth routes loaded")
+
+# =====================================
+# XYNAFAITH AI (NEW)
+# =====================================
+app.include_router(
+    faith_router,
+    prefix="/api/v1/faith",
+    tags=["Faith"]
+)
+
+app.include_router(
+    faith_conversations_router,
+    prefix="/api/v1/faith",
+    tags=["Faith"]
+)
+
+app.include_router(
+    faith_ministry_router,
+    prefix="/api/v1/faith",
+    tags=["Faith Ministry V2"]
+)
+
+print("✅ XynaFaith AI routes loaded")
+
+# =====================================
+# SERMON CRUD
+# =====================================
+app.include_router(
+    sermon_crud_router,
+    prefix="/api"
+)
+
+print("✅ Sermon CRUD routes loaded")
+
+# =====================================
+# SERMON UPLOAD
+# =====================================
+app.include_router(
+    upload.router,
+    prefix="/sermon"
+)
+
+print("✅ Sermon Upload routes loaded")
+
+# =====================================
+# COLLABORATION
+# =====================================
+app.include_router(
+    collab_router,
+    prefix="/api"
+)
+
+print("✅ Collaboration routes loaded")
+
+# =====================================
+# COMMENTS
+# =====================================
+app.include_router(
+    comment_router,
+    prefix="/api"
+)
+
+print("✅ Comment routes loaded")
+
+# =====================================
+# FOLLOW SYSTEM
+# =====================================
+app.include_router(follow_router)
+
+print("✅ Follow routes loaded")
+
+# =====================================
+# DASHBOARD
+# =====================================
+app.include_router(
+    dashboard_router,
+    prefix="/api/v1"
+)
+
+print("✅ Dashboard routes loaded")
+
+# =====================================
+# USERS
+# =====================================
+app.include_router(
+    users_router,
+    prefix="/api/v1"
+)
+
+print("✅ User routes loaded")
+
+
+# =====================================
+# PUSH DEVICE TOKENS
+# =====================================
+app.include_router(
+    push_devices_router,
+    prefix="/api/v1"
+)
+print("✅ Push device routes loaded")
+
+
+# =====================================
+# PASTORS
+# =====================================
+app.include_router(
+    pastors_router,
+    prefix="/api/v1"
+)
+
+# =====================================
+# For Prayer Wall
+# =====================================
+app.include_router(
+    prayer_router,
+    prefix="/api/v1"
+)
+print("✅ Prayer routes loaded")
+
+# =====================================
+# PASTOR PROFILE
+# =====================================
+app.include_router(
+    pastor_profile_router,
+    prefix="/api/v1"
+)
+
+print("✅ Pastor profile routes loaded")
+
+# =====================================
+# MEMBER PROFILE
+# =====================================
+app.include_router(
+    member_profile_router,
+    prefix="/api/v1"
+)
+
+print("✅ Member profile routes loaded")
+
+# =====================================
+#NETWORK
+# =====================================
+app.include_router(
+    network_router,
+    prefix="/api/v1"
+)
+
+print("✅ Community network routes loaded")
+
+# =====================================
+# SEARCH 
+# =====================================
+app.include_router(
+    search.router,
+    prefix="/api/v1",
+    tags=["Search"]
+)
+print("✅ Search routes loaded")
+# =====================================
+# CHURCH SPACES V2
+# =====================================
+app.include_router(
+    churches_router,
+    prefix="/api/v1"
+)
+
+print("✅ Church Space routes loaded")
+
+# =====================================
+# MEMBER ENGAGEMENT V2
+# =====================================
+app.include_router(
+    member_engagement_router,
+    prefix="/api/v1/member",
+    tags=["Member Engagement V2"],
+)
+
+print("✅ Member Engagement routes loaded")
+
+# =====================================
+# EFFECTIVE ACCESS V2
+# =====================================
+app.include_router(
+    access_router,
+    prefix="/api/v1",
+)
+
+print("✅ Effective Access routes loaded")
+
+# ================================
+# 📁 FRONTEND (SPA)
+# ================================
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
+
+FAITH_DIR = os.path.join(
+    BASE_DIR,
+    "ui-faith"
+)
+
+UPLOADS_DIR = os.path.join(
+    BASE_DIR,
+    "uploads"
+)
+
+os.makedirs(
+    UPLOADS_DIR,
+    exist_ok=True
+)
+
+app.mount(
+    "/uploads",
+    StaticFiles(directory=UPLOADS_DIR),
+    name="uploads"
+)
+
+print("✅ Uploads mounted at /uploads")
+
+print("📁 BASE_DIR:", BASE_DIR)
+print("📁 UI DIR:", FAITH_DIR)
+
+if os.path.exists(FAITH_DIR):
+
+    app.mount(
+        "/faith",
+        StaticFiles(directory=FAITH_DIR),
+        name="faith"
+    )
+
+    print("✅ Frontend mounted at /faith")
+
+else:
+
+    print("❌ ERROR: ui-faith folder not found")
+    print("📁 Available:", os.listdir(BASE_DIR))
+
+
+# ================================
+# XynaFaith V2 — Isolated Frontend
+# ================================
+FAITH_V2_DIR = os.path.join(BASE_DIR, "ui-faith-v2")
+
+if os.path.isdir(FAITH_V2_DIR):
+    app.mount(
+        "/faith-v2",
+        StaticFiles(
+            directory=FAITH_V2_DIR,
+            html=True
+        ),
+        name="faith-v2"
+    )
+    print("V2 frontend mounted at /faith-v2")
+
+# ================================
+# 🏠 ROOT → LOAD SPA
+# ================================
+@app.get("/")
+def root():
+
+    layout_path = os.path.join(
+        FAITH_DIR,
+        "layout.html"
+    )
+
+    if os.path.exists(layout_path):
+
+        return FileResponse(layout_path)
+
+    return {
+        "error": "layout.html not found",
+        "checked_path": layout_path,
+        "files_here": (
+            os.listdir(FAITH_DIR)
+            if os.path.exists(FAITH_DIR)
+            else []
+        )
+    }
+
+# ================================
+# 🔁 OPTIONAL ENTRY
+# ================================
+@app.get("/app")
+def app_entry():
+
+    layout_path = os.path.join(
+        FAITH_DIR,
+        "layout.html"
+    )
+
+    if os.path.exists(layout_path):
+
+        return FileResponse(layout_path)
+
+    return {
+        "error": "layout.html missing"
+    }
+
+# ================================
+# ❤️ HEALTH CHECK
+# ================================
+@app.get("/health")
+def health():
+
+    return {
+        "status": "ok",
+        "service": "XynaFaith API",
+        "ai": "enabled",
+
+        "features": [
+            "sermon_generation",
+            "sermon_save",
+            "sermon_history",
+            "sermon_edit",
+            "sermon_upload",
+            "structured_sermon_json",
+            "xynafaith_ai",
+            "focus_mode",
+            "mobile_sermon_studio"
+        ]
+    }

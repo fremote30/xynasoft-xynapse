@@ -1,0 +1,48 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.dbui-faith/styles.backup.css
+
+# Local databases and temporary backups
+storage/*.db
+scripts/genesis_manual_backup/
+scripts/*.zip
+ui-faith/*.backup.css
+# ============================================================================
+# Mobile
+# ============================================================================
+
+# Mobile
+mobile/node_modules
+mobile/android/.gradle
+mobile/android/build
+mobile/ios/DerivedData
+mobile/ios/App/build
+
+# Capacitor
+mobile/android/app/build
+
+# Firebase
+mobile/android/app/google-services.json
+
+# Apple Firebase (future)
+mobile/ios/App/App/GoogleService-Info.plist
+# ============================================================================
+# Android Release Signing
+# ============================================================================
+*.jks
+*.keystore
+keystore.properties
+mobile/android/keystore.properties
+
+# Private Render web-preview exclusions
+/node_modules/
+/mobile/android/
+/mobile/ios/
+/mobile/www/
+
+# Development-only Compose files excluded from private Render release
+/docker-compose.yml
+/docker-compose.v2.yml

@@ -1,0 +1,369 @@
+
+/* Batch 20E.1 — Integrated Church Space presentation */
+
+/* Scope all changes to the Church Space content container. */
+#churchSpaceContent {
+  --xf-church-navy: #172c40;
+  --xf-church-blue: #2563eb;
+  --xf-church-green: #10b981;
+  --xf-church-gold: #f4bd58;
+}
+
+/* Unified section rhythm */
+#churchSpaceContent .dashboard-section,
+#churchSpaceContent .church-prayer-section,
+#churchSpaceContent .church-testimony-section,
+#churchSpaceContent .church-pastoral-care-section {
+  margin-block: 24px;
+  min-width: 0;
+}
+
+#churchSpaceContent .dashboard-section > h2,
+#churchSpaceContent .section-heading h2 {
+  color: var(--xf-church-navy);
+  line-height: 1.25;
+}
+
+/* Existing feature cards */
+#churchSpaceContent .feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+#churchSpaceContent .feature-card,
+#churchSpaceContent .church-community-item {
+  min-width: 0;
+  border-radius: 18px;
+  overflow-wrap: anywhere;
+}
+
+/* Community and prayer content */
+#churchCommunitySection,
+#churchPeopleSection,
+#churchPrayerSection,
+#churchTestimonySection,
+#churchPastoralCareWorkspace {
+  min-width: 0;
+}
+
+#churchSpaceContent .section-heading {
+  gap: 12px;
+}
+
+#churchSpaceContent input,
+#churchSpaceContent textarea,
+#churchSpaceContent select {
+  max-width: 100%;
+}
+
+/* Intelligence metrics */
+#churchSpaceContent .xf-intelligence-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#churchSpaceContent .xf-intelligence-metric {
+  min-width: 0;
+}
+
+/* Responsive Church Space */
+@media (max-width: 700px) {
+  #churchSpaceContent .feature-grid,
+  #churchSpaceContent .xf-intelligence-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #churchSpaceContent .dashboard-section,
+  #churchSpaceContent .church-prayer-section,
+  #churchSpaceContent .church-testimony-section,
+  #churchSpaceContent .church-pastoral-care-section {
+    margin-block: 18px;
+  }
+
+  #churchSpaceContent .feature-card,
+  #churchSpaceContent .church-community-item {
+    border-radius: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #churchSpaceContent *,
+  #churchSpaceContent *::before,
+  #churchSpaceContent *::after {
+    scroll-behavior: auto;
+  }
+}
+
+
+/* Batch 20E.4: Church Space unavailable state */
+#churchSpaceState.xf-church-empty-state {
+  max-width: 760px;
+  margin: 28px auto;
+  padding: clamp(28px, 5vw, 52px);
+  border: 1px solid #dbe5ef;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 14px 40px rgba(23, 44, 64, 0.07);
+  text-align: center;
+  color: #172c40;
+}
+
+#churchSpaceState .xf-church-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+  border-radius: 18px;
+  background: #edf4ff;
+  color: #2563eb;
+  font-size: 28px;
+}
+
+#churchSpaceState.xf-church-empty-state h3 {
+  margin: 0 0 12px;
+  font-size: clamp(22px, 3vw, 28px);
+  color: #172c40;
+}
+
+#churchSpaceState.xf-church-empty-state p {
+  max-width: 520px;
+  margin: 0 auto 12px;
+  line-height: 1.65;
+}
+
+#churchSpaceState .xf-church-empty-help {
+  color: #64748b;
+  font-size: 14px;
+}
+
+
+/* Church Space V2 — Professional Foundation 21M */
+
+/* Unified typography and content canvas */
+#app > .page-section:has(#churchSpaceContent) {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #172c40;
+  background: #f5f7fb;
+  width: 100%;
+  max-width: none;
+  padding: clamp(18px, 3vw, 44px);
+  box-sizing: border-box;
+}
+
+#app > .page-section:has(#churchSpaceContent) *,
+#app > .page-section:has(#churchSpaceContent) *::before,
+#app > .page-section:has(#churchSpaceContent) *::after {
+  box-sizing: border-box;
+}
+
+/* Church identity */
+#app > .page-section:has(#churchSpaceContent) > .page-header {
+  max-width: 1240px;
+  margin: 0 auto 28px;
+  padding: clamp(24px, 4vw, 44px);
+  border-radius: 24px;
+  background: linear-gradient(125deg, #17324d, #24548b);
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+#app > .page-section:has(#churchSpaceContent) > .page-header h1 {
+  color: #ffffff;
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.2;
+  margin: 10px 0 12px;
+}
+
+#app > .page-section:has(#churchSpaceContent) > .page-header p {
+  color: #e2eaf5;
+  line-height: 1.6;
+}
+
+#app > .page-section:has(#churchSpaceContent) > .page-header .eyebrow {
+  color: #bcd7ff;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+/* Content alignment */
+#churchSpaceContent {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#churchSpaceContent .dashboard-section,
+#churchSpaceContent .church-prayer-section,
+#churchSpaceContent .church-testimony-section,
+#churchSpaceContent .church-pastoral-care-section {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 24px;
+}
+
+/* Section panels */
+#churchSpaceContent .dashboard-section,
+#churchSpaceContent .church-testimony-section,
+#churchSpaceContent .church-pastoral-care-section {
+  padding: clamp(22px, 3vw, 32px);
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(23, 44, 64, 0.035);
+}
+
+#churchSpaceContent h2 {
+  font-size: clamp(22px, 2.5vw, 28px);
+  font-weight: 700;
+  color: #17324d;
+  line-height: 1.3;
+}
+
+#churchSpaceContent h3 {
+  color: #17324d;
+  line-height: 1.35;
+}
+
+#churchSpaceContent p {
+  line-height: 1.65;
+}
+
+#churchSpaceContent .section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+#churchSpaceContent .section-heading p {
+  color: #64748b;
+}
+
+/* Card system */
+#churchSpaceContent .feature-card,
+#churchSpaceContent .church-community-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: clamp(18px, 2.4vw, 26px);
+  box-shadow: 0 5px 18px rgba(23, 44, 64, 0.045);
+  text-align: left;
+}
+
+#churchSpaceContent .feature-card h3,
+#churchSpaceContent .church-community-item h3 {
+  margin-top: 0;
+}
+
+/* Responsive foundation */
+@media (max-width: 700px) {
+  #app > .page-section:has(#churchSpaceContent) {
+    padding: 12px;
+  }
+
+  #app > .page-section:has(#churchSpaceContent) > .page-header {
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+
+  #churchSpaceContent .dashboard-section,
+  #churchSpaceContent .church-prayer-section,
+  #churchSpaceContent .church-testimony-section,
+  #churchSpaceContent .church-pastoral-care-section {
+    padding: 18px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+}
+
+
+/* Unified V2 Church Navigation — Batch 21S */
+
+#churchSpaceContent .xf-church-navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 24px;
+  padding: 10px;
+  overflow-x: auto;
+  background: #ffffff;
+  border: 1px solid #dce4ee;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(15, 35, 65, 0.06);
+}
+
+#churchSpaceContent .xf-church-nav-button {
+  flex: 0 0 auto;
+  padding: 12px 18px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #334155;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease,
+              color 0.15s ease;
+}
+
+#churchSpaceContent .xf-church-nav-button:hover {
+  background: #edf3fb;
+  color: #17345b;
+}
+
+#churchSpaceContent .xf-church-nav-button[aria-current="page"] {
+  background: #17345b;
+  color: #ffffff;
+}
+
+#churchSpaceContent .xf-church-nav-button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+#churchSpaceContent .xf-church-nav-button[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  #churchSpaceContent .xf-church-navigation {
+    gap: 6px;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  #churchSpaceContent .xf-church-nav-button {
+    padding: 10px 13px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+
+/* Church navigation visibility — Batch 21T.1 */
+
+/*
+ * Navigation visibility is separate from authorization.
+ * Existing modules retain ownership of the hidden attribute.
+ */
+#churchSpaceContent > .xf-church-view-inactive {
+  display: none !important;
+}
+
+/* Never display an authorization-hidden section. */
+#churchSpaceContent > section[hidden] {
+  display: none !important;
+}

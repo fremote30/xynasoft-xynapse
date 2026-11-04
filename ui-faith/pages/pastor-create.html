@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Xynasoft Faith — Create Pastor Profile</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/faith/styles.css?v=999" />
+  <style>
+    .note { font-size: 13px; opacity:.8; margin-top:8px; }
+    .result { margin-top:14px; padding:12px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.03); }
+    .result code { word-break: break-all; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand" style="cursor:pointer" onclick="window.location.href='/faith'">
+    <img src="/faith/xynasoft-logo.png" alt="Xynasoft" style="height:28px;width:auto;display:block" />
+    <div style="margin-left:10px">
+      <div class="title">Xynasoft Faith</div>
+      <div class="subtitle">Pastor Profile</div>
+    </div>
+  </div>
+
+  <div class="top-actions">
+    <a class="link" href="/faith" rel="noreferrer">Home</a>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>Create Your Pastor Profile</h1>
+    <p>Free beta. No login. You’ll receive a private edit link—save it.</p>
+    <div class="accent-line"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-title">Profile Details</div>
+
+    <label class="label">Handle (your public link)</label>
+    <input id="handle" class="input" placeholder="e.g., pastor-daniel" />
+    <div class="note">Lowercase letters/numbers/hyphens. 3–30 characters.</div>
+
+    <div class="row" style="margin-top:10px">
+      <div class="col">
+        <label class="label">Name</label>
+        <input id="name" class="input" placeholder="e.g., Pastor Daniel" />
+      </div>
+      <div class="col">
+        <label class="label">Church</label>
+        <input id="church" class="input" placeholder="e.g., Grace Chapel" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <div class="col">
+        <label class="label">City</label>
+        <input id="city" class="input" placeholder="e.g., Accra" />
+      </div>
+      <div class="col">
+        <label class="label">Country</label>
+        <input id="country" class="input" value="Ghana" />
+      </div>
+    </div>
+
+    <label class="label" style="margin-top:10px">Bio</label>
+    <textarea id="bio" class="input" rows="4" placeholder="Short introduction..."></textarea>
+
+    <div class="row" style="margin-top:10px">
+      <div class="col">
+        <label class="label">WhatsApp (optional)</label>
+        <input id="whatsapp" class="input" placeholder="+233..." />
+      </div>
+      <div class="col">
+        <label class="label">Email (optional)</label>
+        <input id="email" class="input" placeholder="example@email.com" />
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:14px">
+      <button id="createBtn" class="btn primary" type="button">Create Profile</button>
+      <button id="clearBtn" class="btn secondary" type="button">Clear</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="result" class="result" style="display:none"></div>
+  </section>
+
+  <footer class="footer">
+    <div>Xynasoft Faith • Pastor Profiles (Phase 1)</div>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    handle: $("handle"),
+    name: $("name"),
+    church: $("church"),
+    city: $("city"),
+    country: $("country"),
+    bio: $("bio"),
+    whatsapp: $("whatsapp"),
+    email: $("email"),
+    createBtn: $("createBtn"),
+    clearBtn: $("clearBtn"),
+    status: $("status"),
+    result: $("result"),
+  };
+
+  function setStatus(msg){ els.status.textContent = msg || ""; }
+  function showResult(html){
+    els.result.style.display = "block";
+    els.result.innerHTML = html;
+  }
+  function hideResult(){
+    els.result.style.display = "none";
+    els.result.innerHTML = "";
+  }
+
+  async function createProfile(){
+    hideResult();
+    setStatus("Creating profile…");
+    els.createBtn.disabled = true;
+
+    const payload = {
+      handle: (els.handle.value || "").trim(),
+      name: (els.name.value || "").trim(),
+      church: (els.church.value || "").trim() || null,
+      city: (els.city.value || "").trim() || null,
+      country: (els.country.value || "").trim() || "Ghana",
+      bio: (els.bio.value || "").trim() || null,
+      whatsapp: (els.whatsapp.value || "").trim() || null,
+      email: (els.email.value || "").trim() || null,
+    };
+
+    if (!payload.handle || !payload.name) {
+      setStatus("Handle and Name are required.");
+      els.createBtn.disabled = false;
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/v1/faith/pastors", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.detail || `Request failed (${res.status})`);
+
+      const pub = data.public_url;
+      const edit = data.edit_url;
+
+      showResult(`
+        <div><b>✅ Profile created!</b></div>
+        <div style="margin-top:8px"><b>Public:</b> <code>${pub}</code></div>
+        <div style="margin-top:6px"><b>Private edit link (SAVE THIS):</b> <code>${edit}</code></div>
+        <div class="note" style="margin-top:10px">
+          Tip: Copy the private edit link to WhatsApp / Notes. This is your “login”.
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn secondary" id="copyPub">Copy Public Link</button>
+          <button class="btn secondary" id="copyEdit">Copy Edit Link</button>
+          <button class="btn primary" id="openPub">Open Public Profile</button>
+        </div>
+      `);
+
+      document.getElementById("copyPub").onclick = () => navigator.clipboard.writeText(pub);
+      document.getElementById("copyEdit").onclick = () => navigator.clipboard.writeText(edit);
+      document.getElementById("openPub").onclick = () => window.location.href = pub.replace(window.location.origin, "");
+
+      setStatus("Done.");
+    } catch (e) {
+      setStatus("Error: " + (e.message || e));
+    } finally {
+      els.createBtn.disabled = false;
+    }
+  }
+
+  function clearAll(){
+    ["handle","name","church","city","country","bio","whatsapp","email"].forEach(id => $(id).value = "");
+    $("country").value = "Ghana";
+    setStatus("");
+    hideResult();
+  }
+
+  els.createBtn.addEventListener("click", createProfile);
+  els.clearBtn.addEventListener("click", clearAll);
+})();
+</script>
+</body>
+</html>

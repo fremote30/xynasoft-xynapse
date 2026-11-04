@@ -1,0 +1,116 @@
+
+.xf-core {
+  padding: 64px 24px;
+  background: #fff;
+  font-family: Inter, system-ui, sans-serif;
+}
+.xf-core-inner { max-width: 1120px; margin: auto; }
+.xf-core h2 {
+  text-align: center;
+  font-size: clamp(28px, 3vw, 40px);
+  letter-spacing: -.035em;
+}
+.xf-eyebrow {
+  display: block;
+  text-align: center;
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: .12em;
+}
+.xf-core-intro {
+  max-width: 640px;
+  margin: 0 auto 32px;
+  text-align: center;
+  color: #64748b;
+  line-height: 1.7;
+}
+.xf-core-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+.xf-core-card {
+  padding: 26px 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+}
+.xf-core-icon { font-size: 28px; }
+.xf-core-card h3 { font-size: 18px; margin: 16px 0 10px; }
+.xf-core-card p { color: #64748b; line-height: 1.6; }
+.xf-pricing-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+.xf-pricing-card-pro { border: 1px solid #dbeafe; }
+@media(max-width: 1050px) {
+  .xf-core-grid, .xf-pricing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media(max-width: 640px) {
+  .xf-core-grid, .xf-pricing-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* Batch 8C — Church Pro pricing alignment */
+.xf-pricing-grid > .xf-plan-church-pro {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 28px 26px;
+  background: #fff;
+  border: 1px solid #dfe5ef;
+  border-radius: 18px;
+  box-shadow: 0 12px 24px rgba(15,23,42,.045);
+  box-sizing: border-box;
+}
+.xf-plan-church-pro .xf-plan-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 14px;
+}
+.xf-plan-church-pro h3 {
+  font-size: 22px;
+  margin: 0 0 22px;
+}
+.xf-plan-church-pro .xf-plan-price {
+  font-size: 34px;
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 26px;
+}
+.xf-plan-church-pro .xf-plan-description {
+  color: #64748b;
+  line-height: 1.65;
+  min-height: 64px;
+}
+.xf-plan-church-pro .xf-plan-features {
+  padding: 0;
+  margin: 24px 0 30px;
+  list-style: none;
+}
+.xf-plan-church-pro .xf-plan-features li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.xf-plan-church-pro .xf-plan-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #059669;
+  font-weight: 800;
+}
+.xf-plan-church-pro .xf-plan-cta {
+  margin-top: auto;
+  padding: 15px 12px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #334155;
+  text-align: center;
+  font-weight: 700;
+}

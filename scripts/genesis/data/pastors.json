@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Pastor Samuel Mensah",
+    "email": "samuel.mensah@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Life Chapel",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor David Carter",
+    "email": "david.carter@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "New Hope Community Church",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Chinedu Okafor",
+    "email": "chinedu.okafor@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Life Ministries",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Daniel Mwangi",
+    "email": "daniel.mwangi@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Living Waters Fellowship",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Michael Thompson",
+    "email": "michael.thompson@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Kingdom Hope Church",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Jose Santos",
+    "email": "jose.santos@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Hope Fellowship Center",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Thabo Dlamini",
+    "email": "thabo.dlamini@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Restoration Church",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Lucas Almeida",
+    "email": "lucas.almeida@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Igreja Vida Nova",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Arun Joseph",
+    "email": "arun.joseph@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Grace Fellowship India",
+    "role": "pastor"
+  },
+  {
+    "name": "Pastor Andre Campbell",
+    "email": "andre.campbell@genesis.xynafaith.com",
+    "password": "Genesis2026!",
+    "church": "Caribbean Hope Ministries",
+    "role": "pastor"
+  }
+]

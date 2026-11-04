@@ -1,0 +1,31 @@
+<section class="member-v2-page">
+  <header class="member-v2-page-header">
+    <span class="member-v2-eyebrow">PERSONAL REFLECTIONS</span>
+    <h1>My Sermon Notes</h1>
+    <p>Capture meaningful insights and revisit what you've learned.</p>
+  </header>
+  <div class="member-v2-grid">
+    <section class="member-v2-panel">
+      <h2>Write a Note</h2>
+      <form id="memberNoteForm">
+        <input type="hidden" id="memberNoteId">
+        <label for="memberNoteTitle">Title</label>
+        <input id="memberNoteTitle" maxlength="200"
+               placeholder="A meaningful title">
+        <label for="memberNoteBody">Your reflection</label>
+        <textarea id="memberNoteBody" required maxlength="50000"
+                  rows="9" placeholder="Write your thoughts…"></textarea>
+        <div class="member-v2-actions">
+          <button type="submit" class="member-v2-button">Save Note</button>
+          <button type="button" id="memberNoteClear"
+                  class="member-v2-button member-v2-outline">Clear</button>
+        </div>
+        <p id="memberNoteStatus" role="status"></p>
+      </form>
+    </section>
+    <section class="member-v2-panel">
+      <h2>Saved Notes</h2>
+      <div id="memberNotesList" aria-live="polite"></div>
+    </section>
+  </div>
+</section>

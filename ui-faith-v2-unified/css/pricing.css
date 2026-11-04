@@ -1,0 +1,143 @@
+
+/* XynaFaith unified pricing — scoped development styles */
+
+.xf-pricing {
+  padding: 76px 20px;
+  background: #f5f8fd;
+}
+
+.xf-pricing-container {
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+.xf-pricing-heading {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.xf-pricing-heading h2 {
+  font-size: 34px;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.xf-pricing-heading p,
+.xf-pricing-note {
+  color: #64748b;
+}
+
+.xf-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.xf-plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 26px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(15,23,42,.05);
+}
+
+.xf-plan-featured {
+  border: 2px solid #2563eb;
+}
+
+.xf-plan-label {
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.xf-plan h3 {
+  font-size: 23px;
+  color: #0f172a;
+}
+
+.xf-plan-price {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1d4ed8;
+  margin: 18px 0;
+}
+
+.xf-plan-price span {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.xf-plan p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.xf-plan ul {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 32px;
+  flex: 1;
+}
+
+.xf-plan li {
+  padding: 9px 0;
+  color: #334155;
+}
+
+.xf-plan li::before {
+  content: "✓";
+  color: #16a34a;
+  margin-right: 10px;
+  font-weight: 700;
+}
+
+.xf-plan-button,
+.xf-plan-unavailable {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+.xf-plan-button {
+  border: 0;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.xf-plan-unavailable {
+  background: #eff6ff;
+  color: #475569;
+}
+
+.xf-pricing-note {
+  text-align: center;
+  font-size: 13px;
+  margin-top: 24px;
+}
+
+@media (max-width: 850px) {
+  .xf-pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .xf-pricing {
+    padding: 48px 18px;
+  }
+
+  .xf-pricing-heading h2 {
+    font-size: 28px;
+  }
+}

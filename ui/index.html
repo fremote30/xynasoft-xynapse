@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Xynasoft Faith</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/faith/styles.css" />
+    <style>
+      /* Small additions so this file works even if styles.css is minimal */
+      .container { max-width: 980px; margin: 0 auto; padding: 24px 16px 60px; }
+      .hero { margin-bottom: 14px; }
+      .muted { opacity: 0.85; }
+      .card { margin: 14px 0; padding: 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,.12); }
+      .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
+      .label { display:block; font-size: 12px; opacity: .8; margin: 10px 0 6px; }
+      .input { width:100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.15); color: inherit; }
+      .btn { padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.18); color: inherit; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; }
+      .btn.secondary { opacity:.9; }
+      .status { margin-top: 10px; font-size: 13px; opacity: .9; }
+      .sermon-body h3 { margin-top: 16px; }
+      .point { margin: 12px 0; padding: 10px; border: 1px solid rgba(255,255,255,.10); border-radius: 10px; }
+      .sermon-body ul { padding-left: 18px; }
+      .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom: 16px; }
+      .brand { display:flex; gap:10px; align-items:center; }
+      .logo { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:800; border:1px solid rgba(255,255,255,.12); }
+      .small { font-size: 12px; opacity: .85; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    </style>
+  </head>
+
+  <body>
+    <!-- MEMBER VIEW (public) -->
+    <section id="memberView" class="container" style="display:none;">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">X</div>
+          <div>
+            <div class="mono" style="font-weight:700;">Xynasoft Faith</div>
+            <div class="small muted">Sermon shared with you</div>
+          </div>
+        </div>
+        <a class="btn secondary" href="/faith">Back</a>
+      </div>
+
+      <section class="card">
+        <h2 id="mvTitle">Loading…</h2>
+        <div id="mvMeta" class="small muted"></div>
+        <hr style="border:0;border-top:1px solid rgba(255,255,255,.12);margin:14px 0;" />
+        <div id="mvBody" class="sermon-body"></div>
+      </section>
+
+      <section class="card">
+        <h3>Ask a Question</h3>
+        <p class="small muted">Submit a question for your pastor about this sermon.</p>
+
+        <label class="label">Your name (optional)</label>
+        <input id="mvName" class="input" placeholder="e.g., Ama" />
+
+        <label class="label">Your question</label>
+        <textarea id="mvQuestion" class="input" rows="4" placeholder="Type your question…"></textarea>
+
+        <div class="actions">
+          <button id="mvSubmit" class="btn">Submit</button>
+        </div>
+
+        <div id="mvStatus" class="status"></div>
+      </section>
+    </section>
+
+    <!-- PASTOR VIEW (generator) -->
+    <section id="pastorView" class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">X</div>
+          <div>
+            <div class="mono" style="font-weight:700;">Xynasoft Faith</div>
+            <div class="small muted">Ghana-first sermon research assistant (beta)</div>
+          </div>
+        </div>
+        <div class="small muted mono" id="faithStatus">ready</div>
+      </div>
+
+      <section class="card">
+        <h3>Generate a Sermon Outline</h3>
+
+        <label class="label">Bible Passage</label>
+        <input id="passage_reference" class="input" placeholder="e.g., Ephesians 6:10-18" />
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;">
+            <label class="label">Theme</label>
+            <input id="theme" class="input" placeholder="e.g., Spiritual Strength" />
+          </div>
+          <div style="flex:1; min-width:220px;">
+            <label class="label">Audience</label>
+            <select id="audience_type" class="input">
+              <option>General</option>
+              <option selected>Youth</option>
+              <option>Women</option>
+              <option>Men</option>
+              <option>Leaders</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;">
+            <label class="label">Local Context</label>
+            <input id="local_context" class="input" placeholder="e.g., Accra" />
+          </div>
+          <div style="flex:1; min-width:220px;">
+            <label class="label">Service Type</label>
+            <select id="service_type" class="input">
+              <option selected>Sunday</option>
+              <option>Midweek</option>
+              <option>Youth Service</option>
+              <option>Revival</option>
+              <option>Funeral</option>
+              <option>Wedding</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;">
+            <label class="label">Tone</label>
+            <select id="tone" class="input">
+              <option selected>Encouraging</option>
+              <option>Teaching</option>
+              <option>Evangelistic</option>
+              <option>Prophetic</option>
+              <option>Pastoral</option>
+            </select>
+          </div>
+          <div style="flex:1; min-width:220px;">
+            <label class="label">Duration (minutes)</label>
+            <input id="duration_minutes" class="input" type="text" value="30" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="btnGenerate" class="btn">Generate</button>
+          <!-- We’ll wire these later in Option A -->
+          <button id="saveBtn" class="btn secondary" disabled>Save</button>
+          <button id="publishBtn" class="btn secondary" disabled>Publish</button>
+          <a id="shareLink" class="btn secondary" style="display:none" target="_blank" rel="noopener">Open Member Link</a>
+        </div>
+
+        <div id="toast" class="status muted mono"></div>
+      </section>
+
+      <section class="card">
+        <h3>Output</h3>
+        <div id="output" class="sermon-body muted">No sermon generated yet.</div>
+      </section>
+
+      <section class="card">
+        <h3>API Key (for saving/publishing later)</h3>
+        <input id="apiKey" class="input" placeholder="x-api-key" />
+        <div class="small muted" style="margin-top:8px;">
+          This is stored in your browser localStorage. Member view does not require an API key.
+        </div>
+      </section>
+    </section>
+
+    <!-- IMPORTANT: Faith UI uses /faith/app.js (NOT /ui/app.js) -->
+    <script src="/faith/app.js"></script>
+  </body>
+</html>

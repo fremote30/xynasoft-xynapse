@@ -1,0 +1,629 @@
+<section class="page-section">
+  <div class="page-header">
+    <div>
+      <p class="eyebrow">Church Space</p>
+      <h1 id="churchSpaceName">My Church</h1>
+      <p id="churchSpaceIdentity">
+        Loading your church community...
+      </p>
+    </div>
+
+    <span
+      id="churchSpaceRole"
+      class="status-badge"
+      hidden
+    ></span>
+  </div>
+
+  <div
+    id="churchSpaceState"
+    class="feature-card"
+  >
+    <h3>Loading Church Space</h3>
+    <p>
+      Preparing your church home.
+    </p>
+  </div>
+
+  <div
+    id="churchSpaceContent"
+    hidden
+  >
+    <!-- Unified V2 Church Space navigation -->
+    <nav
+      id="churchSpaceNavigation"
+      class="xf-church-navigation"
+      aria-label="Church Space sections"
+    >
+      <button type="button"
+        class="xf-church-nav-button"
+        data-church-view="home"
+        aria-current="page">
+        Home
+      </button>
+
+      <button type="button"
+        class="xf-church-nav-button"
+        data-church-view="community">
+        Community
+      </button>
+
+      <button type="button"
+        class="xf-church-nav-button"
+        data-church-view="prayer">
+        Prayer &amp; Care
+      </button>
+
+      <button type="button"
+        class="xf-church-nav-button"
+        data-church-view="testimonies">
+        Testimonies
+      </button>
+
+      <button type="button"
+        class="xf-church-nav-button"
+        data-church-view="management"
+        hidden>
+        Management
+      </button>
+    </nav>
+    <section
+      id="churchHomeSection"
+      class="dashboard-section"
+    >
+      <h2>Church Home</h2>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>🙏 Prayer</h3>
+          <p>
+            Pray with your church community and
+            support shared prayer needs.
+          </p>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="navigate('prayer')"
+          >
+            Open Prayer Wall
+          </button>
+        </article>
+
+        <article
+          id="churchContentCard"
+          class="feature-card"
+          hidden
+        >
+          <h3>✍️ Ministry Content</h3>
+          <p>
+            Create sermons and ministry resources
+            for your church.
+          </p>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="navigate('sermon')"
+          >
+            Open Sermon Studio
+          </button>
+        </article>
+
+        <article
+          id="churchPastoralCareCard"
+          class="feature-card"
+          hidden
+        >
+          <h3>❤️ Pastoral Care</h3>
+          <p>
+            Pastoral care workflows will live here
+            as the care module comes online.
+          </p>
+        </article>
+
+        <article
+          id="churchAnalyticsCard"
+          class="feature-card"
+          hidden
+        >
+          <h3>Church Intelligence</h3>
+          <p>
+            Understand your church community through
+            operational insights.
+          </p>
+          <div id="churchIntelligenceState" role="status">
+            Preparing church insights...
+          </div>
+          <div
+            id="churchIntelligenceMetrics"
+            class="xf-intelligence-grid"
+            hidden
+          ></div>
+        </article>
+      </div>
+    </section>
+
+    <section
+      id="churchCommunitySection"
+      class="dashboard-section"
+    >
+      <div class="section-heading">
+        <div>
+          <h2>Church Community</h2>
+          <p>
+            Stay connected with announcements and
+            upcoming events from your church.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="section-heading">
+            <div>
+              <h3>📣 Announcements</h3>
+              <p>
+                Recent updates from your church.
+              </p>
+            </div>
+
+            <button
+              id="churchAnnouncementCreateButton"
+              type="button"
+              class="btn btn-primary"
+              hidden
+            >
+              New Announcement
+            </button>
+          </div>
+
+          <div
+            id="churchAnnouncementForm"
+            hidden
+          >
+            <label>
+              Title
+              <input
+                id="churchAnnouncementTitle"
+                type="text"
+                maxlength="200"
+                autocomplete="off"
+              >
+            </label>
+
+            <label>
+              Announcement
+              <textarea
+                id="churchAnnouncementBody"
+                rows="5"
+              ></textarea>
+            </label>
+
+            <div>
+              <button
+                id="churchAnnouncementSaveButton"
+                type="button"
+                class="btn btn-primary"
+              >
+                Save Draft
+              </button>
+
+              <button
+                id="churchAnnouncementCancelButton"
+                type="button"
+                class="btn btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <p
+              id="churchAnnouncementFormState"
+              role="status"
+            ></p>
+          </div>
+
+          <div id="churchAnnouncementsList">
+            <p>Loading announcements...</p>
+          </div>
+        </article>
+
+        <article class="feature-card">
+          <div class="section-heading">
+            <div>
+              <h3>📅 Upcoming Events</h3>
+              <p>
+                Gatherings and activities from your
+                church community.
+              </p>
+            </div>
+
+            <button
+              id="churchEventCreateButton"
+              type="button"
+              class="btn btn-primary"
+              hidden
+            >
+              New Event
+            </button>
+          </div>
+
+          <div
+            id="churchEventForm"
+            hidden
+          >
+            <label>
+              Title
+              <input
+                id="churchEventTitle"
+                type="text"
+                maxlength="200"
+                autocomplete="off"
+              >
+            </label>
+
+            <label>
+              Description
+              <textarea
+                id="churchEventDescription"
+                rows="4"
+              ></textarea>
+            </label>
+
+            <label>
+              Starts
+              <input
+                id="churchEventStartsAt"
+                type="datetime-local"
+              >
+            </label>
+
+            <label>
+              Ends
+              <input
+                id="churchEventEndsAt"
+                type="datetime-local"
+              >
+            </label>
+
+            <label>
+              Location
+              <input
+                id="churchEventLocation"
+                type="text"
+                maxlength="255"
+                autocomplete="off"
+              >
+            </label>
+
+            <label>
+              Event link
+              <input
+                id="churchEventUrl"
+                type="url"
+                placeholder="https://"
+                autocomplete="off"
+              >
+            </label>
+
+            <div>
+              <button
+                id="churchEventSaveButton"
+                type="button"
+                class="btn btn-primary"
+              >
+                Save Draft
+              </button>
+
+              <button
+                id="churchEventCancelButton"
+                type="button"
+                class="btn btn-secondary"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <p
+              id="churchEventFormState"
+              role="status"
+            ></p>
+          </div>
+
+          <div id="churchEventsList">
+            <p>Loading events...</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+<!-- CHURCH OPERATIONS: UNIFIED V2 -->
+<section
+  id="churchOperationsSection"
+  class="dashboard-section"
+  hidden
+>
+  <div class="section-heading">
+    <div>
+      <h2>Attendance & Service Teams</h2>
+      <p>Manage attendance and service assignments.</p>
+    </div>
+  </div>
+
+  <p id="churchOperationsState" role="status">
+    Preparing church operations...
+  </p>
+
+  <div class="feature-card">
+    <label for="churchOperationsEvent">Church event</label>
+    <select id="churchOperationsEvent">
+      <option value="">Select event</option>
+    </select>
+  </div>
+
+  <div class="feature-grid">
+    <article class="feature-card">
+      <h3>Attendance</h3>
+
+      <label for="churchAttendanceMember">Member</label>
+      <select id="churchAttendanceMember">
+        <option value="">Select member</option>
+      </select>
+
+      <label for="churchAttendanceStatus">Status</label>
+      <select id="churchAttendanceStatus">
+        <option value="present">Present</option>
+        <option value="absent">Absent</option>
+        <option value="excused">Excused</option>
+      </select>
+
+      <button
+        id="churchAttendanceSaveButton"
+        type="button"
+        class="btn btn-primary"
+      >
+        Record Attendance
+      </button>
+
+      <div id="churchAttendanceList"></div>
+    </article>
+
+    <article class="feature-card">
+      <h3>Service Assignments</h3>
+
+      <label for="churchServiceGroup">Ministry group</label>
+      <select id="churchServiceGroup">
+        <option value="">Select group</option>
+      </select>
+
+      <label for="churchServiceMember">Member</label>
+      <select id="churchServiceMember">
+        <option value="">Select member</option>
+      </select>
+
+      <label for="churchServiceRole">Service role</label>
+      <input
+        id="churchServiceRole"
+        type="text"
+        maxlength="120"
+        placeholder="e.g. Usher, Choir, Media"
+      >
+
+      <button
+        id="churchServiceSaveButton"
+        type="button"
+        class="btn btn-primary"
+      >
+        Assign Member
+      </button>
+
+      <div id="churchServiceAssignmentList"></div>
+    </article>
+  </div>
+</section>
+
+<section
+      id="churchPeopleSection"
+      class="dashboard-section"
+      hidden
+    >
+      <div class="section-heading">
+        <div>
+          <h2>People</h2>
+          <p>
+            Active members of this Church Space.
+          </p>
+        </div>
+      </div>
+
+      <div
+        id="churchPeopleList"
+        class="feature-grid"
+      ></div>
+    </section>
+
+  <!-- =========================================
+       V2 PRAYER + PASTORAL CARE
+  ========================================== -->
+  <section class="church-prayer-section" id="churchPrayerSection">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Prayer & Care</span>
+        <h2>Church Prayer Community</h2>
+        <p>
+          Pray together, request private pastoral follow-up,
+          and celebrate answered prayers.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        id="churchPrayerCreateButton"
+      >
+        Submit Prayer
+      </button>
+    </div>
+
+    <form id="churchPrayerForm" hidden>
+      <div class="church-community-item">
+        <h3>Share a prayer request</h3>
+
+        <label>
+          Prayer request
+          <textarea
+            id="churchPrayerMessage"
+            rows="5"
+            maxlength="5000"
+            required
+            placeholder="What would you like your church to pray about?"
+          ></textarea>
+        </label>
+
+        <label>
+          Category
+          <select id="churchPrayerCategory">
+            <option value="">Select category</option>
+            <option value="Healing">Healing</option>
+            <option value="Family">Family</option>
+            <option value="Faith">Faith</option>
+            <option value="Work">Work</option>
+            <option value="School">School</option>
+            <option value="Grief">Grief</option>
+            <option value="Guidance">Guidance</option>
+            <option value="Thanksgiving">Thanksgiving</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+
+        <label>
+          Privacy
+          <select id="churchPrayerVisibility">
+            <option value="community">
+              Church community
+            </option>
+            <option value="private">
+              Private — only me unless I request pastoral care
+            </option>
+          </select>
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            id="churchPrayerAnonymous"
+          >
+          Show this prayer anonymously
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            id="churchPrayerPastoralCare"
+          >
+          I would like private pastoral follow-up
+        </label>
+
+        <p>
+          Pastoral-care notes are private to authorized
+          pastoral-care leaders and are not shown on the
+          Prayer Wall.
+        </p>
+
+        <div>
+          <button type="submit" class="btn btn-primary">
+            Submit Prayer
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="churchPrayerCancelButton"
+          >
+            Cancel
+          </button>
+        </div>
+
+        <p id="churchPrayerFormState"></p>
+      </div>
+    </form>
+
+    <div id="churchPrayerList">
+      <p>Loading church prayers...</p>
+    </div>
+  </section>
+
+  <!-- =========================================
+       V2 TESTIMONY WALL
+  ========================================== -->
+  <section
+    class="church-testimony-section"
+    id="churchTestimonySection"
+  >
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Answered Prayers</span>
+        <h2>Testimony Wall</h2>
+        <p>
+          Celebrate testimonies that members have chosen
+          to share with their church community.
+        </p>
+      </div>
+    </div>
+
+    <div id="churchTestimonyList">
+      <p>Loading testimonies...</p>
+    </div>
+
+    <div
+      id="churchTestimonyModeration"
+      class="church-community-item"
+      hidden
+    >
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Content Review</span>
+          <h3>Pending Testimonies</h3>
+          <p>
+            Review testimonies members have submitted
+            for publication.
+          </p>
+        </div>
+      </div>
+
+      <div id="churchPendingTestimonyList">
+        <p>No testimonies are waiting for review.</p>
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="church-pastoral-care-section"
+    id="churchPastoralCareWorkspace"
+    hidden
+  >
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Private Ministry Workflow</span>
+        <h2>Pastoral Care</h2>
+        <p>
+          Assign follow-up, schedule care, keep private notes,
+          and resolve pastoral-care requests.
+        </p>
+      </div>
+    </div>
+
+    <div id="churchPastoralCareList">
+      <p>Loading pastoral-care requests...</p>
+    </div>
+
+    <div
+      id="churchPastoralCareDetail"
+      class="church-community-item"
+      hidden
+    ></div>
+  </section>
+
+  </div>
+
+</section>

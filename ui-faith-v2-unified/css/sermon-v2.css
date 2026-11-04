@@ -1,0 +1,896 @@
+
+/*
+ * Sermon Studio 2.0
+ * Isolated V2 visual enhancements.
+ * Existing IDs and JavaScript behavior remain unchanged.
+ */
+
+@media (min-width: 1201px) {
+  .studio-layout {
+    grid-template-columns:
+      minmax(250px, 290px)
+      minmax(0, 1fr)
+      minmax(260px, 300px);
+    gap: 18px;
+    padding: 20px;
+    max-width: 1920px;
+    margin-inline: auto;
+    align-items: start;
+  }
+
+  .studio-sidebar,
+  .action-sidebar {
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .studio-main {
+    min-width: 0;
+  }
+}
+
+.studio-main {
+  border-radius: 20px;
+}
+
+.sermon-canvas {
+  line-height: 1.75;
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.studio-sidebar,
+.action-sidebar,
+.studio-main {
+  box-shadow: 0 6px 28px rgba(15, 23, 42, 0.045);
+}
+
+@media (max-width: 768px) {
+  .studio-layout {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .studio-main {
+    min-width: 0;
+    padding: 16px;
+  }
+
+  .sermon-canvas {
+    padding: 18px;
+    line-height: 1.7;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 17B */
+
+/* Design foundation */
+.studio-layout {
+  --studio-accent: #6658d9;
+  --studio-border: #e6e9f2;
+  --studio-text: #20263a;
+  --studio-muted: #697386;
+  color: var(--studio-text);
+}
+
+/* Main workspace */
+.studio-layout .studio-main {
+  background: #ffffff;
+  border: 1px solid var(--studio-border);
+  border-radius: 22px;
+  box-shadow: 0 12px 36px rgba(25, 35, 75, 0.06);
+}
+
+.studio-layout .main-header {
+  border-bottom: 1px solid var(--studio-border);
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+
+/* Writing canvas */
+.studio-layout .sermon-canvas {
+  background: #fff;
+  border-radius: 16px;
+  color: var(--studio-text);
+  line-height: 1.85;
+  font-size: 16px;
+  max-width: 100%;
+}
+
+.studio-layout .sermon-canvas:focus {
+  outline: 2px solid rgba(102, 88, 217, 0.20);
+  outline-offset: 3px;
+}
+
+/* Creation panel */
+.studio-layout .studio-sidebar {
+  background: #fff;
+  border: 1px solid var(--studio-border);
+  border-radius: 22px;
+  box-shadow: 0 8px 28px rgba(25, 35, 75, 0.045);
+}
+
+/* Assistant and tools */
+.studio-layout .action-sidebar {
+  background: #fff;
+  border: 1px solid var(--studio-border);
+  border-radius: 22px;
+  box-shadow: 0 8px 28px rgba(25, 35, 75, 0.045);
+}
+
+.studio-layout #xynivaStudioPanel {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* Advanced options */
+.studio-layout .advanced-wrapper {
+  border: 1px solid var(--studio-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Wider editor on desktop */
+@media (min-width: 1201px) {
+  .studio-layout {
+    grid-template-columns:
+      minmax(240px, 270px)
+      minmax(0, 1fr)
+      minmax(250px, 285px);
+    gap: 18px;
+    align-items: start;
+  }
+}
+
+/* Keep the existing mobile tab visibility logic */
+@media (max-width: 768px) {
+  .studio-layout .studio-main,
+  .studio-layout .studio-sidebar,
+  .studio-layout .action-sidebar {
+    border-radius: 16px;
+  }
+
+  .studio-layout .sermon-canvas {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 18A */
+
+/* More space for the sermon editor */
+@media (min-width: 1201px) {
+  .studio-layout {
+    grid-template-columns:
+      minmax(225px, 250px)
+      minmax(0, 1fr)
+      minmax(235px, 265px);
+    gap: 16px;
+    max-width: 1920px;
+    margin-inline: auto;
+  }
+}
+
+/* A calmer writing environment */
+.studio-layout .studio-main {
+  min-width: 0;
+  background: #fff;
+  border-radius: 22px;
+}
+
+.studio-layout .sermon-canvas {
+  max-width: 900px;
+  margin-inline: auto;
+  font-size: 17px;
+  line-height: 1.9;
+  letter-spacing: 0.005em;
+}
+
+/* Compact creation panel */
+.studio-layout .studio-sidebar {
+  padding: 18px;
+}
+
+.studio-layout .studio-sidebar input,
+.studio-layout .studio-sidebar select,
+.studio-layout .studio-sidebar textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Compact AI and action panel */
+.studio-layout .action-sidebar {
+  padding: 16px;
+}
+
+.studio-layout #xynivaStudioPanel {
+  background: #f9faff;
+  border: 1px solid #e2e5ff;
+  border-radius: 18px;
+}
+
+/* Preserve the existing mobile tab system */
+@media (max-width: 768px) {
+  .studio-layout {
+    gap: 12px;
+  }
+
+  .studio-layout .sermon-canvas {
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 18B */
+
+.studio-layout .main-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sermon-v2-collaborate,
+.sermon-v2-xyniva-toggle {
+  border: 1px solid #dfe3f6;
+  border-radius: 12px;
+  background: #f7f8ff;
+  color: #3949ab;
+  padding: 10px 13px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.sermon-v2-xyniva-toggle {
+  margin-left: auto;
+  min-width: 38px;
+  font-weight: 700;
+}
+
+.xyniva-studio-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.sermon-v2-xyniva-collapsed
+  > :not(.xyniva-studio-header) {
+  display: none !important;
+}
+
+@media (min-width: 769px) {
+  .studio-layout.sermon-v2-focus {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .studio-layout.sermon-v2-focus > .studio-sidebar,
+  .studio-layout.sermon-v2-focus > .action-sidebar {
+    display: none !important;
+  }
+
+  .studio-layout.sermon-v2-focus > .studio-main {
+    display: block !important;
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 18C */
+
+.studio-layout .sermon-v2-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e7eaf4;
+}
+
+.studio-layout .sermon-v2-toolbar-btn {
+  appearance: none;
+  border: 1px solid #e1e5f1;
+  background: #fff;
+  color: #334155;
+  border-radius: 11px;
+  padding: 10px 13px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.studio-layout .sermon-v2-toolbar-btn:hover:not(:disabled) {
+  background: #f1f5ff;
+}
+
+.studio-layout .sermon-v2-toolbar-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.studio-layout .sermon-v2-toolbar-btn:focus-visible {
+  outline: 3px solid #818cf8;
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .studio-layout .sermon-v2-toolbar {
+    gap: 6px;
+  }
+
+  .studio-layout .sermon-v2-toolbar-btn {
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 18D */
+
+/* Compact toolbar */
+.studio-layout .sermon-v2-toolbar {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  gap: 7px;
+  padding: 8px 0 12px;
+  margin-bottom: 8px;
+}
+
+.studio-layout .sermon-v2-toolbar-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 9px 11px;
+  font-size: 12px;
+}
+
+/* Keep focus controls aligned */
+.studio-layout .main-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.studio-layout .focus-btn {
+  white-space: nowrap;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+/* More balanced sermon editor */
+.studio-layout .studio-main {
+  padding: 22px;
+}
+
+.studio-layout .sermon-canvas {
+  min-height: 580px;
+  padding: 24px;
+  border-radius: 16px;
+}
+
+/* Reduce unnecessary panel spacing */
+.studio-layout .studio-sidebar,
+.studio-layout .action-sidebar {
+  min-width: 0;
+}
+
+/* Improve compact controls */
+.studio-layout .action-sidebar button {
+  max-width: 100%;
+}
+
+/* Mobile-friendly spacing */
+@media (max-width: 768px) {
+  .studio-layout .studio-main {
+    padding: 14px;
+  }
+
+  .studio-layout .sermon-canvas {
+    padding: 16px;
+    min-height: 420px;
+  }
+
+  .studio-layout .sermon-v2-toolbar {
+    padding-bottom: 10px;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 19B */
+
+@media (min-width: 1201px) {
+  .studio-layout {
+    grid-template-columns:
+      minmax(225px, 250px)
+      minmax(0, 1fr)
+      minmax(235px, 265px);
+    align-items: start;
+    gap: 18px;
+  }
+}
+
+.sermon-v2-workspace-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 24px;
+  background: #fff;
+  border: 1px solid #e8ebf3;
+  border-radius: 20px;
+}
+
+.sermon-v2-workspace-title h1 {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.3;
+  color: #172033;
+}
+
+.sermon-v2-workspace-title p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.sermon-v2-workspace-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+
+#sermonV2ToolbarHost {
+  min-width: 0;
+}
+
+#sermonV2ToolbarHost .sermon-v2-toolbar {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+#sermonV2FocusHost .main-actions {
+  margin: 0;
+}
+
+@media (max-width: 1200px) {
+  .sermon-v2-workspace-header {
+    flex-wrap: wrap;
+  }
+
+  .sermon-v2-workspace-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .sermon-v2-workspace-header {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .sermon-v2-workspace-title h1 {
+    font-size: 20px;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 19C */
+
+/* Preserve the workspace header in Focus Mode */
+@media (min-width: 769px) {
+  .studio-layout.sermon-v2-focus {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .studio-layout.sermon-v2-focus
+    > .sermon-v2-workspace-header {
+    grid-column: 1 / -1;
+    display: flex !important;
+  }
+
+  .studio-layout.sermon-v2-focus
+    > .studio-main {
+    grid-column: 1 / -1;
+    display: block !important;
+    width: 100%;
+    max-width: 1100px;
+    justify-self: center;
+  }
+
+  .studio-layout.sermon-v2-focus
+    > .studio-sidebar,
+  .studio-layout.sermon-v2-focus
+    > .action-sidebar {
+    display: none !important;
+  }
+}
+
+/* Keep the global toolbar usable */
+.sermon-v2-workspace-actions {
+  flex-wrap: wrap;
+}
+
+#sermonV2ToolbarHost {
+  max-width: 100%;
+}
+
+/* Prioritize writing space */
+.studio-layout .studio-main {
+  min-width: 0;
+}
+
+.studio-layout .sermon-canvas {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* SERMON STUDIO V2 — BATCH 19D */
+
+.sermon-v2-panel-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sermon-v2-panel-controls button {
+  border: 1px solid #e1e7f0;
+  border-radius: 10px;
+  padding: 9px 12px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sermon-v2-panel-controls button:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.sermon-v2-panel-controls button:focus-visible {
+  outline: 3px solid #818cf8;
+  outline-offset: 2px;
+}
+
+@media (min-width: 1201px) {
+  .studio-layout {
+    grid-template-columns:
+      minmax(220px, 260px)
+      minmax(0, 1fr)
+      minmax(235px, 275px) !important;
+  }
+
+  .studio-layout.sermon-v2-assistant-closed {
+    grid-template-columns:
+      minmax(220px, 260px)
+      minmax(0, 1fr) !important;
+  }
+
+  .studio-layout.sermon-v2-create-closed {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(235px, 275px) !important;
+  }
+
+  .studio-layout.sermon-v2-create-closed.sermon-v2-assistant-closed {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .studio-layout.sermon-v2-create-closed > .studio-sidebar,
+  .studio-layout.sermon-v2-assistant-closed > .action-sidebar {
+    display: none !important;
+  }
+
+  .studio-layout > .studio-main {
+    min-width: 0;
+    grid-column: auto;
+  }
+
+  .studio-layout.sermon-v2-focus {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .studio-layout.sermon-v2-focus > .studio-main {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 1200px) {
+  .sermon-v2-panel-controls {
+    display: none;
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 19E */
+
+/* Keep legacy action handlers in the DOM without
+   making them compete with the primary toolbar. */
+@media (min-width: 1201px) {
+  .studio-layout .sermon-v2-secondary-actions {
+    border: 1px solid #e8edf5;
+    background: #fafbfe;
+    box-shadow: none;
+    padding: 12px;
+  }
+
+  .studio-layout .sermon-v2-secondary-actions h3 {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+}
+
+/* Compact the empty sermon state. */
+.studio-layout #emptyState {
+  padding: 24px 18px !important;
+  min-height: 180px !important;
+  max-width: 500px;
+  margin: 24px auto !important;
+}
+
+.studio-layout #emptyState .empty-icon {
+  font-size: 32px !important;
+  width: 56px !important;
+  height: 56px !important;
+  margin: 0 auto 14px !important;
+}
+
+.studio-layout #emptyState h2 {
+  font-size: 20px !important;
+  line-height: 1.35 !important;
+  margin-bottom: 10px !important;
+}
+
+.studio-layout #emptyState p {
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* Give the editor a quieter, document-like appearance. */
+.studio-layout .sermon-canvas {
+  border: 1px solid #edf0f6;
+  border-radius: 14px;
+  background: #fff;
+  line-height: 1.75;
+}
+
+
+/* SERMON STUDIO V2 — BATCH 19F */
+
+.sermon-v2-more-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sermon-v2-more-menu > summary {
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid #dce3ed;
+  background: #f8fafc;
+  color: #334155;
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sermon-v2-more-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.sermon-v2-more-menu[open] > summary {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+#sermonV2MoreActionsHost {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 250px;
+  max-height: 70vh;
+  overflow-y: auto;
+  z-index: 100;
+  padding: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(15,23,42,.14);
+}
+
+#sermonV2MoreActionsHost .sermon-v2-secondary-actions {
+  margin: 0;
+  padding: 4px;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+#sermonV2MoreActionsHost .sermon-v2-secondary-actions button {
+  width: 100%;
+  text-align: left;
+  margin: 3px 0;
+}
+
+@media (max-width: 768px) {
+  #sermonV2MoreActionsHost {
+    right: auto;
+    left: 0;
+    width: min(250px, 80vw);
+  }
+}
+
+
+/* SERMON STUDIO V2 — BATCH 19G */
+
+/* Align More Actions with the primary toolbar */
+.sermon-v2-workspace-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sermon-v2-more-menu {
+  display: flex;
+  align-items: center;
+  align-self: center;
+}
+
+.sermon-v2-more-menu > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 38px;
+  padding: 8px 13px;
+  line-height: 20px;
+  margin: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Keep Xyniva content within the assistant card */
+.studio-layout #xynivaStudioPanel {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+}
+
+.studio-layout .xyniva-studio-header {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+.studio-layout .xyniva-studio-header > div {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
+.studio-layout .xyniva-studio-header h3 {
+  margin: 0 0 5px;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.studio-layout .sermon-v2-xyniva-toggle {
+  flex: 0 0 30px;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.studio-layout #xynivaStudioForm,
+.studio-layout #xynivaStudioInput {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.studio-layout #xynivaStudioInput {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.studio-layout #xynivaStudioSend {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+
+/* SERMON STUDIO V2 — BATCH 19G.4 */
+
+/* One consistent alignment model for all header actions. */
+.studio-layout .sermon-v2-workspace-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.studio-layout #sermonV2ToolbarHost,
+.studio-layout #sermonV2FocusHost,
+.studio-layout .sermon-v2-more-menu {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  margin: 0;
+  padding: 0;
+}
+
+.studio-layout #sermonV2ToolbarHost .sermon-v2-toolbar,
+.studio-layout #sermonV2FocusHost .main-actions {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Standardize the actual clickable controls. */
+.studio-layout #sermonV2ToolbarHost .sermon-v2-toolbar-btn,
+.studio-layout #sermonV2FocusHost .focus-btn,
+.studio-layout .sermon-v2-more-menu > summary {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 12px;
+  margin: 0;
+  line-height: 1;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Preserve dropdown positioning and accessibility. */
+.studio-layout .sermon-v2-more-menu {
+  position: relative;
+  height: 36px;
+}
+
+.studio-layout .sermon-v2-more-menu > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+@media (max-width: 1200px) {
+  .studio-layout .sermon-v2-workspace-actions {
+    justify-content: flex-start;
+  }
+}

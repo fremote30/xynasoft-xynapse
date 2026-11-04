@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>XynaFaith Collaboration</title>
+
+<link rel="stylesheet" href="/faith/styles.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Collaborative Sermon Editor</h2>
+
+<input id="title" placeholder="Sermon title">
+
+<textarea id="content" placeholder="Write sermon here..." rows="20"></textarea>
+
+<br><br>
+
+<button onclick="save()">Save</button>
+
+</div>
+
+<script>
+
+const sermonId = new URLSearchParams(window.location.search).get("id")
+
+async function load(){
+
+const res = await fetch(`/api/v1/faith/collab/${sermonId}`)
+const data = await res.json()
+
+document.getElementById("title").value = data.title
+document.getElementById("content").value = data.content
+
+}
+
+async function save(){
+
+await fetch(`/api/v1/faith/collab/${sermonId}/update`,{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+title:document.getElementById("title").value,
+content:document.getElementById("content").value
+
+})
+
+})
+
+alert("Saved")
+
+}
+
+load()
+
+</script>
+
+</body>
+
+</html>

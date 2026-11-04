@@ -1,0 +1,176 @@
+<div class="app clean-app">
+  <div class="clean-main">
+
+    <section class="xyniva-page">
+
+      <div class="xyniva-header">
+
+        <div class="xyniva-heading">
+
+          <button
+            type="button"
+            class="xyniva-back"
+            aria-label="Go back"
+            title="Go back"
+            onclick="navigate('sermon')"
+          >
+            ←
+          </button>
+
+          <div>
+            <span class="eyebrow">
+              Xyniva Ministry Studio
+            </span>
+
+            <h1>
+              Sermon Series Builder
+            </h1>
+
+            <p>
+              Build a connected sermon series with
+              themes, scripture, summaries and key points.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="xyniva-workspace">
+
+        <div class="action-card">
+
+          <h3>
+            Series Direction
+          </h3>
+
+          <label for="seriesTopic">
+            Topic
+          </label>
+
+          <input
+            id="seriesTopic"
+            type="text"
+            maxlength="500"
+            placeholder="Example: Walking by Faith"
+          >
+
+          <label for="seriesScripture">
+            Scripture
+          </label>
+
+          <input
+            id="seriesScripture"
+            type="text"
+            maxlength="500"
+            placeholder="Example: Hebrews 11"
+          >
+
+          <label for="seriesPurpose">
+            Purpose
+          </label>
+
+          <textarea
+            id="seriesPurpose"
+            rows="3"
+            maxlength="2000"
+            placeholder="What should this series help the church understand or do?"
+          ></textarea>
+
+          <label for="seriesCount">
+            Number of sermons
+          </label>
+
+          <select id="seriesCount">
+            <option value="2">2 sermons</option>
+            <option value="3">3 sermons</option>
+            <option value="4" selected>4 sermons</option>
+            <option value="5">5 sermons</option>
+            <option value="6">6 sermons</option>
+            <option value="7">7 sermons</option>
+            <option value="8">8 sermons</option>
+            <option value="9">9 sermons</option>
+            <option value="10">10 sermons</option>
+            <option value="11">11 sermons</option>
+            <option value="12">12 sermons</option>
+          </select>
+
+          <label for="seriesAudience">
+            Audience
+          </label>
+
+          <input
+            id="seriesAudience"
+            type="text"
+            maxlength="500"
+            placeholder="Example: Entire church"
+          >
+
+          <label for="seriesDenomination">
+            Denomination / tradition
+          </label>
+
+          <select id="seriesDenomination">
+            <option value="general">General Christian</option>
+            <option value="pentecostal">Pentecostal</option>
+            <option value="baptist">Baptist</option>
+            <option value="reformed">Reformed</option>
+            <option value="catholic">Catholic</option>
+            <option value="methodist">Methodist</option>
+            <option value="presbyterian">Presbyterian</option>
+            <option value="charismatic">Charismatic</option>
+          </select>
+
+          <label for="seriesTone">
+            Tone
+          </label>
+
+          <select id="seriesTone">
+            <option value="balanced">Balanced</option>
+            <option value="encouraging">Encouraging</option>
+            <option value="teaching">Teaching</option>
+            <option value="evangelistic">Evangelistic</option>
+            <option value="pastoral">Pastoral</option>
+          </select>
+
+          <label for="seriesContext">
+            Ministry context
+          </label>
+
+          <textarea
+            id="seriesContext"
+            rows="3"
+            maxlength="2000"
+            placeholder="Optional church, season or ministry context"
+          ></textarea>
+
+          <button
+            id="seriesGenerateBtn"
+            type="button"
+            class="btn-primary"
+            onclick="generateSermonSeries()"
+          >
+            ✨ Build Series
+          </button>
+
+          <div
+            id="seriesStatus"
+            role="status"
+            aria-live="polite"
+            hidden
+          ></div>
+
+        </div>
+
+        <div
+          id="seriesOutput"
+          aria-live="polite"
+          hidden
+        ></div>
+
+      </div>
+
+    </section>
+
+  </div>
+</div>

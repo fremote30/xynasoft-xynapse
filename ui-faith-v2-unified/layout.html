@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <title>XynaFaith</title>
+
+  <!-- Existing production stylesheet -->
+  <link rel="stylesheet" href="/ui-faith-v2-unified/styles.css" />
+
+  <!-- Sunday beta mobile-navigation overrides -->
+  <link rel="stylesheet" href="/ui-faith-v2-unified/css/mobile.css" />
+<link rel="stylesheet" href="/ui-faith-v2-unified/modules/ministry-studio/css/app.css">
+<link rel="stylesheet" href="/ui-faith-v2-unified/css/unified-home.css">
+<link rel="stylesheet" href="/ui-faith-v2-unified/css/pricing.css">
+<link rel="stylesheet" href="/ui-faith-v2-unified/css/home-simplified.css">
+<link rel="stylesheet" href="/ui-faith-v2-unified/css/ministry-hub.css">
+  <link rel="stylesheet" href="/ui-faith-v2-unified/css/sermon-v2.css">
+  <link rel="stylesheet" href="/ui-faith-v2-unified/css/member-experience-v2.css">
+  <link rel="stylesheet" href="/ui-faith-v2-unified/css/member-dashboard-v2.css">
+<link rel="stylesheet" href="/ui-faith-v2-unified/css/member-dashboard-compact-v2.css">
+<link rel="stylesheet" href="/ui-faith-v2-unified/css/member-dashboard-consolidated-v2.css">
+<link rel="stylesheet" href="/ui-faith-v2-unified/css/member-dashboard-core22-v2.css">
+
+  <!-- Unified V2 Church Space styles -->
+  <link rel="stylesheet" href="/ui-faith-v2-unified/css/church-intelligence-v2.css">
+  <link rel="stylesheet" href="/ui-faith-v2-unified/css/church-space-integrated-v2.css">
+  <link rel="stylesheet" href="/ui-faith-v2-unified/css/church-prayer-care-v2.css?v=1">
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+  <header class="navbar">
+
+    <div class="nav-left">
+
+      <img
+        src="/ui-faith-v2-unified/assets/xynafaith.png"
+        class="logo"
+        alt="XynaFaith Logo"
+      />
+
+      <div class="brand">
+
+        <div class="brand-title">
+          XynaFaith
+        </div>
+
+        <div class="brand-sub">
+          Powered by AI • Guided by Scripture • Led by Pastors
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- DESKTOP NAVIGATION -->
+    <nav
+      id="topnav"
+      class="nav-links"
+      aria-label="Primary navigation"
+    ></nav>
+
+
+    <!-- MOBILE ACTIONS -->
+    <div class="mobile-header-actions">
+
+
+      <button
+        id="notificationBell"
+        class="notification-bell hidden"
+        type="button"
+        onclick="togglePrayerNotifications()"
+        aria-label="Prayer notifications"
+        title="Notifications"
+      >
+
+        <span aria-hidden="true">
+          🔔
+        </span>
+
+        <span
+          id="notificationBadge"
+          class="notification-badge hidden"
+        >
+          0
+        </span>
+
+      </button>
+
+
+
+      <button
+        id="mobileMenuBtn"
+        class="mobile-menu-btn"
+        type="button"
+        onclick="toggleMobileMenu()"
+        aria-label="Open navigation menu"
+        aria-controls="mobileDrawer"
+        aria-expanded="false"
+      >
+
+        <span aria-hidden="true">
+          ☰
+        </span>
+
+      </button>
+
+
+    </div>
+
+
+  </header>
+
+
+
+  <!-- =========================
+       MOBILE DRAWER
+  ========================== -->
+  <nav
+    id="mobileDrawer"
+    class="mobile-drawer"
+    aria-label="Mobile navigation"
+    aria-hidden="true"
+  >
+
+
+    <div class="mobile-drawer-header">
+
+
+      <button
+        id="mobileDrawerClose"
+        class="mobile-drawer-close"
+        type="button"
+        onclick="closeMobileMenu()"
+        aria-label="Close navigation menu"
+      >
+
+        <span aria-hidden="true">
+          ×
+        </span>
+
+      </button>
+
+
+
+      <div class="brand-title">
+        XynaFaith
+      </div>
+
+
+
+      <div class="mobile-drawer-user">
+
+        <div class="mobile-drawer-user-copy">
+
+
+          <span
+            id="mobileDrawerUserName"
+            class="mobile-drawer-user-name"
+          >
+            Guest
+          </span>
+
+
+
+          <span
+            id="mobileDrawerUserRole"
+            class="mobile-drawer-user-role"
+          ></span>
+
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <div class="mobile-drawer-links">
+
+      <!-- Dynamic links rendered by core.js -->
+
+    </div>
+
+
+  </nav>
+
+
+
+  <!-- MOBILE DRAWER OVERLAY -->
+  <div
+    id="mobileDrawerOverlay"
+    class="mobile-drawer-overlay"
+    onclick="closeMobileMenu()"
+    aria-hidden="true"
+  ></div>
+
+
+
+  <!-- =========================
+       SPA CONTENT
+  ========================== -->
+  <main id="app"></main>
+
+
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav
+    id="mobileBottomNav"
+    class="mobile-bottom-nav"
+    aria-label="Mobile primary navigation"
+  ></nav>
+
+
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+  <footer class="footer">
+
+
+    <div class="footer-brand">
+      © 2026 XynaFaith. All rights reserved.
+    </div>
+
+
+    <div class="footer-tagline">
+      Powered by AI • Guided by Scripture • Led by Pastors
+    </div>
+
+
+
+    <div class="footer-links">
+
+
+      <a
+        href="https://xynasoft.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        A Xynasoft Platform
+      </a>
+
+
+
+      <span aria-hidden="true">
+        •
+      </span>
+
+
+
+      <a href="mailto:support@xynafaith.com">
+        Contact Us
+      </a>
+
+
+
+      <span aria-hidden="true">
+        •
+      </span>
+
+
+
+      <a
+        href="#"
+        onclick="event.preventDefault(); showAIDisclaimer();"
+      >
+        AI Disclaimer
+      </a>
+
+
+    </div>
+
+
+  </footer>
+
+
+
+  <!-- =========================
+       EXTERNAL LIBRARIES
+  ========================== -->
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/chart.js"
+  ></script>
+
+
+
+  <!-- =========================
+       UTILITIES
+  ========================== -->
+  <script defer src="/ui-faith-v2-unified/js/utils/storage.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/utils/toast.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/utils/modal.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/utils/loader.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/utils/phone-auth.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/utils/auth.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/conversation.js?v=6g6-save-1"></script>
+  <script defer src="/ui-faith-v2-unified/js/xyniva.js?v=6g6-save-1"></script>
+  <script defer src="/ui-faith-v2-unified/js/xyniva-studio.js?v=6g6-save-2"></script>
+
+
+
+  <!-- =========================
+       CORE
+  ========================== -->
+  <script defer src="/ui-faith-v2-unified/js/router.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/core.js"></script>
+
+
+
+  <!-- =========================
+       FEATURE MODULES
+  ========================== -->
+  <script defer src="/ui-faith-v2-unified/js/dashboard.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/admin.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/ministry.js?v=v2-5c2a-1"></script>
+  <script defer src="/ui-faith-v2-unified/js/ministry-studios.js?v=v2-5d-1"></script>
+  <script defer src="/ui-faith-v2-unified/js/church-space.js?v=v2-6a-1"></script>
+  <script defer src="/ui-faith-v2-unified/js/church-operations-v2.js?v=v2-operations-1"></script>
+  <script defer src="/ui-faith-v2-unified/js/church-operations-ui-v2.js?v=v2-operations-ui-1"></script>
+<script defer src="/ui-faith-v2-unified/js/church-intelligence-v2.js"></script>
+
+
+
+  <script defer src="/ui-faith-v2-unified/js/church-prayer-care.js?v=v2-prayer-care-2"></script>
+  <script defer src="/ui-faith-v2-unified/js/church-navigation-v2.js?v=v2-navigation-1"></script>
+  <script defer src="/ui-faith-v2-unified/js/sermon.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/collaboration.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/network.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/member-profile.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/platform.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/prayer.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/search.js"></script>
+
+
+
+  <!-- =========================
+       RECOVERY
+  ========================== -->
+  <script defer src="/ui-faith-v2-unified/js/recovery.js"></script>
+
+
+
+  <!-- =========================
+       ERROR HANDLER
+  ========================== -->
+  <script defer src="/ui-faith-v2-unified/js/error-handler.js"></script>
+
+<!-- =====================================================
+     MOBILE CONFIGURATION
+====================================================== -->
+
+<script defer src="/ui-faith-v2-unified/js/mobile/config.js"></script>
+
+
+<!-- =====================================================
+     MOBILE METADATA
+====================================================== -->
+
+<script defer src="/ui-faith-v2-unified/js/mobile/version.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/environment.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/diagnostics.js"></script>
+
+<!-- =====================================================
+     MOBILE HELPERS
+====================================================== -->
+
+<script defer src="/ui-faith-v2-unified/js/mobile/helpers/assets.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/helpers/utils.js"></script>
+
+<!-- =====================================================
+     MOBILE SERVICES
+====================================================== -->
+
+<script defer src="/ui-faith-v2-unified/js/mobile/services/device.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/storage.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/network.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/camera.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/share.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/notification.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/auth.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/api.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/index.js"></script>
+
+<script defer src="/ui-faith-v2-unified/js/mobile/components/network-banner.js"></script>
+
+<script defer src="/ui-faith-v2-unified/js/mobile/services/splash.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/keyboard.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/backbutton.service.js"></script>
+<script defer src="/ui-faith-v2-unified/js/mobile/services/statusbar.service.js"></script>
+<!-- =====================================================
+     MOBILE RUNTIME
+====================================================== -->
+<script defer src="/ui-faith-v2-unified/js/mobile/bootstrap.js"></script>
+
+<!-- =====================================================
+     APPLICATION
+====================================================== -->
+<script defer src="/ui-faith-v2-unified/js/app.js"></script>
+
+
+<script defer src="/ui-faith-v2-unified/modules/ministry-studio/js/app.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/sermon-page-v2.js"></script>
+  <script defer src="/ui-faith-v2-unified/js/member-engagement-v2.js"></script>
+<script defer src="/ui-faith-v2-unified/js/bible-quiz-ai-v2.js?v=24-84"></script>
+<script defer src="/ui-faith-v2-unified/js/bible-quiz-review-v2.js?v=24-85g"></script>
+<script defer src="/ui-faith-v2-unified/js/bible-quiz-member-v2.js?v=25-05"></script>
+</body>
+
+</html>

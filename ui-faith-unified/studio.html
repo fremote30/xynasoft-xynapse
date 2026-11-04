@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opening Ministry Studio — XynaFaith</title>
+</head>
+<body>
+  <main>
+    <h1>Opening Ministry Studio</h1>
+    <p id="status">Checking your XynaFaith session...</p>
+  </main>
+
+  <script src="/ui-faith-unified/studio-entry.js"></script>
+  <script>
+    (async () => {
+      await window.XynaFaithStudioEntry.prepareStudioSession();
+
+      window.location.replace("/ui-faith-v2/index.html");
+    })();
+  </script>
+</body>
+</html>

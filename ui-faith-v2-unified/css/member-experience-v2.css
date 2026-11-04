@@ -1,0 +1,151 @@
+/* XynaFaith V2 — Member Experience */
+.member-v2-page {
+  --member-navy: #172c40;
+  --member-gold: #f4bd58;
+  --member-ivory: #f8f5ef;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+  color: var(--member-navy);
+}
+
+.member-v2-page-header {
+  padding: 38px;
+  border-radius: 22px;
+  background: linear-gradient(125deg, #172c40, #28455c);
+  color: white;
+  margin-bottom: 24px;
+}
+
+.member-v2-page-header h1 {
+  color: white;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  margin: 10px 0;
+}
+
+.member-v2-page-header p {
+  color: #e8edf0;
+}
+
+.member-v2-eyebrow {
+  color: var(--member-gold);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.member-v2-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.member-v2-panel {
+  background: #fff;
+  border: 1px solid #e8e6e1;
+  border-radius: 18px;
+  padding: 24px;
+  min-width: 0;
+}
+
+.member-v2-panel h2 {
+  margin: 0 0 18px;
+  color: var(--member-navy);
+}
+
+.member-v2-item {
+  padding: 18px;
+  border: 1px solid #ece8e0;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  background: #fffdfa;
+  overflow-wrap: anywhere;
+}
+
+.member-v2-item h3 {
+  margin: 0 0 8px;
+}
+
+.member-v2-item progress {
+  width: 100%;
+  height: 10px;
+  accent-color: #d69c32;
+  margin: 12px 0;
+}
+
+.member-v2-days {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.member-v2-day {
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--member-ivory);
+}
+
+.member-v2-button {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 16px;
+  background: var(--member-gold);
+  color: #172c40;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.member-v2-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.member-v2-outline {
+  background: transparent;
+  border: 1px solid #c5cbd0;
+}
+
+.member-v2-danger {
+  background: #f9e6e3;
+  color: #8b2b23;
+}
+
+.member-v2-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.member-v2-panel label {
+  display: block;
+  font-weight: 600;
+  margin: 15px 0 6px;
+}
+
+.member-v2-panel input:not([type="hidden"]),
+.member-v2-panel textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #d4d7d9;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.member-v2-error {
+  color: #9a3027;
+}
+
+.member-v2-status {
+  display: inline-block;
+  margin-top: 12px;
+  color: #66756c;
+}
+
+@media (max-width: 760px) {
+  .member-v2-page { padding: 16px; }
+  .member-v2-page-header { padding: 26px 20px; }
+  .member-v2-grid { grid-template-columns: 1fr; }
+  .member-v2-panel { padding: 18px; }
+}

@@ -1,0 +1,395 @@
+
+/*
+ * XynaFaith V2 — Compact Member Dashboard
+ * Presentation-only enhancement.
+ * Preserves original branding, markup, IDs and behavior.
+ */
+
+.xf-member-dashboard,
+.member-dashboard-section,
+.member-dashboard-hero,
+.member-prayer-section {
+  --xf-compact-navy: #172c40;
+  --xf-compact-gold: #f4bd58;
+}
+
+/* Compact welcome and feature introduction */
+.xf-member-dashboard .xf-member-feature-grid,
+.xf-member-feature-grid {
+  gap: 14px;
+}
+
+.xf-member-dashboard .xf-member-feature-card,
+.xf-member-feature-card {
+  min-height: 0;
+}
+
+.xf-member-dashboard .xf-member-feature-copy,
+.xf-member-feature-copy {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+/* Preserve profile functionality while reducing empty space */
+.member-dashboard-hero {
+  min-height: 0 !important;
+  padding: 28px 30px !important;
+  margin-top: 16px;
+  margin-bottom: 24px;
+  border-radius: 20px;
+}
+
+.member-dashboard-hero .hero-title {
+  line-height: 1.2;
+  margin: 8px 0;
+}
+
+.member-dashboard-hero p,
+.member-dashboard-hero h3 {
+  line-height: 1.5;
+}
+
+.member-dashboard-hero .pastor-status-wrapper {
+  margin-top: 8px;
+}
+
+.member-dashboard-hero #pastorUpgradeCard {
+  padding: 18px;
+  border-radius: 16px;
+}
+
+.member-dashboard-hero #pastorUpgradeMessage {
+  color: #46576a;
+}
+
+.member-dashboard-hero .hero-actions,
+.member-dashboard-hero .hero-buttons {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Reduce repeated vertical gaps throughout the dashboard */
+.member-dashboard-section {
+  padding-top: 28px !important;
+  padding-bottom: 28px !important;
+  margin-top: 0 !important;
+}
+
+.member-dashboard-section h2 {
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+
+.member-dashboard-section .section-heading {
+  margin-bottom: 18px;
+}
+
+/* Compact journey cards */
+.member-dashboard-section .journey-grid {
+  gap: 14px;
+}
+
+.member-dashboard-section .journey-card {
+  min-height: 0 !important;
+  padding: 20px !important;
+  border-radius: 16px;
+}
+
+.member-dashboard-section .journey-card h3 {
+  margin: 10px 0 6px;
+}
+
+.member-dashboard-section .journey-card p {
+  line-height: 1.5;
+}
+
+.member-dashboard-section .journey-card button {
+  min-height: 40px;
+}
+
+/* Compact activity counters */
+.member-dashboard-section .member-activity-grid {
+  gap: 12px;
+}
+
+.member-dashboard-section .member-activity-grid .feature-card {
+  min-height: 0 !important;
+  padding: 18px 14px !important;
+  border-radius: 16px;
+}
+
+.member-dashboard-section .member-activity-grid h3 {
+  margin-bottom: 8px;
+}
+
+.member-dashboard-section .member-activity-grid p {
+  margin: 6px 0;
+}
+
+/* Keep empty feeds visually proportionate */
+.member-dashboard-section .suggested-pastors-grid,
+.member-dashboard-section .continue-reading-section {
+  min-height: 0;
+}
+
+.member-dashboard-section .feature-card {
+  border-radius: 16px;
+}
+
+/* Reduce the isolated prayer area */
+.member-prayer-section {
+  padding-top: 24px !important;
+  padding-bottom: 32px !important;
+  margin-top: 0 !important;
+}
+
+.member-prayer-section .dashboard-prayer-widget {
+  max-width: 100%;
+  min-height: 0 !important;
+}
+
+.member-prayer-section .dashboard-prayer-copy {
+  margin-bottom: 16px;
+}
+
+/* Preserve XynaFaith's original blue and green action colors */
+.member-dashboard-section button,
+.member-dashboard-hero button,
+.member-prayer-section button {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.member-dashboard-section button:hover,
+.member-dashboard-hero button:hover,
+.member-prayer-section button:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .member-dashboard-hero {
+    padding: 22px 18px !important;
+    margin-bottom: 16px;
+  }
+
+  .member-dashboard-section {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .member-dashboard-section .journey-card {
+    padding: 16px !important;
+  }
+
+  .member-dashboard-section .member-activity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .member-dashboard-hero {
+    padding: 18px 14px !important;
+  }
+
+  .member-dashboard-section .member-activity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .member-dashboard-section .member-activity-grid .feature-card {
+    padding: 14px 10px !important;
+  }
+}
+
+
+/* BATCH 20D.2 — COMPACT PROFILE */
+
+/*
+ * Scope layout corrections to the Member Dashboard.
+ * Preserve existing XynaFaith action colors.
+ */
+
+.member-dashboard-hero.simple-hero {
+  display: block !important;
+  width: min(100% - 32px, 1152px);
+  max-width: 1152px;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 12px auto 24px !important;
+  padding: 24px 28px !important;
+  background: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid #e6eaf0;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(23,44,64,.07);
+  color: #172c40;
+}
+
+.member-dashboard-hero .hero-content {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.member-dashboard-hero .hero-top-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 280px);
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  min-height: 0;
+}
+
+.member-dashboard-hero .member-hero-info,
+.member-dashboard-hero .member-hero-top {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.member-dashboard-hero .member-hero-top {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  text-align: left;
+}
+
+.member-dashboard-hero .member-dashboard-avatar {
+  flex: 0 0 76px;
+  width: 76px !important;
+  height: 76px !important;
+  min-width: 76px;
+  min-height: 76px;
+  font-size: 1.65rem;
+  margin: 0 !important;
+}
+
+.member-dashboard-hero .member-hero-top > div:last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.member-dashboard-hero .eyebrow {
+  color: #a57323 !important;
+}
+
+.member-dashboard-hero .hero-title {
+  color: #172c40 !important;
+  font-size: clamp(1.45rem, 2.5vw, 2rem) !important;
+  line-height: 1.2;
+  margin: 6px 0 8px !important;
+  text-align: left;
+}
+
+.member-dashboard-hero .hero-title .highlight {
+  color: #2563eb !important;
+  font-size: inherit !important;
+  line-height: inherit;
+}
+
+.member-dashboard-hero .hero-sub,
+.member-dashboard-hero #memberDashboardLocation {
+  color: #536477 !important;
+  margin: 4px 0 10px !important;
+  text-align: left;
+}
+
+.member-dashboard-hero .member-favorite-scripture {
+  color: #34495e !important;
+  margin: 8px 0;
+  max-width: 48ch;
+}
+
+.member-dashboard-hero .pastor-status-wrapper {
+  margin: 8px 0 0 !important;
+  text-align: left;
+}
+
+.member-dashboard-hero #pastorUpgradeContainer {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+.member-dashboard-hero #pastorUpgradeCard {
+  width: 100%;
+  min-height: 0;
+  padding: 16px !important;
+  background: #f8fafc;
+  border: 1px solid #e6eaf0;
+  border-radius: 14px;
+  box-shadow: none;
+  text-align: left;
+}
+
+.member-dashboard-hero #pastorCardTitle {
+  color: #172c40 !important;
+  font-size: 1rem;
+  margin: 0 0 8px;
+}
+
+.member-dashboard-hero #pastorUpgradeMessage {
+  color: #536477 !important;
+  font-size: .85rem;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+.member-dashboard-hero .hero-buttons {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin: 18px 0 0 !important;
+  padding: 16px 0 0;
+  border-top: 1px solid #edf0f3;
+}
+
+.member-dashboard-hero .hero-buttons button {
+  width: auto !important;
+  min-height: 40px;
+  margin: 0 !important;
+  padding: 9px 14px;
+}
+
+@media (max-width: 760px) {
+  .member-dashboard-hero.simple-hero {
+    width: calc(100% - 24px);
+    padding: 20px !important;
+  }
+
+  .member-dashboard-hero .hero-top-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .member-dashboard-hero .member-hero-top {
+    gap: 14px;
+  }
+
+  .member-dashboard-hero .member-dashboard-avatar {
+    flex-basis: 60px;
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px;
+    min-height: 60px;
+  }
+
+  .member-dashboard-hero .hero-title {
+    font-size: 1.4rem !important;
+  }
+
+  .member-dashboard-hero .hero-buttons {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  .member-dashboard-hero .hero-buttons button {
+    flex: 1 1 calc(50% - 8px);
+  }
+}

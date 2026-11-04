@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>XynaFaith V2 — Ministry Studio</title>
+  <link rel="stylesheet" href="./css/app.css">
+  <script src="./js/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <strong>XynaFaith</strong>
+      <span class="version">V2</span>
+    </div>
+    <div class="session-controls">
+      <span class="product">Ministry Studio</span>
+      <button id="signOut" type="button" hidden>Sign out</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="panel" id="loginPanel">
+      <h2>Sign in to XynaFaith V2</h2>
+      <p>Use your existing XynaFaith account.</p>
+
+      <form id="loginForm" aria-describedby="loginStatus">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email"
+               autocomplete="username" required>
+
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password"
+               autocomplete="current-password" required>
+
+        <button id="loginButton" class="primary"
+                type="submit">Sign in</button>
+      </form>
+
+      <p id="loginStatus" role="status"
+         aria-live="polite"></p>
+    </section>
+
+    <div id="studioWorkspace" hidden>
+    <section class="intro">
+      <p class="eyebrow">POWERED BY XYNIVA</p>
+      <h1>Sermon-to-Ministry</h1>
+      <p>
+        Turn a saved sermon into meaningful content
+        for your church and community.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>1. Choose a saved sermon</h2>
+      <label for="sermonSelect">My Sermons</label>
+      <select id="sermonSelect">
+        <option value="">Loading sermons...</option>
+      </select>
+      <button id="refreshSermons" type="button">
+        Refresh sermons
+      </button>
+    </section>
+
+    <section class="panel">
+      <h2>2. Choose content formats</h2>
+      <div id="formatOptions" class="formats"></div>
+    </section>
+
+    <section class="panel">
+      <h2>3. Generate with Xyniva</h2>
+      <button id="generatePack"
+              class="primary"
+              type="button">
+        Generate Ministry Content Pack
+      </button>
+      <button id="retryPack"
+              type="button"
+              hidden>
+        Retry uncertain request
+      </button>
+      <p id="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" id="resultsPanel" hidden>
+      <h2>Your Ministry Content Pack</h2>
+      <div id="results"></div>
+    </section>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,382 @@
+
+/* Batch 20D.8A — Core 22 Member Dashboard */
+
+.xf-member-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.xf-member-feature {
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.xf-member-feature-photo {
+  min-height: 190px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.xf-member-reading-photo {
+  background-color: #e8dfc8;
+  background-image:
+    linear-gradient(135deg, #f4bd58, #f8f3e8 70%);
+}
+
+.xf-member-notes-photo {
+  background-color: #172c40;
+  background-image:
+    linear-gradient(135deg, #172c40, #2563eb);
+}
+
+.xf-member-feature-content {
+  padding: 20px;
+}
+
+@media (max-width: 700px) {
+  .xf-member-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .xf-member-feature-photo {
+    min-height: 145px;
+  }
+}
+
+
+/* Batch 20D.8B — Core 22 member shortcuts */
+
+.xf-member-feature-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.xf-member-core22-card {
+  min-width: 0;
+}
+
+.xf-member-xyniva-photo {
+  background: linear-gradient(135deg, #172c40, #2563eb 70%, #f4bd58);
+}
+
+.xf-member-prayer-photo {
+  background: linear-gradient(135deg, #d9f2e8, #10b981);
+}
+
+.xf-member-pastors-photo {
+  background: linear-gradient(135deg, #f8f3e8, #f4bd58);
+}
+
+@media (max-width: 700px) {
+  .xf-member-feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Batch 20D.8C — Member Dashboard Consolidation */
+
+/* Keep the personalized welcome, avoid a second generic greeting */
+.xf-member-intro-legacy {
+  display: none !important;
+}
+
+/* Temporarily defer failed feed and trending widgets */
+.member-dashboard-section .xf-member-deferred-feed,
+.member-dashboard-section .xf-member-deferred-trending {
+  display: none !important;
+}
+
+/* Hide only the feed heading, not unrelated section headings */
+.member-dashboard-section .features-header:has(.xf-member-deferred-heading) {
+  display: none !important;
+}
+
+/* Retain the approved member profile, simplify secondary actions */
+.member-dashboard-hero .xf-member-profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.member-dashboard-hero .xf-member-profile-actions
+  button[onclick="navigate('network')"],
+.member-dashboard-hero .xf-member-profile-actions
+  button[onclick="navigate('prayer')"],
+.member-dashboard-hero .xf-member-profile-actions
+  button[onclick="navigate('xyniva')"] {
+  display: none !important;
+}
+
+/* These destinations are already prominent Core 22 feature cards */
+
+@media (max-width: 700px) {
+  .member-dashboard-hero .xf-member-profile-actions {
+    gap: 8px;
+  }
+
+  .member-dashboard-hero .xf-member-profile-actions button {
+    min-width: 0;
+  }
+}
+
+
+/* Batch 20D.8D — Photography Integration */
+
+/* Existing gradients remain visible behind image layers. */
+.xf-member-reading-photo {
+  background-image:
+    linear-gradient(180deg, transparent 55%, rgba(23,44,64,.18)),
+    url("/ui-faith-v2-unified/assets/member-reading.webp");
+}
+
+.xf-member-notes-photo {
+  background-image:
+    linear-gradient(180deg, transparent 55%, rgba(23,44,64,.18)),
+    url("/ui-faith-v2-unified/assets/member-notes.webp");
+}
+
+.xf-member-xyniva-photo {
+  background-image:
+    linear-gradient(180deg, transparent 55%, rgba(23,44,64,.18)),
+    url("/ui-faith-v2-unified/assets/member-xyniva.svg");
+}
+
+.xf-member-prayer-photo {
+  background-image:
+    linear-gradient(180deg, transparent 55%, rgba(23,44,64,.18)),
+    url("/ui-faith-v2-unified/assets/member-prayer.svg");
+}
+
+.xf-member-pastors-photo {
+  background-image:
+    linear-gradient(180deg, transparent 55%, rgba(23,44,64,.18)),
+    url("/ui-faith-v2-unified/assets/member-pastors.svg");
+}
+
+.xf-member-feature-photo {
+  aspect-ratio: 16 / 9;
+  min-height: 0;
+}
+
+@media (max-width: 700px) {
+  .xf-member-feature-photo {
+    aspect-ratio: 16 / 8;
+    min-height: 0;
+  }
+}
+
+
+/* Batch 20D.9 — Member Dashboard Final Layout */
+
+/* Profile first, workspaces second */
+.member-dashboard-hero {
+  margin-bottom: 28px;
+}
+
+.xf-member-shell {
+  margin-bottom: 30px;
+}
+
+/* Photography-led workspace cards */
+.xf-member-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.xf-member-feature {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.xf-member-feature-photo {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  min-height: 0;
+  background-position: center;
+  background-size: cover;
+  flex: none;
+}
+
+.xf-member-feature-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px 22px 22px;
+}
+
+.xf-member-feature-content h2,
+.xf-member-feature-content p {
+  margin: 0;
+}
+
+.xf-member-feature-button {
+  margin-top: auto;
+  min-height: 42px;
+}
+
+/* The fifth card fills the row */
+.xf-member-feature-grid > .xf-member-feature:last-child {
+  grid-column: 1 / -1;
+}
+
+.xf-member-feature-grid > .xf-member-feature:last-child
+.xf-member-feature-photo {
+  aspect-ratio: 16 / 4;
+}
+
+/* Hide duplicate journeys while preserving their markup */
+.member-dashboard-section .xf-member-redundant-journey {
+  display: none !important;
+}
+
+.member-dashboard-section
+.features-header:has(.xf-member-redundant-journey-heading),
+.member-dashboard-section
+.features-header:has(.xf-member-empty-grow-heading) {
+  display: none !important;
+}
+
+/* Compact existing activity information */
+.member-dashboard-section .member-activity-grid {
+  gap: 12px;
+}
+
+.member-dashboard-section .dashboard-stats-card {
+  padding: 16px;
+}
+
+/* Tighten prayer section spacing */
+.member-dashboard-section .member-prayer-section {
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.member-dashboard-section .dashboard-prayer-copy {
+  margin-bottom: 0;
+}
+
+/* Avoid three equivalent prayer actions */
+.member-dashboard-section .dashboard-prayer-actions
+button[onclick="navigate('prayer')"]:last-child {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .member-dashboard-hero {
+    margin-bottom: 18px;
+  }
+
+  .xf-member-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .xf-member-feature-grid > .xf-member-feature:last-child {
+    grid-column: auto;
+  }
+
+  .xf-member-feature-photo,
+  .xf-member-feature-grid > .xf-member-feature:last-child
+  .xf-member-feature-photo {
+    aspect-ratio: 16 / 8;
+  }
+
+  .xf-member-feature-content {
+    padding: 18px;
+  }
+}
+
+
+/* Batch 20D.9A — Final Visual Cleanup */
+
+/* Keep prayer introduction close to its widget */
+.member-dashboard-section .member-prayer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.member-dashboard-section .dashboard-prayer-copy {
+  margin: 0;
+  padding: 0;
+}
+
+.member-dashboard-section .dashboard-prayer-widget {
+  margin-top: 0;
+}
+
+/* Compact the gap before activity */
+.member-dashboard-section .member-activity-grid {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 700px) {
+  .member-dashboard-section .member-prayer-section {
+    gap: 14px;
+  }
+}
+
+
+/* Batch 20D.10 — Final Member Polish */
+
+/* Distinct local illustrations for Scripture and reflections */
+.xf-member-reading-photo {
+  background-image:
+    url("/ui-faith-v2-unified/assets/member-reading-core22.svg");
+}
+
+.xf-member-notes-photo {
+  background-image:
+    url("/ui-faith-v2-unified/assets/member-notes-core22.svg");
+}
+
+/* Remove inherited spacing in the Prayer Wall section */
+.member-dashboard-section .member-prayer-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 16px;
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.member-dashboard-section .member-prayer-section
+.dashboard-prayer-copy {
+  margin: 0;
+  padding: 0;
+}
+
+.member-dashboard-section .member-prayer-section
+.dashboard-prayer-widget {
+  margin: 0;
+}
+
+/* One primary Prayer Wall action */
+.member-dashboard-section .dashboard-prayer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.member-dashboard-section .dashboard-prayer-actions
+button[onclick="navigate('prayer')"]:last-child {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .member-dashboard-section .member-prayer-section {
+    gap: 12px;
+  }
+}

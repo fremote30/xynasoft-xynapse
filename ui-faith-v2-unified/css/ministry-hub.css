@@ -1,0 +1,148 @@
+
+/* Unified XynaFaith V2 Ministry Studio */
+.xf-ministry-hub,
+.unified-ministry-studio {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: Inter, system-ui, sans-serif;
+  box-sizing: border-box;
+}
+.xf-ministry-heading { margin: 14px 0 28px; }
+.xf-ministry-heading h1 {
+  margin: 8px 0;
+  font-size: clamp(28px, 3vw, 38px);
+}
+.xf-ministry-heading p { color: #64748b; }
+.xf-ministry-eyebrow {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+.xf-ministry-tools {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.xf-ministry-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+  background: white;
+  color: #0f172a;
+  text-align: left;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  cursor: pointer;
+  font: inherit;
+}
+.xf-ministry-tool strong { font-size: 17px; }
+.xf-ministry-tool span {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+.xf-ministry-active { border-color: #2563eb; }
+.xf-ministry-planned {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  color: #64748b;
+  font-size: 13px;
+}
+.unified-ministry-studio .studio-heading { display: none; }
+.unified-ministry-studio #studioWorkspace {
+  max-width: 100%;
+  margin: 0;
+}
+.unified-ministry-studio .intro {
+  margin-bottom: 24px;
+}
+.unified-ministry-studio .panel {
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: white;
+}
+.unified-ministry-studio .formats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.unified-ministry-studio .formats label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  text-align: left;
+}
+.unified-ministry-studio .formats input {
+  flex: 0 0 auto;
+}
+.unified-ministry-studio select {
+  width: 100%;
+  max-width: 100%;
+}
+@media (max-width: 720px) {
+  .xf-ministry-tools,
+  .unified-ministry-studio .formats {
+    grid-template-columns: 1fr;
+  }
+  .xf-ministry-hub,
+  .unified-ministry-studio { padding: 16px; }
+}
+
+/* Batch 10B — Content format alignment */
+.unified-ministry-studio #formatOptions.formats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.unified-ministry-studio #formatOptions.formats label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  border: 1px solid #dbe3ef;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left !important;
+  cursor: pointer;
+  white-space: normal;
+}
+
+.unified-ministry-studio #formatOptions.formats label input[type="checkbox"] {
+  position: static !important;
+  display: inline-block !important;
+  flex: 0 0 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  accent-color: #2563eb;
+}
+
+.unified-ministry-studio #formatOptions.formats label:has(input:checked) {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+@media (max-width: 700px) {
+  .unified-ministry-studio #formatOptions.formats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,434 @@
+
+/* XynaFaith — approved unified homepage design */
+
+.xf-unified-preview {
+  background: #f7faff;
+  color: #111b39;
+}
+
+.xf-unified-preview .navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 12px 28px;
+  background: #fff;
+  box-shadow: 0 3px 18px rgba(22, 42, 84, .05);
+}
+
+.xf-unified-preview .nav-left {
+  flex-shrink: 0;
+}
+
+.xf-header-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  max-width: 270px;
+  padding: 12px 18px;
+  border-radius: 24px;
+  background: #f1f4f9;
+  color: #66758f;
+  font-size: 13px;
+}
+
+.xf-header-search > span:first-child {
+  font-size: 24px;
+  line-height: 14px;
+}
+
+.xf-top-navigation {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.xf-top-navigation > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: #50617f;
+  font-size: 22px;
+}
+
+.xf-top-navigation small {
+  font-size: 12px;
+}
+
+.xf-top-navigation .xf-nav-active {
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
+}
+
+.xf-unified-preview .simple-hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 36px 24px 22px;
+  min-height: auto;
+  box-shadow: none;
+  background: transparent;
+}
+
+.xf-unified-preview .simple-hero .hero-title {
+  font-size: clamp(36px, 4vw, 54px);
+  line-height: 1.08;
+}
+
+.xf-unified-preview .simple-hero .hero-sub {
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.xf-unified-preview .why-xynafaith {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 24px 32px;
+  background: transparent;
+}
+
+.xf-unified-preview .why-container > h2,
+.xf-unified-preview .why-description {
+  display: none;
+}
+
+.xf-unified-preview .why-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  background: #fff;
+  border: 1px solid #e3eaf5;
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(24, 49, 91, .05);
+  overflow: hidden;
+}
+
+.xf-unified-preview .why-item {
+  min-height: 76px;
+  padding: 14px 10px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 13px;
+  color: #1c3156;
+}
+
+.xf-unified-preview .why-item:not(:last-child) {
+  border-right: 1px solid #e3eaf5;
+}
+
+@media (max-width: 900px) {
+  .xf-header-search {
+    display: none;
+  }
+
+  .xf-top-navigation {
+    gap: 14px;
+  }
+
+  .xf-unified-preview .why-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .xf-unified-preview .why-item {
+    border-bottom: 1px solid #e3eaf5;
+  }
+}
+
+@media (max-width: 600px) {
+  .xf-unified-preview .navbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .xf-top-navigation {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .xf-top-navigation > span {
+    font-size: 18px;
+  }
+
+  .xf-top-navigation small {
+    font-size: 10px;
+  }
+
+  .xf-unified-preview .simple-hero {
+    padding: 26px 16px;
+  }
+
+  .xf-unified-preview .why-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .xf-unified-preview .why-item {
+    min-height: 54px;
+  }
+}
+
+/* APPROVED FOUR-COLUMN MODULE DESIGN */
+
+.xf-unified-preview .xf-modules {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+.xf-modules-heading {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.xf-modules-heading h2 {
+  font-size: 34px;
+  margin-bottom: 10px;
+  color: #101936;
+}
+
+.xf-modules-heading p {
+  max-width: 720px;
+  margin: auto;
+  line-height: 1.6;
+  color: #52617d;
+}
+
+.xf-module-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.xf-module-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 26px 18px 18px;
+  background: white;
+  border: 1px solid #e4eaf4;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(15, 35, 75, .045);
+}
+
+.xf-module-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.xf-module-card h3 {
+  font-size: 18px;
+  color: #111a38;
+  margin: 0 0 10px;
+}
+
+.xf-module-card p {
+  flex: 1;
+  color: #52617d;
+  line-height: 1.55;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.xf-module-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.xf-status,
+.xf-module-future {
+  border-radius: 30px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.xf-status.live {
+  color: white;
+  background: #10b981;
+}
+
+.xf-status.soon {
+  color: #805a00;
+  background: #fef08a;
+}
+
+.xf-module-future {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+@media (max-width: 950px) {
+  .xf-module-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .xf-module-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .xf-modules-heading h2 {
+    font-size: 28px;
+  }
+}
+
+/* XY NIVA INTRODUCTION */
+
+.xf-xyniva-banner {
+  max-width: 1180px;
+  margin: 18px auto 26px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #fff;
+  border: 1px solid #e3eaf5;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(20, 45, 85, .04);
+}
+
+.xf-xyniva-symbol {
+  font-size: 36px;
+}
+
+.xf-xyniva-copy {
+  flex: 1;
+}
+
+.xf-xyniva-copy h2 {
+  font-size: 19px;
+  color: #14203f;
+  margin: 0 0 6px;
+}
+
+.xf-xyniva-copy p {
+  margin: 0;
+  font-size: 14px;
+  color: #586780;
+}
+
+.xf-new-label {
+  display: inline-block;
+  padding: 4px 10px;
+  margin-left: 8px;
+  border-radius: 20px;
+  color: white;
+  background: #7c3aed;
+  font-size: 11px;
+}
+
+.xf-xyniva-action {
+  padding: 11px 16px;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.xf-footer {
+  padding: 16px 20px 30px;
+  text-align: center;
+  color: #66758f;
+  font-size: 12px;
+}
+
+.xf-footer p {
+  margin: 7px 0;
+}
+
+@media (max-width: 700px) {
+  .xf-xyniva-banner {
+    flex-direction: column;
+    text-align: center;
+    margin: 16px;
+  }
+}
+
+/* UNIFIED PRICING FINAL POLISH */
+
+.xf-unified-preview .xf-pricing {
+  padding: 44px 20px 24px;
+}
+
+.xf-unified-preview .xf-pricing-heading {
+  margin-bottom: 28px;
+}
+
+.xf-unified-preview .xf-pricing-grid {
+  gap: 24px;
+}
+
+.xf-unified-preview .xf-plan {
+  padding: 28px 26px;
+  min-height: 440px;
+}
+
+.xf-unified-preview .xf-plan-featured {
+  position: relative;
+  border-color: #2563eb;
+  box-shadow: 0 10px 30px rgba(37,99,235,.08);
+}
+
+.xf-popular-badge {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 18px;
+  border-radius: 22px;
+  background: #2563eb;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.xf-unified-preview .xf-pricing-note {
+  margin: 18px auto 0;
+}
+
+.xf-unified-preview .xf-xyniva-banner {
+  margin-top: 12px;
+  margin-bottom: 18px;
+}
+
+.xf-unified-preview .xf-footer {
+  padding-top: 8px;
+}
+
+@media (max-width: 850px) {
+  .xf-unified-preview .xf-pricing-grid {
+    gap: 28px;
+  }
+
+  .xf-unified-preview .xf-plan {
+    min-height: auto;
+  }
+}
+
+/* UNIFIED FUNCTIONAL NAVIGATION */
+.xf-unified-preview .xf-top-navigation a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.xf-unified-preview .xf-top-navigation a:hover {
+  color: #2563eb;
+}
+
+.xf-unified-preview .xf-hero-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+}

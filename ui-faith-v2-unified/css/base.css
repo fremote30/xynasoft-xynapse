@@ -1,0 +1,134 @@
+/* =========================================================
+   XYNAFAITH — BASE STYLES
+   Global defaults only. No page-specific styling.
+========================================================= */
+
+/* =========================
+   RESET
+========================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  color: var(--text, #111827);
+
+  background:
+    linear-gradient(
+      rgba(255, 255, 255, 0.85),
+      rgba(255, 255, 255, 0.95)
+    ),
+    url("/faith/assets/hero.webp");
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* =========================
+   APPLICATION SHELL
+========================= */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#app {
+  flex: 1;
+  width: 100%;
+  padding-top: 105px;
+}
+
+/* =========================
+   MEDIA
+========================= */
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* =========================
+   FORM AND INTERACTIVE DEFAULTS
+========================= */
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  touch-action: manipulation;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* =========================
+   LINKS
+========================= */
+
+a {
+  color: inherit;
+}
+
+/* =========================
+   UTILITIES
+========================= */
+
+.hidden {
+  display: none !important;
+}
+
+.full,
+.full-width {
+  width: 100%;
+}
+
+/* Visually hidden but accessible to screen readers */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* =========================
+   MOBILE BASE
+========================= */
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  #app {
+    padding-top: 100px;
+  }
+}

@@ -1,0 +1,52 @@
+.venv
+__pycache__
+*.pyc
+.pgdata
+pgdata
+.git
+.vscode
+*.log
+
+# Render preview security exclusions
+.env
+.env.*
+*.before-*
+*.bak
+*.backup
+*.tar.gz
+*.sqlite
+*.db
+*.pem
+*.key
+credentials.json
+service-account.json
+tests/
+.pgdata/
+pgdata/
+
+# Additional preview exclusions
+*.before-*
+*.orig
+*.rej
+*.swp
+*.swo
+*.p12
+*.pfx
+*.crt
+*.jks
+*.keystore
+*.secret
+*.secrets
+*credentials*
+*service-account*
+
+# Native mobile and local dependency exclusions
+node_modules/
+**/node_modules/
+mobile/android/
+mobile/ios/
+mobile/www/
+
+# Development-only Compose files
+docker-compose.yml
+docker-compose.v2.yml

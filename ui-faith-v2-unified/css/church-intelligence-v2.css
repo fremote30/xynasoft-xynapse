@@ -1,0 +1,41 @@
+
+.xf-intelligence-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.xf-intelligence-metric {
+  background: #f8f5ef;
+  border: 1px solid #e7dfd1;
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.xf-intelligence-metric strong {
+  display: block;
+  color: #172c40;
+  font-size: 1.7rem;
+  line-height: 1.2;
+}
+
+.xf-intelligence-metric span {
+  display: block;
+  color: #526579;
+  font-size: .85rem;
+  margin-top: 6px;
+}
+
+#churchIntelligenceState {
+  color: #526579;
+  font-size: .9rem;
+  margin-top: 10px;
+}
+
+@media (max-width: 480px) {
+  .xf-intelligence-grid {
+    grid-template-columns: 1fr;
+  }
+}
