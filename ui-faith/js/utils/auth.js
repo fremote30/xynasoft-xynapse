@@ -116,6 +116,15 @@ window.apiFetch =
               : {}
           );
 
+        case "PATCH":
+
+          return MobileApi.patch(
+            url,
+            options.body
+              ? JSON.parse(options.body)
+              : {}
+          );
+
         case "DELETE":
 
           return MobileApi.delete(
