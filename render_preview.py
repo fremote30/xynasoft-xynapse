@@ -78,6 +78,15 @@ class PreviewAccessMiddleware(BaseHTTPMiddleware):
         if request.url.path == "/preview-health":
             return await call_next(request)
 
+        # Explicit opt-out for the public V2 deployment.
+        # Missing or invalid settings retain preview protection.
+        preview_auth_enabled = os.getenv(
+            "PREVIEW_AUTH_ENABLED", "true"
+        ).strip().lower()
+
+        if preview_auth_enabled == "false":
+            return await call_next(request)
+
         username = os.getenv("PREVIEW_USERNAME")
         password = os.getenv("PREVIEW_PASSWORD")
         secret = os.getenv("SECRET_KEY")
