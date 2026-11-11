@@ -12,6 +12,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from main import app
 
+# The public V2 homepage must take precedence over
+# the legacy root route registered in main.py.
+from fastapi.responses import RedirectResponse
+
+
 ROOT = Path(__file__).resolve().parent
 FRONTEND = ROOT / "ui-faith-v2-unified"
 
@@ -154,6 +159,25 @@ class PreviewAccessMiddleware(BaseHTTPMiddleware):
             )
 
         return response
+
+
+# Replace only the legacy root route with the
+# unified V2 frontend entry point.
+# Preserve every other route and API endpoint.
+for route in list(app.router.routes):
+    if (
+        getattr(route, "path", None) == "/"
+        and "GET" in getattr(route, "methods", set())
+    ):
+        app.router.routes.remove(route)
+
+
+@app.get("/", include_in_schema=False)
+def public_v2_homepage():
+    return RedirectResponse(
+        url="/layout.html",
+        status_code=302,
+    )
 
 
 app.add_middleware(PreviewAccessMiddleware)
