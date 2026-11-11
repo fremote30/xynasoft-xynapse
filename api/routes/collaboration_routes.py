@@ -76,7 +76,10 @@ def share_sermon(
 
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to share sermon"
+        )
 
 
 # ================================

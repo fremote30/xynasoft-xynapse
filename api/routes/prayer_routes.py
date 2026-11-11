@@ -852,7 +852,8 @@ def prayer_analytics(
 # =====================================
 @router.get("/dashboard/recent-prayers")
 def recent_prayers(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
     prayers = db.query(Prayer).filter(
         Prayer.is_hidden == False,
@@ -878,7 +879,8 @@ def recent_prayers(
 
 @router.get("/dashboard/member-prayers")
 def member_prayers(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user)
 ):
     prayers = db.query(Prayer).filter(
         Prayer.is_hidden == False,

@@ -230,7 +230,8 @@ async def refine_existing_sermon(
 # =========================================
 @router.post("/sermon/multiverse")
 async def multiverse_sermons(
-    payload: SermonRequest
+    payload: SermonRequest,
+    current_user: User = Depends(get_current_user)
 ):
 
     universes = generate_multiverse_sermons(
