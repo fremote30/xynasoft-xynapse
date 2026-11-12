@@ -1,0 +1,620 @@
+
+/* XynaFaith V2 Authentication — scoped presentation */
+
+.xf-auth-v2 {
+  min-height: calc(100vh - 72px);
+  padding: 0;
+  background: #f5f8fc;
+}
+
+.xf-auth-v2 .xf-auth-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: calc(100vh - 72px);
+}
+
+.xf-auth-v2 .xf-auth-showcase {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(9, 32, 65, 0.55),
+      rgba(10, 37, 72, 0.72)
+    ),
+    url("../assets/xynafaith-home-hero-clean.webp")
+      center center / cover no-repeat;
+  color: #fff;
+}
+
+.xf-auth-v2 .xf-auth-showcase-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 80px);
+}
+
+.xf-auth-v2 .xf-auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+
+.xf-auth-v2 .xf-auth-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.13);
+  color: #7ee3d6;
+}
+
+.xf-auth-v2 .xf-auth-showcase-copy h1 {
+  max-width: 570px;
+  margin: 18px 0;
+  color: #fff;
+  font-size: clamp(34px, 4vw, 58px);
+  line-height: 1.12;
+  letter-spacing: -1.7px;
+}
+
+.xf-auth-v2 .xf-auth-showcase-copy p {
+  max-width: 480px;
+  color: #d5e3f1;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.xf-auth-v2 .xf-auth-eyebrow {
+  color: #84e5d9;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.xf-auth-v2 .xf-auth-feature-list {
+  display: grid;
+  gap: 15px;
+  margin-top: 36px;
+  color: #e4eff9;
+  font-size: 15px;
+}
+
+.xf-auth-v2 .xf-auth-showcase-footer {
+  color: #a9c2d8;
+  font-size: 13px;
+}
+
+.xf-auth-v2 .xf-auth-form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 36px 22px;
+}
+
+.xf-auth-v2 .auth-wrapper {
+  width: 100%;
+  max-width: 510px;
+  margin: 0;
+  padding: 0;
+}
+
+.xf-auth-v2 .auth-card {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(26px, 4vw, 46px);
+  border: 1px solid #e4ebf3;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(22, 49, 83, .08);
+}
+
+.xf-auth-v2 .auth-logo {
+  display: block;
+  max-width: 150px;
+  max-height: 65px;
+  object-fit: contain;
+  margin: 0 auto 24px;
+}
+
+.xf-auth-v2 .auth-card h2 {
+  margin: 0 0 10px;
+  color: #172e4b;
+  font-size: 29px;
+  letter-spacing: -.6px;
+}
+
+.xf-auth-v2 .auth-sub {
+  margin-bottom: 26px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.xf-auth-v2 .form-group {
+  margin-bottom: 20px;
+}
+
+.xf-auth-v2 .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #24364c;
+  font-weight: 650;
+}
+
+.xf-auth-v2 .form-group input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #cdd8e4;
+  border-radius: 11px;
+  padding: 11px 14px;
+  background: #fff;
+  color: #172e4b;
+  font-size: 15px;
+}
+
+.xf-auth-v2 .form-group input:focus {
+  outline: 3px solid rgba(32, 151, 171, .16);
+  border-color: #2097ab;
+}
+
+.xf-auth-v2 .btn-primary.full {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 11px;
+  font-weight: 750;
+}
+
+.xf-auth-v2 .auth-footer {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.xf-auth-v2 .auth-footer a,
+.xf-auth-v2 .login-options a {
+  color: #087d96;
+  font-weight: 700;
+}
+
+.xf-auth-v2 .auth-identity-display,
+.xf-auth-v2 .account-info {
+  padding: 14px;
+  border-radius: 12px;
+  background: #eff7fa;
+  margin-bottom: 18px;
+}
+
+.xf-auth-v2 .auth-step-back {
+  margin-bottom: 22px;
+}
+
+.xf-auth-v2 .auth-error {
+  color: #b42318;
+}
+
+.xf-auth-v2 .password-wrapper {
+  position: relative;
+}
+
+.xf-auth-v2 .password-wrapper input {
+  padding-right: 52px;
+}
+
+.xf-auth-v2 .password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.xf-auth-v2 [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .xf-auth-v2 .xf-auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase {
+    min-height: 220px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-inner {
+    padding: 26px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-copy h1 {
+    font-size: 29px;
+  }
+
+  .xf-auth-v2 .xf-auth-feature-list,
+  .xf-auth-v2 .xf-auth-showcase-footer {
+    display: none;
+  }
+
+  .xf-auth-v2 .xf-auth-form-panel {
+    padding: 24px 16px 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .xf-auth-v2 .auth-card {
+    padding: 24px 18px;
+    border-radius: 17px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-copy p {
+    font-size: 14px;
+  }
+}
+
+
+/* BATCH 151H — AUTH REFINEMENT */
+
+/* Modern typography scoped to authentication screens */
+.xf-auth-v2,
+.xf-auth-v2 input,
+.xf-auth-v2 button,
+.xf-auth-v2 label {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
+
+.xf-auth-v2 .xf-auth-showcase-copy h1 {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.xf-auth-v2 .auth-card h2 {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.xf-auth-v2 .auth-card {
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.xf-auth-v2 .btn-primary.full {
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+@media (hover: hover) {
+  .xf-auth-v2 .btn-primary.full:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 9px 22px rgba(30, 95, 205, .18);
+  }
+}
+
+.xf-auth-v2 button:focus-visible,
+.xf-auth-v2 a:focus-visible,
+.xf-auth-v2 input:focus-visible {
+  outline: 3px solid rgba(26, 156, 183, .55);
+  outline-offset: 3px;
+}
+
+.xf-auth-v2 .auth-error:not(:empty) {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: #fff1f0;
+  color: #a8221b;
+}
+
+.xf-auth-v2 .auth-secondary-button {
+  min-height: 42px;
+  margin-top: 12px;
+}
+
+.xf-auth-v2 .remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xf-auth-v2 .remember-me input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  min-height: 0;
+  flex-shrink: 0;
+}
+
+.xf-auth-v2 .login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+
+.xf-auth-v2 .auth-card a {
+  text-underline-offset: 3px;
+}
+
+/* Tablet and mobile */
+@media (max-width: 900px) {
+  .xf-auth-v2 .xf-auth-showcase {
+    min-height: 0;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-inner {
+    padding: 24px;
+    gap: 16px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-copy h1 {
+    margin: 8px 0;
+    font-size: clamp(24px, 5vw, 34px);
+    line-height: 1.18;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-copy p {
+    margin: 8px 0 0;
+    line-height: 1.5;
+  }
+
+  .xf-auth-v2 .xf-auth-form-panel {
+    padding-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .xf-auth-v2 .xf-auth-showcase-inner {
+    padding: 18px 20px;
+    gap: 10px;
+  }
+
+  .xf-auth-v2 .xf-auth-brand {
+    font-size: 19px;
+  }
+
+  .xf-auth-v2 .xf-auth-brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+
+  .xf-auth-v2 .xf-auth-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.3px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-copy h1 {
+    font-size: 25px;
+    letter-spacing: -.8px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-copy p {
+    font-size: 13px;
+  }
+
+  .xf-auth-v2 .xf-auth-form-panel {
+    padding: 14px 12px 32px;
+  }
+
+  .xf-auth-v2 .auth-card {
+    padding: 24px 18px;
+  }
+
+  .xf-auth-v2 .auth-card h2 {
+    font-size: 25px;
+  }
+
+  .xf-auth-v2 .auth-logo {
+    margin-bottom: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xf-auth-v2 .auth-card,
+  .xf-auth-v2 .btn-primary.full {
+    transition: none;
+  }
+}
+
+
+/* BATCH 151J4 PREMIUM START */
+
+/* Unified desktop authentication experience */
+.xf-auth-v2 {
+  width: min(1280px, calc(100% - 48px));
+  min-height: min(780px, calc(100vh - 80px));
+  margin: 40px auto;
+  overflow: hidden;
+  border: 1px solid rgba(27, 57, 91, .09);
+  border-radius: 24px;
+  background: #f8fbff;
+  box-shadow:
+    0 24px 80px rgba(19, 46, 78, .10),
+    0 4px 16px rgba(19, 46, 78, .035);
+}
+
+/* Refined photographic panel */
+.xf-auth-v2 .xf-auth-showcase {
+  overflow: hidden;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8, 30, 60, .68) 0%,
+      rgba(10, 37, 72, .56) 45%,
+      rgba(7, 26, 54, .83) 100%
+    ),
+    url("../assets/xynafaith-home-hero-clean.webp")
+      55% center / cover no-repeat;
+}
+
+/* Balanced image-panel content */
+.xf-auth-v2 .xf-auth-showcase-inner {
+  max-width: 680px;
+  padding: clamp(36px, 5vw, 70px);
+}
+
+.xf-auth-v2 .xf-auth-showcase-copy h1 {
+  max-width: 550px;
+  font-size: clamp(36px, 3.8vw, 54px);
+  line-height: 1.12;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .12);
+}
+
+.xf-auth-v2 .xf-auth-showcase-copy p {
+  max-width: 470px;
+  color: #e6edf6;
+  line-height: 1.65;
+}
+
+.xf-auth-v2 .xf-auth-feature-list {
+  gap: 14px;
+  color: #f0f6ff;
+}
+
+/* Cleaner form area */
+.xf-auth-v2 .xf-auth-form-panel {
+  min-width: 0;
+  padding: clamp(24px, 4vw, 56px);
+  background: #f8fbff;
+}
+
+.xf-auth-v2 .auth-wrapper {
+  max-width: 500px;
+}
+
+.xf-auth-v2 .auth-card {
+  border: 1px solid rgba(29, 64, 102, .09);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow:
+    0 18px 48px rgba(23, 50, 84, .075),
+    0 2px 8px rgba(23, 50, 84, .025);
+}
+
+.xf-auth-v2 .auth-card h2 {
+  color: #183354;
+  letter-spacing: -.04em;
+}
+
+/* More polished fields */
+.xf-auth-v2 input:not([type="checkbox"]) {
+  border-radius: 12px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.xf-auth-v2 input:not([type="checkbox"]):focus {
+  border-color: #2b66e9;
+  box-shadow: 0 0 0 4px rgba(43, 102, 233, .11);
+  outline: none;
+}
+
+/* Primary action */
+.xf-auth-v2 .btn-primary.full {
+  border-radius: 12px;
+  box-shadow: 0 5px 12px rgba(39, 98, 231, .12);
+}
+
+@media (hover: hover) {
+  .xf-auth-v2 .btn-primary.full:hover {
+    box-shadow: 0 9px 20px rgba(39, 98, 231, .20);
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .xf-auth-v2 {
+    width: min(720px, calc(100% - 32px));
+    min-height: 0;
+    margin: 24px auto;
+    border-radius: 20px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase {
+    background-position: center 42%;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-inner {
+    padding: 30px;
+  }
+
+  .xf-auth-v2 .xf-auth-form-panel {
+    padding: 28px 24px 40px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .xf-auth-v2 {
+    width: calc(100% - 20px);
+    margin: 10px auto 20px;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(19, 46, 78, .07);
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-inner {
+    padding: 22px 20px;
+  }
+
+  .xf-auth-v2 .xf-auth-showcase-copy h1 {
+    font-size: 25px;
+    line-height: 1.16;
+  }
+
+  .xf-auth-v2 .xf-auth-form-panel {
+    padding: 18px 12px 30px;
+  }
+
+  .xf-auth-v2 .auth-card {
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(23, 50, 84, .05);
+  }
+}
+
+/* BATCH 151J4 PREMIUM END */
+
+
+/* BATCH 151K IMAGES START */
+
+.xf-auth-v2:has(#loginIdentityForm) .xf-auth-showcase {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,30,60,.70),
+      rgba(7,26,54,.82)
+    ),
+    url("../assets/Diverse Fellowship Around the Bible.png")
+      center / cover no-repeat;
+}
+
+.xf-auth-v2:has(#registerIdentityForm) .xf-auth-showcase {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,30,60,.57),
+      rgba(7,26,54,.75)
+    ),
+    url("../assets/xynafaith-registration-photo.webp")
+      center / cover no-repeat;
+}
+
+/* BATCH 151K IMAGES END */
